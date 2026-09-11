@@ -53,6 +53,51 @@ can be deleted at the end of the project with no side effects.
 
 ---
 
+## Short version, for a chat or Facebook message
+
+Chat windows do not render tables or formatting, so this says the same thing in plain lines that
+survive a copy and paste onto a phone.
+
+```
+Hi Brandon, could you add one DNS record to agaims.com.au for me when you get a chance?
+
+It's a CNAME:
+
+Host / Name:  consultation
+Type:         CNAME
+Points to:    pob099-maker.github.io
+TTL:          3600, or whatever the default is
+
+So it ends up as consultation.agaims.com.au
+
+That's the only change - please leave the main site A record, the www record
+and the mail (MX) records exactly as they are. I've checked and there's no
+wildcard record on the domain and "consultation" isn't in use, so there
+shouldn't be anything to conflict with.
+
+It's for a four month industry consultation for a potato project I'm working
+on. The site sits on GitHub Pages and the HTTPS certificate is issued
+automatically once the record resolves, so there's nothing else to set up at
+your end. If there's a proxy or CDN toggle on the record it needs to be off,
+or the certificate check fails.
+
+When the project wraps up the record can just be deleted.
+
+Could you let me know once it's in and I'll test it from my end? Thanks.
+```
+
+### If he asks
+
+- **"Do you want a trailing dot on the target?"** Either is fine. Some panels want
+  `pob099-maker.github.io.` with the dot, some add it themselves. He will know which his does.
+- **"Wouldn't an A record be easier?"** Not for a subdomain — GitHub publishes A records only for a
+  root domain, and they change. A CNAME follows them automatically.
+- **"Can I put it behind the proxy / orange cloud?"** Not while the certificate is being issued. It
+  can go back on afterwards if he wants, but there is no need: GitHub serves it over its own CDN.
+- **"What happens to it at the end?"** Delete the record. Nothing else on the domain is involved.
+
+---
+
 ## Once Brandon confirms
 
 1. Check it has propagated:
