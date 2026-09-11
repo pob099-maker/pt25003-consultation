@@ -87,6 +87,7 @@ supabase/
 
 ## Documentation
 
+- [docs/GO_LIVE.md](docs/GO_LIVE.md) — step by step from empty repository to a link you can email
 - [docs/SETUP.md](docs/SETUP.md) — Supabase project, migrations, admin accounts, environment
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — building and hosting, cheaply
 - [docs/ADMIN.md](docs/ADMIN.md) — running a consultation round, exports, tagging, new rounds
