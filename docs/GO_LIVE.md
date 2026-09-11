@@ -136,6 +136,25 @@ sorted out.
 
 ### 2.3 Point `consultation.agaims.com.au` at it
 
+**Until the DNS record exists, the site is published at the GitHub address** and the repository
+variable `VITE_BASE` is set to `/pt25003-consultation/`. A `public/CNAME` file would claim the
+custom domain the moment it was published, and GitHub would then send every visitor to a name that
+does not yet resolve — so the file is added at cutover, not before.
+
+At cutover, three things change together:
+
+```bash
+printf 'consultation.agaims.com.au
+' > public/CNAME
+git add public/CNAME && git commit -m "Claim the custom domain" && git push
+gh variable delete VITE_BASE --repo pob099-maker/pt25003-consultation
+```
+
+Then enter the domain under **Settings → Pages**, wait for the DNS check, tick **Enforce HTTPS**,
+and re-run the deploy. Leaving `VITE_BASE` set is the classic mistake: the page loads with no
+styling at all, because it is looking for its assets under `/pt25003-consultation/`.
+
+
 One CNAME record, which Brandon adds. The request is written out ready to send in
 [DNS-REQUEST.md](DNS-REQUEST.md), along with what it does and does not touch — the Wix site on the
 apex, the `www` record and the mail records all stay exactly as they are.
