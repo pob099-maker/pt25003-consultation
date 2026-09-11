@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Layout } from '../../components/Layout';
-import { card, primaryButton, secondaryButton, textInput } from '../../components/ui';
+import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { interestLabel, roleLabel } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
@@ -22,7 +22,7 @@ const Stat = ({ label, value, note }: { label: string; value: string; note?: str
 
 const Bar = ({ share }: { share: number }) => (
   <div className="h-1.5 w-full overflow-hidden rounded-full bg-sunk" aria-hidden="true">
-    <div className="h-full rounded-full bg-accent" style={{ width: `${Math.max(2, Math.round(share * 100))}%` }} />
+    <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(2, Math.round(share * 100))}%` }} />
   </div>
 );
 
@@ -82,7 +82,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     <Layout>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h1>Consultation results</h1>
-        <button type="button" className="text-meta text-accent underline underline-offset-4" onClick={onSignOut}>
+        <button type="button" className="text-meta text-primary underline underline-offset-4" onClick={onSignOut}>
           Sign out
         </button>
       </div>
@@ -91,7 +91,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       </p>
 
       {data.demoMode && (
-        <p className={`${card} mt-5 border-accent/40 bg-accent-soft text-body`} role="status">
+        <p className={`${accentPanel} mt-5 text-body`} role="status">
           No backend is configured, so this screen is showing the seeded <strong>test data</strong> that ships with the
           app. Set the Supabase environment variables to see real responses.
         </p>
@@ -140,7 +140,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           <label className="flex items-center gap-2 text-body">
             <input
               type="checkbox"
-              className="size-5 accent-accent"
+              className="size-5 accent-primary"
               checked={includeTest}
               onChange={(event) => setIncludeTest(event.target.checked)}
             />
@@ -164,7 +164,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             aria-current={tab === id ? 'page' : undefined}
             onClick={() => setTab(id)}
             className={`rounded-md border px-4 py-2 text-body min-h-11 ${
-              tab === id ? 'border-accent bg-accent text-white' : 'border-line-strong bg-surface text-ink'
+              tab === id ? 'border-primary bg-primary text-white' : 'border-line-strong bg-surface text-ink'
             }`}
           >
             {label}
@@ -303,7 +303,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                         aria-pressed={on}
                         onClick={() => void toggleTag(entry.responseId, entry.questionId, theme)}
                         className={`rounded-full border px-3 py-1.5 text-meta ${
-                          on ? 'border-accent bg-accent text-white' : 'border-line-strong bg-surface text-ink-soft'
+                          on ? 'border-primary bg-primary text-white' : 'border-line-strong bg-surface text-ink-soft'
                         }`}
                       >
                         {theme}

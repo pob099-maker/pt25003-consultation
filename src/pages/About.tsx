@@ -25,7 +25,7 @@ export const About = () => {
         <ul className="mt-3 space-y-3 text-ink-soft">
           {POINTS.map((point) => (
             <li key={point} className="flex gap-3">
-              <span aria-hidden="true" className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+              <span aria-hidden="true" className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" />
               <span>{point}</span>
             </li>
           ))}

@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { NO_INTEREST_ID } from '../content/questionnaire';
 import { contactFormSchema, type ContactFormValues } from '../schemas/consultation';
 import type { Option } from '../types';
-import { card, choiceRow, choiceRowSelected, textInput } from './ui';
+import { accentPanel, choiceRow, choiceRowSelected, textInput } from './ui';
 
 interface Props {
   readonly interestOptions: readonly Option[];
@@ -87,7 +87,7 @@ export const StayInvolved = ({
 
   return (
     <form id={formId} noValidate onSubmit={handleSubmit((values) => onSubmit(wantsContact ? values : null))}>
-      <div className={`${card} border-accent/40 bg-accent-soft`}>
+      <div className={accentPanel}>
         <p className="text-ink-soft">
           If you are willing to be contacted about future activities — the project reference group, a trial or
           demonstration, or simply the findings — you may provide your details below. This is optional. Choosing not to
@@ -114,7 +114,7 @@ export const StayInvolved = ({
                 <label className={`${choiceRow} cursor-pointer ${checked ? choiceRowSelected : ''}`}>
                   <input
                     type="checkbox"
-                    className="mt-1 size-5 shrink-0 accent-accent"
+                    className="mt-1 size-5 shrink-0 accent-primary"
                     checked={checked}
                     onChange={() => toggle(option.id)}
                   />

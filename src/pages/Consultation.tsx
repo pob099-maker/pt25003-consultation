@@ -62,7 +62,7 @@ const AboutYou = ({
                 <input
                   type="radio"
                   name="role"
-                  className="mt-1 size-5 shrink-0 accent-accent"
+                  className="mt-1 size-5 shrink-0 accent-primary"
                   checked={role === option.id}
                   aria-invalid={showRoleError}
                   onChange={() => onRole(option.id)}
@@ -87,7 +87,7 @@ const AboutYou = ({
                 <label className={`${choiceRow} cursor-pointer ${checked ? choiceRowSelected : ''}`}>
                   <input
                     type="checkbox"
-                    className="mt-1 size-5 shrink-0 accent-accent"
+                    className="mt-1 size-5 shrink-0 accent-primary"
                     checked={checked}
                     onChange={() => toggleRegion(option.id)}
                   />

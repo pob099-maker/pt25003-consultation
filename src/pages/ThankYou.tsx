@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Layout } from '../components/Layout';
-import { card, primaryButton, secondaryButton } from '../components/ui';
+import { accentPanel, primaryButton, secondaryButton } from '../components/ui';
 import { config } from '../lib/config';
 
 interface ThankYouState {
@@ -51,7 +51,7 @@ export const ThankYou = () => {
       </div>
 
       {state.queued === true && (
-        <p className={`${card} mt-6 prose-measure border-accent/40 bg-accent-soft`} role="status">
+        <p className={`${accentPanel} mt-6 prose-measure`} role="status">
           Your response is saved on this device and has not been sent yet — the connection was unavailable. Open this
           page again when you have signal and it will be sent automatically. Please do not clear your browser data
           before then.

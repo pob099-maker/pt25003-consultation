@@ -19,7 +19,7 @@ export const ProgressIndicator = ({ current, total, label }: Props) => {
         aria-valuetext={`Step ${current + 1} of ${total}`}
         className="h-2 w-full overflow-hidden rounded-full bg-sunk"
       >
-        <div className="h-full rounded-full bg-accent" style={{ width: `${percent}%` }} />
+        <div className="h-full rounded-full bg-primary" style={{ width: `${percent}%` }} />
       </div>
     </div>
   );

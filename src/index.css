@@ -1,42 +1,153 @@
 @import 'tailwindcss';
 
-/*
- * One palette, defined once. Components use the token names, never raw hex,
- * and greys are real colours rather than opacity over an unknown ground —
- * an `ink/60` composites differently on every surface and cannot be
- * contrast-checked until it is painted.
- */
-@theme {
-  --color-paper: #fbfaf7;
-  --color-surface: #ffffff;
-  --color-sunk: #f3f2ed;
-  --color-ink: #1b1e1b;
-  --color-ink-soft: #4a514a;
-  --color-ink-faint: #6b716b;
-  --color-line: #e0e0d8;
-  --color-line-strong: #c3c4ba;
-  /* The single agricultural accent: a muted field green. */
-  --color-accent: #3d6b4a;
-  --color-accent-strong: #2d5237;
-  --color-accent-soft: #edf3ee;
-  --color-danger: #9a2f26;
+/* ---------------------------------------------------------------------------
+   Typefaces
+   ---------------------------------------------------------------------------
+   Self-hosted, the same files as the Fieldwork app. They are not fetched from
+   a CDN: a consultation opened on mobile data in a shed should not depend on
+   a font server, and the two-family request form Fontshare was given in
+   Fieldwork silently returned the wrong display face for months. Local files
+   cannot change underneath the app.
+   --------------------------------------------------------------------------- */
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./assets/fonts/Satoshi-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./assets/fonts/Satoshi-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./assets/fonts/Satoshi-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cabinet Grotesk';
+  src: url('./assets/fonts/CabinetGrotesk-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cabinet Grotesk';
+  src: url('./assets/fonts/CabinetGrotesk-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cabinet Grotesk';
+  src: url('./assets/fonts/CabinetGrotesk-800.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------------------
+   Tokens
+   ---------------------------------------------------------------------------
+   The PotatoLink palette, the same names and values as the Fieldwork app:
+   rich brown for actions, golden tan for keylines and panels, warm cream
+   grounds. Greys are real colours in three steps rather than opacity over an
+   unknown ground — an ink/60 composites differently on cream, on a card and
+   on a tinted panel, compounds when nested, and cannot be contrast-checked
+   because it is not a colour until it is painted.
+   --------------------------------------------------------------------------- */
+
+@theme {
+  /* Brand. These two do not flip: a filled brown button carries white text on
+     either ground. */
+  --color-primary: #6e4320; /* rich chocolate brown — actions, headings */
+  --color-primary-soft: #d9a868; /* golden tan — primary's stand-in on dark */
+  --color-accent: #d6a455; /* PotatoLink gold — keylines, panels, highlights */
+
+  /* Grounds, in order: the page, a raised card, a recessed panel. */
+  --color-paper: #f7f2e9;
+  --color-surface: #fffdf8; /* warm white; pure #fff reads as a cold card on cream */
+  --color-sunk: #f0e8d9;
+  /* The wash behind a chosen answer. A token rather than an opacity, so a
+     selected row looks the same on a card as it does on the page. */
+  --color-selected: #f4e6cd;
+
+  /* Text, in three steps of emphasis. */
+  --color-ink: #3a2f24;
+  --color-ink-soft: #6b5c4c;
+  --color-ink-faint: #756652;
+
+  /* Hairlines. */
+  --color-line: #e2d8c6;
+  --color-line-strong: #cbbca3;
+
+  --color-danger: #a13544;
+
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Cabinet Grotesk', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale. Each step carries its own line height, so a size is never
+     picked without the leading that belongs to it. The display step is fluid
+     because a heading has to survive a 375px phone and a laptop. */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.12em;
+  --text-eyebrow--font-weight: 600;
 
   --text-meta: 0.8125rem;
   --text-meta--line-height: 1.45;
+
   --text-body: 1rem;
-  --text-body--line-height: 1.6;
-  --text-subtitle: 1.125rem;
-  --text-subtitle--line-height: 1.5;
-  --text-title: 1.5rem;
+  --text-body--line-height: 1.55;
+
+  --text-subtitle: 1.0625rem;
+  --text-subtitle--line-height: 1.4;
+  --text-subtitle--font-weight: 600;
+
+  --text-title: 1.25rem;
   --text-title--line-height: 1.3;
-  --text-display: 1.875rem;
-  --text-display--line-height: 1.2;
+  --text-title--font-weight: 700;
+
+  --text-display: clamp(1.5rem, 1.15rem + 1.6vw, 1.9rem);
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: 0.02em;
+  --text-display--font-weight: 800;
+}
+
+/* The dark palette, as one flip of the same names. Respondents get whatever
+   their phone is set to; there is no toggle, because a consultation is not a
+   place to put a preference control. Redefining tokens beats a `dark:` class
+   per element: one place to check the set moved together, and no way to leave
+   a colour behind on the wrong ground. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: #1e1710;
+    --color-surface: #2a2118;
+    --color-sunk: #241c14;
+    --color-selected: #3a2c1c;
+
+    --color-ink: #efe6d7;
+    --color-ink-soft: #b8a894;
+    --color-ink-faint: #95856f;
+
+    --color-line: #4a3c2c;
+    --color-line-strong: #63513c;
+
+    --color-danger: #e8909e;
+
+    color-scheme: dark;
+  }
 }
 
 html {
-  background: var(--color-paper);
+  background-color: var(--color-paper);
   -webkit-text-size-adjust: 100%;
 }
 
@@ -45,34 +156,64 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: var(--text-body);
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
-/*
- * The Tailwind reset removes the focus ring. Put it back here, once, for
- * everything. Never add `focus:outline-none` to an element: it wins on
- * specificity and silently takes the ring away from keyboard users.
- */
-:focus-visible {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 2px;
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
 }
 
+/* Brand typography: bold uppercase for clarity and authority — on h1 only.
+   With uppercase on h2 as well, a page stacks all-caps headings down the
+   screen and uppercase removes the word shape that makes a heading scannable.
+   The authority comes from one title being set that way and nothing else
+   competing with it. */
 h1 {
   font-size: var(--text-display);
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  line-height: 1.08;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 h2 {
   font-size: var(--text-title);
   line-height: 1.3;
-  font-weight: 650;
+  font-weight: 700;
 }
 
-/* A long consultation is read, not skimmed: keep measure under control. */
+/* Keyboard focus. Tailwind's reset removes the outline; this puts it back once
+   for everything. Never add `focus:outline-none` to an element — it wins on
+   specificity and silently takes the ring away. The dark theme uses the golden
+   tan, because the brown all but disappears against a dark ground. */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :focus-visible {
+    outline-color: var(--color-primary-soft);
+  }
+}
+
+/* A control sitting on the brown needs the ring to contrast with that, not
+   with the page behind it. */
+.bg-primary:focus-visible {
+  outline-color: #fffdf8;
+}
+
+/* Figures line up by column rather than drifting by digit width. */
+table,
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A long consultation is read, not skimmed: keep the measure under control. */
 .prose-measure {
   max-width: 38rem;
 }
@@ -80,5 +221,19 @@ h2 {
 @media print {
   .no-print {
     display: none !important;
+  }
+
+  /* Paper is white whatever the reader's screen was set to. */
+  :root {
+    --color-paper: #ffffff;
+    --color-surface: #ffffff;
+    --color-sunk: #f4f0e8;
+    --color-selected: #f4e6cd;
+    --color-ink: #1a1a1a;
+    --color-ink-soft: #444444;
+    --color-ink-faint: #666666;
+    --color-line: #cccccc;
+    --color-line-strong: #999999;
+    color-scheme: light;
   }
 }

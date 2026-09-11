@@ -83,8 +83,14 @@ supabase/
   plainly rather than claiming a response was received.
 - **Nothing is coerced.** There is no `z.coerce.number()` anywhere: an untouched rating must stay
   absent, because "nobody answered" and "rated 1, not a priority" are different findings.
-- **Colours come from the tokens in `src/index.css`**, never from raw hex or an opacity over an
-  unknown ground.
+- **The look is the Fieldwork app's.** The same PotatoLink palette, the same self-hosted Cabinet
+  Grotesk and Satoshi files, the same AgAims mark in the header, so the two apps read as one
+  project. Colours come from the tokens in `src/index.css` — never raw hex, and never a grey built
+  from opacity, which composites differently on every ground and cannot be contrast-checked.
+- **Dark is one flip of the same tokens**, following the reader's own phone setting. There is no
+  theme toggle: a consultation is not a place to put a preference control. Never add a `dark:`
+  class for something the tokens already flip — that is how one colour gets left behind on the
+  wrong ground.
 - **The focus ring is restored once, globally.** Never add `focus:outline-none` — it beats
   `:focus-visible` on specificity and silently removes the ring for keyboard users.
 

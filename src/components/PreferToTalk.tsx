@@ -1,5 +1,5 @@
 import { config, telHref } from '../lib/config';
-import { card } from './ui';
+import { accentPanel } from './ui';
 
 /**
  * Plenty of the people this consultation is aimed at would rather talk than
@@ -14,7 +14,7 @@ export const PreferToTalk = () => {
   if (contacts.length === 0) return null;
 
   return (
-    <section className={`${card} mt-4 prose-measure`} aria-labelledby="prefer-to-talk">
+    <section className={`${accentPanel} mt-4 prose-measure`} aria-labelledby="prefer-to-talk">
       <h2 id="prefer-to-talk" className="text-subtitle font-semibold">
         Would you rather talk to someone?
       </h2>

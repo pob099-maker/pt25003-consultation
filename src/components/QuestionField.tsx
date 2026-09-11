@@ -54,7 +54,7 @@ const MultiField = ({ question, answer, onChange }: Props) => {
               <label className={`${choiceRow} cursor-pointer ${checked ? choiceRowSelected : ''}`}>
                 <input
                   type="checkbox"
-                  className="mt-1 size-5 shrink-0 accent-accent"
+                  className="mt-1 size-5 shrink-0 accent-primary"
                   checked={checked}
                   onChange={() => toggle(option.id)}
                 />
@@ -102,7 +102,7 @@ const SingleField = ({ question, answer, onChange }: Props) => {
               <input
                 type="radio"
                 name={groupId}
-                className="mt-1 size-5 shrink-0 accent-accent"
+                className="mt-1 size-5 shrink-0 accent-primary"
                 checked={selected === option.id}
                 onChange={() => onChange({ kind: 'single', value: option.id })}
               />
@@ -174,7 +174,7 @@ const RatingField = ({ question, answer, onChange }: Props) => {
                     aria-label={`${point.value}, ${point.label}`}
                     onClick={() => set(row.id, point.value)}
                     className={`flex-1 rounded-md border py-3 text-body font-semibold min-h-12 ${
-                      active ? 'border-accent bg-accent text-white' : 'border-line-strong bg-surface text-ink'
+                      active ? 'border-primary bg-primary text-white' : 'border-line-strong bg-surface text-ink'
                     }`}
                   >
                     {point.value}
@@ -242,7 +242,7 @@ const RankField = ({ question, answer, onChange, rankChoices }: Props) => {
                 <span
                   aria-hidden="true"
                   className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border text-meta font-bold ${
-                    selected ? 'border-accent bg-accent text-white' : 'border-line-strong text-ink-faint'
+                    selected ? 'border-primary bg-primary text-white' : 'border-line-strong text-ink-faint'
                   }`}
                 >
                   {selected ? position + 1 : ''}
