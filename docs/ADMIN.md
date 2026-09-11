@@ -69,8 +69,11 @@ says somebody will talk it through first, so make sure that call happens before 
 
 ## Somebody who would rather not use the form
 
-The landing page and the consent page both offer a phone call or a visit instead, with the project
-contact details. When somebody takes that up, complete the consultation with them over the phone and
+The landing page and the consent page both offer a phone call or a visit instead, naming whoever is
+listed in `VITE_PROJECT_CONTACTS` — currently Peter O'Brien on 0409 773 111. Adding a second name is
+a change to that one setting, not to the code.
+
+ When somebody takes that up, complete the consultation with them over the phone and
 submit it the same way — their answers then sit in the same data as everyone else's, and the analysis
 is not quietly biased towards the people comfortable with an online form.
 

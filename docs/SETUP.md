@@ -44,7 +44,7 @@ The other variables are cosmetic and have sensible defaults:
 | `VITE_HOME_URL` | Where "Return to the project home page" goes on the thank-you page |
 | `VITE_PRIVACY_CONTACT_NAME` | Named on the privacy page |
 | `VITE_PRIVACY_CONTACT_EMAIL` | The address for a privacy question, and for anyone who would rather respond by phone |
-| `VITE_CONTACT_PHONE` | Optional. A number for people who would rather talk than type. Left blank, the offer is made by email only rather than with no number behind it |
+| `VITE_PROJECT_CONTACTS` | Who to ring if an online form does not suit somebody. `Name\|Phone\|Email`, several separated by a semicolon. Adding a second or third contact is an environment change, not a code change |
 
 ## 4. Create administrator accounts
 
