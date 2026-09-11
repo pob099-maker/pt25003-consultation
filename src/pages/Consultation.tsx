@@ -127,6 +127,10 @@ export const Consultation = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const isLastStep = stepIndex === steps.length - 1;
+  // Before a role is chosen there is no role-specific section in the list yet.
+  // Counting it anyway keeps the total honest: a progress bar that grows from
+  // "of 5" to "of 6" the moment somebody answers reads as moving backwards.
+  const totalSteps = pathway === null ? steps.length + 1 : steps.length;
 
   /** Ranking is offered over whatever the respondent ticked in question 1. */
   const rankChoices = useMemo<readonly Option[]>(() => {
@@ -207,7 +211,7 @@ export const Consultation = () => {
 
   return (
     <Layout>
-      <ProgressIndicator current={stepIndex} total={steps.length} label={step.title} />
+      <ProgressIndicator current={stepIndex} total={totalSteps} label={step.title} />
 
       <h1 className="text-title font-bold">{step.title}</h1>
       {step.intro !== undefined && <p className="prose-measure mt-2 text-ink-soft">{step.intro}</p>}
