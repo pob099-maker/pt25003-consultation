@@ -42,14 +42,17 @@ follow [docs/SETUP.md](docs/SETUP.md).
 
 ## Routes
 
+Hash routing, so the app works on any static host — GitHub Pages included — with no server
+rewrites and no link that can 404.
+
 | Path | Who it is for |
 | --- | --- |
-| `/` | Landing page, introduction and confidentiality statement |
-| `/about` | Information and consent, before any question |
-| `/consultation` | The six-step consultation |
-| `/thank-you` | What happens next |
-| `/privacy` | Privacy statement |
-| `/admin` | Project staff only. Supabase sign-in |
+| `#/` | Landing page, introduction and confidentiality statement |
+| `#/about` | Information and consent, before any question |
+| `#/consultation` | The six-step consultation |
+| `#/thank-you` | What happens next |
+| `#/privacy` | Privacy statement |
+| `#/admin` | Project staff only. Supabase sign-in |
 
 ## How it is put together
 

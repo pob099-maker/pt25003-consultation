@@ -7,10 +7,18 @@ npm install
 npm run build      # produces dist/
 ```
 
-## Single-page routing
+## Routing
 
-The app uses real URLs (`/about`, `/consultation`, `/admin`). Any host must rewrite unknown paths to
-`index.html`, or a refresh on `/privacy` returns a 404.
+The app uses hash routing (`#/about`, `#/admin`), so no host needs a rewrite rule and no link can
+404 — including GitHub Pages, which has no SPA fallback to configure. `public/404.html` catches any
+pre-hash link somebody saved and sends it to its hash equivalent.
+
+### GitHub Pages
+
+`.github/workflows/deploy.yml` builds and publishes on every push to `main`, after lint, typecheck
+and tests pass. Set repository **variables** (not secrets — these ship in the bundle by design):
+`VITE_BASE` to `/<repo-name>/` for a project site, or `/` for a custom domain, plus the Supabase and
+contact values below.
 
 ### Netlify
 

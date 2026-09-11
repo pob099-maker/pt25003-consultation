@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+  // GitHub Pages serves a project site from /<repo>/, so the asset paths have
+  // to be built for wherever the app will actually live. Any host that serves
+  // from the root needs nothing set.
+  base: process.env.VITE_BASE ?? '/',
   plugins: [react(), tailwindcss()],
   test: {
     environment: 'node',

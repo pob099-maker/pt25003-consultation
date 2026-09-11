@@ -6,8 +6,8 @@ to collect responses, and a web address to send people to. Allow an hour, most o
 Nothing here needs a developer, but you will need:
 
 - A Supabase account (the database).
-- A Cloudflare, Netlify or Vercel account (the hosting). Free.
-- Whoever controls DNS for `potatolink.com.au`, if you want the link on that domain.
+- The `pob099-maker` GitHub account (the hosting). Free, and the same place the Fieldwork app lives.
+- Whoever controls DNS for the domain, only if you want the link on a domain of your own.
 
 ---
 
@@ -81,76 +81,77 @@ cost you responses.
 
 ## Part 2 — The web address
 
-### 2.1 Decide the address
+The app uses hash routing, so it works on any static host with no server configuration — including
+GitHub Pages, which cannot be told to fall back to `index.html`. That means you can start on a free
+address and move to your own domain later without touching the code or losing a single response.
 
-| Option | Link | Notes |
-| --- | --- | --- |
-| **A subdomain of the project site** | `https://consultation.potatolink.com.au` | Recommended. Looks like it belongs to the project, which matters when you are asking people to give you commercially sensitive opinions |
-| A free host subdomain | `https://pt25003-consultation.pages.dev` | Works immediately, no DNS needed. Fine for testing, weaker in a cold email |
+### 2.1 Push the code to GitHub
 
-You can start on the second and move to the first later without losing any data.
-
-### 2.2 Put the code somewhere the host can see it
-
-The project is a local git repository with no remote. Push it to GitHub (private is fine) so the
-host can build from it:
+The project is a local git repository with no remote yet. Put it on the same account as the
+Fieldwork app:
 
 ```bash
-gh repo create potatolink/pt25003-consultation --private --source . --push
+gh repo create pob099-maker/pt25003-consultation --private --source . --push
 ```
 
-Or create an empty repository on github.com and follow the two lines it gives you.
+### 2.2 Option A — GitHub Pages, alongside the Fieldwork app
 
-### 2.3 Connect the host — Cloudflare Pages
+This is the same arrangement as `potatolink-fieldwork`, and the deploy workflow is already in the
+repository at `.github/workflows/deploy.yml`. It runs lint, typecheck and tests first, and only
+publishes if they pass.
 
-1. <https://dash.cloudflare.com> → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**.
-2. Pick the repository.
-3. Build settings:
-   - Framework preset: **Vite**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-4. **Environment variables** — add these before the first deploy:
+1. Repository → **Settings** → **Pages** → **Source: GitHub Actions**.
+2. Repository → **Settings** → **Secrets and variables** → **Actions** → **Variables** tab → **New
+   repository variable**, once for each:
 
    | Name | Value |
    | --- | --- |
-   | `VITE_SUPABASE_URL` | the Project URL from step 1.4 |
-   | `VITE_SUPABASE_ANON_KEY` | the anon public key from step 1.4 |
+   | `VITE_BASE` | `/pt25003-consultation/` — the leading and trailing slashes matter |
+   | `VITE_SUPABASE_URL` | Project URL from step 1.4 |
+   | `VITE_SUPABASE_ANON_KEY` | anon public key from step 1.4 |
    | `VITE_HOME_URL` | `https://potatolink.com.au` |
    | `VITE_PROJECT_CONTACTS` | `Peter O'Brien\|0409 773 111\|` |
    | `VITE_PRIVACY_CONTACT_NAME` | whoever answers privacy questions |
    | `VITE_PRIVACY_CONTACT_EMAIL` | their address |
 
-5. **Save and Deploy**. Two minutes later you have a working link on `*.pages.dev`.
+   Variables, not Secrets: these end up in the published bundle by design, and a Secret would only
+   hide them from you. The Supabase **service_role** key is the one that must never go in either.
+3. Push to `main`, or **Actions** → **Deploy** → **Run workflow**.
 
-These are read when the site is built, so changing one later needs a redeploy — one button in the
-same dashboard.
+Your link:
 
-### 2.4 Point the subdomain at it
+**`https://pob099-maker.github.io/pt25003-consultation/`**
 
-In the Pages project → **Custom domains** → **Set up a custom domain** → enter
-`consultation.potatolink.com.au`.
+### 2.3 Option B — your own domain
 
-Cloudflare will show you a DNS record. Send this to whoever manages the domain:
+Better in a cold email: a link on a domain people recognise reads as the project asking, where a
+`github.io` address reads as something that might be a phishing attempt. Two ways:
+
+- **On GitHub Pages** — Repository → **Settings** → **Pages** → **Custom domain**, enter the
+  subdomain, then set `VITE_BASE` to `/` and redeploy (a custom domain serves from the root, not
+  from `/<repo>/`).
+- **On Cloudflare Pages** — you already have a Cloudflare account named "PotatoLink" hosting the
+  CRM. **Workers & Pages** → **Create** → **Pages** → **Connect to Git**, framework preset Vite,
+  build `npm run build`, output `dist`, and add the same variables. Leave `VITE_BASE` unset.
+
+Either way, whoever manages the domain adds one record:
 
 > Please add a CNAME record:
-> **Name:** `consultation`
-> **Target:** `pt25003-consultation.pages.dev`
-> **Proxy/CDN:** on, if the option is offered
+> **Name:** `consultation` (or whatever subdomain you want)
+> **Target:** `pob099-maker.github.io` for GitHub Pages, or `pt25003-consultation.pages.dev` for
+> Cloudflare Pages
 
-It usually works within minutes, sometimes a few hours. The certificate is issued automatically, so
-the link is `https://` with no further work.
-
----
+The HTTPS certificate is issued automatically. Give it a few minutes to a few hours.
 
 ## Part 3 — Check it before anybody sees it
 
 1. Open the link on your own phone, on mobile data rather than wi-fi.
 2. Complete the consultation as a grower. Tick a couple of interests and put your own details in.
-3. Sign in at `<your link>/admin`. Your response should be there within seconds.
+3. Sign in at `<your link>#/admin`. Your response should be there within seconds.
 4. Check the **Contacts** tab shows your details, and that nothing on the screen connects them to
    your answers — that separation is what the privacy statement promises.
 5. Press **Export responses (CSV)** and open it in Excel. Labels should read as words, not codes.
-6. Try `/admin` in a private window without signing in. You should see a sign-in form and no data.
+6. Try `#/admin` in a private window without signing in. You should see a sign-in form and no data.
 
 ---
 
@@ -174,7 +175,7 @@ the link is `https://` with no further work.
 > better digital tools would make the most practical difference. It takes about 8–10 minutes, on a
 > phone or a computer, and you can answer anonymously — no sign-up, no account.
 >
-> https://consultation.potatolink.com.au
+> https://pob099-maker.github.io/pt25003-consultation/
 >
 > The questions adapt to your part of the industry, so you will only be asked about work you
 > actually do. If you would rather talk it through than fill in a form, ring Peter O'Brien on

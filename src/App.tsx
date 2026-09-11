@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { QuestionnaireProvider } from './contexts/QuestionnaireContext';
 import { Landing } from './pages/Landing';
 import { About } from './pages/About';
@@ -12,6 +12,12 @@ import { flushOutbox } from './services/submit';
 // bundle means a grower on a paddock connection never downloads it.
 const Admin = lazy(() => import('./pages/admin/Admin').then((module) => ({ default: module.Admin })));
 
+/**
+ * Hash routing, so a link works on any static host without server rewrites —
+ * GitHub Pages included, which cannot be told to fall back to index.html. The
+ * consultation is shared as a single root link, so the hash is never something
+ * anybody has to type.
+ */
 export const App = () => {
   useEffect(() => {
     // Anything held on the device from an earlier submission goes out now.
@@ -19,7 +25,7 @@ export const App = () => {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <QuestionnaireProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -38,6 +44,6 @@ export const App = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </QuestionnaireProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
