@@ -7,7 +7,7 @@ Nothing here needs a developer, but you will need:
 
 - A Supabase account (the database).
 - The `pob099-maker` GitHub account (the hosting). Free, and the same place the Fieldwork app lives.
-- Whoever controls DNS for the domain, only if you want the link on a domain of your own.
+- Brandon, who manages DNS for `agaims.com.au`, for one record. See [DNS-REQUEST.md](DNS-REQUEST.md).
 
 ---
 
@@ -94,11 +94,11 @@ Fieldwork app:
 gh repo create pob099-maker/pt25003-consultation --private --source . --push
 ```
 
-### 2.2 Option A — GitHub Pages, alongside the Fieldwork app
+### 2.2 Publish on GitHub Pages
 
-This is the same arrangement as `potatolink-fieldwork`, and the deploy workflow is already in the
-repository at `.github/workflows/deploy.yml`. It runs lint, typecheck and tests first, and only
-publishes if they pass.
+The same arrangement as `potatolink-fieldwork`, and the workflow is already in the repository at
+`.github/workflows/deploy.yml`. It runs lint, typecheck and tests first, and only publishes if they
+pass.
 
 1. Repository → **Settings** → **Pages** → **Source: GitHub Actions**.
 2. Repository → **Settings** → **Secrets and variables** → **Actions** → **Variables** tab → **New
@@ -106,7 +106,6 @@ publishes if they pass.
 
    | Name | Value |
    | --- | --- |
-   | `VITE_BASE` | `/pt25003-consultation/` — the leading and trailing slashes matter |
    | `VITE_SUPABASE_URL` | Project URL from step 1.4 |
    | `VITE_SUPABASE_ANON_KEY` | anon public key from step 1.4 |
    | `VITE_HOME_URL` | `https://potatolink.com.au` |
@@ -116,32 +115,27 @@ publishes if they pass.
 
    Variables, not Secrets: these end up in the published bundle by design, and a Secret would only
    hide them from you. The Supabase **service_role** key is the one that must never go in either.
+
+   Leave `VITE_BASE` unset. It is only needed if you publish at the GitHub address rather than the
+   custom domain, in which case set it to `/pt25003-consultation/` — leading and trailing slashes
+   included.
 3. Push to `main`, or **Actions** → **Deploy** → **Run workflow**.
 
-Your link:
+The site is live at `https://pob099-maker.github.io/pt25003-consultation/` while the domain is being
+sorted out.
 
-**`https://pob099-maker.github.io/pt25003-consultation/`**
+### 2.3 Point `consultation.agaims.com.au` at it
 
-### 2.3 Option B — your own domain
+One CNAME record, which Brandon adds. The request is written out ready to send in
+[DNS-REQUEST.md](DNS-REQUEST.md), along with what it does and does not touch — the Wix site on the
+apex, the `www` record and the mail records all stay exactly as they are.
 
-Better in a cold email: a link on a domain people recognise reads as the project asking, where a
-`github.io` address reads as something that might be a phishing attempt. Two ways:
+Once he confirms, follow the checklist at the end of that document: enter the domain under
+**Settings → Pages**, wait for the DNS check, tick **Enforce HTTPS**, and redeploy.
 
-- **On GitHub Pages** — Repository → **Settings** → **Pages** → **Custom domain**, enter the
-  subdomain, then set `VITE_BASE` to `/` and redeploy (a custom domain serves from the root, not
-  from `/<repo>/`).
-- **On Cloudflare Pages** — you already have a Cloudflare account named "PotatoLink" hosting the
-  CRM. **Workers & Pages** → **Create** → **Pages** → **Connect to Git**, framework preset Vite,
-  build `npm run build`, output `dist`, and add the same variables. Leave `VITE_BASE` unset.
+Your link is then:
 
-Either way, whoever manages the domain adds one record:
-
-> Please add a CNAME record:
-> **Name:** `consultation` (or whatever subdomain you want)
-> **Target:** `pob099-maker.github.io` for GitHub Pages, or `pt25003-consultation.pages.dev` for
-> Cloudflare Pages
-
-The HTTPS certificate is issued automatically. Give it a few minutes to a few hours.
+**`https://consultation.agaims.com.au`**
 
 ## Part 3 — Check it before anybody sees it
 
@@ -175,7 +169,7 @@ The HTTPS certificate is issued automatically. Give it a few minutes to a few ho
 > better digital tools would make the most practical difference. It takes about 8–10 minutes, on a
 > phone or a computer, and you can answer anonymously — no sign-up, no account.
 >
-> https://pob099-maker.github.io/pt25003-consultation/
+> https://consultation.agaims.com.au
 >
 > The questions adapt to your part of the industry, so you will only be asked about work you
 > actually do. If you would rather talk it through than fill in a form, ring Peter O'Brien on
