@@ -401,7 +401,7 @@ export const seedContacts = (): readonly ContactRecord[] => [
   {
     id: '00000000-0000-4000-9000-000000000001',
     roundId: DEFAULT_QUESTIONNAIRE.roundId,
-    interests: ['demo', 'case_study', 'summary'],
+    interests: ['farm_host_trial', 'reference_group', 'case_study', 'summary'],
     name: 'TEST DATA — Alex Fielding',
     organisation: 'TEST DATA — Fielding Farms',
     broadRole: 'Grower',
@@ -417,7 +417,7 @@ export const seedContacts = (): readonly ContactRecord[] => [
   {
     id: '00000000-0000-4000-9000-000000000002',
     roundId: DEFAULT_QUESTIONNAIRE.roundId,
-    interests: ['follow_up', 'review_tool', 'updates'],
+    interests: ['pro_line_measurement', 'follow_up', 'review_tool', 'updates'],
     name: 'TEST DATA — Jordan Pike',
     organisation: 'TEST DATA — Riverbend Packing',
     broadRole: 'Packhouse manager',

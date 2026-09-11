@@ -5,7 +5,7 @@ import { ProgressIndicator } from '../components/ProgressIndicator';
 import { QuestionField } from '../components/QuestionField';
 import { StayInvolved } from '../components/StayInvolved';
 import { choiceRow, choiceRowSelected, primaryButton, secondaryButton, textInput } from '../components/ui';
-import { NO_INTEREST_ID } from '../content/questionnaire';
+import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
 import { questionById } from '../content/lookup';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { useConsultation } from '../hooks/useConsultation';
@@ -249,7 +249,7 @@ export const Consultation = () => {
 
         {isLastStep && (
           <StayInvolved
-            interestOptions={questionnaire.interestOptions}
+            interestOptions={interestsForPathway(questionnaire, pathway)}
             contactMethods={questionnaire.contactMethods}
             interests={interests}
             onInterestsChange={setInterests}

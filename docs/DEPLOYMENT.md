@@ -52,6 +52,7 @@ change needs a redeploy.
 | `VITE_HOME_URL` | No |
 | `VITE_PRIVACY_CONTACT_NAME` | No |
 | `VITE_PRIVACY_CONTACT_EMAIL` | No |
+| `VITE_CONTACT_PHONE` | No |
 
 Never add the Supabase **service role** key. It bypasses every row-level security policy, and
 anything in the bundle is public.

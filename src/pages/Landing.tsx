@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
+import { PreferToTalk } from '../components/PreferToTalk';
 import { card, primaryButton, quietButton } from '../components/ui';
 import { STORAGE_KEYS, readJson } from '../lib/storage';
 
@@ -33,6 +34,8 @@ export const Landing = () => {
           people or businesses without permission.
         </p>
       </section>
+
+      <PreferToTalk />
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
         <Link to="/about" className={primaryButton}>

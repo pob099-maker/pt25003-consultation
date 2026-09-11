@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Layout } from '../../components/Layout';
 import { card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
-import { roleLabel } from '../../content/lookup';
+import { interestLabel, roleLabel } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
 import { contactsCsv, freeTextCsv, responsesCsv } from '../../services/exportCsv';
 import { freeTextEntries, overview, rankConstraints, rateAreas, tallyMulti } from '../../services/analysis';
@@ -63,6 +63,18 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     const next = current.includes(tag) ? current.filter((value) => value !== tag) : [...current, tag];
     data.setTags(await saveTags(responseId, questionId, next, data.tags));
   };
+
+  // What people volunteered for, counted. This is the list the project works
+  // from when it comes to filling the reference group or finding a trial host.
+  const interestTally = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const contact of contacts) {
+      for (const id of contact.interests) counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .map(([id, count]) => ({ id, label: interestLabel(questionnaire, id), count }))
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+  }, [contacts, questionnaire]);
 
   const stamp = new Date().toISOString().slice(0, 10);
 
@@ -312,6 +324,19 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             These records exist only because somebody asked to be contacted. They carry no link to any consultation
             answers.
           </p>
+          {interestTally.length > 0 && (
+            <section className={card}>
+              <h2 className="text-subtitle font-semibold">What people volunteered for</h2>
+              <ul className="mt-3 grid gap-2 text-body">
+                {interestTally.map((row) => (
+                  <li key={row.id} className="flex justify-between gap-3">
+                    <span>{row.label}</span>
+                    <span className="text-ink-soft">{row.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           {contacts.map((contact) => (
             <article key={contact.id} className={card}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -331,7 +356,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                 {contact.phone}
               </p>
               <p className="mt-2 text-meta text-ink-soft">
-                Interested in: {contact.interests.map((id) => questionnaire.interestOptions.find((o) => o.id === id)?.label ?? id).join(', ')}
+                Interested in: {contact.interests.map((id) => interestLabel(questionnaire, id)).join(', ')}
               </p>
               {contact.preferredContactTime.trim().length > 0 && (
                 <p className="mt-1 text-meta text-ink-soft">Best time: {contact.preferredContactTime}</p>

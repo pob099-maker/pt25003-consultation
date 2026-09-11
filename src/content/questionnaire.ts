@@ -463,18 +463,81 @@ const PROJECT_DESIGN: readonly Section[] = [
 
 export const NO_INTEREST_ID = 'none';
 
+/**
+ * Ways to stay involved that anybody can offer, whatever their part of the
+ * chain. The project reference group sits here rather than in a pathway,
+ * because it is the same commitment for everyone and the project needs to see
+ * every volunteer for it in one list.
+ */
 export const INTEREST_OPTIONS = opts(
+  ['reference_group', 'Joining the project reference group', 'A small group that meets a few times a year to steer the project.'],
   ['follow_up', 'Confidential follow-up discussion'],
   ['summary', 'Receiving a summary of findings'],
   ['online_discussion', 'Joining a future online discussion'],
   ['peer_group', 'Participating in a small peer group'],
-  ['demo', 'Hosting or participating in a field demonstration'],
   ['case_study', 'Contributing to a case study'],
   ['data', 'Contributing de-identified operational data'],
   ['review_tool', 'Reviewing a draft ROI or decision-support tool'],
   ['updates', 'Receiving PotatoLink updates about mechanisation'],
-  [NO_INTEREST_ID, 'None of these'],
 );
+
+/**
+ * What helping with a trial actually means depends on where somebody sits.
+ * A grower offers a paddock, a dealer offers a machine and a technician, a
+ * packhouse offers a line and permission to measure it. Asking everybody the
+ * same vague question about "participating in a demonstration" gets a tick
+ * that nobody can act on, so each pathway is asked in its own terms.
+ */
+export const PATHWAY_INTERESTS: Readonly<Record<string, readonly Option[]>> = {
+  farm: opts(
+    ['farm_host_trial', 'Hosting a trial or demonstration on your farm'],
+    ['farm_measurements', 'Allowing measurements during harvest or planting', 'For example bruise sampling, timing, or labour hours.'],
+    ['farm_machine_data', 'Sharing machine or operational data during a trial'],
+    ['farm_field_day', 'Speaking at a field day or grower walk about your experience'],
+  ),
+  contractor: opts(
+    ['con_demo_machine', 'Running a machine at a field demonstration'],
+    ['con_trial_time', 'Providing operator time or machinery for a trial'],
+    ['con_measurements', 'Allowing measurements while you are working in a crop'],
+  ),
+  processor: opts(
+    ['pro_host_trial', 'Hosting a trial in your packhouse, receival or store'],
+    ['pro_line_measurement', 'Allowing throughput, grading or damage measurements on your line'],
+    ['pro_benchmark', 'Taking part in an independent grading accuracy assessment'],
+  ),
+  machinery: opts(
+    ['mach_supply_demo', 'Supplying machinery for a demonstration'],
+    ['mach_technical_support', 'Providing a technician or operator for a trial'],
+    ['mach_briefing', 'Briefing the project on equipment that is coming to market'],
+    ['mach_training', 'Helping deliver operator or technician training'],
+  ),
+  technology: opts(
+    ['tech_evaluation', 'Providing your technology for an independent evaluation'],
+    ['tech_protocol', 'Helping design what a credible trial would measure'],
+    ['tech_integration', 'Working on data compatibility with other systems'],
+  ),
+  adviser: opts(
+    ['adv_design', 'Helping design or measure a trial'],
+    ['adv_review', 'Reviewing findings before they are published'],
+    ['adv_event', 'Helping run a field day, workshop or webinar'],
+    ['adv_connect', 'Connecting the project with growers or businesses you work with'],
+  ),
+};
+
+const NONE_OPTION: Option = { id: NO_INTEREST_ID, label: 'None of these' };
+
+/**
+ * The list shown at the end: what this person specifically could offer first,
+ * then the ways anybody can stay involved, then the opt-out.
+ */
+export const interestsForPathway = (
+  questionnaire: Questionnaire,
+  pathway: string | null,
+): readonly Option[] => [
+  ...(pathway === null ? [] : (questionnaire.pathwayInterests[pathway] ?? [])),
+  ...questionnaire.interestOptions,
+  NONE_OPTION,
+];
 
 export const DEFAULT_QUESTIONNAIRE: Questionnaire = {
   roundId: '2026-round-1',
@@ -485,5 +548,6 @@ export const DEFAULT_QUESTIONNAIRE: Questionnaire = {
   pathways: PATHWAYS,
   projectDesign: PROJECT_DESIGN,
   interestOptions: INTEREST_OPTIONS,
+  pathwayInterests: PATHWAY_INTERESTS,
   contactMethods: opts(['email', 'Email'], ['phone', 'Phone'], ['either', 'Either']),
 };

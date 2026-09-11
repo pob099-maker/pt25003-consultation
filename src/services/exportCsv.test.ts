@@ -40,6 +40,7 @@ describe('contactsCsv', () => {
     const csv = contactsCsv(q, seedContacts());
     expect(csv).toContain('test.alex@example.invalid');
     expect(csv).not.toContain('response_id');
-    expect(csv).toContain('Hosting or participating in a field demonstration');
+    expect(csv).toContain('Hosting a trial or demonstration on your farm');
+    expect(csv).toContain('Joining the project reference group');
   });
 });

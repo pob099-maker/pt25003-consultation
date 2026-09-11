@@ -53,6 +53,30 @@ The files open cleanly in Excel — labels, not codes; UTF-8 with a byte order m
 names read correctly; and a text answer beginning with `=` is neutralised so a spreadsheet cannot
 treat it as a formula.
 
+## Who volunteered for what
+
+The **Contacts** tab opens with a tally of what people offered — how many are willing to join the
+project reference group, host a trial, supply a machine for a demonstration, and so on. That is the
+list to work from when the reference group is being filled or a demonstration site is needed.
+
+The options people saw depended on their pathway, because helping with a trial means different
+things in different parts of the chain: a grower offers a paddock and a harvest to measure, a dealer
+offers a machine and a technician, a packhouse offers a line and permission to measure it. Everyone,
+whatever their role, was offered the project reference group, so that list is complete in one place.
+
+Treat every tick as an expression of interest rather than a commitment — the wording on the form
+says somebody will talk it through first, so make sure that call happens before anyone is counted on.
+
+## Somebody who would rather not use the form
+
+The landing page and the consent page both offer a phone call or a visit instead, with the project
+contact details. When somebody takes that up, complete the consultation with them over the phone and
+submit it the same way — their answers then sit in the same data as everyone else's, and the analysis
+is not quietly biased towards the people comfortable with an online form.
+
+If they also want to be contacted about activities, ask before entering their details, and tick the
+interests they agreed to.
+
 ## Tagging comments
 
 Open the **Comments** tab. Each free-text answer shows the role, the date and the question. Tap any

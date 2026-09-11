@@ -33,5 +33,15 @@ export const regionLabel = (questionnaire: Questionnaire, id: string): string =>
 export const roleLabel = (questionnaire: Questionnaire, id: string | null): string =>
   id === null ? 'Not given' : (questionnaire.roles.find((role) => role.id === id)?.label ?? id);
 
-export const interestLabel = (questionnaire: Questionnaire, id: string): string =>
-  questionnaire.interestOptions.find((option) => option.id === id)?.label ?? id;
+/** Looks through the common list and every pathway's, so an export reads the
+ * same whichever perspective the person came through. */
+export const interestLabel = (questionnaire: Questionnaire, id: string): string => {
+  if (id === 'none') return 'None of these';
+  const common = questionnaire.interestOptions.find((option) => option.id === id);
+  if (common !== undefined) return common.label;
+  for (const options of Object.values(questionnaire.pathwayInterests)) {
+    const match = options.find((option) => option.id === id);
+    if (match !== undefined) return match.label;
+  }
+  return id;
+};

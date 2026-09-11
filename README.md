@@ -10,7 +10,11 @@ industry bodies — without a face-to-face meeting, an app download or an accoun
 - Questions adapt to the role, so nobody is asked about packhouse grading lines when they run a
   harvester.
 - Optional contact and expression-of-interest details are collected **separately** from the
-  anonymous answers, in a table with no key back to them.
+  anonymous answers, in a table with no key back to them. What somebody can offer — hosting a trial,
+  supplying a machine, joining the project reference group — is asked in the terms of their own part
+  of the chain.
+- Anyone who would rather not use an online form is told, before they start, that they can give the
+  same input by phone or in person.
 - Project staff get a small protected admin area: response counts, ranked priorities, filters, CSV
   exports, and thematic tagging of free-text comments.
 

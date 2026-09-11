@@ -88,10 +88,10 @@ export const StayInvolved = ({
   return (
     <form id={formId} noValidate onSubmit={handleSubmit((values) => onSubmit(wantsContact ? values : null))}>
       <div className={`${card} border-accent/40 bg-accent-soft`}>
-        <h2 className="text-subtitle font-semibold">Optional: Stay involved</h2>
-        <p className="mt-2 text-ink-soft">
-          If you are willing to be contacted about future activities, you may provide your details below. This is
-          optional. Choosing not to provide contact details will not affect your consultation response.
+        <p className="text-ink-soft">
+          If you are willing to be contacted about future activities — the project reference group, a trial or
+          demonstration, or simply the findings — you may provide your details below. This is optional. Choosing not to
+          provide contact details will not affect your consultation response.
         </p>
         <p className="mt-2 text-meta text-ink-soft">
           Anything you enter here is stored separately from your answers, and is not linked back to them.
@@ -99,9 +99,13 @@ export const StayInvolved = ({
       </div>
 
       <fieldset className="mt-6">
-        <legend className="mb-3 text-subtitle font-semibold text-ink">
+        <legend className="mb-1 text-subtitle font-semibold text-ink">
           Would you be interested in any of the following?
         </legend>
+        <p className="mb-3 text-meta text-ink-soft">
+          The first few are ways your part of the industry could help directly. Ticking something is an expression of
+          interest, not a commitment — somebody will talk it through with you first.
+        </p>
         <ul className="grid gap-2">
           {interestOptions.map((option) => {
             const checked = interests.includes(option.id);

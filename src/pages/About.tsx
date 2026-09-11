@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
+import { PreferToTalk } from '../components/PreferToTalk';
 import { card, primaryButton, secondaryButton } from '../components/ui';
 
 const POINTS = [
@@ -9,6 +10,7 @@ const POINTS = [
   'Results will be summarised in aggregate form.',
   'Contact details are optional. They are only collected if you ask to be contacted or express interest in follow-up activities.',
   'Please do not enter commercially confidential information unless you are comfortable doing so.',
+  'You do not have to do this online. You can give the same input by phone, or in person, if you would rather.',
 ] as const;
 
 export const About = () => {
@@ -29,6 +31,8 @@ export const About = () => {
           ))}
         </ul>
       </section>
+
+      <PreferToTalk />
 
       <p className="prose-measure mt-5 text-meta text-ink-soft">
         The full detail is in the <Link to="/privacy" className="underline underline-offset-4">privacy statement</Link>.

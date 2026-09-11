@@ -67,7 +67,10 @@ export interface Questionnaire {
   readonly pathways: Readonly<Record<string, Section>>;
   /** Sections shown to everybody, after the role-specific pathway. */
   readonly projectDesign: readonly Section[];
+  /** Ways to stay involved that are offered to everybody. */
   readonly interestOptions: readonly Option[];
+  /** Ways to help that only make sense for one part of the chain, by pathway. */
+  readonly pathwayInterests: Readonly<Record<string, readonly Option[]>>;
   readonly contactMethods: readonly Option[];
 }
 
