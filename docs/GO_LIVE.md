@@ -25,8 +25,13 @@ Nothing here needs a developer, but you will need:
 ### 1.2 Create the tables
 
 1. Left sidebar → **SQL Editor** → **New query**.
-2. Open `supabase/migrations/0001_consultation.sql` from this repository, copy the whole file, paste
-   it into the editor.
+2. Copy the migration to the clipboard — from the project folder:
+
+   ```bash
+   cat supabase/migrations/0001_consultation.sql | clip
+   ```
+
+   Then paste it into the editor. (Or open the file and copy it by hand.)
 3. **Run**. You should see "Success. No rows returned."
 
 That created four tables and turned on row-level security. From this point:
@@ -39,7 +44,7 @@ That created four tables and turned on row-level security. From this point:
 
 ### 1.3 Load the test data (recommended while setting up)
 
-Same SQL editor, new query, paste `supabase/seed/test_data.sql`, **Run**. That gives you eight
+Same SQL editor, new query, `cat supabase/seed/test_data.sql | clip`, paste, **Run**. That gives you eight
 realistic responses to check the admin screens against. Every row is flagged as test data, and you
 clear them in step 4.2 before going live.
 
@@ -91,8 +96,13 @@ The project is a local git repository with no remote yet. Put it on the same acc
 Fieldwork app:
 
 ```bash
-gh repo create pob099-maker/pt25003-consultation --private --source . --push
+gh repo create pob099-maker/pt25003-consultation --public --source . --push
 ```
+
+**Public, not private.** GitHub Pages only publishes from a private repository on a paid plan, which
+is why `potatolink-fieldwork` is public too. Nothing secret lives in this repository: the Supabase
+values are Actions variables, `.env.local` is git-ignored, and the anon key is designed to be
+readable by every respondent anyway.
 
 ### 2.2 Publish on GitHub Pages
 
