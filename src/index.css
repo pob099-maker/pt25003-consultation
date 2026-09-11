@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+
+/*
+ * One palette, defined once. Components use the token names, never raw hex,
+ * and greys are real colours rather than opacity over an unknown ground —
+ * an `ink/60` composites differently on every surface and cannot be
+ * contrast-checked until it is painted.
+ */
+@theme {
+  --color-paper: #fbfaf7;
+  --color-surface: #ffffff;
+  --color-sunk: #f3f2ed;
+  --color-ink: #1b1e1b;
+  --color-ink-soft: #4a514a;
+  --color-ink-faint: #6b716b;
+  --color-line: #e0e0d8;
+  --color-line-strong: #c3c4ba;
+  /* The single agricultural accent: a muted field green. */
+  --color-accent: #3d6b4a;
+  --color-accent-strong: #2d5237;
+  --color-accent-soft: #edf3ee;
+  --color-danger: #9a2f26;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.45;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-subtitle: 1.125rem;
+  --text-subtitle--line-height: 1.5;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.3;
+  --text-display: 1.875rem;
+  --text-display--line-height: 1.2;
+}
+
+html {
+  background: var(--color-paper);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+/*
+ * The Tailwind reset removes the focus ring. Put it back here, once, for
+ * everything. Never add `focus:outline-none` to an element: it wins on
+ * specificity and silently takes the ring away from keyboard users.
+ */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+h1 {
+  font-size: var(--text-display);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: var(--text-title);
+  line-height: 1.3;
+  font-weight: 650;
+}
+
+/* A long consultation is read, not skimmed: keep measure under control. */
+.prose-measure {
+  max-width: 38rem;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
