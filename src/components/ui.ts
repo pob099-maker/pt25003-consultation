@@ -8,7 +8,7 @@ export const primaryButton = `${buttonBase} bg-primary text-white hover:bg-prima
 
 export const secondaryButton = `${buttonBase} border border-line-strong bg-surface text-ink hover:bg-sunk`;
 
-export const quietButton = 'text-primary underline underline-offset-4 hover:text-primary/80';
+export const quietButton = 'text-primary-ink underline underline-offset-4 hover:opacity-80';
 
 export const card = 'rounded-xl border border-line bg-surface p-5 sm:p-6';
 

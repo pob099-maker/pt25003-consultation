@@ -70,6 +70,10 @@
   --color-primary: #6e4320; /* rich chocolate brown — actions, headings */
   --color-primary-soft: #d9a868; /* golden tan — primary's stand-in on dark */
   --color-accent: #d6a455; /* PotatoLink gold — keylines, panels, highlights */
+  /* The brand colour used as TEXT, which must flip: brown on a dark ground is
+     all but unreadable, and a link nobody can see is a link nobody follows.
+     --color-primary stays put, because it is the fill behind white text. */
+  --color-primary-ink: #6e4320;
 
   /* Grounds, in order: the page, a raised card, a recessed panel. */
   --color-paper: #f7f2e9;
@@ -146,12 +150,14 @@
     --color-line-strong: #63513c;
 
     --color-danger: #e8909e;
+    --color-primary-ink: #d9a868;
 
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
+  --color-primary-ink: #d9a868;
   --color-paper: #1e1710;
   --color-surface: #2a2118;
   --color-sunk: #241c14;

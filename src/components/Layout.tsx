@@ -23,7 +23,7 @@ export const Layout = ({ children }: { children: ReactNode }) => (
     </a>
     <header className="border-b-2 border-accent/60 bg-surface no-print">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-        <Link to="/" className="flex items-center gap-2.5 text-primary">
+        <Link to="/" className="flex items-center gap-2.5 text-primary-ink">
           <AgAimsMark />
           <span className="leading-tight">
             <span className="block font-display text-title font-extrabold">Potato Mechanisation</span>

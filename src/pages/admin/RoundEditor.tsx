@@ -163,7 +163,7 @@ export const RoundEditor = () => {
                   />
                   {options.length > 0 && (
                     <details className="mt-3">
-                      <summary className="cursor-pointer text-meta font-semibold text-primary">
+                      <summary className="cursor-pointer text-meta font-semibold text-primary-ink">
                         Answer options ({options.length})
                       </summary>
                       <ul className="mt-2 grid gap-2">

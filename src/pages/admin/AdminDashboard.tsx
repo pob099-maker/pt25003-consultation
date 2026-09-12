@@ -87,7 +87,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     <Layout>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h1>Consultation results</h1>
-        <button type="button" className="text-meta text-primary underline underline-offset-4" onClick={onSignOut}>
+        <button type="button" className="text-meta text-primary-ink underline underline-offset-4" onClick={onSignOut}>
           Sign out
         </button>
       </div>
