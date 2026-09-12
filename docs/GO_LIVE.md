@@ -134,37 +134,32 @@ pass.
 The site is live at `https://pob099-maker.github.io/pt25003-consultation/` while the domain is being
 sorted out.
 
-### 2.3 Point `consultation.agaims.com.au` at it
+### 2.3 The custom domain — done 12 September 2026
 
-**Until the DNS record exists, the site is published at the GitHub address** and the repository
-variable `VITE_BASE` is set to `/pt25003-consultation/`. A `public/CNAME` file would claim the
-custom domain the moment it was published, and GitHub would then send every visitor to a name that
-does not yet resolve — so the file is added at cutover, not before.
+The consultation is live at **https://consultation.agaims.com.au**, and the GitHub address
+redirects to it, so any link already shared still works.
 
-At cutover, three things change together:
+What was done, for the record and for the next time:
 
-```bash
-printf 'consultation.agaims.com.au
-' > public/CNAME
-git add public/CNAME && git commit -m "Claim the custom domain" && git push
-gh variable delete VITE_BASE --repo pob099-maker/pt25003-consultation
-```
+1. Brandon added `consultation` as a CNAME to `pob099-maker.github.io`.
+2. `public/CNAME` added, containing the domain.
+3. The `VITE_BASE` repository variable **deleted** — a custom domain serves from the root. Leaving
+   it set is the classic failure: the page loads with no styling at all, because it hunts for its
+   assets under `/pt25003-consultation/`.
+4. The domain set on the Pages configuration itself. The `CNAME` file in the build artifact does
+   **not** do this when publishing through GitHub Actions, which is easy to assume and wrong:
 
-Then enter the domain under **Settings → Pages**, wait for the DNS check, tick **Enforce HTTPS**,
-and re-run the deploy. Leaving `VITE_BASE` set is the classic mistake: the page loads with no
-styling at all, because it is looking for its assets under `/pt25003-consultation/`.
+   ```bash
+   gh api -X PUT repos/pob099-maker/pt25003-consultation/pages -f cname=consultation.agaims.com.au
+   ```
 
+5. Once the certificate issued, HTTPS enforced:
 
-One CNAME record, which Brandon adds. The request is written out ready to send in
-[DNS-REQUEST.md](DNS-REQUEST.md), along with what it does and does not touch — the Wix site on the
-apex, the `www` record and the mail records all stay exactly as they are.
+   ```bash
+   gh api -X PUT repos/pob099-maker/pt25003-consultation/pages -F https_enforced=true
+   ```
 
-Once he confirms, follow the checklist at the end of that document: enter the domain under
-**Settings → Pages**, wait for the DNS check, tick **Enforce HTTPS**, and redeploy.
-
-Your link is then:
-
-**`https://consultation.agaims.com.au`**
+Plain `http://` now answers with a 301 to `https://`.
 
 ## Part 3 — Check it before anybody sees it
 
