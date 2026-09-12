@@ -25,8 +25,8 @@ export const toCsv = (headers: readonly string[], rows: readonly CsvRow[]): stri
   return `\uFEFF${lines.join('\r\n')}\r\n`;
 };
 
-export const downloadCsv = (filename: string, csv: string): void => {
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+export const downloadText = (filename: string, text: string, mimeType: string): void => {
+  const blob = new Blob([text], { type: `${mimeType};charset=utf-8` });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -36,3 +36,5 @@ export const downloadCsv = (filename: string, csv: string): void => {
   link.remove();
   URL.revokeObjectURL(url);
 };
+
+export const downloadCsv = (filename: string, csv: string): void => downloadText(filename, csv, 'text/csv');

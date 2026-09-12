@@ -91,8 +91,21 @@ Irrigation, Data, Training, ROI, Service support.
 
 ## Changing question wording
 
-**Question wording** lets you edit any question's text, its guidance line, and the label on any
-answer option — then press **Save wording**. New responses use the new words straight away.
+Sign in at `/#/admin`, open the **Question wording** tab, and edit away. Every question in the
+consultation is listed, section by section, in the order respondents see them. For each one you can
+change:
+
+- the question itself
+- the grey guidance line underneath it
+- the label on any answer option — open **Answer options** beneath the question
+
+Press **Save wording** when you are done. New responses use the new words straight away; nobody has
+to redeploy anything and no developer is involved.
+
+Then press **Download phone script** and use that copy on calls. The script is built from the
+wording you just set, so the person on the phone asks exactly what the form asks — otherwise the
+phone answers and the online answers slowly stop being the same question, and the analysis splits
+into two datasets that disagree.
 
 What you cannot do from here, by design: delete an option, or change the underlying id shown in grey
 above each field. Every response already collected points at those ids. Renaming an option relabels
