@@ -7,6 +7,7 @@ import { downloadCsv } from '../../lib/csv';
 import { contactsCsv, freeTextCsv, responsesCsv } from '../../services/exportCsv';
 import { freeTextEntries, overview, rankConstraints, rateAreas, tallyMulti } from '../../services/analysis';
 import { THEME_TAGS, saveTags, tagKey } from '../../services/tags';
+import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
 import { RoundEditor } from './RoundEditor';
 
@@ -75,6 +76,10 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       .map(([id, count]) => ({ id, label: interestLabel(questionnaire, id), count }))
       .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
   }, [contacts, questionnaire]);
+
+  // Where people stop. Built from the progress table, which holds how far a
+  // session got and nothing that was said in it.
+  const funnel = useMemo(() => summariseProgress(data.progress), [data.progress]);
 
   const stamp = new Date().toISOString().slice(0, 10);
 
@@ -251,6 +256,49 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
               </ul>
             </section>
           </div>
+
+          {funnel.started > 0 && (
+            <section className={card}>
+              <h2 className="text-subtitle font-semibold">Where people stop</h2>
+              <p className="mt-1 text-meta text-ink-soft">
+                {funnel.started} started, {funnel.completed} finished ({percent(funnel.completionRate)}). These counts
+                come from a record of how far each session got — it holds no answers and nothing anybody typed.
+              </p>
+              <table className="mt-3 w-full text-body">
+                <thead>
+                  <tr className="border-b border-line text-left text-meta text-ink-soft">
+                    <th scope="col" className="py-2">Furthest step reached</th>
+                    <th scope="col" className="py-2 text-right">Sessions</th>
+                    <th scope="col" className="py-2 text-right">Stopped here</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {funnel.dropOff.map((step) => (
+                    <tr key={step.stepId} className="border-b border-line last:border-0">
+                      <th scope="row" className="py-2 pr-3 text-left font-normal">
+                        {step.stepIndex + 1}. {step.stepId.replaceAll('_', ' ')}
+                      </th>
+                      <td className="py-2 text-right">{step.reached}</td>
+                      <td className={`py-2 text-right font-semibold ${step.stopped > 0 ? 'text-danger' : ''}`}>
+                        {step.stopped}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <h3 className="mt-5 text-meta font-semibold uppercase tracking-wide text-ink-faint">Finishing by branch</h3>
+              <ul className="mt-2 grid gap-1 text-body">
+                {funnel.byPathway.map((row) => (
+                  <li key={row.pathway} className="flex justify-between gap-3">
+                    <span>{row.pathway.replaceAll('_', ' ')}</span>
+                    <span className="text-ink-soft">
+                      {row.completed} of {row.started} · {percent(row.rate)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className={card}>
             <h2 className="text-subtitle font-semibold">Who responded</h2>

@@ -5,12 +5,14 @@ import { CONTACTS_TABLE, RESPONSES_TABLE } from '../../services/submit';
 import { fromContactRow, fromResponseRow, type ContactRow, type ResponseRow } from '../../services/records';
 import { seedContacts, seedResponses } from '../../services/seed';
 import { loadTags, type TagMap } from '../../services/tags';
+import { loadProgress, type ProgressRow } from '../../services/progress';
 import type { ConsultationResponse, ContactRecord } from '../../types';
 
 export interface AdminData {
   readonly responses: readonly ConsultationResponse[];
   readonly contacts: readonly ContactRecord[];
   readonly tags: TagMap;
+  readonly progress: readonly ProgressRow[];
   readonly loading: boolean;
   readonly error: string | null;
   /** True when there is no backend, so the screen is showing seeded test data. */
@@ -24,6 +26,7 @@ export const useAdminData = (): AdminData => {
   const [responses, setResponses] = useState<readonly ConsultationResponse[]>([]);
   const [contacts, setContacts] = useState<readonly ContactRecord[]>([]);
   const [tags, setTags] = useState<TagMap>({});
+  const [progress, setProgress] = useState<readonly ProgressRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nonce, setNonce] = useState(0);
@@ -46,10 +49,11 @@ export const useAdminData = (): AdminData => {
       }
       const supabase = getSupabase();
       if (supabase === null) return;
-      const [responseResult, contactResult, loadedTags] = await Promise.all([
+      const [responseResult, contactResult, loadedTags, loadedProgress] = await Promise.all([
         supabase.from(RESPONSES_TABLE).select('*').order('submitted_at', { ascending: false }),
         supabase.from(CONTACTS_TABLE).select('*').order('submitted_at', { ascending: false }),
         loadTags(),
+        loadProgress(),
       ]);
       if (cancelled) return;
       if (responseResult.error !== null) {
@@ -64,6 +68,7 @@ export const useAdminData = (): AdminData => {
         contactResult.error === null ? (contactResult.data as ContactRow[]).map(fromContactRow) : [],
       );
       setTags(loadedTags);
+      setProgress(loadedProgress);
       setLoading(false);
     };
     void run();
@@ -72,5 +77,5 @@ export const useAdminData = (): AdminData => {
     };
   }, [demoMode, nonce]);
 
-  return { responses, contacts, tags, loading, error, demoMode, reload, setTags };
+  return { responses, contacts, tags, progress, loading, error, demoMode, reload, setTags };
 };

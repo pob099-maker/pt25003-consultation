@@ -11,6 +11,7 @@ const POINTS = [
   'Contact details are optional. They are only collected if you ask to be contacted or express interest in follow-up activities.',
   'Please do not enter commercially confidential information unless you are comfortable doing so.',
   'You do not have to do this online. You can give the same input by phone, or in person, if you would rather.',
+  'We record which step you reach, so we can tell whether a section is too long. That record holds no answers and nothing you type.',
 ] as const;
 
 export const About = () => {

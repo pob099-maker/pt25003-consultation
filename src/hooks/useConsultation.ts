@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
+import { recordProgress } from '../services/progress';
 import type { Answer, AnswerMap, Questionnaire, RoleId, Section } from '../types';
 
 export interface Draft {
+  /** Identifies this session to the progress table. Never shown, never linked
+   *  to the answers, and random enough that nobody can guess somebody else's. */
+  readonly progressId: string;
   readonly startedAt: string;
   readonly roundId: string;
   readonly role: RoleId | null;
@@ -14,6 +18,7 @@ export interface Draft {
 }
 
 const emptyDraft = (questionnaire: Questionnaire): Draft => ({
+  progressId: crypto.randomUUID(),
   startedAt: new Date().toISOString(),
   roundId: questionnaire.roundId,
   role: null,
@@ -44,7 +49,9 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
     const saved = readJson<Draft>(STORAGE_KEYS.draft);
     // A saved draft from an earlier round is not resumable: the questions have
     // changed underneath it, so start clean rather than mix rounds.
-    if (saved !== null && saved.roundId === questionnaire.roundId) return saved;
+    if (saved !== null && saved.roundId === questionnaire.roundId) {
+      return saved.progressId === undefined ? { ...saved, progressId: crypto.randomUUID() } : saved;
+    }
     return emptyDraft(questionnaire);
   });
   const isResumed = useRef(readJson<Draft>(STORAGE_KEYS.draft) !== null);
@@ -53,10 +60,17 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
     writeJson(STORAGE_KEYS.draft, draft);
   }, [draft]);
 
-  const pathway = useMemo(
-    () => questionnaire.roles.find((role) => role.id === draft.role)?.pathway ?? null,
-    [questionnaire.roles, draft.role],
+  /** Kept in a ref so the progress ping reads the current draft without
+   *  every callback that touches it being rebuilt on each keystroke. */
+  const latest = useRef(draft);
+  latest.current = draft;
+
+  const pathwayOf = useCallback(
+    (role: RoleId | null) => questionnaire.roles.find((entry) => entry.id === role)?.pathway ?? null,
+    [questionnaire.roles],
   );
+
+  const pathway = useMemo(() => pathwayOf(draft.role), [pathwayOf, draft.role]);
 
   const steps = useMemo<readonly Step[]>(() => {
     const roleSection = pathway === null ? null : (questionnaire.pathways[pathway] ?? null);
@@ -84,12 +98,34 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
   const setRegions = useCallback((regions: readonly string[]) => setDraft((current) => ({ ...current, regions })), []);
   const setRegionOther = useCallback((regionOther: string) => setDraft((current) => ({ ...current, regionOther })), []);
 
+  /** Instrumentation only: how far this session got, on which branch. Nothing
+   *  that was typed goes with it. See services/progress.ts. */
+  const ping = useCallback(
+    (stepIndex: number, completed: boolean) => {
+      const current = latest.current;
+      recordProgress({
+        id: current.progressId,
+        roundId: current.roundId,
+        role: current.role,
+        pathway: pathwayOf(current.role),
+        stepIndex,
+        stepId: steps[stepIndex]?.id ?? '',
+        stepCount: steps.length,
+        startedAt: current.startedAt,
+        completed,
+      });
+    },
+    [steps, pathwayOf],
+  );
+
   const goTo = useCallback(
     (index: number) => {
-      setDraft((current) => ({ ...current, stepIndex: Math.max(0, Math.min(index, steps.length - 1)) }));
+      const stepIndex = Math.max(0, Math.min(index, steps.length - 1));
+      setDraft((current) => ({ ...current, stepIndex }));
+      ping(stepIndex, false);
       window.scrollTo({ top: 0 });
     },
-    [steps.length],
+    [steps.length, ping],
   );
 
   const next = useCallback(() => goTo(stepIndex + 1), [goTo, stepIndex]);
@@ -103,6 +139,7 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
   return {
     draft,
     pathway,
+    ping,
     steps,
     step,
     stepIndex,

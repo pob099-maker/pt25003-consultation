@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { ProgressIndicator } from '../components/ProgressIndicator';
@@ -126,6 +126,14 @@ export const Consultation = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Opens the session record, so somebody who looks at the first screen and
+  // leaves is counted as a start rather than never existing.
+  useEffect(() => {
+    state.ping(0, false);
+    // Once per visit: this is a funnel entry, not a step change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const isLastStep = stepIndex === steps.length - 1;
   // Before a role is chosen there is no role-specific section in the list yet.
   // Counting it anyway keeps the total honest: a progress bar that grows from
@@ -215,6 +223,8 @@ export const Consultation = () => {
       }
       contactQueued = savedContact.data === 'queued';
     }
+
+    state.ping(steps.length - 1, true);
 
     state.reset();
     navigate('/thank-you', {

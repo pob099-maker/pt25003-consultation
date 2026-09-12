@@ -18,11 +18,18 @@ export const Privacy = () => (
     </p>
 
     <Section title="What information is collected">
-      <p>The consultation collects two separate kinds of information.</p>
+      <p>The consultation collects three separate kinds of information, held apart from each other.</p>
       <p>
         <strong className="text-ink">Anonymous consultation responses.</strong> Your role category, the regions you
         selected, which question pathway you were shown, your answers, any free-text comments, and the date of
         submission. No name, business name or contact detail is required at any point.
+      </p>
+      <p>
+        <strong className="text-ink">A record of how far you got.</strong> While you work through the consultation we
+        record which step you reached and which set of questions you were shown, so we can see whether a section is too
+        long and fix it. That record holds no answers and nothing you typed — only the step number — and it is not
+        connected to your responses or to any contact details. It exists so that somebody who gives up halfway tells us
+        something, instead of vanishing.
       </p>
       <p>
         <strong className="text-ink">Optional contact and expression-of-interest details.</strong> Only if you ask to be

@@ -53,6 +53,26 @@ The files open cleanly in Excel — labels, not codes; UTF-8 with a byte order m
 names read correctly; and a text answer beginning with `=` is neutralised so a spreadsheet cannot
 treat it as a formula.
 
+## Where people stop
+
+The **Priorities** tab shows how many sessions started, how many finished, which step people got to
+before giving up, and how each role's branch compares.
+
+That comes from a separate record of how far each session got. It holds the step number, the role
+and the branch, and nothing else — no answers, no free text. Keeping the partial *answers* of
+somebody who chose not to submit them was the obvious alternative and is deliberately not done: we
+tell people they may stop at any time, and taking their views anyway would make that a lie.
+
+Use it while the consultation is running, not after. If one branch finishes at half the rate of the
+others, that is a section to shorten — and you can shorten it from the **Question wording** tab
+without waiting for the round to end.
+
+Clear the records when the consultation closes:
+
+```sql
+delete from public.consultation_progress;
+```
+
 ## Who volunteered for what
 
 The **Contacts** tab opens with a tally of what people offered — how many are willing to join the
