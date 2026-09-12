@@ -125,7 +125,7 @@ export const buildQuestionMap = (questionnaire: Questionnaire): string => {
 
   lines.push('## Branch lengths', '');
   lines.push(`- Shared by everyone: about ${minutes(coreSeconds + designSeconds)}`, '');
-  for (const [pathway, section] of Object.entries(questionnaire.pathways)) {
+  for (const section of Object.values(questionnaire.pathways)) {
     const seconds = section.questions.reduce((sum, q) => sum + cost(q), 0);
     lines.push(`- ${section.title} branch: about ${minutes(seconds)} → total ${minutes(coreSeconds + designSeconds + seconds)}`);
   }
