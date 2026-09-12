@@ -44,6 +44,12 @@ export const Layout = ({ children }: { children: ReactNode }) => (
           How your information is used
         </Link>
         <span>Hort Innovation project PT25003</span>
+        {/* Quiet on purpose. Respondents need no account, and a prominent
+            "log in" invites them to wonder whether they do — but the project
+            team needs a way in that does not involve remembering a URL. */}
+        <Link to="/admin" className="ml-auto underline underline-offset-4">
+          Project team sign in
+        </Link>
       </div>
     </footer>
   </div>
