@@ -10,6 +10,7 @@ import { THEME_TAGS, saveTags, tagKey } from '../../services/tags';
 import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
 import { RoundEditor } from './RoundEditor';
+import { PhoneScriptPanel } from './PhoneScriptPanel';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
@@ -36,7 +37,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [includeTest, setIncludeTest] = useState(data.demoMode);
-  const [tab, setTab] = useState<'priorities' | 'comments' | 'contacts' | 'rounds'>('priorities');
+  const [tab, setTab] = useState<'priorities' | 'comments' | 'contacts' | 'phone' | 'rounds'>('priorities');
 
   const filtered = useMemo(
     () =>
@@ -191,6 +192,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             ['priorities', 'Priorities'],
             ['comments', `Comments (${comments.length})`],
             ['contacts', `Contacts (${contacts.length})`],
+            ['phone', 'Phone script'],
             ['rounds', 'Question wording'],
           ] as const
         ).map(([id, label]) => (
@@ -446,6 +448,8 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           {contacts.length === 0 && <p className="text-ink-soft">No contact records yet.</p>}
         </div>
       )}
+
+      {tab === 'phone' && <PhoneScriptPanel />}
 
       {!data.loading && tab === 'rounds' && <RoundEditor />}
 

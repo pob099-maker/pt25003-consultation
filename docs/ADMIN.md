@@ -111,6 +111,20 @@ says somebody will talk it through first, so make sure that call happens before 
 
 ## Somebody who would rather not use the form
 
+The **Phone script** tab is the whole consultation laid out to be read down the phone: an opening to
+say in your own words, the role question that tells you which branch to use, every question with its
+options, and prompts for the caller — *read the list, tick everything they say, do not read it
+twice*, and on the ratings *"no view" is a fine answer, leave it blank rather than guessing*. A
+guessed 3 is indistinguishable from a considered 3 once it is stored, and it drags every mean
+towards the middle.
+
+Type a role into **Show one branch only** to cut it to the branch you need; the shared questions
+always stay. **Print** gives you something for the desk, **Download a copy** gives you the file.
+
+It is built from the wording that is live right now, so it changes when you change a question — the
+call and the form ask the same things by construction rather than by anybody remembering.
+
+
 The landing page and the consent page both offer a phone call or a visit instead, naming whoever is
 listed in `VITE_PROJECT_CONTACTS` — currently Peter O'Brien on 0409 773 111. Adding a second name is
 a change to that one setting, not to the code.

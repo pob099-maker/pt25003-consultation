@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react';
 import { card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { DEFAULT_QUESTIONNAIRE } from '../../content/questionnaire';
 import { allSections } from '../../content/lookup';
-import { applyRound, loadActiveRound, saveRound, type QuestionOverride, type RoundConfig } from '../../services/rounds';
-import { buildPhoneScript } from '../../content/phoneScript';
-import { downloadText } from '../../lib/csv';
+import { loadActiveRound, saveRound, type QuestionOverride, type RoundConfig } from '../../services/rounds';
 
 const emptyRound = (): RoundConfig => ({
   roundId: DEFAULT_QUESTIONNAIRE.roundId,
@@ -96,27 +94,11 @@ export const RoundEditor = () => {
           <button type="button" className={secondaryButton} onClick={startNewRound}>
             Start a new round
           </button>
-          <button
-            type="button"
-            className={secondaryButton}
-            onClick={() =>
-              downloadText(
-                `pt25003-phone-script-${new Date().toISOString().slice(0, 10)}.md`,
-                // Built from the wording in this editor, including edits not yet
-                // saved. A phone call that asks different questions from the form
-                // splits the results into two datasets that do not agree, so the
-                // script has to follow the words, not the other way round.
-                buildPhoneScript(applyRound(DEFAULT_QUESTIONNAIRE, round)),
-                'text/markdown',
-              )
-            }
-          >
-            Download phone script
-          </button>
+
         </div>
         <p className="mt-3 text-meta text-ink-soft">
-          The phone script follows whatever is written below, so somebody taking a response over the
-          phone asks exactly what the form asks. Download it again after you change any wording.
+          The <strong>Phone script</strong> tab follows whatever is written below, so somebody taking a response over
+          the phone asks exactly what the form asks. Look there again after you change any wording.
         </p>
         {status !== null && (
           <p className="mt-3 text-meta text-ink-soft" role="status">
