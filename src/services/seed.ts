@@ -34,8 +34,8 @@ const SPECS: readonly SeedSpec[] = [
   {
     role: 'grower',
     regions: ['tas_north'],
-    constraints: ['harvesting', 'harvest_logistics', 'skills', 'storage'],
-    topThree: ['harvesting', 'skills', 'harvest_logistics'],
+    constraints: ['harvest', 'harvest_logistics', 'skills', 'storage'],
+    topThree: ['harvest', 'skills', 'harvest_logistics'],
     impacts: ['labour_avail', 'timeliness', 'damage'],
     badSeason:
       'A wet November and we simply cannot lift on time. Last season we left two paddocks a fortnight late, the skin set went off and the pack-out dropped about eight per cent. Chasing extra crew at that point costs more than the crop is worth.',
@@ -57,6 +57,7 @@ const SPECS: readonly SeedSpec[] = [
       'Harvester damage reduction first. Small changes to web speed and drop heights make a real difference and cost very little compared with a new machine.',
     evidence: ['local_demo', 'roi', 'peer', 'service'],
     pathwayAnswers: {
+      farm_scale: { kind: 'single', value: '5k_20k' },
       farm_pressure: { kind: 'multi', values: ['harvest', 'carting', 'staffing'], other: '' },
       farm_adopted: { kind: 'multi', values: ['guidance', 'section_control', 'harvester_setup'], other: '' },
       farm_outcome: { kind: 'single', value: 'refine' },
@@ -101,6 +102,7 @@ const SPECS: readonly SeedSpec[] = [
     opportunities: 'Irrigation automation tied to soil moisture. It is the one that saves both water and labour hours.',
     evidence: ['operating_data', 'training', 'service', 'compatibility'],
     pathwayAnswers: {
+      farm_scale: { kind: 'single', value: '20k_50k' },
       farm_pressure: { kind: 'multi', values: ['irrigation', 'maintenance', 'staffing'], other: '' },
       farm_adopted: { kind: 'multi', values: ['soil_moisture', 'irrigation_auto', 'machine_telemetry'], other: '' },
       farm_outcome: { kind: 'single', value: 'expand' },
@@ -118,8 +120,8 @@ const SPECS: readonly SeedSpec[] = [
   {
     role: 'contractor',
     regions: ['vic_ballarat', 'vic_gippsland'],
-    constraints: ['harvesting', 'harvest_logistics', 'maintenance'],
-    topThree: ['harvest_logistics', 'maintenance', 'harvesting'],
+    constraints: ['harvest', 'harvest_logistics', 'maintenance'],
+    topThree: ['harvest_logistics', 'maintenance', 'harvest'],
     impacts: ['timeliness', 'downtime', 'labour_cost'],
     badSeason: 'Everyone wants us in the same fortnight. If a machine goes down we push three clients back a week.',
     areas: {
@@ -139,6 +141,7 @@ const SPECS: readonly SeedSpec[] = [
     opportunities: 'Anything that shortens the changeover between jobs, and better parts availability in season.',
     evidence: ['local_demo', 'service', 'operating_data'],
     pathwayAnswers: {
+      con_scale: { kind: 'single', value: '1k_5k' },
       con_peak: { kind: 'multi', values: ['harvest', 'carting', 'machine_moves'], other: '' },
       con_limits: { kind: 'multi', values: ['machine_availability', 'operators', 'parts_lead'], other: '' },
       con_service: { kind: 'multi', values: ['parts_in_season', 'technicians'], other: '' },
@@ -177,6 +180,7 @@ const SPECS: readonly SeedSpec[] = [
     opportunities: 'Optical grading with defect classification that actually holds up on dirty potatoes.',
     evidence: ['operating_data', 'case_study', 'roi', 'compatibility'],
     pathwayAnswers: {
+      pro_scale: { kind: 'single', value: 'over_50k' },
       pro_constraints: { kind: 'multi', values: ['grading', 'defects', 'palletising', 'staffing'], other: '' },
       pro_losses: { kind: 'multi', values: ['bruising', 'greening', 'misgrades'], other: '' },
       pro_systems: { kind: 'multi', values: ['optical_size', 'optical_defect'], other: '' },
@@ -197,8 +201,8 @@ const SPECS: readonly SeedSpec[] = [
   {
     role: 'machinery',
     regions: ['national'],
-    constraints: ['maintenance', 'skills', 'harvesting'],
-    topThree: ['skills', 'maintenance', 'harvesting'],
+    constraints: ['maintenance', 'skills', 'harvest'],
+    topThree: ['skills', 'maintenance', 'harvest'],
     impacts: ['skills', 'downtime', 'labour_cost'],
     badSeason: 'Customers cannot get technicians, so small faults become whole-season problems.',
     areas: {
@@ -220,10 +224,10 @@ const SPECS: readonly SeedSpec[] = [
     pathwayAnswers: {
       mach_available: {
         kind: 'multi',
-        values: ['planting', 'harvest', 'optical', 'sensors', 'maintenance'],
+        values: ['precision_planting', 'harvest_efficiency', 'optical_sorting', 'sensors', 'predictive_maintenance'],
         other: '',
       },
-      mach_ready: { kind: 'multi', values: ['optical', 'sensors', 'maintenance'], other: '' },
+      mach_ready: { kind: 'multi', values: ['optical_sorting', 'sensors', 'predictive_maintenance'], other: '' },
       mach_barriers: { kind: 'multi', values: ['capital', 'roi', 'service', 'operators'], other: '' },
       mach_capacity: { kind: 'multi', values: ['field_techs', 'parts_holding', 'tech_training'], other: '' },
       mach_gaps: { kind: 'multi', values: ['row_spacing', 'soil', 'scale', 'support_distance'], other: '' },
@@ -263,7 +267,7 @@ const SPECS: readonly SeedSpec[] = [
     opportunities: 'Common data formats. Without them every integration is a custom job and nothing scales.',
     evidence: ['local_demo', 'operating_data', 'compatibility'],
     pathwayAnswers: {
-      tech_offer: { kind: 'multi', values: ['optical', 'sensors', 'data_standards'], other: '' },
+      tech_offer: { kind: 'multi', values: ['optical_sorting', 'sensors', 'interoperability'], other: '' },
       tech_problem: { kind: 'multi', values: ['quality', 'data', 'labour'], other: '' },
       tech_maturity: { kind: 'single', value: 'overseas' },
       tech_requirements: { kind: 'multi', values: ['connectivity', 'conditions', 'integration'], other: '' },
@@ -284,7 +288,7 @@ const SPECS: readonly SeedSpec[] = [
   {
     role: 'adviser',
     regions: ['sa_southeast', 'vic_ballarat'],
-    constraints: ['monitoring', 'skills', 'data', 'harvesting'],
+    constraints: ['monitoring', 'skills', 'data', 'harvest'],
     topThree: ['skills', 'monitoring', 'data'],
     impacts: ['skills', 'data', 'timeliness'],
     badSeason: 'Growers fall back on what they did last year, because there is no local evidence to do otherwise.',
@@ -306,7 +310,7 @@ const SPECS: readonly SeedSpec[] = [
     evidence: ['local_demo', 'roi', 'operating_data', 'case_study'],
     pathwayAnswers: {
       adv_gaps: { kind: 'multi', values: ['damage_cost', 'roi_au', 'workforce'], other: '' },
-      adv_evaluate: { kind: 'multi', values: ['optical', 'harvest'], other: '' },
+      adv_evaluate: { kind: 'multi', values: ['optical_sorting', 'harvest_efficiency'], other: '' },
       adv_measurements: { kind: 'multi', values: ['damage', 'throughput', 'labour_hours', 'cost'], other: '' },
       adv_underrepresented: { kind: 'multi', values: ['operators', 'small_farms'], other: '' },
       adv_sharing: { kind: 'multi', values: ['case_numbers', 'field_days', 'existing_groups'], other: '' },
@@ -345,12 +349,10 @@ const SPECS: readonly SeedSpec[] = [
     opportunities: 'Workforce and skills pathways, linked to the machinery that is actually being bought.',
     evidence: ['case_study', 'peer', 'safety'],
     pathwayAnswers: {
-      adv_gaps: { kind: 'multi', values: ['workforce', 'labour_impact', 'safety'], other: '' },
-      adv_evaluate: { kind: 'multi', values: ['training', 'robotics'], other: '' },
-      adv_measurements: { kind: 'multi', values: ['labour_hours', 'safety'], other: '' },
-      adv_underrepresented: { kind: 'multi', values: ['seasonal', 'operators'], other: '' },
-      adv_sharing: { kind: 'multi', values: ['existing_groups', 'publications'], other: '' },
-      adv_connections: {
+      ind_priorities: { kind: 'multi', values: ['labour', 'skills', 'capital'], other: '' },
+      ind_role: { kind: 'multi', values: ['independent_evidence', 'training', 'advocacy'], other: '' },
+      ind_underrepresented: { kind: 'multi', values: ['seasonal', 'operators'], other: '' },
+      ind_connections: {
         kind: 'text',
         value: 'State farming organisations and the relevant training packages.',
       },

@@ -29,6 +29,41 @@ describe('seed SQL', () => {
     }
   });
 
+  it('only chooses options that exist', () => {
+    // Renaming an option id is safe in the app — nothing points at the old one
+    // — but seeded answers keep choosing it, and the admin demo then shows a
+    // tally of choices nobody can find in the form. Checking question ids alone
+    // missed this, because the question survived the rename and the option did
+    // not.
+    const questions = new Map(allQuestions(DEFAULT_QUESTIONNAIRE).map((question) => [question.id, question]));
+    for (const response of seedResponses()) {
+      for (const [questionId, answer] of Object.entries(response.answers)) {
+        const question = questions.get(questionId);
+        if (question === undefined) continue;
+        const valid = new Set(
+          question.kind === 'multi' || question.kind === 'single'
+            ? question.options.map((option) => option.id)
+            : question.kind === 'rating'
+              ? question.rows.map((row) => row.id)
+              : question.kind === 'rank'
+                ? question.fallbackOptions.map((option) => option.id)
+                : [],
+        );
+        const chosen =
+          answer.kind === 'multi' || answer.kind === 'rank'
+            ? answer.values
+            : answer.kind === 'single'
+              ? [answer.value]
+              : answer.kind === 'rating'
+                ? Object.keys(answer.values)
+                : [];
+        for (const id of chosen) {
+          expect(valid, `${questionId} has no option "${id}"`).toContain(id);
+        }
+      }
+    }
+  });
+
   it('matches the committed file', () => {
     const current = existsSync(SQL_PATH) ? readFileSync(SQL_PATH, 'utf8') : '';
     if (current !== generated && process.env.CI === undefined) {

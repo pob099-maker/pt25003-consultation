@@ -1,3 +1,5 @@
+import { DOMAIN_TO_AREAS } from './questionnaire';
+import { optionLabel, questionById } from './lookup';
 import type { Option, Question, Questionnaire } from '../types';
 
 /**
@@ -122,6 +124,18 @@ export const buildQuestionMap = (questionnaire: Questionnaire): string => {
     lines.push(`#### Only on the ${questionnaire.pathways[pathway]?.title ?? pathway} branch`, '', bullets(options), '');
   }
   lines.push('### If anything is ticked', '', '- Name, organisation, broad role, region', '- Email or phone (at least one)', '- Preferred method and time', '- Comments', '');
+
+  lines.push('## Crosswalk: constraint named → priority areas rated', '');
+  lines.push(
+    'The two lists are different axes — where the trouble is, and what could be done about it. This is the stated mapping between them, so "did the people who named harvesting also rate harvest technology highly?" is one query rather than a judgement call made differently by each analyst.',
+    '',
+  );
+  const constraintQuestion = questionById(questionnaire, 'q1_constraints');
+  const areaQuestion = questionById(questionnaire, 'q5_areas');
+  for (const [domain, areas] of Object.entries(DOMAIN_TO_AREAS)) {
+    lines.push(`### ${optionLabel(constraintQuestion, domain)}`, '');
+    lines.push(bullets(areas.map((area) => ({ id: area, label: optionLabel(areaQuestion, area) }))), '');
+  }
 
   lines.push('## Branch lengths', '');
   lines.push(`- Shared by everyone: about ${minutes(coreSeconds + designSeconds)}`, '');

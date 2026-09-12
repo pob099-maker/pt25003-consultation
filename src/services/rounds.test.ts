@@ -11,7 +11,7 @@ describe('applyRound', () => {
     overrides: {
       q1_constraints: {
         prompt: 'Where are the biggest hold-ups?',
-        optionLabels: { harvesting: 'Lifting' },
+        optionLabels: { harvest: 'Lifting' },
         addedOptions: [{ id: 'weather', label: 'Weather windows' }],
       },
     },
@@ -22,9 +22,9 @@ describe('applyRound', () => {
     const question = questionById(updated, 'q1_constraints');
     expect(question?.prompt).toBe('Where are the biggest hold-ups?');
     if (question?.kind !== 'multi') throw new Error('expected a multi-select question');
-    const harvesting = question.options.find((option) => option.id === 'harvesting');
+    const harvesting = question.options.find((option) => option.id === 'harvest');
     expect(harvesting?.label).toBe('Lifting');
-    expect(harvesting?.id).toBe('harvesting');
+    expect(harvesting?.id).toBe('harvest');
   });
 
   it('keeps every original option, so a historic answer still resolves', () => {

@@ -8,14 +8,20 @@ interface Props {
   readonly onChange: (answer: Answer | undefined) => void;
   /** Choices for a rank question, resolved from the question it draws on. */
   readonly rankChoices?: readonly Option[];
+  /**
+   * Replaces the written prompt with one naming what this respondent actually
+   * chose earlier. "For the one at the top of your list" makes somebody scroll
+   * back and guess; "For harvesting" does not.
+   */
+  readonly promptOverride?: string;
 }
 
 const OTHER_ID = 'other';
 
-const Prompt = ({ question, id }: { question: Question; id: string }) => (
+const Prompt = ({ question, id, override }: { question: Question; id: string; override?: string }) => (
   <div className="mb-3">
     <p id={id} className="text-subtitle font-semibold text-ink">
-      {question.prompt}
+      {override ?? question.prompt}
     </p>
     {question.help !== undefined && <p className="mt-1 text-meta text-ink-soft">{question.help}</p>}
   </div>
@@ -24,7 +30,7 @@ const Prompt = ({ question, id }: { question: Question; id: string }) => (
 const OptionHelp = ({ option }: { option: Option }) =>
   option.help === undefined ? null : <span className="mt-0.5 block text-meta text-ink-faint">{option.help}</span>;
 
-const MultiField = ({ question, answer, onChange }: Props) => {
+const MultiField = ({ question, answer, onChange, promptOverride }: Props) => {
   const groupId = useId();
   const values = answer !== undefined && answer.kind === 'multi' ? answer.values : [];
   const other = answer !== undefined && answer.kind === 'multi' ? (answer.other ?? '') : '';
@@ -44,7 +50,7 @@ const MultiField = ({ question, answer, onChange }: Props) => {
   return (
     <fieldset aria-describedby={groupId}>
       <legend className="contents">
-        <Prompt question={question} id={groupId} />
+        <Prompt question={question} id={groupId} override={promptOverride} />
       </legend>
       <ul className="grid gap-2">
         {question.options.map((option) => {

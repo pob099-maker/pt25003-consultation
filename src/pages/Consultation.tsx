@@ -6,7 +6,7 @@ import { QuestionField } from '../components/QuestionField';
 import { StayInvolved } from '../components/StayInvolved';
 import { choiceRow, choiceRowSelected, primaryButton, secondaryButton, textInput } from '../components/ui';
 import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
-import { questionById } from '../content/lookup';
+import { optionLabel, questionById } from '../content/lookup';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { useConsultation } from '../hooks/useConsultation';
 import type { ContactFormValues } from '../schemas/consultation';
@@ -141,6 +141,20 @@ export const Consultation = () => {
     return source.options.filter((option) => answer.values.includes(option.id));
   }, [draft.answers, questionnaire]);
 
+  /**
+   * Question 3 asks about "the one at the top of your list". We know which one
+   * that is, so say it — a respondent should never have to scroll back to work
+   * out what they are answering about.
+   */
+  const impactPrompt = useMemo<string | undefined>(() => {
+    const ranked = draft.answers['q2_top_three'];
+    const top = ranked !== undefined && ranked.kind === 'rank' ? ranked.values[0] : undefined;
+    if (top === undefined) return undefined;
+    const source = questionById(questionnaire, 'q1_constraints');
+    const label = optionLabel(source, top);
+    return `Thinking about ${label.toLowerCase()} — what does it actually cost a business?`;
+  }, [draft.answers, questionnaire]);
+
   const handleNext = (): void => {
     if (stepIndex === 0 && draft.role === null) {
       setRoleError(true);
@@ -241,6 +255,7 @@ export const Consultation = () => {
                 question={question}
                 answer={draft.answers[question.id]}
                 rankChoices={question.kind === 'rank' ? rankChoices : undefined}
+                promptOverride={question.id === 'q3_impact' ? impactPrompt : undefined}
                 onChange={(answer) => state.setAnswer(question.id, answer)}
               />
             ))}

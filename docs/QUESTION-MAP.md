@@ -15,7 +15,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Machinery dealer, manufacturer or service provider → *Machinery supply and service*
 - Technology provider → *Your technology*
 - Adviser, consultant, researcher or educator → *Evidence, evaluation and extension*
-- Industry body or other stakeholder → *Evidence, evaluation and extension*
+- Industry body or other stakeholder → *Your members and the wider industry*
 
 ### Which regions?
 
@@ -41,7 +41,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 `q1_constraints` · tick any + other
 
-- Field preparation and planting
+- Ground preparation and planting
 - Crop monitoring and decision support
 - Irrigation operation and automation
 - Crop protection operations
@@ -102,6 +102,8 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Data standards and system interoperability
 - Training, skills and workforce pathways
 
+## 4. Everybody — What would convince you
+
 ### If we could only take on one or two of those, which would you pick — and why?
 
 `q6_first_opportunities` · open text
@@ -122,11 +124,22 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Better compatibility with existing equipment or data systems
 - Other
 
-## 4. One branch only — by role
+## 5. One branch only — by role
 
 ### Your farming operation
 
-Potato grower or business owner; Farm manager, supervisor or machinery operator · 7 questions · about 3.7 min
+Potato grower or business owner; Farm manager, supervisor or machinery operator · 8 questions · about 3.9 min
+
+#### Roughly how many tonnes of potatoes do you grow in a year?
+
+`farm_scale` · one only
+
+- Under 1,000 tonnes
+- 1,000 to 5,000 tonnes
+- 5,000 to 20,000 tonnes
+- 20,000 to 50,000 tonnes
+- More than 50,000 tonnes
+- Prefer not to say
 
 #### Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?
 
@@ -165,7 +178,7 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - Nothing much yet
 - Other
 
-#### How did that go, overall?
+#### Think of the one that mattered most. How did that go?
 
 `farm_outcome` · one only
 
@@ -173,7 +186,8 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - Working, but it needs sorting out
 - We tried it and stopped
 - We looked into it and did not go ahead
-- Not really relevant to us
+- Mixed — some of it worked, some did not
+- Nothing has really applied to us yet
 
 #### What has held you back most?
 
@@ -222,7 +236,18 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 
 ### Your contracting work
 
-Contractor · 7 questions · about 4.1 min
+Contractor · 8 questions · about 4.3 min
+
+#### Roughly how many tonnes of potatoes do you handle in a year, across all your clients?
+
+`con_scale` · one only
+
+- Under 1,000 tonnes
+- 1,000 to 5,000 tonnes
+- 5,000 to 20,000 tonnes
+- 20,000 to 50,000 tonnes
+- More than 50,000 tonnes
+- Prefer not to say
 
 #### Which jobs put you under the most pressure in the peak?
 
@@ -314,7 +339,18 @@ Contractor · 7 questions · about 4.1 min
 
 ### Receival, storage, grading and packing
 
-Processor, packhouse or storage business · 6 questions · about 3.7 min
+Processor, packhouse or storage business · 7 questions · about 3.9 min
+
+#### Roughly how many tonnes do you handle in a year?
+
+`pro_scale` · one only
+
+- Under 1,000 tonnes
+- 1,000 to 5,000 tonnes
+- 5,000 to 20,000 tonnes
+- 20,000 to 50,000 tonnes
+- More than 50,000 tonnes
+- Prefer not to say
 
 #### Where are the pinch points — labour, throughput, quality, handling or safety?
 
@@ -405,36 +441,36 @@ Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 m
 
 `mach_available` · tick any + other
 
-- Precision planting and establishment
-- Autonomous or semi-autonomous field machines
+- Precision planting and crop establishment
+- Autonomous or semi-autonomous field operations
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
 - Optical sorting, grading and quality measurement
 - Packhouse and receival automation
-- Robotics for repetitive manual work
-- Sensors and machine data for decisions
-- Irrigation automation
-- Predictive maintenance and uptime
-- Data standards and getting systems to talk
-- Training and workforce
+- Robotics for repetitive manual tasks
+- Sensors and machine data for operational decisions
+- Irrigation automation linked to crop and soil information
+- Predictive maintenance and machinery uptime
+- Data standards and system interoperability
+- Training, skills and workforce pathways
 - Other
 
 #### And of those, which would you say are genuinely ready — not just promising?
 
 `mach_ready` · tick any + other
 
-- Precision planting and establishment
-- Autonomous or semi-autonomous field machines
+- Precision planting and crop establishment
+- Autonomous or semi-autonomous field operations
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
 - Optical sorting, grading and quality measurement
 - Packhouse and receival automation
-- Robotics for repetitive manual work
-- Sensors and machine data for decisions
-- Irrigation automation
-- Predictive maintenance and uptime
-- Data standards and getting systems to talk
-- Training and workforce
+- Robotics for repetitive manual tasks
+- Sensors and machine data for operational decisions
+- Irrigation automation linked to crop and soil information
+- Predictive maintenance and machinery uptime
+- Data standards and system interoperability
+- Training, skills and workforce pathways
 - Other
 
 #### What stops your potato customers going ahead?
@@ -499,18 +535,18 @@ Technology provider · 7 questions · about 3.8 min
 
 `tech_offer` · tick any + other
 
-- Precision planting and establishment
-- Autonomous or semi-autonomous field machines
+- Precision planting and crop establishment
+- Autonomous or semi-autonomous field operations
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
 - Optical sorting, grading and quality measurement
 - Packhouse and receival automation
-- Robotics for repetitive manual work
-- Sensors and machine data for decisions
-- Irrigation automation
-- Predictive maintenance and uptime
-- Data standards and getting systems to talk
-- Training and workforce
+- Robotics for repetitive manual tasks
+- Sensors and machine data for operational decisions
+- Irrigation automation linked to crop and soil information
+- Predictive maintenance and machinery uptime
+- Data standards and system interoperability
+- Training, skills and workforce pathways
 - Other
 
 #### What problem does it solve for a potato business?
@@ -581,9 +617,59 @@ Technology provider · 7 questions · about 3.8 min
 
 `tech_other` · open text
 
+### Your members and the wider industry
+
+Industry body or other stakeholder · 4 questions · about 2.4 min
+
+#### What do the businesses you represent raise with you most often?
+
+`ind_priorities` · tick any + other
+
+- Labour availability and cost
+- Skills and training
+- Cost of machinery
+- Energy and input costs
+- Workplace safety
+- Market access and returns
+- Regulation and compliance
+- Succession and new entrants
+- Data and reporting burden
+- Other
+
+#### Where could a project like this be most useful to your members?
+
+`ind_role` · tick any + other
+
+- Independent evidence they can trust
+- Demonstrations they can visit
+- Training and skills pathways
+- Tools for working out whether it pays
+- Safety and regulatory guidance
+- Coordinating across regions and sectors
+- Evidence to support advocacy
+- Other
+
+#### Whose voice usually gets missed in these conversations?
+
+`ind_underrepresented` · tick any + other
+
+- Machinery operators
+- Smaller family operations
+- Seasonal and labour hire workforce
+- Contractors
+- Packhouse floor staff
+- New entrants
+- Women in the industry
+- Particular regions
+- Other
+
+#### Are there groups, programs or people we should be working with rather than around?
+
+`ind_connections` · open text
+
 ### Evidence, evaluation and extension
 
-Adviser, consultant, researcher or educator; Industry body or other stakeholder · 6 questions · about 3.8 min
+Adviser, consultant, researcher or educator · 6 questions · about 3.8 min
 
 #### Where are the biggest holes in what we actually know?
 
@@ -604,18 +690,18 @@ Adviser, consultant, researcher or educator; Industry body or other stakeholder 
 
 `adv_evaluate` · tick any + other
 
-- Precision planting and establishment
-- Autonomous or semi-autonomous field machines
+- Precision planting and crop establishment
+- Autonomous or semi-autonomous field operations
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
 - Optical sorting, grading and quality measurement
 - Packhouse and receival automation
-- Robotics for repetitive manual work
-- Sensors and machine data for decisions
-- Irrigation automation
-- Predictive maintenance and uptime
-- Data standards and getting systems to talk
-- Training and workforce
+- Robotics for repetitive manual tasks
+- Sensors and machine data for operational decisions
+- Irrigation automation linked to crop and soil information
+- Predictive maintenance and machinery uptime
+- Data standards and system interoperability
+- Training, skills and workforce pathways
 - Other
 
 #### If we run a demonstration, what should we be measuring?
@@ -668,7 +754,7 @@ Adviser, consultant, researcher or educator; Industry body or other stakeholder 
 
 `adv_connections` · open text
 
-## 5. Everybody — How we should go about it
+## 6. Everybody — How we should go about it
 
 ### What could we do that would be genuinely useful — to your business, or to the industry?
 
@@ -708,7 +794,7 @@ Adviser, consultant, researcher or educator; Industry body or other stakeholder 
 - Other
 - Prefer not to say
 
-## 6. Everybody — optional: stay involved
+## 7. Everybody — optional: stay involved
 
 ### Would you be interested in any of the following?
 
@@ -758,6 +844,13 @@ Adviser, consultant, researcher or educator; Industry body or other stakeholder 
 - Helping design what a credible trial would measure
 - Working on data compatibility with other systems
 
+#### Only on the Your members and the wider industry branch
+
+- Helping get the consultation in front of your members
+- Hosting a session at one of your events
+- Circulating the findings to your members
+- Working with us on workforce or skills policy
+
 #### Only on the Evidence, evaluation and extension branch
 
 - Helping design or measure a trial
@@ -772,15 +865,82 @@ Adviser, consultant, researcher or educator; Industry body or other stakeholder 
 - Preferred method and time
 - Comments
 
+## Crosswalk: constraint named → priority areas rated
+
+The two lists are different axes — where the trouble is, and what could be done about it. This is the stated mapping between them, so "did the people who named harvesting also rate harvest technology highly?" is one query rather than a judgement call made differently by each analyst.
+
+### Ground preparation and planting
+
+- Precision planting and crop establishment
+- Autonomous or semi-autonomous field operations
+
+### Crop monitoring and decision support
+
+- Sensors and machine data for operational decisions
+- Data standards and system interoperability
+
+### Irrigation operation and automation
+
+- Irrigation automation linked to crop and soil information
+- Sensors and machine data for operational decisions
+
+### Crop protection operations
+
+- Autonomous or semi-autonomous field operations
+- Sensors and machine data for operational decisions
+
+### Harvesting
+
+- Harvest efficiency and damage reduction
+- Autonomous or semi-autonomous field operations
+
+### In-field transport and harvest logistics
+
+- Harvest logistics and transport coordination
+
+### Receival
+
+- Packhouse and receival automation
+- Optical sorting, grading and quality measurement
+
+### Washing, grading and sorting
+
+- Optical sorting, grading and quality measurement
+- Packhouse and receival automation
+
+### Packing
+
+- Packhouse and receival automation
+- Robotics for repetitive manual tasks
+
+### Storage and handling
+
+- Sensors and machine data for operational decisions
+- Packhouse and receival automation
+
+### Data capture, traceability and system integration
+
+- Data standards and system interoperability
+- Sensors and machine data for operational decisions
+
+### Machinery maintenance and reliability
+
+- Predictive maintenance and machinery uptime
+
+### Access to skilled operators and technicians
+
+- Training, skills and workforce pathways
+
 ## Branch lengths
 
 - Shared by everyone: about 7.9 min
 
-- Your farming operation branch: about 3.7 min → total 11.6 min
-- Your contracting work branch: about 4.1 min → total 12 min
-- Receival, storage, grading and packing branch: about 3.7 min → total 11.6 min
+- Your farming operation branch: about 3.9 min → total 11.8 min
+- Your contracting work branch: about 4.3 min → total 12.2 min
+- Receival, storage, grading and packing branch: about 3.9 min → total 11.8 min
 - Machinery supply and service branch: about 3.9 min → total 11.9 min
 - Your technology branch: about 3.8 min → total 11.7 min
+- Your members and the wider industry branch: about 2.4 min → total 10.3 min
 - Evidence, evaluation and extension branch: about 3.8 min → total 11.7 min
 
 _Estimates only: 1.5 seconds per option read, 45 for an open box, 7 per rating row. Useful for comparing branches against each other, not for promising a number to a respondent._

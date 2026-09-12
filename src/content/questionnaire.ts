@@ -11,7 +11,7 @@ export const ROLES = [
   { id: 'machinery', label: 'Machinery dealer, manufacturer or service provider', pathway: 'machinery' },
   { id: 'technology', label: 'Technology provider', pathway: 'technology' },
   { id: 'adviser', label: 'Adviser, consultant, researcher or educator', pathway: 'adviser' },
-  { id: 'industry_body', label: 'Industry body or other stakeholder', pathway: 'adviser' },
+  { id: 'industry_body', label: 'Industry body or other stakeholder', pathway: 'industry' },
 ] as const;
 
 const REGIONS = opts(
@@ -30,12 +30,20 @@ const REGIONS = opts(
   ['no_say', 'Prefer not to say'],
 );
 
+/**
+ * The process axis: where in the chain the trouble is. Question 1 uses it.
+ *
+ * Ids are canonical and shared — `harvest` here is the same harvest as
+ * `harvest_efficiency` in AREAS below, and DOMAIN_TO_AREAS says so, so the
+ * obvious cross-tab ("did the people who named harvesting also rate harvest
+ * technology highly?") does not need a hand-built lookup at analysis time.
+ */
 const CONSTRAINTS = opts(
-  ['field_prep', 'Field preparation and planting'],
+  ['planting', 'Ground preparation and planting'],
   ['monitoring', 'Crop monitoring and decision support'],
   ['irrigation', 'Irrigation operation and automation'],
   ['crop_protection', 'Crop protection operations'],
-  ['harvesting', 'Harvesting'],
+  ['harvest', 'Harvesting'],
   ['harvest_logistics', 'In-field transport and harvest logistics'],
   ['receival', 'Receival'],
   ['grading', 'Washing, grading and sorting'],
@@ -45,6 +53,65 @@ const CONSTRAINTS = opts(
   ['maintenance', 'Machinery maintenance and reliability'],
   ['skills', 'Access to skilled operators and technicians'],
   ['other', 'Other'],
+);
+
+/**
+ * The response axis: what could be done about it. One list, used by the
+ * priority ratings, by what dealers say is available and ready, by what
+ * technology providers offer, and by what advisers think needs evaluating —
+ * so those four questions can be read against each other.
+ */
+const AREAS = opts(
+  ['precision_planting', 'Precision planting and crop establishment'],
+  ['autonomy', 'Autonomous or semi-autonomous field operations', 'Machines that run with limited or no driver input.'],
+  ['harvest_efficiency', 'Harvest efficiency and damage reduction'],
+  ['harvest_logistics', 'Harvest logistics and transport coordination'],
+  ['optical_sorting', 'Optical sorting, grading and quality measurement', 'Cameras and sensors that grade tubers as they pass.'],
+  ['packhouse_automation', 'Packhouse and receival automation'],
+  ['robotics', 'Robotics for repetitive manual tasks'],
+  ['sensors', 'Sensors and machine data for operational decisions'],
+  ['irrigation_automation', 'Irrigation automation linked to crop and soil information'],
+  ['predictive_maintenance', 'Predictive maintenance and machinery uptime', 'Using machine data to service a part before it fails.'],
+  ['interoperability', 'Data standards and system interoperability', 'Making equipment and software from different suppliers share data.'],
+  ['training', 'Training, skills and workforce pathways'],
+);
+
+const AREAS_WITH_OTHER = [...AREAS, { id: 'other', label: 'Other' }] as const;
+
+/**
+ * Which responses belong to which part of the chain. Published in
+ * docs/QUESTION-MAP.md so the crosswalk is a stated assumption rather than
+ * something each analyst re-invents differently.
+ */
+export const DOMAIN_TO_AREAS: Readonly<Record<string, readonly string[]>> = {
+  planting: ['precision_planting', 'autonomy'],
+  monitoring: ['sensors', 'interoperability'],
+  irrigation: ['irrigation_automation', 'sensors'],
+  crop_protection: ['autonomy', 'sensors'],
+  harvest: ['harvest_efficiency', 'autonomy'],
+  harvest_logistics: ['harvest_logistics'],
+  receival: ['packhouse_automation', 'optical_sorting'],
+  grading: ['optical_sorting', 'packhouse_automation'],
+  packing: ['packhouse_automation', 'robotics'],
+  storage: ['sensors', 'packhouse_automation'],
+  data: ['interoperability', 'sensors'],
+  maintenance: ['predictive_maintenance'],
+  skills: ['training'],
+};
+
+/**
+ * Scale, in tonnes rather than hectares, because tonnage is the one currency a
+ * grower, a packer and a processor all use — one comparable question instead of
+ * three that cannot be pooled. Without it there is no way to tell whether
+ * "capital cost" is a small-grower finding or an industry-wide one.
+ */
+const TONNAGE = opts(
+  ['under_1k', 'Under 1,000 tonnes'],
+  ['1k_5k', '1,000 to 5,000 tonnes'],
+  ['5k_20k', '5,000 to 20,000 tonnes'],
+  ['20k_50k', '20,000 to 50,000 tonnes'],
+  ['over_50k', 'More than 50,000 tonnes'],
+  ['no_say', 'Prefer not to say'],
 );
 
 const PRIORITY_SCALE: readonly ScalePoint[] = [
@@ -118,21 +185,14 @@ const CORE: readonly Section[] = [
         prompt: 'Where should we put our effort first?',
         help: 'Rate each one from 1 (not a priority) to 5 (very high priority). Skip any you have no view on.',
         scale: PRIORITY_SCALE,
-        rows: opts(
-          ['precision_planting', 'Precision planting and crop establishment'],
-          ['autonomy', 'Autonomous or semi-autonomous field operations', 'Machines that run with limited or no driver input.'],
-          ['harvest_efficiency', 'Harvest efficiency and damage reduction'],
-          ['harvest_logistics', 'Harvest logistics and transport coordination'],
-          ['optical_sorting', 'Optical sorting, grading and quality measurement', 'Cameras and sensors that grade tubers as they pass.'],
-          ['packhouse_automation', 'Packhouse and receival automation'],
-          ['robotics', 'Robotics for repetitive manual tasks'],
-          ['sensors', 'Sensors and machine data for operational decisions'],
-          ['irrigation_automation', 'Irrigation automation linked to crop and soil information'],
-          ['predictive_maintenance', 'Predictive maintenance and machinery uptime', 'Using machine data to service a part before it fails.'],
-          ['interoperability', 'Data standards and system interoperability', 'Making equipment and software from different suppliers share data.'],
-          ['training', 'Training, skills and workforce pathways'],
-        ),
+        rows: AREAS,
       },
+    ],
+  },
+  {
+    id: 'core_evidence',
+    title: 'What would convince you',
+    questions: [
       {
         id: 'q6_first_opportunities',
         kind: 'text',
@@ -176,21 +236,6 @@ const ADOPTION_BARRIERS = opts(
   ['other', 'Other'],
 );
 
-const TECH_CATEGORIES = opts(
-  ['planting', 'Precision planting and establishment'],
-  ['autonomy', 'Autonomous or semi-autonomous field machines'],
-  ['harvest', 'Harvest efficiency and damage reduction'],
-  ['logistics', 'Harvest logistics and transport coordination'],
-  ['optical', 'Optical sorting, grading and quality measurement'],
-  ['packhouse', 'Packhouse and receival automation'],
-  ['robotics', 'Robotics for repetitive manual work'],
-  ['sensors', 'Sensors and machine data for decisions'],
-  ['irrigation', 'Irrigation automation'],
-  ['maintenance', 'Predictive maintenance and uptime'],
-  ['data_standards', 'Data standards and getting systems to talk'],
-  ['training', 'Training and workforce'],
-  ['other', 'Other'],
-);
 
 /**
  * The role-specific sections.
@@ -215,6 +260,13 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     title: 'Your farming operation',
     intro: 'Now a few questions about your own place, so we know where the pressure actually falls.',
     questions: [
+      {
+        id: 'farm_scale',
+        kind: 'single',
+        prompt: 'Roughly how many tonnes of potatoes do you grow in a year?',
+        help: 'A broad band is plenty. It lets us tell whether a finding belongs to smaller operations or to everybody.',
+        options: TONNAGE,
+      },
       {
         id: 'farm_pressure',
         kind: 'multi',
@@ -263,13 +315,17 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'farm_outcome',
         kind: 'single',
-        prompt: 'How did that go, overall?',
+        // Asked about one thing on purpose. It used to ask "how did that go,
+        // overall?" after somebody ticked five technologies, which forces an
+        // average across five different experiences and records a blur.
+        prompt: 'Think of the one that mattered most. How did that go?',
         options: opts(
           ['expand', 'Working well, and we would do more of it'],
           ['refine', 'Working, but it needs sorting out'],
           ['stopped', 'We tried it and stopped'],
           ['not_adopted', 'We looked into it and did not go ahead'],
-          ['not_relevant', 'Not really relevant to us'],
+          ['varies', 'Mixed — some of it worked, some did not'],
+          ['not_relevant', 'Nothing has really applied to us yet'],
         ),
       },
       {
@@ -328,7 +384,13 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     intro: 'A few questions about the work you do for potato growers.',
     questions: [
       {
-        id: 'con_peak',
+        id: 'con_scale',
+        kind: 'single',
+        prompt: 'Roughly how many tonnes of potatoes do you handle in a year, across all your clients?',
+        help: 'A broad band is plenty.',
+        options: TONNAGE,
+      },
+      { id: 'con_peak',
         kind: 'multi',
         prompt: 'Which jobs put you under the most pressure in the peak?',
         help: 'Tick any that apply.',
@@ -449,6 +511,13 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     intro: 'A few questions about your shed, from the weighbridge through to dispatch.',
     questions: [
       {
+        id: 'pro_scale',
+        kind: 'single',
+        prompt: 'Roughly how many tonnes do you handle in a year?',
+        help: 'A broad band is plenty.',
+        options: TONNAGE,
+      },
+      {
         id: 'pro_constraints',
         kind: 'multi',
         prompt: 'Where are the pinch points — labour, throughput, quality, handling or safety?',
@@ -552,7 +621,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         kind: 'multi',
         prompt: 'What can Australian potato businesses actually buy or trial today?',
         help: 'Tick any that apply.',
-        options: TECH_CATEGORIES,
+        options: AREAS_WITH_OTHER,
         allowOther: true,
       },
       {
@@ -560,7 +629,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         kind: 'multi',
         prompt: 'And of those, which would you say are genuinely ready — not just promising?',
         help: 'Tick any that apply.',
-        options: TECH_CATEGORIES,
+        options: AREAS_WITH_OTHER,
         allowOther: true,
       },
       {
@@ -631,7 +700,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         kind: 'multi',
         prompt: 'What sort of technology do you offer?',
         help: 'Tick any that apply. There is room to describe it properly at the end.',
-        options: TECH_CATEGORIES,
+        options: AREAS_WITH_OTHER,
         allowOther: true,
       },
       {
@@ -725,6 +794,79 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
     ],
   },
+  /*
+   * Industry bodies used to be sent down the adviser branch, where they were
+   * asked what a field demonstration should measure — a question a peak body
+   * has no reason to hold a view on. Four questions that suit the seat they
+   * actually sit in beat six that do not.
+   */
+  industry: {
+    id: 'industry',
+    title: 'Your members and the wider industry',
+    questions: [
+      {
+        id: 'ind_priorities',
+        kind: 'multi',
+        prompt: 'What do the businesses you represent raise with you most often?',
+        help: 'Tick any that apply.',
+        options: opts(
+          ['labour', 'Labour availability and cost'],
+          ['skills', 'Skills and training'],
+          ['capital', 'Cost of machinery'],
+          ['energy', 'Energy and input costs'],
+          ['workforce_safety', 'Workplace safety'],
+          ['market', 'Market access and returns'],
+          ['regulation', 'Regulation and compliance'],
+          ['succession', 'Succession and new entrants'],
+          ['data', 'Data and reporting burden'],
+          ['other', 'Other'],
+        ),
+        allowOther: true,
+      },
+      {
+        id: 'ind_role',
+        kind: 'multi',
+        prompt: 'Where could a project like this be most useful to your members?',
+        help: 'Tick any that apply.',
+        options: opts(
+          ['independent_evidence', 'Independent evidence they can trust'],
+          ['demos', 'Demonstrations they can visit'],
+          ['training', 'Training and skills pathways'],
+          ['roi_tools', 'Tools for working out whether it pays'],
+          ['safety_guidance', 'Safety and regulatory guidance'],
+          ['coordination', 'Coordinating across regions and sectors'],
+          ['advocacy', 'Evidence to support advocacy'],
+          ['other', 'Other'],
+        ),
+        allowOther: true,
+      },
+      {
+        id: 'ind_underrepresented',
+        kind: 'multi',
+        prompt: 'Whose voice usually gets missed in these conversations?',
+        help: 'Tick any that apply.',
+        options: opts(
+          ['operators', 'Machinery operators'],
+          ['small_farms', 'Smaller family operations'],
+          ['seasonal', 'Seasonal and labour hire workforce'],
+          ['contractors', 'Contractors'],
+          ['packhouse_floor', 'Packhouse floor staff'],
+          ['new_entrants', 'New entrants'],
+          ['women', 'Women in the industry'],
+          ['regions', 'Particular regions'],
+          ['other', 'Other'],
+        ),
+        allowOther: true,
+      },
+      {
+        id: 'ind_connections',
+        kind: 'text',
+        prompt: 'Are there groups, programs or people we should be working with rather than around?',
+        help: 'Optional. Names are more use to us than categories here.',
+        rows: 4,
+      },
+    ],
+  },
   adviser: {
     id: 'adviser',
     title: 'Evidence, evaluation and extension',
@@ -754,7 +896,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         kind: 'multi',
         prompt: 'What deserves a proper independent look?',
         help: 'Tick any that apply.',
-        options: TECH_CATEGORIES,
+        options: AREAS_WITH_OTHER,
         allowOther: true,
       },
       {
@@ -934,6 +1076,12 @@ export const PATHWAY_INTERESTS: Readonly<Record<string, readonly Option[]>> = {
     ['tech_evaluation', 'Providing your technology for an independent evaluation'],
     ['tech_protocol', 'Helping design what a credible trial would measure'],
     ['tech_integration', 'Working on data compatibility with other systems'],
+  ),
+  industry: opts(
+    ['ind_promote', 'Helping get the consultation in front of your members'],
+    ['ind_event', 'Hosting a session at one of your events'],
+    ['ind_circulate', 'Circulating the findings to your members'],
+    ['ind_policy', 'Working with us on workforce or skills policy'],
   ),
   adviser: opts(
     ['adv_design', 'Helping design or measure a trial'],

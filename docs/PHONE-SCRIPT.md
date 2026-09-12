@@ -51,7 +51,7 @@ _Choose as many as apply._
 
 _Read the list, tick everything they say. Do not read it twice._
 
-  - Field preparation and planting
+  - Ground preparation and planting
   - Crop monitoring and decision support
   - Irrigation operation and automation
   - Crop protection operations
@@ -119,6 +119,8 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
   - Data standards and system interoperability — Making equipment and software from different suppliers share data.
   - Training, skills and workforce pathways
 
+## What would convince you
+
 **6. If we could only take on one or two of those, which would you pick — and why?**
 
 _Let them talk. Write it down in their words, not yours._
@@ -149,7 +151,20 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _For: Potato grower or business owner; Farm manager, supervisor or machinery operator._
 
-**1. Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?**
+**1. Roughly how many tonnes of potatoes do you grow in a year?**
+
+_A broad band is plenty. It lets us tell whether a finding belongs to smaller operations or to everybody._
+
+_One answer only._
+
+  - Under 1,000 tonnes
+  - 1,000 to 5,000 tonnes
+  - 5,000 to 20,000 tonnes
+  - 20,000 to 50,000 tonnes
+  - More than 50,000 tonnes
+  - Prefer not to say
+
+**2. Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?**
 
 _Tick any that apply._
 
@@ -168,7 +183,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Record keeping and compliance
   - Other
 
-**2. What have you put on, trialled, or had a serious look at?**
+**3. What have you put on, trialled, or had a serious look at?**
 
 _Tick any that apply. It does not matter whether you kept it._
 
@@ -190,7 +205,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Nothing much yet
   - Other
 
-**3. How did that go, overall?**
+**4. Think of the one that mattered most. How did that go?**
 
 _One answer only._
 
@@ -198,9 +213,10 @@ _One answer only._
   - Working, but it needs sorting out
   - We tried it and stopped
   - We looked into it and did not go ahead
-  - Not really relevant to us
+  - Mixed — some of it worked, some did not
+  - Nothing has really applied to us yet
 
-**4. What has held you back most?**
+**5. What has held you back most?**
 
 _Tick any that apply._
 
@@ -217,7 +233,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Safety or regulatory concerns
   - Other
 
-**5. When you are weighing up a machinery purchase, which numbers do you actually look at?**
+**6. When you are weighing up a machinery purchase, which numbers do you actually look at?**
 
 _Tick any that apply._
 
@@ -237,7 +253,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Maintenance and downtime
   - Other
 
-**6. Is there anything running now that would make a good local case study or demonstration?**
+**7. Is there anything running now that would make a good local case study or demonstration?**
 
 _We are looking for gear that is working in the paddock, not a sales pitch._
 
@@ -247,7 +263,7 @@ _One answer only._
   - Yes — somewhere else I know of
   - Not that comes to mind
 
-**7. Is anything being pushed at the moment that you reckon will not work in Australian potatoes? What is the concern?**
+**8. Is anything being pushed at the moment that you reckon will not work in Australian potatoes? What is the concern?**
 
 _Optional, and genuinely useful. Nobody ticks a box to disagree with the industry, so this is the place to say it._
 
@@ -257,7 +273,20 @@ _Let them talk. Write it down in their words, not yours._
 
 _For: Contractor._
 
-**1. Which jobs put you under the most pressure in the peak?**
+**1. Roughly how many tonnes of potatoes do you handle in a year, across all your clients?**
+
+_A broad band is plenty._
+
+_One answer only._
+
+  - Under 1,000 tonnes
+  - 1,000 to 5,000 tonnes
+  - 5,000 to 20,000 tonnes
+  - 20,000 to 50,000 tonnes
+  - More than 50,000 tonnes
+  - Prefer not to say
+
+**2. Which jobs put you under the most pressure in the peak?**
 
 _Tick any that apply._
 
@@ -275,7 +304,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Juggling client schedules
   - Other
 
-**2. What stops you getting through more work, or doing it better?**
+**3. What stops you getting through more work, or doing it better?**
 
 _Tick any that apply._
 
@@ -292,7 +321,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Cost of upgrading gear
   - Other
 
-**3. On the machinery side, what causes you the most grief?**
+**4. On the machinery side, what causes you the most grief?**
 
 _Tick any that apply._
 
@@ -306,7 +335,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Access to diagnostics or software
   - Other
 
-**4. Where are the biggest gaps in operator skills?**
+**5. Where are the biggest gaps in operator skills?**
 
 _Tick any that apply._
 
@@ -322,7 +351,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Getting new operators up to speed quickly
   - Other
 
-**5. What would make the biggest difference to the service you can offer?**
+**6. What would make the biggest difference to the service you can offer?**
 
 _Tick any that apply._
 
@@ -338,7 +367,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Training for your operators
   - Other
 
-**6. If we ran a demonstration, what would it take for it to be worth your while?**
+**7. If we ran a demonstration, what would it take for it to be worth your while?**
 
 _Tick any that apply._
 
@@ -353,7 +382,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Insurance and safety sorted beforehand
   - Other
 
-**7. Anything else about contracting we should know?**
+**8. Anything else about contracting we should know?**
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -361,7 +390,20 @@ _Let them talk. Write it down in their words, not yours._
 
 _For: Processor, packhouse or storage business._
 
-**1. Where are the pinch points — labour, throughput, quality, handling or safety?**
+**1. Roughly how many tonnes do you handle in a year?**
+
+_A broad band is plenty._
+
+_One answer only._
+
+  - Under 1,000 tonnes
+  - 1,000 to 5,000 tonnes
+  - 5,000 to 20,000 tonnes
+  - 20,000 to 50,000 tonnes
+  - More than 50,000 tonnes
+  - Prefer not to say
+
+**2. Where are the pinch points — labour, throughput, quality, handling or safety?**
 
 _Tick any that apply._
 
@@ -380,7 +422,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Staffing the shifts
   - Other
 
-**2. Which losses or quality problems cost you the most?**
+**3. Which losses or quality problems cost you the most?**
 
 _Tick any that apply._
 
@@ -397,7 +439,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Customer complaints or rejections
   - Other
 
-**3. What have you put in, trialled, or had a serious look at?**
+**4. What have you put in, trialled, or had a serious look at?**
 
 _Tick any that apply._
 
@@ -414,7 +456,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Nothing much yet
   - Other
 
-**4. What has held that back?**
+**5. What has held that back?**
 
 _Tick any that apply._
 
@@ -431,7 +473,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Safety or regulatory concerns
   - Other
 
-**5. Which numbers matter most when you judge whether something is working?**
+**6. Which numbers matter most when you judge whether something is working?**
 
 _Tick any that apply._
 
@@ -448,7 +490,7 @@ _Read the list, tick everything they say. Do not read it twice._
   - Food safety and compliance
   - Other
 
-**6. Anything else about your operation we should know?**
+**7. Anything else about your operation we should know?**
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -462,18 +504,18 @@ _Tick any that apply._
 
 _Read the list, tick everything they say. Do not read it twice._
 
-  - Precision planting and establishment
-  - Autonomous or semi-autonomous field machines
+  - Precision planting and crop establishment
+  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement
+  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual work
-  - Sensors and machine data for decisions
-  - Irrigation automation
-  - Predictive maintenance and uptime
-  - Data standards and getting systems to talk
-  - Training and workforce
+  - Robotics for repetitive manual tasks
+  - Sensors and machine data for operational decisions
+  - Irrigation automation linked to crop and soil information
+  - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
+  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Training, skills and workforce pathways
   - Other
 
 **2. And of those, which would you say are genuinely ready — not just promising?**
@@ -482,18 +524,18 @@ _Tick any that apply._
 
 _Read the list, tick everything they say. Do not read it twice._
 
-  - Precision planting and establishment
-  - Autonomous or semi-autonomous field machines
+  - Precision planting and crop establishment
+  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement
+  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual work
-  - Sensors and machine data for decisions
-  - Irrigation automation
-  - Predictive maintenance and uptime
-  - Data standards and getting systems to talk
-  - Training and workforce
+  - Robotics for repetitive manual tasks
+  - Sensors and machine data for operational decisions
+  - Irrigation automation linked to crop and soil information
+  - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
+  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Training, skills and workforce pathways
   - Other
 
 **3. What stops your potato customers going ahead?**
@@ -568,18 +610,18 @@ _Tick any that apply. There is room to describe it properly at the end._
 
 _Read the list, tick everything they say. Do not read it twice._
 
-  - Precision planting and establishment
-  - Autonomous or semi-autonomous field machines
+  - Precision planting and crop establishment
+  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement
+  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual work
-  - Sensors and machine data for decisions
-  - Irrigation automation
-  - Predictive maintenance and uptime
-  - Data standards and getting systems to talk
-  - Training and workforce
+  - Robotics for repetitive manual tasks
+  - Sensors and machine data for operational decisions
+  - Irrigation automation linked to crop and soil information
+  - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
+  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Training, skills and workforce pathways
   - Other
 
 **2. What problem does it solve for a potato business?**
@@ -660,9 +702,67 @@ _What it does, and where it would fit in a potato operation._
 
 _Let them talk. Write it down in their words, not yours._
 
+### Your members and the wider industry
+
+_For: Industry body or other stakeholder._
+
+**1. What do the businesses you represent raise with you most often?**
+
+_Tick any that apply._
+
+_Read the list, tick everything they say. Do not read it twice._
+
+  - Labour availability and cost
+  - Skills and training
+  - Cost of machinery
+  - Energy and input costs
+  - Workplace safety
+  - Market access and returns
+  - Regulation and compliance
+  - Succession and new entrants
+  - Data and reporting burden
+  - Other
+
+**2. Where could a project like this be most useful to your members?**
+
+_Tick any that apply._
+
+_Read the list, tick everything they say. Do not read it twice._
+
+  - Independent evidence they can trust
+  - Demonstrations they can visit
+  - Training and skills pathways
+  - Tools for working out whether it pays
+  - Safety and regulatory guidance
+  - Coordinating across regions and sectors
+  - Evidence to support advocacy
+  - Other
+
+**3. Whose voice usually gets missed in these conversations?**
+
+_Tick any that apply._
+
+_Read the list, tick everything they say. Do not read it twice._
+
+  - Machinery operators
+  - Smaller family operations
+  - Seasonal and labour hire workforce
+  - Contractors
+  - Packhouse floor staff
+  - New entrants
+  - Women in the industry
+  - Particular regions
+  - Other
+
+**4. Are there groups, programs or people we should be working with rather than around?**
+
+_Optional. Names are more use to us than categories here._
+
+_Let them talk. Write it down in their words, not yours._
+
 ### Evidence, evaluation and extension
 
-_For: Adviser, consultant, researcher or educator; Industry body or other stakeholder._
+_For: Adviser, consultant, researcher or educator._
 
 **1. Where are the biggest holes in what we actually know?**
 
@@ -687,18 +787,18 @@ _Tick any that apply._
 
 _Read the list, tick everything they say. Do not read it twice._
 
-  - Precision planting and establishment
-  - Autonomous or semi-autonomous field machines
+  - Precision planting and crop establishment
+  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement
+  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual work
-  - Sensors and machine data for decisions
-  - Irrigation automation
-  - Predictive maintenance and uptime
-  - Data standards and getting systems to talk
-  - Training and workforce
+  - Robotics for repetitive manual tasks
+  - Sensors and machine data for operational decisions
+  - Irrigation automation linked to crop and soil information
+  - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
+  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Training, skills and workforce pathways
   - Other
 
 **3. If we run a demonstration, what should we be measuring?**
