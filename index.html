@@ -6,9 +6,38 @@
     <meta name="description" content="Consultation for the Potato Mechanisation Project (PT25003). Share practical input on mechanisation, automation and extension priorities for the Australian potato industry." />
     <meta name="robots" content="noindex" />
     <title>Potato Mechanisation Project Consultation</title>
+    <script>
+      /*
+       * A deploy replaces the built filenames, and a browser holding a cached
+       * index.html then asks for a file that no longer exists. Nothing renders,
+       * nothing is logged, and the person sees a white page — which is how the
+       * admin screen failed after this morning's release.
+       *
+       * Reload once, past the cache, and the fresh index.html points at files
+       * that are actually there. The flag makes it once per tab, so a genuine
+       * outage cannot turn into a reload loop.
+       */
+      window.__bootFailed = function () {
+        try {
+          if (sessionStorage.getItem('pt25003.reloaded') === '1') return;
+          sessionStorage.setItem('pt25003.reloaded', '1');
+        } catch (error) {
+          /* Private mode. One reload is still better than a blank page. */
+        }
+        window.location.replace(
+          window.location.pathname + '?v=' + Date.now() + window.location.hash,
+        );
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <noscript>
+      <p style="max-width: 34rem; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; line-height: 1.6">
+        This consultation needs JavaScript turned on. If you would rather not, ring Peter O&rsquo;Brien on
+        <a href="tel:0409773111">0409 773 111</a> and give your answers over the phone — they count the same either way.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx" onerror="window.__bootFailed()"></script>
   </body>
 </html>
