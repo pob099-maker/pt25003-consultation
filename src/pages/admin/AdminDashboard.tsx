@@ -30,6 +30,9 @@ const Bar = ({ share }: { share: number }) => (
 export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const questionnaire = useQuestionnaire();
   const data = useAdminData();
+  // Defaults to the round that is collecting now, so a pilot run does not
+  // quietly inflate the real numbers once the consultation is live.
+  const [roundFilter, setRoundFilter] = useState(questionnaire.roundId);
   const [roleFilter, setRoleFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [includeTest, setIncludeTest] = useState(data.demoMode);
@@ -38,18 +41,30 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const filtered = useMemo(
     () =>
       data.responses.filter((response) => {
+        if (roundFilter !== 'all' && response.roundId !== roundFilter) return false;
         if (!includeTest && response.isTestData) return false;
         if (roleFilter !== 'all' && response.role !== roleFilter) return false;
         if (regionFilter !== 'all' && !response.regions.includes(regionFilter)) return false;
         return true;
       }),
-    [data.responses, includeTest, roleFilter, regionFilter],
+    [data.responses, includeTest, roleFilter, regionFilter, roundFilter],
   );
 
   const contacts = useMemo(
-    () => data.contacts.filter((contact) => includeTest || !contact.isTestData),
-    [data.contacts, includeTest],
+    () =>
+      data.contacts.filter(
+        (contact) =>
+          (roundFilter === 'all' || contact.roundId === roundFilter) && (includeTest || !contact.isTestData),
+      ),
+    [data.contacts, includeTest, roundFilter],
   );
+
+  /** Every round that has actually collected something, newest label first. */
+  const rounds = useMemo(() => {
+    const seen = new Set<string>([questionnaire.roundId]);
+    for (const response of data.responses) seen.add(response.roundId);
+    return [...seen];
+  }, [data.responses, questionnaire.roundId]);
 
   const stats = useMemo(() => overview(questionnaire, filtered), [questionnaire, filtered]);
   const ranked = useMemo(() => rankConstraints(questionnaire, filtered, 'q2_top_three'), [questionnaire, filtered]);
@@ -79,7 +94,10 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
 
   // Where people stop. Built from the progress table, which holds how far a
   // session got and nothing that was said in it.
-  const funnel = useMemo(() => summariseProgress(data.progress), [data.progress]);
+  const funnel = useMemo(
+    () => summariseProgress(data.progress.filter((row) => roundFilter === 'all' || row.round_id === roundFilter)),
+    [data.progress, roundFilter],
+  );
 
   const stamp = new Date().toISOString().slice(0, 10);
 
@@ -114,7 +132,20 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         <Stat label="Contact records" value={String(contacts.length)} note="Opted in to follow-up" />
       </section>
 
-      <section className={`${card} mt-5 grid gap-4 sm:grid-cols-3`} aria-label="Filters">
+      <section className={`${card} mt-5 grid gap-4 sm:grid-cols-4`} aria-label="Filters">
+        <div>
+          <label htmlFor="filter-round" className="mb-1 block text-meta font-semibold text-ink-soft">
+            Round
+          </label>
+          <select id="filter-round" className={textInput} value={roundFilter} onChange={(e) => setRoundFilter(e.target.value)}>
+            <option value="all">All rounds</option>
+            {rounds.map((round) => (
+              <option key={round} value={round}>
+                {round === questionnaire.roundId ? `${round} (collecting now)` : round}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <label htmlFor="filter-role" className="mb-1 block text-meta font-semibold text-ink-soft">
             Role

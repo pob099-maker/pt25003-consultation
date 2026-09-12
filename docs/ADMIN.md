@@ -31,6 +31,28 @@ while something a few people put first is an acute one.
 The mean of the 1–5 ratings, alongside the share who rated it 4 or 5. Areas nobody rated are not
 counted as zeros — an unanswered question is not a low score.
 
+## Piloting before the link goes out
+
+Let the team use the real thing, on a **pilot round**, rather than testing and then deleting.
+
+1. **Question wording** tab → set the round to something obvious like `2026-pilot`, name it
+   *Pilot — internal review*, **Save wording**. Everything submitted from now carries that round.
+2. Send the team the real link. They respond as real respondents, on their own phones.
+3. When you are ready to go wide: **Start a new round**, name it for the real consultation, save.
+
+Nothing has to be deleted. The pilot answers keep their own round for ever, the admin **Round**
+filter defaults to whichever round is collecting now, and the CSV carries a `round` column. If you
+would rather clear the pilot afterwards anyway:
+
+```sql
+delete from public.consultation_responses where round_id = '2026-pilot';
+delete from public.consultation_contacts  where round_id = '2026-pilot';
+delete from public.consultation_progress  where round_id = '2026-pilot';
+```
+
+Ask each person to take a **different role**, so all six branches get walked, and to do it on a
+phone rather than a laptop — that is what respondents will use, and it is where length hurts.
+
 ## Filtering
 
 Role and region filters apply to everything on the screen, including the exports. That is how you
