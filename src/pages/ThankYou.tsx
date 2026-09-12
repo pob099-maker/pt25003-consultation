@@ -35,7 +35,7 @@ export const ThankYou = () => {
 
   return (
     <Layout>
-      <h1 className="prose-measure">Thank you for contributing to the Potato Mechanisation Project consultation.</h1>
+      <h1 className="text-center">Thank you for contributing to the Potato Mechanisation Project consultation.</h1>
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>

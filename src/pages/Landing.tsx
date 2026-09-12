@@ -9,7 +9,10 @@ export const Landing = () => {
 
   return (
     <Layout>
-      <h1 className="prose-measure">Potato Mechanisation Project Consultation</h1>
+      {/* Centred as the one title on the page. The paragraphs under it stay
+          left-aligned and measured: centred body text gives the eye no
+          reliable left edge to return to, and this page is read, not skimmed. */}
+      <h1 className="text-center">Potato Mechanisation Project Consultation</h1>
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>
