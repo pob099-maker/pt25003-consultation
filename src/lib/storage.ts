@@ -33,4 +33,5 @@ export const STORAGE_KEYS = {
   draft: 'pt25003.draft.v1',
   outbox: 'pt25003.outbox.v1',
   tags: 'pt25003.tags.v1',
+  theme: 'pt25003.theme.v1',
 } as const;

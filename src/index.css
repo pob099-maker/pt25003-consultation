@@ -121,13 +121,18 @@
   --text-display--font-weight: 800;
 }
 
-/* The dark palette, as one flip of the same names. Respondents get whatever
-   their phone is set to; there is no toggle, because a consultation is not a
-   place to put a preference control. Redefining tokens beats a `dark:` class
-   per element: one place to check the set moved together, and no way to leave
-   a colour behind on the wrong ground. */
+/* The dark palette, as one flip of the same names.
+ *
+ * Three states, not two. A reader who has chosen nothing follows their phone,
+ * which is the right default and the one most people never change. A reader who
+ * has chosen gets what they chose, in both directions — the common bug is a
+ * theme that can be switched to dark but not back out of it on a dark phone.
+ *
+ * Redefining tokens beats a `dark:` class per element: one place to check the
+ * whole set moved together, and no way to leave a single colour behind on the
+ * wrong ground. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --color-paper: #1e1710;
     --color-surface: #2a2118;
     --color-sunk: #241c14;
@@ -144,6 +149,24 @@
 
     color-scheme: dark;
   }
+}
+
+:root[data-theme='dark'] {
+  --color-paper: #1e1710;
+  --color-surface: #2a2118;
+  --color-sunk: #241c14;
+  --color-selected: #3a2c1c;
+
+  --color-ink: #efe6d7;
+  --color-ink-soft: #b8a894;
+  --color-ink-faint: #95856f;
+
+  --color-line: #4a3c2c;
+  --color-line-strong: #63513c;
+
+  --color-danger: #e8909e;
+
+  color-scheme: dark;
 }
 
 html {
@@ -196,9 +219,13 @@ h2 {
 }
 
 @media (prefers-color-scheme: dark) {
-  :focus-visible {
+  :root:not([data-theme='light']) :focus-visible {
     outline-color: var(--color-primary-soft);
   }
+}
+
+:root[data-theme='dark'] :focus-visible {
+  outline-color: var(--color-primary-soft);
 }
 
 /* A control sitting on the brown needs the ring to contrast with that, not

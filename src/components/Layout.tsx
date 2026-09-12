@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import agAimsMark from '../assets/agaims-mark.png';
+import { ThemeToggle } from './ThemeToggle';
 
 /**
  * The AgAims mark, the same artwork the Fieldwork app carries. The white is
@@ -29,7 +30,10 @@ export const Layout = ({ children }: { children: ReactNode }) => (
             <span className="block font-display text-eyebrow uppercase text-ink-faint">Industry consultation</span>
           </span>
         </Link>
-        <span className="text-eyebrow uppercase text-ink-faint">PT25003</span>
+        <div className="flex items-center gap-3">
+          <span className="text-eyebrow uppercase text-ink-faint">PT25003</span>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
     <main id="main" className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
