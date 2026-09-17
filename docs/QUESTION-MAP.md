@@ -124,6 +124,35 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Better compatibility with existing equipment or data systems
 - Other
 
+### Before you committed to something new, how much would it matter to try it on part of the operation first?
+
+`q_trial` · one only
+
+- Essential — I would not go ahead without it
+- Helpful, but not a deal-breaker
+- Not needed — the evidence would be enough
+- Not my call to make in my role
+
+### When you are weighing up new gear or a new way of doing things, whose opinion actually counts?
+
+`q_trust` · tick any + other
+
+- Other growers and neighbours
+- Grower groups and study groups
+- An independent agronomist or consultant
+- Machinery dealers
+- Manufacturer representatives
+- Processor or packer field officers
+- Industry bodies
+- Researchers and universities
+- State agriculture departments
+- Extension officers, including PotatoLink
+- Field days and trade shows
+- Rural press and industry magazines
+- Online forums, video and social media
+- Family and business partners
+- Other
+
 ## 5. One branch only — by role
 
 ### Your farming operation
@@ -933,15 +962,15 @@ The two lists are different axes — where the trouble is, and what could be don
 
 ## Branch lengths
 
-- Shared by everyone: about 7.9 min
+- Shared by everyone: about 8.8 min
 
-- Your farming operation branch: about 3.9 min → total 11.8 min
-- Your contracting work branch: about 4.3 min → total 12.2 min
-- Receival, storage, grading and packing branch: about 3.9 min → total 11.8 min
-- Machinery supply and service branch: about 3.9 min → total 11.9 min
-- Your technology branch: about 3.8 min → total 11.7 min
-- Your members and the wider industry branch: about 2.4 min → total 10.3 min
-- Evidence, evaluation and extension branch: about 3.8 min → total 11.7 min
+- Your farming operation branch: about 3.9 min → total 12.8 min
+- Your contracting work branch: about 4.3 min → total 13.1 min
+- Receival, storage, grading and packing branch: about 3.9 min → total 12.7 min
+- Machinery supply and service branch: about 3.9 min → total 12.8 min
+- Your technology branch: about 3.8 min → total 12.6 min
+- Your members and the wider industry branch: about 2.4 min → total 11.2 min
+- Evidence, evaluation and extension branch: about 3.8 min → total 12.6 min
 
 _Estimates only: 1.5 seconds per option read, 45 for an open box, 7 per rating row. Useful for comparing branches against each other, not for promising a number to a respondent._
 

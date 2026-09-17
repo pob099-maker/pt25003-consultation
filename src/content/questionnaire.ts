@@ -219,6 +219,50 @@ const CORE: readonly Section[] = [
         ),
         allowOther: true,
       },
+      {
+        id: 'q_trial',
+        kind: 'single',
+        // Trialability — whether something can be tried on a small scale before
+        // committing — is one of the strongest predictors of adoption in ADOPT,
+        // the CSIRO tool Australian extension leans on. It was implied by the
+        // evidence question above but never asked, and "a demonstration
+        // somewhere" is not the same thing as "on my own place, on a few rows".
+        prompt: 'Before you committed to something new, how much would it matter to try it on part of the operation first?',
+        options: opts(
+          ['essential', 'Essential — I would not go ahead without it'],
+          ['helpful', 'Helpful, but not a deal-breaker'],
+          ['not_needed', 'Not needed — the evidence would be enough'],
+          ['not_my_call', 'Not my call to make in my role'],
+        ),
+      },
+      {
+        id: 'q_trust',
+        kind: 'multi',
+        // Who actually shifts somebody's thinking is arguably the single most
+        // useful answer for designing extension, and it was missing. A finding
+        // nobody hears from a source they trust is a finding that changes
+        // nothing on a farm.
+        prompt: 'When you are weighing up new gear or a new way of doing things, whose opinion actually counts?',
+        help: 'Tick any that genuinely sway you — not everyone you hear from.',
+        options: opts(
+          ['neighbours', 'Other growers and neighbours'],
+          ['grower_groups', 'Grower groups and study groups'],
+          ['agronomist', 'An independent agronomist or consultant'],
+          ['dealer', 'Machinery dealers'],
+          ['manufacturer', 'Manufacturer representatives'],
+          ['processor_field', 'Processor or packer field officers'],
+          ['industry_body', 'Industry bodies'],
+          ['researchers', 'Researchers and universities'],
+          ['state_ag', 'State agriculture departments'],
+          ['extension', 'Extension officers, including PotatoLink'],
+          ['field_days', 'Field days and trade shows'],
+          ['press', 'Rural press and industry magazines'],
+          ['online', 'Online forums, video and social media'],
+          ['family', 'Family and business partners'],
+          ['other', 'Other'],
+        ),
+        allowOther: true,
+      },
     ],
   },
 ];

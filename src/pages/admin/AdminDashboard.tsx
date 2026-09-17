@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
-import { interestLabel, roleLabel } from '../../content/lookup';
+import { interestLabel, optionLabel, questionById, roleLabel } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
 import { contactsCsv, freeTextCsv, responsesCsv } from '../../services/exportCsv';
 import { freeTextEntries, overview, rankConstraints, rateAreas, tallyMulti } from '../../services/analysis';
@@ -72,6 +72,18 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const mentioned = useMemo(() => tallyMulti(questionnaire, filtered, 'q1_constraints'), [questionnaire, filtered]);
   const areas = useMemo(() => rateAreas(questionnaire, filtered, 'q5_areas'), [questionnaire, filtered]);
   const evidence = useMemo(() => tallyMulti(questionnaire, filtered, 'q7_evidence'), [questionnaire, filtered]);
+  const trusted = useMemo(() => tallyMulti(questionnaire, filtered, 'q_trust'), [questionnaire, filtered]);
+  const trial = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const response of filtered) {
+      const answer = response.answers['q_trial'];
+      if (answer !== undefined && answer.kind === 'single') counts.set(answer.value, (counts.get(answer.value) ?? 0) + 1);
+    }
+    const question = questionById(questionnaire, 'q_trial');
+    return [...counts.entries()]
+      .map(([id, count]) => ({ id, label: optionLabel(question, id), count }))
+      .sort((a, b) => b.count - a.count);
+  }, [questionnaire, filtered]);
   const comments = useMemo(() => freeTextEntries(questionnaire, filtered), [questionnaire, filtered]);
 
   const toggleTag = async (responseId: string, questionId: string, tag: string): Promise<void> => {
@@ -332,6 +344,35 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
               </ul>
             </section>
           )}
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <section className={card}>
+              <h2 className="text-subtitle font-semibold">Whose opinion counts</h2>
+              <p className="mt-1 text-meta text-ink-soft">Where findings need to be heard to change anything.</p>
+              <ul className="mt-3 grid gap-2 text-body">
+                {trusted.map((row) => (
+                  <li key={row.id} className="flex justify-between gap-3">
+                    <span>{row.label}</span>
+                    <span className="text-ink-soft">{row.count} · {percent(row.share)}</span>
+                  </li>
+                ))}
+                {trusted.length === 0 && <li className="text-ink-faint">No answers yet.</li>}
+              </ul>
+            </section>
+            <section className={card}>
+              <h2 className="text-subtitle font-semibold">Trying it small first</h2>
+              <p className="mt-1 text-meta text-ink-soft">How much a small-scale trial matters before committing.</p>
+              <ul className="mt-3 grid gap-2 text-body">
+                {trial.map((row) => (
+                  <li key={row.id} className="flex justify-between gap-3">
+                    <span>{row.label}</span>
+                    <span className="text-ink-soft">{row.count}</span>
+                  </li>
+                ))}
+                {trial.length === 0 && <li className="text-ink-faint">No answers yet.</li>}
+              </ul>
+            </section>
+          </div>
 
           <section className={card}>
             <h2 className="text-subtitle font-semibold">Who responded</h2>

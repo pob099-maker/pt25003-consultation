@@ -143,6 +143,37 @@ _Read the list, tick everything they say. Do not read it twice._
   - Better compatibility with existing equipment or data systems
   - Other
 
+**8. Before you committed to something new, how much would it matter to try it on part of the operation first?**
+
+_One answer only._
+
+  - Essential — I would not go ahead without it
+  - Helpful, but not a deal-breaker
+  - Not needed — the evidence would be enough
+  - Not my call to make in my role
+
+**9. When you are weighing up new gear or a new way of doing things, whose opinion actually counts?**
+
+_Tick any that genuinely sway you — not everyone you hear from._
+
+_Read the list, tick everything they say. Do not read it twice._
+
+  - Other growers and neighbours
+  - Grower groups and study groups
+  - An independent agronomist or consultant
+  - Machinery dealers
+  - Manufacturer representatives
+  - Processor or packer field officers
+  - Industry bodies
+  - Researchers and universities
+  - State agriculture departments
+  - Extension officers, including PotatoLink
+  - Field days and trade shows
+  - Rural press and industry magazines
+  - Online forums, video and social media
+  - Family and business partners
+  - Other
+
 ---
 
 ## Role sections — use only the one that matches

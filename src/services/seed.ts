@@ -365,6 +365,19 @@ const SPECS: readonly SeedSpec[] = [
   },
 ];
 
+const TRIAL_ANSWERS = ['essential', 'essential', 'helpful', 'essential', 'not_my_call', 'helpful', 'helpful', 'not_my_call'];
+
+const TRUST_ANSWERS: readonly (readonly string[])[] = [
+  ['neighbours', 'grower_groups', 'agronomist'],
+  ['neighbours', 'dealer', 'field_days'],
+  ['neighbours', 'dealer', 'manufacturer'],
+  ['processor_field', 'researchers', 'industry_body'],
+  ['manufacturer', 'field_days', 'press'],
+  ['researchers', 'online', 'press'],
+  ['researchers', 'extension', 'grower_groups'],
+  ['industry_body', 'state_ag', 'extension'],
+];
+
 const isoDaysAgo = (days: number): string => {
   const date = new Date();
   date.setDate(date.getDate() - days);
@@ -384,6 +397,8 @@ export const seedResponses = (): readonly ConsultationResponse[] =>
       q5_areas: rating(spec.areas),
       q6_first_opportunities: { kind: 'text', value: spec.opportunities },
       q7_evidence: { kind: 'multi', values: spec.evidence, other: '' },
+      q_trial: { kind: 'single', value: TRIAL_ANSWERS[index % TRIAL_ANSWERS.length] ?? 'helpful' },
+      q_trust: { kind: 'multi', values: TRUST_ANSWERS[index % TRUST_ANSWERS.length] ?? [], other: '' },
       ...spec.pathwayAnswers,
       pd_most_useful: { kind: 'text', value: spec.mostUseful },
       pd_avoid: { kind: 'text', value: spec.avoid },
