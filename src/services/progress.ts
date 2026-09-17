@@ -3,6 +3,7 @@ import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import type { RoleId } from '../types';
 
 export const PROGRESS_TABLE = 'consultation_progress';
+export const PROGRESS_FUNCTION = 'record_consultation_progress';
 
 export interface ProgressPing {
   readonly id: string;
@@ -80,23 +81,31 @@ export const recordProgress = (ping: ProgressPing): void => {
   if (ping.stepIndex <= seen && !ping.completed) return;
   furthest.set(ping.id, Math.max(seen, ping.stepIndex));
 
-  const row: ProgressRow = {
-    id: ping.id,
-    round_id: ping.roundId,
-    role: ping.role,
-    pathway: ping.pathway,
-    furthest_step: Math.max(seen, ping.stepIndex),
-    furthest_step_id: ping.stepId,
-    step_count: ping.stepCount,
-    completed: ping.completed,
-    started_at: ping.startedAt,
-    updated_at: new Date().toISOString(),
-  };
-
+  // Through a database function, not a table write. Anonymous visitors cannot
+  // read the progress table, and Postgres will not run an insert-or-update for
+  // a caller that cannot read — so a direct upsert was refused every time.
+  // The function enforces its own rules: a session only moves forward, and a
+  // finished session is never changed. See migrations/0004.
   void supabase
-    .from(PROGRESS_TABLE)
-    .upsert(row, { onConflict: 'id' })
-    .then(() => undefined, () => undefined);
+    .rpc(PROGRESS_FUNCTION, {
+      p_id: ping.id,
+      p_round_id: ping.roundId,
+      p_role: ping.role,
+      p_pathway: ping.pathway,
+      p_furthest_step: Math.max(seen, ping.stepIndex),
+      p_furthest_step_id: ping.stepId,
+      p_step_count: ping.stepCount,
+      p_completed: ping.completed,
+      p_started_at: ping.startedAt,
+    })
+    .then(
+      ({ error }) => {
+        // Still never shown to the respondent — but no longer silent. A
+        // swallowed error is how this recorded nothing for its first week.
+        if (error !== null) console.warn('Progress not recorded:', error.message);
+      },
+      (error: unknown) => console.warn('Progress not recorded:', error),
+    );
 };
 
 export interface DropOff {
