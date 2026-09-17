@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { summariseProgress, type ProgressRow } from './progress';
+import { isProgressAllowed, summariseProgress, type ProgressRow } from './progress';
 
 const row = (over: Partial<ProgressRow>): ProgressRow => ({
   id: crypto.randomUUID(),
@@ -70,5 +70,21 @@ describe('summariseProgress', () => {
     expect(summary.started).toBe(0);
     expect(summary.completionRate).toBe(0);
     expect(summary.dropOff).toHaveLength(0);
+  });
+});
+
+describe('isProgressAllowed', () => {
+  it('records by default', () => {
+    expect(isProgressAllowed({ optedOut: false, globalPrivacyControl: false })).toBe(true);
+  });
+
+  it('stops when the person switches it off', () => {
+    expect(isProgressAllowed({ optedOut: true, globalPrivacyControl: false })).toBe(false);
+  });
+
+  it('stops when the browser has already asked not to be tracked', () => {
+    // Nobody should have to find our switch after telling their browser the
+    // same thing.
+    expect(isProgressAllowed({ optedOut: false, globalPrivacyControl: true })).toBe(false);
   });
 });

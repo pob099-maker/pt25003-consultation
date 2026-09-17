@@ -34,4 +34,5 @@ export const STORAGE_KEYS = {
   outbox: 'pt25003.outbox.v1',
   tags: 'pt25003.tags.v1',
   theme: 'pt25003.theme.v1',
+  progressOptOut: 'pt25003.progress-optout.v1',
 } as const;

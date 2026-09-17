@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { config } from '../lib/config';
 import { secondaryButton } from '../components/ui';
+import { ProgressOptOut } from '../components/ProgressOptOut';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <section className="mt-7 prose-measure">
@@ -29,8 +30,10 @@ export const Privacy = () => (
         record which step you reached and which set of questions you were shown, so we can see whether a section is too
         long and fix it. That record holds no answers and nothing you typed — only the step number — and it is not
         connected to your responses or to any contact details. It exists so that somebody who gives up halfway tells us
-        something, instead of vanishing.
+        something, instead of vanishing. It is on unless you switch it off, and it is off automatically if your browser
+        sends a do-not-track privacy signal.
       </p>
+      <ProgressOptOut />
       <p>
         <strong className="text-ink">Optional contact and expression-of-interest details.</strong> Only if you ask to be
         contacted: your name, organisation, broad role, region, email address, phone number, preferred contact method and

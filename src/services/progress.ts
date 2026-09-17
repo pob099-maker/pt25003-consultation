@@ -1,4 +1,5 @@
 import { getSupabase } from '../lib/supabase';
+import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import type { RoleId } from '../types';
 
 export const PROGRESS_TABLE = 'consultation_progress';
@@ -28,6 +29,38 @@ export interface ProgressRow {
   updated_at: string;
 }
 
+/**
+ * Whether this person has let us record how far they get.
+ *
+ * Opt-out rather than opt-in, deliberately: the people who would tick "yes,
+ * record me" are the engaged ones, who are the least likely to give up — so an
+ * opt-in would measure drop-off only among people who do not drop off. The
+ * record holds a step number and nothing typed, which makes on-by-default with
+ * a plain off switch the proportionate choice.
+ *
+ * A browser sending Global Privacy Control is treated as having opted out
+ * already. Nobody should have to find our switch after telling their browser
+ * the same thing.
+ */
+export const isProgressAllowed = (state: { optedOut: boolean; globalPrivacyControl: boolean }): boolean =>
+  !state.optedOut && !state.globalPrivacyControl;
+
+const currentState = (): { optedOut: boolean; globalPrivacyControl: boolean } => ({
+  optedOut: readJson<boolean>(STORAGE_KEYS.progressOptOut) === true,
+  globalPrivacyControl:
+    typeof navigator !== 'undefined' &&
+    (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl === true,
+});
+
+export const progressAllowed = (): boolean => isProgressAllowed(currentState());
+
+export const browserSaysDoNotTrack = (): boolean => currentState().globalPrivacyControl;
+
+export const setProgressOptOut = (optedOut: boolean): void => {
+  if (optedOut) writeJson(STORAGE_KEYS.progressOptOut, true);
+  else removeKey(STORAGE_KEYS.progressOptOut);
+};
+
 /** The furthest step this session has reached, so going Back never rewinds it. */
 const furthest = new Map<string, number>();
 
@@ -39,6 +72,7 @@ const furthest = new Map<string, number>();
  * ten minutes.
  */
 export const recordProgress = (ping: ProgressPing): void => {
+  if (!progressAllowed()) return;
   const supabase = getSupabase();
   if (supabase === null) return;
 

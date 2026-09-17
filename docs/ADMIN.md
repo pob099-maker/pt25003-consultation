@@ -116,6 +116,13 @@ Use it while the consultation is running, not after. If one branch finishes at h
 others, that is a section to shorten — and you can shorten it from the **Question wording** tab
 without waiting for the round to end.
 
+**It is opt-out.** Anyone can switch it off with one checkbox on the consent page or the privacy
+page, and it is off automatically for anyone whose browser sends a do-not-track privacy signal.
+Opt-in was considered and rejected: the people who would tick "yes, record me" are the engaged ones,
+the least likely to give up — so an opt-in record would measure drop-off only among people who do
+not drop off. The funnel therefore slightly under-counts sessions; treat its numbers as a guide to
+where people stop, not an exact count of how many started.
+
 Clear the records when the consultation closes:
 
 ```sql
