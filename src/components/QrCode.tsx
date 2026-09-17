@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 import qrcode from 'qrcode-generator';
 
 /**
@@ -6,7 +6,17 @@ import qrcode from 'qrcode-generator';
  * size. Generated on the device — nothing is fetched from a QR service, which
  * would also have been told every join link.
  */
-export const QrCode = ({ value, label, className }: { value: string; label: string; className?: string }) => {
+export const QrCode = ({
+  value,
+  label,
+  className,
+  style,
+}: {
+  value: string;
+  label: string;
+  className?: string;
+  style?: CSSProperties;
+}) => {
   const { size, path } = useMemo(() => {
     const qr = qrcode(0, 'M');
     qr.addData(value);
@@ -28,6 +38,7 @@ export const QrCode = ({ value, label, className }: { value: string; label: stri
       role="img"
       aria-label={label}
       className={className}
+      style={style}
       shapeRendering="crispEdges"
     >
       <rect width={size} height={size} fill="#ffffff" />

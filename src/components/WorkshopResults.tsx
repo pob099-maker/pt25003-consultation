@@ -9,47 +9,54 @@ import {
 } from '../services/workshops';
 import { TallyBars } from './TallyBars';
 
-const RatingBars = ({ rows, answered, large }: { rows: readonly RatingRow[]; answered: number; large: boolean }) => (
-  <figure>
-    <ul className={`grid ${large ? 'gap-4' : 'gap-3'}`}>
-      {rows.map((row) => (
-        <li key={row.id}>
-          <div className={`flex justify-between gap-3 ${large ? 'text-subtitle' : 'text-body'}`}>
-            <span className="text-ink">{row.label}</span>
-            <span className="shrink-0 font-semibold text-ink">
-              {row.rated === 0 ? '—' : row.mean.toFixed(1)}
-              <span className="font-normal text-ink-soft"> / 5</span>
-            </span>
-          </div>
-          {/* One segment per score, so the spread shows as well as the average. */}
-          <div
-            className={`mt-1 flex w-full overflow-hidden rounded-full bg-sunk ${large ? 'h-5' : 'h-3'}`}
-            aria-hidden="true"
-          >
-            {row.scores.map((count, index) => (
-              <div
-                key={index}
-                className="h-full bg-primary"
-                style={{
-                  width: row.rated === 0 ? '0%' : `${(count / row.rated) * 100}%`,
-                  opacity: 0.35 + index * 0.16,
-                }}
-              />
-            ))}
-          </div>
-          <p className="mt-0.5 text-meta text-ink-soft">
-            {row.rated === 0
-              ? 'Nobody rated this.'
-              : `${Math.round(row.high * 100)}% rated it 4 or 5 · ${row.rated} rated it`}
-          </p>
-        </li>
-      ))}
-    </ul>
-    <figcaption className="mt-3 text-meta text-ink-soft">
-      {answered} {answered === 1 ? 'person' : 'people'} answered. Darker means a higher score.
-    </figcaption>
-  </figure>
-);
+const RatingBars = ({ rows, answered, large }: { rows: readonly RatingRow[]; answered: number; large: boolean }) => {
+  // On the big screen, unrated rows are left out and a long list takes two
+  // columns, so twelve areas still fit on one slide.
+  const shown = large ? rows.filter((row) => row.rated > 0) : rows;
+  const columns =
+    large && shown.length > 8 ? 'md:grid-cols-2 lg:grid-cols-3' : large && shown.length > 4 ? 'md:grid-cols-2' : '';
+  return (
+    <figure>
+      <ul className={`grid ${large ? `gap-x-10 gap-y-3 ${columns}` : 'gap-3'}`}>
+        {shown.map((row) => (
+          <li key={row.id}>
+            <div className={`flex justify-between gap-3 ${large ? 'text-subtitle font-normal' : 'text-body'}`}>
+              <span className="text-ink">{row.label}</span>
+              <span className="shrink-0 font-semibold text-ink">
+                {row.rated === 0 ? '—' : row.mean.toFixed(1)}
+                <span className="font-normal text-ink-soft"> / 5</span>
+              </span>
+            </div>
+            {/* One segment per score, so the spread shows as well as the average. */}
+            <div
+              className={`mt-1 flex w-full overflow-hidden rounded-full bg-sunk ${large ? 'h-4' : 'h-3'}`}
+              aria-hidden="true"
+            >
+              {row.scores.map((count, index) => (
+                <div
+                  key={index}
+                  className="h-full bg-primary"
+                  style={{
+                    width: row.rated === 0 ? '0%' : `${(count / row.rated) * 100}%`,
+                    opacity: 0.35 + index * 0.16,
+                  }}
+                />
+              ))}
+            </div>
+            <p className={`mt-0.5 text-meta text-ink-soft ${large ? 'sr-only' : ''}`}>
+              {row.rated === 0
+                ? 'Nobody rated this.'
+                : `${Math.round(row.high * 100)}% rated it 4 or 5 · ${row.rated} rated it`}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <figcaption className="mt-3 text-meta text-ink-soft">
+        {answered} {answered === 1 ? 'person' : 'people'} answered. Darker means a higher score.
+      </figcaption>
+    </figure>
+  );
+};
 
 const WordCloud = ({
   words,
@@ -63,7 +70,7 @@ const WordCloud = ({
   onHide?: (word: string) => void;
 }) => {
   const top = words[0]?.count ?? 1;
-  const [min, max] = large ? [1.1, 4.5] : [0.95, 2.4];
+  const [min, max] = large ? [1.4, 5] : [0.95, 2.4];
   return (
     <figure>
       {words.length === 0 ? (
@@ -72,7 +79,10 @@ const WordCloud = ({
         <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 py-4">
           {words.map((item, index) => {
             const size = min + (max - min) * (top === 1 ? 1 : (item.count - 1) / (top - 1));
-            const style = { fontSize: `${size.toFixed(2)}rem`, lineHeight: 1.1 };
+            const style = {
+              fontSize: `${size.toFixed(2)}rem`,
+              lineHeight: 1.1,
+            };
             const tone = index % 3 === 0 ? 'text-primary-ink' : index % 3 === 1 ? 'text-ink' : 'text-ink-soft';
             const label = `${item.word}, ${item.count} ${item.count === 1 ? 'person' : 'people'}`;
             return (

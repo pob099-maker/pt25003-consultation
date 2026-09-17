@@ -6,7 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Layout } from '../../components/Layout';
 import { WorkshopResults } from '../../components/WorkshopResults';
-import { accentPanel, card, choiceRow, choiceRowSelected, primaryButton, quietButton, textInput } from '../../components/ui';
+import {
+  accentPanel,
+  card,
+  choiceRow,
+  choiceRowSelected,
+  primaryButton,
+  quietButton,
+  textInput,
+} from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { questionById } from '../../content/lookup';
 import { useWorkshopState } from '../../hooks/useWorkshopState';
@@ -104,8 +112,8 @@ const Joining = ({ live, onJoin }: { live: LiveWorkshop; onJoin: (role: RoleId |
           Answer each question as it comes up on the screen. You won&rsquo;t be asked your name.
         </p>
         <p className="mt-2 text-meta text-ink-soft">
-          Your answers are saved as one anonymous response to the {currentProject().reference} consultation. The room only sees totals,
-          and only once at least {live.minAnswers} people have answered.{' '}
+          Your answers are saved as one anonymous response to the {currentProject().reference} consultation. The room
+          only sees totals, and only once at least {live.minAnswers} people have answered.{' '}
           <Link to="/privacy" className={quietButton}>
             Privacy
           </Link>
@@ -157,9 +165,9 @@ const RatingEntry = ({
       <p className="text-meta text-ink-soft">
         1 = {low.toLowerCase()} · 5 = {high.toLowerCase()}
       </p>
-      <ul className="grid gap-3">
+      <ul className="grid gap-5">
         {question.rows.map((row) => (
-          <li key={row.id}>
+          <li key={row.id} className="border-t border-line pt-4 first:border-0 first:pt-0">
             <fieldset>
               <legend className="mb-1 text-body text-ink">{row.label}</legend>
               <div className="grid grid-cols-5 gap-1.5">
@@ -211,12 +219,14 @@ const WordEntry = ({
 }) => {
   const { register, watch } = useForm<WordsValues>({
     resolver: zodResolver(wordsSchema),
-    defaultValues: { words: Array.from({ length: MAX_WORDS }, (_, i) => ({ text: initial[i] ?? '' })) },
+    defaultValues: {
+      words: Array.from({ length: MAX_WORDS }, (_, i) => ({
+        text: initial[i] ?? '',
+      })),
+    },
   });
   useEffect(() => {
-    const subscription = watch((values) =>
-      onChange(cleanWords((values.words ?? []).map((word) => word?.text ?? ''))),
-    );
+    const subscription = watch((values) => onChange(cleanWords((values.words ?? []).map((word) => word?.text ?? ''))));
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
   return (
@@ -318,45 +328,56 @@ const Voting = ({
                       className={`${choiceRow} ${on ? choiceRowSelected : ''}`}
                       onClick={() => setPicked((current) => toggleChoice(question, current, option.id))}
                     >
-                      {question.kind === 'rank' && on && (
-                        <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-meta font-bold text-white">
-                          {position + 1}
+                      {question.kind === 'rank' ? (
+                        <span
+                          aria-hidden="true"
+                          className={`grid size-7 shrink-0 place-items-center rounded-full border-2 text-meta font-bold ${
+                            on ? 'border-primary bg-primary text-white' : 'border-line-strong'
+                          }`}
+                        >
+                          {on ? position + 1 : ''}
+                        </span>
+                      ) : (
+                        <span
+                          aria-hidden="true"
+                          className={`grid size-7 shrink-0 place-items-center border-2 text-body font-bold ${
+                            question.kind === 'single' ? 'rounded-full' : 'rounded-md'
+                          } ${on ? 'border-primary bg-primary text-white' : 'border-line-strong'}`}
+                        >
+                          {on ? '✓' : ''}
                         </span>
                       )}
-                      <span>{option.label}</span>
+                      <span className={`self-center ${on ? 'font-semibold' : ''}`}>{option.label}</span>
                     </button>
                   </li>
                 );
               })}
             </ul>
           )}
-          {question.kind === 'rating' && (
-            <RatingEntry question={question} picked={picked} onChange={setPicked} />
-          )}
-          {question.kind === 'text' && (
-            <WordEntry key={question.id} initial={sent ?? []} onChange={setPicked} />
-          )}
-          {message !== null && (
-            <p role="alert" className="text-meta font-medium text-danger">
-              {message}
-            </p>
-          )}
-          {sent !== undefined && unchanged ? (
-            <p role="status" className="text-body font-medium text-ink">
-              Answer sent. Watch the screen — you can change it until results are shown.
-            </p>
-          ) : (
-            <div>
+          {question.kind === 'rating' && <RatingEntry question={question} picked={picked} onChange={setPicked} />}
+          {question.kind === 'text' && <WordEntry key={question.id} initial={sent ?? []} onChange={setPicked} />}
+          {/* Pinned to the bottom, so a long list never hides the button. */}
+          <div className="sticky bottom-0 -mx-4 grid gap-2 border-t border-line bg-paper px-4 py-3">
+            {message !== null && (
+              <p role="alert" className="text-meta font-medium text-danger">
+                {message}
+              </p>
+            )}
+            {sent !== undefined && unchanged ? (
+              <p role="status" className="text-body font-medium text-ink">
+                Answer sent. Watch the screen — you can change it until results are shown.
+              </p>
+            ) : (
               <button
                 type="button"
-                className={primaryButton}
+                className={`${primaryButton} w-full disabled:opacity-50`}
                 disabled={picked.length === 0 || sending}
                 onClick={() => void send()}
               >
                 {sending ? 'Sending…' : sent === undefined ? 'Send my answer' : 'Update my answer'}
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </>
       )}
 
@@ -493,7 +514,7 @@ export const WorkshopJoin = () => {
 
   return (
     <Layout>
-      <h1 className="mb-4">Workshop</h1>
+      <h1 className="mb-4">{state?.found === true ? state.title : 'Workshop'}</h1>
       {offline && state !== null && (
         <p role="status" className="mb-3 text-meta text-danger">
           Signal lost. Retrying…

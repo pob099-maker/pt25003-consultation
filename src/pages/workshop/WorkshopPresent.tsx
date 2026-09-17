@@ -5,7 +5,6 @@ import { Layout } from '../../components/Layout';
 import { QrCode } from '../../components/QrCode';
 import { WorkshopResults } from '../../components/WorkshopResults';
 import { ThemeToggle } from '../../components/ThemeToggle';
-import { primaryButton, secondaryButton } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { questionById } from '../../content/lookup';
 import { useStaffSession } from '../../hooks/useStaffSession';
@@ -20,6 +19,37 @@ import {
   type WorkshopControl,
 } from '../../services/workshops';
 import { AdminLogin } from '../admin/AdminLogin';
+
+/**
+ * Scales the whole presenter screen with the width of the display. The rest of
+ * the site is sized for reading at arm's length; a projector is read from the
+ * back of a shed. Every size here is in rem, so moving the root moves them all.
+ */
+const useProjectorScale = (): void => {
+  useEffect(() => {
+    const root = document.documentElement;
+    const before = root.style.fontSize;
+    root.style.fontSize = 'clamp(16px, 0.6vw + 9px, 28px)';
+    return () => {
+      root.style.fontSize = before;
+    };
+  }, []);
+};
+
+/** The question, sized for the room. Inline, because page heading styles would otherwise win. */
+const QUESTION_STYLE = {
+  fontSize: 'clamp(1.75rem, 1rem + 1.9vw, 3.5rem)',
+  lineHeight: 1.15,
+} as const;
+/** Facilitator buttons: still big enough to hit, smaller than the content. */
+const controlBase = 'inline-flex items-center rounded-lg px-3 py-2 text-meta font-semibold min-h-10';
+const controlPrimary = `${controlBase} bg-primary text-white hover:bg-primary/90`;
+const controlSecondary = `${controlBase} border border-line-strong bg-surface text-ink hover:bg-sunk`;
+
+const CODE_STYLE = {
+  fontSize: 'clamp(2rem, 1rem + 2.2vw, 4rem)',
+  lineHeight: 1,
+} as const;
 
 /** Fills the screen with the presenter view; Esc or the same button leaves. */
 const FullScreenButton = () => {
@@ -57,30 +87,91 @@ const Stage = ({
   const url = joinUrl(code);
   const last = live.index >= live.questionIds.length - 1;
   const shortUrl = url.replace(/^https?:\/\//, '');
+  const joinPath = shortUrl.replace(/#\/w\/.*$/, '#/w');
+  const showJoinPanel = live.status === 'open' && !live.revealed;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
+    // While people are answering, the join panel takes a column. Once results
+    // are up it shrinks to a line, and the chart gets the whole width.
+    <div className={`grid gap-8 ${showJoinPanel ? 'lg:grid-cols-[1fr_minmax(16rem,22vw)]' : ''}`}>
       <section aria-live="polite" className="min-w-0">
-        <p className="text-eyebrow uppercase text-ink-faint">
-          Question {live.index + 1} of {live.questionIds.length}
-        </p>
+        {/* The facilitator's controls sit beside the counter, so they never fall below a short projector. */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-eyebrow uppercase text-ink-faint">
+            Question {live.index + 1} of {live.questionIds.length}
+          </p>
+          <div className="flex flex-wrap justify-end gap-2 no-print">
+            {live.status === 'open' ? (
+              <>
+                {!live.revealed ? (
+                  <button type="button" className={controlPrimary} onClick={() => onControl({ revealed: true })}>
+                    Close voting and show results
+                  </button>
+                ) : (
+                  <button type="button" className={controlSecondary} onClick={() => onControl({ revealed: false })}>
+                    Reopen voting
+                  </button>
+                )}
+                {live.index > 0 && (
+                  <button
+                    type="button"
+                    className={controlSecondary}
+                    onClick={() => onControl({ index: live.index - 1, revealed: false })}
+                  >
+                    Previous question
+                  </button>
+                )}
+                {!last && (
+                  <button
+                    type="button"
+                    className={live.revealed ? controlPrimary : controlSecondary}
+                    onClick={() => onControl({ index: live.index + 1, revealed: false })}
+                  >
+                    Next question
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={controlSecondary}
+                  onClick={() => {
+                    if (window.confirm('End the workshop? Phones will save their answers and stop taking votes.')) {
+                      onControl({ status: 'closed', revealed: true });
+                    }
+                  }}
+                >
+                  End workshop
+                </button>
+              </>
+            ) : (
+              <p className="text-body text-ink">
+                This workshop has ended. Answers from every phone still open were saved as responses.
+              </p>
+            )}
+          </div>
+        </div>
         {question === null ? (
           <p className="mt-2 text-title text-ink-soft">This question is no longer in the questionnaire.</p>
         ) : (
           <>
-            <h2 className="mt-2 font-display text-display font-bold text-ink">{screenPrompt(question)}</h2>
-            <p className="mt-2 text-subtitle text-ink-soft">{choiceHint(question)}</p>
+            <h2 className="mt-2 font-display font-bold text-ink" style={QUESTION_STYLE}>
+              {screenPrompt(question)}
+            </h2>
+            <p className="mt-3 text-title font-normal text-ink-soft">{choiceHint(question)}</p>
           </>
         )}
 
-        <p className="mt-6 text-title font-semibold text-ink">
+        {live.status === 'open' && live.revealed && (
+          <p className="mt-3 text-subtitle font-normal text-ink-soft">
+            Join at {joinPath} with code{' '}
+            <strong className="font-display tracking-[0.15em] text-primary-ink">{code}</strong>
+          </p>
+        )}
+        <p className="mt-4 text-title font-semibold text-ink">
           {live.answered} {live.answered === 1 ? 'answer' : 'answers'} in
         </p>
 
-        <div className="mt-6">
-          {!live.revealed && (
-            <p className="text-subtitle text-ink-soft">Results are hidden while people answer.</p>
-          )}
+        <div className="mt-4">
+          {!live.revealed && <p className="text-subtitle text-ink-soft">Results are hidden while people answer.</p>}
           {live.revealed && live.results === null && (
             <p className="text-subtitle text-ink-soft">
               Fewer than {live.minAnswers} people have answered, so the result stays hidden to protect their privacy.
@@ -124,65 +215,23 @@ const Stage = ({
             </p>
           )}
         </div>
-
-        <div className="mt-8 flex flex-wrap gap-3 no-print">
-          {live.status === 'open' ? (
-            <>
-              {!live.revealed ? (
-                <button type="button" className={primaryButton} onClick={() => onControl({ revealed: true })}>
-                  Close voting and show results
-                </button>
-              ) : (
-                <button type="button" className={secondaryButton} onClick={() => onControl({ revealed: false })}>
-                  Reopen voting
-                </button>
-              )}
-              {live.index > 0 && (
-                <button
-                  type="button"
-                  className={secondaryButton}
-                  onClick={() => onControl({ index: live.index - 1, revealed: false })}
-                >
-                  Previous question
-                </button>
-              )}
-              {!last && (
-                <button
-                  type="button"
-                  className={live.revealed ? primaryButton : secondaryButton}
-                  onClick={() => onControl({ index: live.index + 1, revealed: false })}
-                >
-                  Next question
-                </button>
-              )}
-              <button
-                type="button"
-                className={secondaryButton}
-                onClick={() => {
-                  if (window.confirm('End the workshop? Phones will save their answers and stop taking votes.')) {
-                    onControl({ status: 'closed', revealed: true });
-                  }
-                }}
-              >
-                End workshop
-              </button>
-            </>
-          ) : (
-            <p className="text-body text-ink">
-              This workshop has ended. Answers from every phone still open were saved as responses.
-            </p>
-          )}
-        </div>
       </section>
 
-      {live.status === 'open' && (
-        <aside className="grid content-start justify-items-center gap-3 rounded-xl border border-line bg-surface p-5 text-center">
+      {showJoinPanel && (
+        <aside className="grid content-start justify-items-center gap-2 rounded-xl border border-line bg-surface p-5 text-center">
           <p className="text-body font-semibold text-ink">Scan to join</p>
-          <QrCode value={url} label={`QR code linking to ${shortUrl}`} className="w-full max-w-64" />
+          <QrCode
+            value={url}
+            label={`QR code linking to ${shortUrl}`}
+            className="aspect-square w-full"
+            style={{ maxHeight: '45vh' }}
+          />
           <p className="text-meta text-ink-soft">or go to</p>
-          <p className="break-all text-body text-ink">{shortUrl.replace(/#\/w\/.*$/, '#/w')}</p>
+          <p className="break-all text-body text-ink">{joinPath}</p>
           <p className="text-meta text-ink-soft">and enter</p>
-          <p className="font-display text-display font-extrabold tracking-[0.2em] text-primary-ink">{code}</p>
+          <p className="font-display font-extrabold tracking-[0.15em] text-primary-ink" style={CODE_STYLE}>
+            {code}
+          </p>
         </aside>
       )}
     </div>
@@ -191,6 +240,7 @@ const Stage = ({
 
 /** The screen the room looks at. Wide, and big enough to read from the back. */
 export const WorkshopPresent = () => {
+  useProjectorScale();
   const staff = useStaffSession();
   const { code = '' } = useParams();
   const { state, offline, refresh } = useWorkshopState(staff.userId === null ? undefined : code);
@@ -220,8 +270,8 @@ export const WorkshopPresent = () => {
   };
 
   return (
-    <div className="min-h-dvh bg-paper px-4 py-6 text-ink sm:px-10 sm:py-8">
-      <header className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b-2 border-accent/60 pb-4 no-print">
+    <div className="min-h-dvh bg-paper px-4 py-4 text-ink sm:px-10 sm:py-5">
+      <header className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b-2 border-accent/60 pb-4 no-print">
         <div>
           <p className="text-eyebrow uppercase text-ink-faint">
             {currentProject().shortName} · {currentProject().reference}
