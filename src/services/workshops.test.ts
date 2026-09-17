@@ -4,21 +4,33 @@ import { consultationResponseSchema } from '../schemas/consultation';
 import {
   MIN_ANSWERS,
   answersFromVotes,
+  cleanWords,
+  cloudWords,
+  decodeRating,
+  encodeRating,
+  isChoiceQuestion,
   joinUrl,
   newWorkshopCode,
   normaliseCode,
+  ratingRows,
   stateFrom,
   tallyRows,
   toggleChoice,
   workshopQuestions,
+  type ChoiceQuestion,
   type DemoWorkshop,
-  type WorkshopQuestion,
 } from './workshops';
 
 const q = DEFAULT_QUESTIONNAIRE;
-const byId = (id: string): WorkshopQuestion => {
+const byId = (id: string) => {
   const found = workshopQuestions(q).find((question) => question.id === id);
   if (found === undefined) throw new Error(`no workshop question ${id}`);
+  return found;
+};
+
+const choice = (id: string): ChoiceQuestion => {
+  const found = byId(id);
+  if (!isChoiceQuestion(found)) throw new Error(`${id} is not a choice question`);
   return found;
 };
 
@@ -55,10 +67,11 @@ describe('join codes', () => {
 });
 
 describe('workshopQuestions', () => {
-  it('offers only what can be answered by tapping', () => {
+  it('offers bars, ratings and word clouds, but no role branches', () => {
     const kinds = new Set(workshopQuestions(q).map((question) => question.kind));
-    expect([...kinds].every((kind) => ['multi', 'single', 'rank'].includes(kind))).toBe(true);
-    expect(workshopQuestions(q).length).toBeGreaterThan(0);
+    expect(kinds.has('rating')).toBe(true);
+    expect(kinds.has('text')).toBe(true);
+    expect(workshopQuestions(q).some((question) => question.id === 'farm_pressure')).toBe(false);
   });
 });
 
@@ -88,7 +101,7 @@ describe('stateFrom', () => {
   it('counts each person once per choice once enough have answered', () => {
     const state = stateFrom(demo(people(6), true));
     expect(state.results).toEqual({ harvest: 6, skills: 3 });
-    const rows = tallyRows(byId('q1_constraints'), state.results ?? {}, state.answered);
+    const rows = tallyRows(choice('q1_constraints'), state.results ?? {}, state.answered);
     expect(rows[0]).toMatchObject({ id: 'harvest', hands: 6, share: 1 });
   });
 });
@@ -117,5 +130,72 @@ describe('answersFromVotes', () => {
     expect(consultationResponseSchema.safeParse(response).success).toBe(true);
     expect(consultationResponseSchema.safeParse({ ...response, sessionId: null }).success).toBe(false);
     expect(consultationResponseSchema.safeParse({ ...response, method: 'online' }).success).toBe(false);
+  });
+});
+
+describe('ratings in a workshop', () => {
+  it('round-trips through the vote format', () => {
+    expect(decodeRating(encodeRating({ labour: 4, harvest_efficiency: 2 }))).toEqual({
+      labour: 4,
+      harvest_efficiency: 2,
+    });
+    expect(decodeRating(['labour=9', 'nonsense'])).toEqual({});
+  });
+
+  it('averages each row and shows the spread', () => {
+    const question = byId('q5_areas');
+    if (question.kind !== 'rating') throw new Error('q5_areas should be a rating');
+    const [first, second] = question.rows;
+    if (first === undefined || second === undefined) throw new Error('need two rows');
+    const rows = ratingRows(question, { [`${first.id}=5`]: 3, [`${first.id}=3`]: 1, [`${second.id}=2`]: 4 });
+    expect(rows[0]).toMatchObject({ id: first.id, rated: 4, mean: 4.5, high: 0.75, scores: [0, 0, 1, 0, 3] });
+    expect(rows[1]).toMatchObject({ id: second.id, mean: 2 });
+    expect(rows.at(-1)?.rated).toBe(0);
+  });
+
+  it('becomes a rating answer, dropping rows the question does not have', () => {
+    const question = byId('q5_areas');
+    if (question.kind !== 'rating') throw new Error('q5_areas should be a rating');
+    const row = question.rows[0]?.id ?? '';
+    expect(answersFromVotes(q, { q5_areas: [`${row}=4`, 'made_up=5'] })).toEqual({
+      q5_areas: { kind: 'rating', values: { [row]: 4 } },
+    });
+  });
+});
+
+describe('word clouds', () => {
+  it('trims, lower-cases, de-duplicates and caps what a phone sends', () => {
+    expect(cleanWords(['  Labour ', 'labour', '', 'Wet   harvest', 'skills', 'extra'])).toEqual([
+      'labour',
+      'wet harvest',
+      'skills',
+    ]);
+  });
+
+  it('counts a word once per person, whatever the case, and leaves hidden words out', () => {
+    const workshop: DemoWorkshop = {
+      ...demo({}, true),
+      questionIds: ['q4_bad_season'],
+      votes: {
+        q4_bad_season: {
+          a: ['Labour', 'labour '],
+          b: ['labour'],
+          c: ['rain'],
+          d: ['rude word'],
+          e: ['Rain'],
+        },
+      },
+      hidden: { q4_bad_season: ['rude word'] },
+    };
+    const state = stateFrom(workshop);
+    expect(state.results).toEqual({ labour: 2, rain: 2 });
+    expect(state.hidden).toEqual(['rude word']);
+    expect(cloudWords(state.results ?? {}).map((item) => item.word)).toEqual(['labour', 'rain']);
+  });
+
+  it('becomes a text answer', () => {
+    expect(answersFromVotes(q, { q4_bad_season: ['Labour', 'wet harvest'] })).toEqual({
+      q4_bad_season: { kind: 'text', value: 'labour; wet harvest' },
+    });
   });
 });

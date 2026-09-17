@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Layout } from '../../components/Layout';
-import { TallyBars } from '../../components/TallyBars';
+import { WorkshopResults } from '../../components/WorkshopResults';
 import { accentPanel, card, choiceRow, choiceRowSelected, primaryButton, quietButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { questionById } from '../../content/lookup';
@@ -15,14 +15,21 @@ import {
   answersFromVotes,
   castVote,
   choiceHint,
+  cleanWords,
+  decodeRating,
+  encodeRating,
+  isChoiceQuestion,
+  MAX_WORD_LENGTH,
+  MAX_WORDS,
   loadParticipant,
   normaliseCode,
   saveParticipant,
-  tallyRows,
+  screenPrompt,
   toggleChoice,
   workshopChoices,
   type LiveWorkshop,
   type ParticipantState,
+  type RatingQuestion,
   type VoteOutcome,
 } from '../../services/workshops';
 import type { RoleId } from '../../types';
@@ -132,6 +139,107 @@ const Joining = ({ live, onJoin }: { live: LiveWorkshop; onJoin: (role: RoleId |
   );
 };
 
+/** One row per area, five tap targets each. Tapping the chosen score again clears it. */
+const RatingEntry = ({
+  question,
+  picked,
+  onChange,
+}: {
+  question: RatingQuestion;
+  picked: readonly string[];
+  onChange: (update: (current: readonly string[]) => readonly string[]) => void;
+}) => {
+  const values = decodeRating(picked);
+  const low = question.scale[0]?.label ?? '1';
+  const high = question.scale.at(-1)?.label ?? '5';
+  return (
+    <>
+      <p className="text-meta text-ink-soft">
+        1 = {low.toLowerCase()} · 5 = {high.toLowerCase()}
+      </p>
+      <ul className="grid gap-3">
+        {question.rows.map((row) => (
+          <li key={row.id}>
+            <fieldset>
+              <legend className="mb-1 text-body text-ink">{row.label}</legend>
+              <div className="grid grid-cols-5 gap-1.5">
+                {question.scale.map((point) => {
+                  const on = values[row.id] === point.value;
+                  return (
+                    <button
+                      key={point.value}
+                      type="button"
+                      aria-pressed={on}
+                      aria-label={`${row.label}: ${point.value}, ${point.label}`}
+                      className={`min-h-12 rounded-lg border text-body font-semibold ${
+                        on ? 'border-primary bg-primary text-white' : 'border-line bg-surface text-ink'
+                      }`}
+                      onClick={() =>
+                        onChange((current) => {
+                          const next = decodeRating(current);
+                          if (next[row.id] === point.value) delete next[row.id];
+                          else next[row.id] = point.value;
+                          return encodeRating(next);
+                        })
+                      }
+                    >
+                      {point.value}
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+};
+
+const wordsSchema = z.object({
+  words: z.array(z.object({ text: z.string().max(MAX_WORD_LENGTH) })).length(MAX_WORDS),
+});
+type WordsValues = z.infer<typeof wordsSchema>;
+
+/** Up to three short entries for the word cloud. */
+const WordEntry = ({
+  initial,
+  onChange,
+}: {
+  initial: readonly string[];
+  onChange: (next: readonly string[]) => void;
+}) => {
+  const { register, watch } = useForm<WordsValues>({
+    resolver: zodResolver(wordsSchema),
+    defaultValues: { words: Array.from({ length: MAX_WORDS }, (_, i) => ({ text: initial[i] ?? '' })) },
+  });
+  useEffect(() => {
+    const subscription = watch((values) =>
+      onChange(cleanWords((values.words ?? []).map((word) => word?.text ?? ''))),
+    );
+    return () => subscription.unsubscribe();
+  }, [watch, onChange]);
+  return (
+    <ul className="grid gap-2">
+      {Array.from({ length: MAX_WORDS }, (_, index) => (
+        <li key={index}>
+          <label htmlFor={`word-${index}`} className="sr-only">
+            Word or phrase {index + 1}
+          </label>
+          <input
+            id={`word-${index}`}
+            className={textInput}
+            maxLength={MAX_WORD_LENGTH}
+            autoComplete="off"
+            placeholder={index === 0 ? 'Type a word or short phrase' : 'Another (optional)'}
+            {...register(`words.${index}.text`)}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const Voting = ({
   live,
   code,
@@ -146,8 +254,7 @@ const Voting = ({
   onLeave: () => void;
 }) => {
   const questionnaire = useQuestionnaire();
-  const found = questionById(questionnaire, live.questionId ?? '');
-  const question = found !== undefined && found.kind !== 'text' && found.kind !== 'rating' ? found : null;
+  const question = questionById(questionnaire, live.questionId ?? '') ?? null;
   const sent = live.questionId === null ? undefined : me.votes[live.questionId];
   const [picked, setPicked] = useState<readonly string[]>(sent ?? []);
   const [message, setMessage] = useState<string | null>(null);
@@ -183,7 +290,7 @@ const Voting = ({
       <p className="text-eyebrow uppercase text-ink-faint">
         Question {live.index + 1} of {live.questionIds.length}
       </p>
-      <h2 className="text-subtitle font-semibold text-ink">{question.guide?.open ?? question.prompt}</h2>
+      <h2 className="text-subtitle font-semibold text-ink">{screenPrompt(question)}</h2>
 
       {live.revealed ? (
         <section className={card}>
@@ -192,35 +299,43 @@ const Voting = ({
               Voting has closed. Fewer than {live.minAnswers} people answered, so the result isn&rsquo;t shown.
             </p>
           ) : (
-            <TallyBars rows={tallyRows(question, live.results, live.answered)} answered={live.answered} />
+            <WorkshopResults question={question} results={live.results} answered={live.answered} />
           )}
         </section>
       ) : (
         <>
           <p className="text-meta text-ink-soft">{choiceHint(question)}</p>
-          <ul className="grid gap-2">
-            {workshopChoices(question).map((option) => {
-              const position = picked.indexOf(option.id);
-              const on = position >= 0;
-              return (
-                <li key={option.id}>
-                  <button
-                    type="button"
-                    aria-pressed={on}
-                    className={`${choiceRow} ${on ? choiceRowSelected : ''}`}
-                    onClick={() => setPicked((current) => toggleChoice(question, current, option.id))}
-                  >
-                    {question.kind === 'rank' && on && (
-                      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-meta font-bold text-white">
-                        {position + 1}
-                      </span>
-                    )}
-                    <span>{option.label}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {isChoiceQuestion(question) && (
+            <ul className="grid gap-2">
+              {workshopChoices(question).map((option) => {
+                const position = picked.indexOf(option.id);
+                const on = position >= 0;
+                return (
+                  <li key={option.id}>
+                    <button
+                      type="button"
+                      aria-pressed={on}
+                      className={`${choiceRow} ${on ? choiceRowSelected : ''}`}
+                      onClick={() => setPicked((current) => toggleChoice(question, current, option.id))}
+                    >
+                      {question.kind === 'rank' && on && (
+                        <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-meta font-bold text-white">
+                          {position + 1}
+                        </span>
+                      )}
+                      <span>{option.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {question.kind === 'rating' && (
+            <RatingEntry question={question} picked={picked} onChange={setPicked} />
+          )}
+          {question.kind === 'text' && (
+            <WordEntry key={question.id} initial={sent ?? []} onChange={setPicked} />
+          )}
           {message !== null && (
             <p role="alert" className="text-meta font-medium text-danger">
               {message}

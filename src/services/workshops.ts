@@ -19,36 +19,85 @@ export const newWorkshopCode = (random: () => number = Math.random): string =>
 
 export const normaliseCode = (raw: string): string => raw.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
 
-export type WorkshopQuestion = Extract<Question, { kind: 'multi' | 'single' | 'rank' }>;
+/** Every kind of question can be put to a room: choices as bars, ratings as averages, text as a word cloud. */
+export type WorkshopQuestion = Question;
+export type ChoiceQuestion = Extract<Question, { kind: 'multi' | 'single' | 'rank' }>;
+export type RatingQuestion = Extract<Question, { kind: 'rating' }>;
+
+export const isChoiceQuestion = (question: Question): question is ChoiceQuestion =>
+  question.kind === 'multi' || question.kind === 'single' || question.kind === 'rank';
+
+/** The shared questions a room can answer together. Role branches are left out: a room is mixed. */
+export const workshopQuestions = (questionnaire: Questionnaire): readonly WorkshopQuestion[] =>
+  groupQuestions(questionnaire);
 
 /**
- * What can be answered by tapping on a phone in a room. Ratings and free text
- * are left out: a grid of sliders is slow on a phone while a presenter waits,
- * and free text needs a facilitator, not a bar chart.
+ * What goes on the screen. The conversational opener suits a room, except for
+ * a rating, whose opener is an interviewer's "I'll read out some areas".
  */
-export const workshopQuestions = (questionnaire: Questionnaire): readonly WorkshopQuestion[] =>
-  groupQuestions(questionnaire).filter(
-    (question): question is WorkshopQuestion =>
-      question.kind === 'multi' || question.kind === 'single' || question.kind === 'rank',
-  );
+export const screenPrompt = (question: WorkshopQuestion): string =>
+  question.kind === 'rating' ? question.prompt : (question.guide?.open ?? question.prompt);
 
-export const workshopChoices = (question: WorkshopQuestion): readonly Option[] =>
-  question.kind === 'rank' ? question.fallbackOptions : question.options;
+/** Words or short phrases one phone may add to a word cloud. */
+export const MAX_WORDS = 3;
+export const MAX_WORD_LENGTH = 40;
 
-export const maxChoices = (question: WorkshopQuestion): number => {
+export const workshopChoices = (question: WorkshopQuestion): readonly Option[] => {
+  if (question.kind === 'rank') return question.fallbackOptions;
+  if (question.kind === 'multi' || question.kind === 'single') return question.options;
+  if (question.kind === 'rating') return question.rows;
+  return [];
+};
+
+export const maxChoices = (question: ChoiceQuestion): number => {
   if (question.kind === 'single') return 1;
   if (question.kind === 'rank') return question.count;
   return question.options.length;
 };
 
 export const choiceHint = (question: WorkshopQuestion): string => {
-  if (question.kind === 'single') return 'Pick one.';
-  if (question.kind === 'rank') return `Pick up to ${question.count}, most important first.`;
-  return 'Pick all that apply.';
+  switch (question.kind) {
+    case 'single':
+      return 'Pick one.';
+    case 'rank':
+      return `Pick up to ${question.count}, most important first.`;
+    case 'multi':
+      return 'Pick all that apply.';
+    case 'rating':
+      return 'Tap a score for each one you have a view on. Skip the rest.';
+    case 'text':
+      return `A word or a short phrase — up to ${MAX_WORDS}.`;
+  }
+};
+
+/** A rating travels as `row=score` strings, so one vote shape serves every kind of question. */
+export const encodeRating = (values: Readonly<Record<string, number>>): readonly string[] =>
+  Object.entries(values).map(([row, score]) => `${row}=${score}`);
+
+export const decodeRating = (choices: readonly string[]): Record<string, number> => {
+  const values: Record<string, number> = {};
+  for (const choice of choices) {
+    const match = /^(.+)=([1-5])$/.exec(choice);
+    if (match?.[1] !== undefined && match[2] !== undefined) values[match[1]] = Number(match[2]);
+  }
+  return values;
+};
+
+/** Trimmed, de-duplicated, capped. Counting is case-insensitive, so lower case loses nothing. */
+export const cleanWords = (raw: readonly string[]): readonly string[] => {
+  const seen = new Set<string>();
+  const words: string[] = [];
+  for (const entry of raw) {
+    const word = entry.trim().replace(/\s+/g, ' ').slice(0, MAX_WORD_LENGTH).toLowerCase();
+    if (word.length === 0 || seen.has(word)) continue;
+    seen.add(word);
+    words.push(word);
+  }
+  return words.slice(0, MAX_WORDS);
 };
 
 /** Tapping adds or removes; a single-choice question swaps; a full ranking refuses more. */
-export const toggleChoice = (question: WorkshopQuestion, current: readonly string[], id: string): readonly string[] => {
+export const toggleChoice = (question: ChoiceQuestion, current: readonly string[], id: string): readonly string[] => {
   if (current.includes(id)) return current.filter((value) => value !== id);
   if (question.kind === 'single') return [id];
   if (current.length >= maxChoices(question)) return current;
@@ -70,6 +119,7 @@ const stateSchema = z.union([
     answered: z.number().int(),
     minAnswers: z.number().int(),
     results: z.record(z.string(), z.number()).nullable(),
+    hidden: z.array(z.string()).default([]),
   }),
 ]);
 
@@ -94,6 +144,7 @@ export interface DemoWorkshop extends WorkshopSummary {
   index: number;
   revealed: boolean;
   votes: Record<string, Record<string, readonly string[]>>; // question -> participant -> choices
+  hidden?: Record<string, readonly string[]>;
 }
 
 const demoAll = (): DemoWorkshop[] => readJson<DemoWorkshop[]>(STORAGE_KEYS.demoWorkshops) ?? [];
@@ -104,11 +155,15 @@ export const stateFrom = (workshop: DemoWorkshop): LiveWorkshop => {
   const questionId = workshop.questionIds[workshop.index] ?? null;
   const votes = questionId === null ? {} : (workshop.votes[questionId] ?? {});
   const answered = Object.keys(votes).length;
+  const hidden = questionId === null ? [] : [...(workshop.hidden?.[questionId] ?? [])];
   let results: Record<string, number> | null = null;
   if (workshop.revealed && answered >= MIN_ANSWERS) {
     results = {};
     for (const choices of Object.values(votes)) {
-      for (const choice of choices) results[choice] = (results[choice] ?? 0) + 1;
+      // Each person counts once per choice, however they typed it.
+      for (const choice of new Set(choices.map((c) => c.trim().toLowerCase()))) {
+        if (!hidden.includes(choice)) results[choice] = (results[choice] ?? 0) + 1;
+      }
     }
   }
   return {
@@ -124,6 +179,7 @@ export const stateFrom = (workshop: DemoWorkshop): LiveWorkshop => {
     answered,
     minAnswers: MIN_ANSWERS,
     results,
+    hidden,
   };
 };
 
@@ -239,6 +295,35 @@ export const controlWorkshop = async (id: string, change: WorkshopControl): Prom
   return error === null ? { success: true, data: true } : { success: false, error: error.message };
 };
 
+/** Takes a word off the screen, or puts it back. Applies to every result the room sees. */
+export const setWordHidden = async (
+  id: string,
+  questionId: string,
+  word: string,
+  hide: boolean,
+): Promise<Result<true>> => {
+  const target = word.trim().toLowerCase();
+  const next = (current: readonly string[]): string[] =>
+    hide ? [...new Set([...current, target])] : current.filter((item) => item !== target);
+  const supabase = getSupabase();
+  if (supabase === null) {
+    const all = demoAll();
+    const workshop = all.find((item) => item.id === id);
+    if (workshop === undefined) return { success: false, error: 'That workshop no longer exists.' };
+    workshop.hidden = { ...(workshop.hidden ?? {}), [questionId]: next(workshop.hidden?.[questionId] ?? []) };
+    demoSave(all);
+    return { success: true, data: true };
+  }
+  const { data, error: readError } = await supabase.from(WORKSHOPS_TABLE).select('hidden').eq('id', id).single();
+  if (readError !== null) return { success: false, error: readError.message };
+  const hidden = (data as { hidden: Record<string, string[]> | null }).hidden ?? {};
+  const { error } = await supabase
+    .from(WORKSHOPS_TABLE)
+    .update({ hidden: { ...hidden, [questionId]: next(hidden[questionId] ?? []) }, updated_at: new Date().toISOString() })
+    .eq('id', id);
+  return error === null ? { success: true, data: true } : { success: false, error: error.message };
+};
+
 export const listWorkshops = async (): Promise<readonly WorkshopSummary[]> => {
   const supabase = getSupabase();
   if (supabase === null) return demoAll();
@@ -280,13 +365,53 @@ export interface TallyRow {
   readonly share: number;
 }
 
-export const tallyRows = (question: WorkshopQuestion, results: Readonly<Record<string, number>>, answered: number) =>
+export const tallyRows = (question: ChoiceQuestion, results: Readonly<Record<string, number>>, answered: number) =>
   workshopChoices(question)
     .map((option): TallyRow => {
       const hands = results[option.id] ?? 0;
       return { id: option.id, label: option.label, hands, share: answered === 0 ? 0 : hands / answered };
     })
     .sort((a, b) => b.hands - a.hands);
+
+export interface RatingRow {
+  readonly id: string;
+  readonly label: string;
+  /** How many people gave each score, 1 to 5. */
+  readonly scores: readonly number[];
+  readonly rated: number;
+  readonly mean: number;
+  /** Of those who rated it, the share giving 4 or 5. */
+  readonly high: number;
+}
+
+/** Average and spread per row, highest average first. Rows nobody rated go last. */
+export const ratingRows = (question: RatingQuestion, results: Readonly<Record<string, number>>): readonly RatingRow[] =>
+  question.rows
+    .map((row): RatingRow => {
+      const scores = [1, 2, 3, 4, 5].map((score) => results[`${row.id}=${score}`] ?? 0);
+      const rated = scores.reduce((sum, count) => sum + count, 0);
+      const total = scores.reduce((sum, count, index) => sum + count * (index + 1), 0);
+      return {
+        id: row.id,
+        label: row.label,
+        scores,
+        rated,
+        mean: rated === 0 ? 0 : total / rated,
+        high: rated === 0 ? 0 : ((scores[3] ?? 0) + (scores[4] ?? 0)) / rated,
+      };
+    })
+    .sort((a, b) => b.mean - a.mean || b.rated - a.rated);
+
+export interface CloudWord {
+  readonly word: string;
+  readonly count: number;
+}
+
+export const cloudWords = (results: Readonly<Record<string, number>>, limit = 40): readonly CloudWord[] =>
+  Object.entries(results)
+    .map(([word, count]) => ({ word, count }))
+    .sort((a, b) => b.count - a.count || a.word.localeCompare(b.word))
+    .slice(0, limit);
 
 /**
  * One phone's answers, as an ordinary response. Only questions actually
@@ -303,6 +428,14 @@ export const answersFromVotes = (
     if (question.kind === 'single') answers[questionId] = { kind: 'single', value: choices[0] ?? '' };
     else if (question.kind === 'multi') answers[questionId] = { kind: 'multi', values: [...choices] };
     else if (question.kind === 'rank') answers[questionId] = { kind: 'rank', values: choices.slice(0, question.count) };
+    else if (question.kind === 'rating') {
+      const rows = new Set(question.rows.map((row) => row.id));
+      const values = Object.fromEntries(Object.entries(decodeRating(choices)).filter(([row]) => rows.has(row)));
+      if (Object.keys(values).length > 0) answers[questionId] = { kind: 'rating', values };
+    } else {
+      const words = cleanWords(choices);
+      if (words.length > 0) answers[questionId] = { kind: 'text', value: words.join('; ') };
+    }
   }
   return answers;
 };

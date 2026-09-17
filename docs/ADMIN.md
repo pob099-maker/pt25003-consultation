@@ -185,8 +185,10 @@ added to them.
 
 **A live workshop** (admin area → *Run a workshop*) is for a room with phones.
 
-1. Name the workshop and tick the questions, in order. Only tap-to-answer
-   questions are offered; ratings and free text are left to the full form.
+1. Name the workshop and tick the questions, in order. Each kind of question
+   gets its own picture: choices as bars, ratings as an average out of 5 with
+   the spread of scores, and open questions as a **word cloud** (each phone
+   can send up to three words or short phrases).
 2. Put the presenter screen on the projector. It shows a QR code and a
    six-character code; people can also go to the site's `#/w` page and type it.
 3. People choose a role if they want to (it's optional) and answer each
@@ -194,7 +196,11 @@ added to them.
 4. **Close voting and show results** puts the totals on the screen and on every
    phone — but only once at least five people have answered that question.
    Below five, the result stays hidden, so nobody's choice can be picked out.
-5. **Next question** moves everyone on. **End workshop** tells every open phone
+   On a word cloud, **click any word to hide it** from the screen and every
+   phone — for a name, or something rude. Hidden words are listed underneath;
+   click one to show it again. The person's own response still keeps it.
+5. **Full screen** (top right) fills the projector; Esc leaves it.
+6. **Next question** moves everyone on. **End workshop** tells every open phone
    to save its answers.
 
 Each phone's answers become one anonymous response, marked *Workshop* in the

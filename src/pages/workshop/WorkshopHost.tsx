@@ -7,7 +7,7 @@ import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { useStaffSession } from '../../hooks/useStaffSession';
-import { createWorkshop, listWorkshops, workshopQuestions, type WorkshopSummary } from '../../services/workshops';
+import { createWorkshop, listWorkshops, screenPrompt, workshopQuestions, type WorkshopSummary } from '../../services/workshops';
 import { AdminLogin } from '../admin/AdminLogin';
 
 const setupSchema = z.object({
@@ -81,7 +81,7 @@ const NewWorkshop = ({ staffId }: { staffId: string }) => {
             <li key={question.id}>
               <label className="flex items-start gap-3 text-body text-ink">
                 <input type="checkbox" value={question.id} className="mt-1 size-5 shrink-0" {...register('questionIds')} />
-                <span>{question.guide?.open ?? question.prompt}</span>
+                <span>{screenPrompt(question)}</span>
               </label>
             </li>
           ))}

@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { currentProject } from '../../content/projects';
 import { Link, useParams } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { QrCode } from '../../components/QrCode';
-import { TallyBars } from '../../components/TallyBars';
+import { WorkshopResults } from '../../components/WorkshopResults';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { primaryButton, secondaryButton } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
@@ -14,21 +14,46 @@ import {
   choiceHint,
   controlWorkshop,
   joinUrl,
-  tallyRows,
+  screenPrompt,
+  setWordHidden,
   type LiveWorkshop,
   type WorkshopControl,
-  type WorkshopQuestion,
 } from '../../services/workshops';
 import { AdminLogin } from '../admin/AdminLogin';
 
-const asWorkshopQuestion = (question: ReturnType<typeof questionById>): WorkshopQuestion | null =>
-  question !== undefined && (question.kind === 'multi' || question.kind === 'single' || question.kind === 'rank')
-    ? question
-    : null;
+/** Fills the screen with the presenter view; Esc or the same button leaves. */
+const FullScreenButton = () => {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const update = (): void => setOn(document.fullscreenElement !== null);
+    document.addEventListener('fullscreenchange', update);
+    return () => document.removeEventListener('fullscreenchange', update);
+  }, []);
+  if (!document.fullscreenEnabled) return null;
+  return (
+    <button
+      type="button"
+      className="text-meta text-primary-ink underline underline-offset-4"
+      onClick={() => void (on ? document.exitFullscreen() : document.documentElement.requestFullscreen())}
+    >
+      {on ? 'Exit full screen' : 'Full screen'}
+    </button>
+  );
+};
 
-const Stage = ({ live, code, onControl }: { live: LiveWorkshop; code: string; onControl: (c: WorkshopControl) => void }) => {
+const Stage = ({
+  live,
+  code,
+  onControl,
+  onHideWord,
+}: {
+  live: LiveWorkshop;
+  code: string;
+  onControl: (c: WorkshopControl) => void;
+  onHideWord: (word: string, hide: boolean) => void;
+}) => {
   const questionnaire = useQuestionnaire();
-  const question = asWorkshopQuestion(questionById(questionnaire, live.questionId ?? ''));
+  const question = questionById(questionnaire, live.questionId ?? '') ?? null;
   const url = joinUrl(code);
   const last = live.index >= live.questionIds.length - 1;
   const shortUrl = url.replace(/^https?:\/\//, '');
@@ -43,7 +68,7 @@ const Stage = ({ live, code, onControl }: { live: LiveWorkshop; code: string; on
           <p className="mt-2 text-title text-ink-soft">This question is no longer in the questionnaire.</p>
         ) : (
           <>
-            <h2 className="mt-2 font-display text-display font-bold text-ink">{question.guide?.open ?? question.prompt}</h2>
+            <h2 className="mt-2 font-display text-display font-bold text-ink">{screenPrompt(question)}</h2>
             <p className="mt-2 text-subtitle text-ink-soft">{choiceHint(question)}</p>
           </>
         )}
@@ -62,7 +87,41 @@ const Stage = ({ live, code, onControl }: { live: LiveWorkshop; code: string; on
             </p>
           )}
           {live.revealed && live.results !== null && question !== null && (
-            <TallyBars rows={tallyRows(question, live.results, live.answered)} answered={live.answered} large />
+            <WorkshopResults
+              question={question}
+              results={live.results}
+              answered={live.answered}
+              large
+              onHideWord={
+                question.kind === 'text'
+                  ? (word) => {
+                      if (window.confirm(`Hide "${word}" from the screen and every phone?`)) onHideWord(word, true);
+                    }
+                  : undefined
+              }
+            />
+          )}
+          {question?.kind === 'text' && live.revealed && live.results !== null && (
+            <p className="mt-3 text-meta text-ink-soft no-print">
+              Click a word to hide it.
+              {live.hidden.length > 0 && (
+                <>
+                  {' '}
+                  Hidden:{' '}
+                  {live.hidden.map((word) => (
+                    <button
+                      key={word}
+                      type="button"
+                      className="mr-2 underline underline-offset-4"
+                      title="Show it again"
+                      onClick={() => onHideWord(word, false)}
+                    >
+                      {word}
+                    </button>
+                  ))}
+                </>
+              )}
+            </p>
           )}
         </div>
 
@@ -153,6 +212,13 @@ export const WorkshopPresent = () => {
     await refresh();
   };
 
+  const hideWord = async (id: string, questionId: string, word: string, hide: boolean): Promise<void> => {
+    setError(null);
+    const result = await setWordHidden(id, questionId, word, hide);
+    if (!result.success) setError(result.error);
+    await refresh();
+  };
+
   return (
     <div className="min-h-dvh bg-paper px-4 py-6 text-ink sm:px-10 sm:py-8">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b-2 border-accent/60 pb-4 no-print">
@@ -163,6 +229,7 @@ export const WorkshopPresent = () => {
           <h1 className="text-title">{state?.found === true ? state.title : 'Workshop'}</h1>
         </div>
         <span className="flex items-center gap-4">
+          <FullScreenButton />
           <Link to="/workshop" className="text-meta text-primary-ink underline underline-offset-4">
             All workshops
           </Link>
@@ -183,7 +250,12 @@ export const WorkshopPresent = () => {
         {state === null && <p className="text-ink-soft">Loading…</p>}
         {state?.found === false && <p className="text-body">No workshop has the code {code}.</p>}
         {state?.found === true && (
-          <Stage live={state} code={code.toUpperCase()} onControl={(change) => void control(state.id, change)} />
+          <Stage
+            live={state}
+            code={code.toUpperCase()}
+            onControl={(change) => void control(state.id, change)}
+            onHideWord={(word, hide) => void hideWord(state.id, state.questionId ?? '', word, hide)}
+          />
         )}
       </main>
     </div>
