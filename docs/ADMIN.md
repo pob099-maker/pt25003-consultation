@@ -4,9 +4,11 @@ For project staff. Nothing here needs a developer.
 
 ## Signing in
 
-Go to `/admin` on the consultation site and sign in with the email and password you were given.
-Access is controlled by a list of administrators, so signing in is not by itself enough — if the
-data does not appear, ask whoever set the project up to add you to `consultation_admins`.
+Use **Project team sign in** at the bottom of any page. You choose your own password from the
+invitation email; nobody sends you one. Signing in is not by itself enough to see results — an
+administrator also has to add you on the **Team** tab. See [TEAM-LOGINS.md](TEAM-LOGINS.md).
+
+**Forgot your password?** is on the sign-in page.
 
 Sign out when you are finished on a shared computer.
 

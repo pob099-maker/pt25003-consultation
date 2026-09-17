@@ -9,6 +9,7 @@ import { Privacy } from './pages/Privacy';
 import { ThankYou } from './pages/ThankYou';
 import { Admin } from './pages/admin/Admin';
 import { Interview } from './pages/Interview';
+import { SetPassword } from './pages/SetPassword';
 import { flushOutbox } from './services/submit';
 
 /**
@@ -42,6 +43,7 @@ export const App = () => {
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/interview" element={<Interview />} />
+            <Route path="/set-password" element={<SetPassword />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </QuestionnaireProvider>

@@ -13,6 +13,7 @@ import { useAdminData } from './useAdminData';
 import { RoundEditor } from './RoundEditor';
 import { PhoneScriptPanel } from './PhoneScriptPanel';
 import { ChangePanel } from './ChangePanel';
+import { TeamPanel } from './TeamPanel';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
@@ -42,7 +43,9 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const [methodFilter, setMethodFilter] = useState<'all' | 'online' | 'interview' | 'workshop'>('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [includeTest, setIncludeTest] = useState(data.demoMode);
-  const [tab, setTab] = useState<'priorities' | 'change' | 'comments' | 'contacts' | 'phone' | 'rounds'>('priorities');
+  const [tab, setTab] = useState<'priorities' | 'change' | 'comments' | 'contacts' | 'phone' | 'rounds' | 'team'>(
+    'priorities',
+  );
 
   const filtered = useMemo(
     () =>
@@ -237,6 +240,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             ['contacts', `Contacts (${contacts.length})`],
             ['phone', 'Phone script'],
             ['rounds', 'Question wording'],
+            ['team', 'Team'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -537,6 +541,8 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       {!data.loading && tab === 'change' && <ChangePanel responses={data.responses} />}
 
       {tab === 'phone' && <PhoneScriptPanel />}
+
+      {tab === 'team' && <TeamPanel />}
 
       {!data.loading && tab === 'rounds' && <RoundEditor />}
 
