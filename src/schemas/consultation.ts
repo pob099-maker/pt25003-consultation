@@ -46,6 +46,11 @@ export const consultationResponseSchema = z.object({
       !response.method.startsWith('interview_') || (response.consentVerbal === true && response.collectedBy !== null),
     { message: 'An interview needs the consent read aloud and agreed to before it can be saved.', path: ['consentVerbal'] },
   )
+  // A workshop answer names its workshop; nothing else claims one.
+  .refine((response) => (response.method === 'workshop') === (response.sessionId !== null), {
+    message: 'A workshop response must name its workshop, and only a workshop response may.',
+    path: ['sessionId'],
+  })
   // Anything marked as prompted has to have been mentioned at all.
   .refine(
     (response) =>

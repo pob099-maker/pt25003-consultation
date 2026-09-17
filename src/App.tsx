@@ -11,6 +11,9 @@ import { Admin } from './pages/admin/Admin';
 import { Interview } from './pages/Interview';
 import { SetPassword } from './pages/SetPassword';
 import { GroupRecordPage } from './pages/GroupRecordPage';
+import { WorkshopHost } from './pages/workshop/WorkshopHost';
+import { WorkshopPresent } from './pages/workshop/WorkshopPresent';
+import { WorkshopJoin } from './pages/workshop/WorkshopJoin';
 import { flushOutbox } from './services/submit';
 
 /**
@@ -47,6 +50,10 @@ export const App = () => {
             <Route path="/set-password" element={<SetPassword />} />
             <Route path="/group" element={<GroupRecordPage />} />
             <Route path="/group/:id" element={<GroupRecordPage />} />
+            <Route path="/workshop" element={<WorkshopHost />} />
+            <Route path="/workshop/:code" element={<WorkshopPresent />} />
+            <Route path="/w" element={<WorkshopJoin />} />
+            <Route path="/w/:code" element={<WorkshopJoin />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </QuestionnaireProvider>

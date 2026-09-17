@@ -140,6 +140,9 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           <Link to="/interview" className={primaryButton}>
             Start an interview
           </Link>
+          <Link to="/workshop" className={secondaryButton}>
+            Run a workshop
+          </Link>
           <button type="button" className="text-meta text-primary-ink underline underline-offset-4" onClick={onSignOut}>
             Sign out
           </button>

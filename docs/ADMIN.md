@@ -172,6 +172,36 @@ is not quietly biased towards the people comfortable with an online form.
 If they also want to be contacted about activities, ask before entering their details, and tick the
 interests they agreed to.
 
+## Group discussions and live workshops
+
+There are two ways to capture a room, and they are counted differently.
+
+**A group discussion** (admin area → Groups → *Record a group discussion*) is
+written up afterwards by the facilitator: how many people were there, and how
+many hands went up for each option. Leave a box empty for anything the group
+wasn't asked — empty means "not asked", 0 means "asked, and nobody". A group is
+one record of a room. It is reported beside individual responses and never
+added to them.
+
+**A live workshop** (admin area → *Run a workshop*) is for a room with phones.
+
+1. Name the workshop and tick the questions, in order. Only tap-to-answer
+   questions are offered; ratings and free text are left to the full form.
+2. Put the presenter screen on the projector. It shows a QR code and a
+   six-character code; people can also go to the site's `#/w` page and type it.
+3. People choose a role if they want to (it's optional) and answer each
+   question as it comes up. They can change an answer until you close voting.
+4. **Close voting and show results** puts the totals on the screen and on every
+   phone — but only once at least five people have answered that question.
+   Below five, the result stays hidden, so nobody's choice can be picked out.
+5. **Next question** moves everyone on. **End workshop** tells every open phone
+   to save its answers.
+
+Each phone's answers become one anonymous response, marked *Workshop* in the
+**Collected** filter and tied to that workshop. Someone who leaves early can tap
+*Save my answers and finish*. A phone closed before the end without doing that
+still counts in the live totals, but not in the responses.
+
 ## Tagging comments
 
 Open the **Comments** tab. Each free-text answer shows the role, the date and the question. Tap any

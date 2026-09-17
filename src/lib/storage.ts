@@ -38,4 +38,6 @@ export const STORAGE_KEYS = {
   interviewDraft: 'pt25003.interview-draft.v1',
   interviewSetup: 'pt25003.interview-setup.v1',
   demoGroups: 'pt25003.demo-groups.v1',
+  demoWorkshops: 'pt25003.demo-workshops.v1',
+  workshopParticipant: 'pt25003.workshop',
 } as const;
