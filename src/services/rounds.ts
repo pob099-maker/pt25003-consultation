@@ -1,6 +1,6 @@
 import { getSupabase } from '../lib/supabase';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
-import type { Option, Question, Questionnaire, Section } from '../types';
+import type { Option, Question, Questionnaire, RoundStage, Section } from '../types';
 
 export const ROUNDS_TABLE = 'consultation_rounds';
 
@@ -21,6 +21,7 @@ export interface QuestionOverride {
 export interface RoundConfig {
   readonly roundId: string;
   readonly label: string;
+  readonly stage: RoundStage;
   readonly isActive: boolean;
   readonly overrides: Readonly<Record<string, QuestionOverride>>;
 }
@@ -38,7 +39,7 @@ const applyToOptions = (
 };
 
 const applyToQuestion = (question: Question, override: QuestionOverride | undefined): Question => {
-  if (override === undefined) return question;
+  if (override === undefined || question.tracking === true) return question;
   const base = {
     ...question,
     prompt: override.prompt ?? question.prompt,
@@ -65,7 +66,9 @@ export const applyRound = (base: Questionnaire, round: RoundConfig): Questionnai
   ...base,
   roundId: round.roundId,
   roundLabel: round.label,
+  stage: round.stage,
   core: base.core.map((section) => applyToSection(section, round.overrides)),
+  followUp: base.followUp.map((section) => applyToSection(section, round.overrides)),
   pathways: Object.fromEntries(
     Object.entries(base.pathways).map(([key, section]) => [key, applyToSection(section, round.overrides)]),
   ),
@@ -75,9 +78,18 @@ export const applyRound = (base: Questionnaire, round: RoundConfig): Questionnai
 interface RoundRow {
   round_id: string;
   label: string;
+  stage: RoundStage | null;
   is_active: boolean;
   overrides: Record<string, QuestionOverride> | null;
 }
+
+const fromRow = (row: RoundRow): RoundConfig => ({
+  roundId: row.round_id,
+  label: row.label,
+  stage: row.stage ?? 'baseline',
+  isActive: row.is_active,
+  overrides: row.overrides ?? {},
+});
 
 /**
  * The active round, or null when there is no backend or no configured round.
@@ -89,26 +101,24 @@ export const loadActiveRound = async (): Promise<RoundConfig | null> => {
   if (supabase === null) return null;
   const { data, error } = await supabase
     .from(ROUNDS_TABLE)
-    .select('round_id, label, is_active, overrides')
+    .select('round_id, label, stage, is_active, overrides')
     .eq('is_active', true)
     .limit(1)
     .maybeSingle();
   if (error !== null || data === null) return null;
   const row = data as RoundRow;
-  return { roundId: row.round_id, label: row.label, isActive: row.is_active, overrides: row.overrides ?? {} };
+  return fromRow(row);
 };
 
 export const loadAllRounds = async (): Promise<readonly RoundConfig[]> => {
   const supabase = getSupabase();
   if (supabase === null) return [];
-  const { data, error } = await supabase.from(ROUNDS_TABLE).select('round_id, label, is_active, overrides');
+  const { data, error } = await supabase
+    .from(ROUNDS_TABLE)
+    .select('round_id, label, stage, is_active, overrides, created_at')
+    .order('created_at', { ascending: true });
   if (error !== null || data === null) return [];
-  return (data as RoundRow[]).map((row) => ({
-    roundId: row.round_id,
-    label: row.label,
-    isActive: row.is_active,
-    overrides: row.overrides ?? {},
-  }));
+  return (data as RoundRow[]).map(fromRow);
 };
 
 export const saveRound = async (round: RoundConfig): Promise<string | null> => {
@@ -126,6 +136,7 @@ export const saveRound = async (round: RoundConfig): Promise<string | null> => {
     {
       round_id: round.roundId,
       label: round.label,
+      stage: round.stage,
       is_active: round.isActive,
       overrides: round.overrides,
     },

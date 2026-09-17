@@ -3,10 +3,18 @@ import { card, primaryButton, secondaryButton, textInput } from '../../component
 import { DEFAULT_QUESTIONNAIRE } from '../../content/questionnaire';
 import { allSections } from '../../content/lookup';
 import { loadActiveRound, saveRound, type QuestionOverride, type RoundConfig } from '../../services/rounds';
+import type { RoundStage } from '../../types';
+
+const STAGES: readonly { id: RoundStage; label: string; help: string }[] = [
+  { id: 'pilot', label: 'Pilot', help: 'Internal testing. Never compared with anything.' },
+  { id: 'baseline', label: 'Baseline', help: 'The starting point every later round is measured against. There is only one.' },
+  { id: 'review', label: 'Review', help: 'A later round. Also asks what people saw from the project and whether it changed anything.' },
+];
 
 const emptyRound = (): RoundConfig => ({
   roundId: DEFAULT_QUESTIONNAIRE.roundId,
   label: DEFAULT_QUESTIONNAIRE.roundLabel,
+  stage: DEFAULT_QUESTIONNAIRE.stage,
   isActive: true,
   overrides: {},
 });
@@ -44,15 +52,19 @@ export const RoundEditor = () => {
     setStatus(error === null ? 'Saved. New responses will use this wording.' : error);
   };
 
-  const startNewRound = (): void => {
+  const startNewRound = (stage: RoundStage): void => {
     const suffix = new Date().toISOString().slice(0, 10);
+    const name = stage === 'baseline' ? 'baseline' : stage === 'review' ? 'review' : 'pilot';
     setRound({
-      roundId: `round-${suffix}`,
-      label: `PT25003 consultation, ${suffix}`,
+      roundId: `${suffix}-${name}`,
+      label: `PT25003 consultation, ${name}, ${suffix}`,
+      stage,
       isActive: true,
       overrides: round.overrides,
     });
-    setStatus('New round prepared. Responses already collected keep their own round and are untouched. Save to start it.');
+    setStatus(
+      `A new ${name} round is prepared. Responses already collected keep their own round and are untouched. Save to start it.`,
+    );
   };
 
   return (
@@ -87,12 +99,40 @@ export const RoundEditor = () => {
             />
           </div>
         </div>
+        <fieldset className="mt-4">
+          <legend className="mb-1 text-meta font-semibold text-ink-soft">Stage</legend>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {STAGES.map((stage) => (
+              <label
+                key={stage.id}
+                className={`flex cursor-pointer gap-2 rounded-lg border p-3 ${
+                  round.stage === stage.id ? 'border-primary bg-selected' : 'border-line bg-surface'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="round-stage"
+                  className="mt-1 accent-primary"
+                  checked={round.stage === stage.id}
+                  onChange={() => setRound({ ...round, stage: stage.id })}
+                />
+                <span>
+                  <span className="block font-semibold text-ink">{stage.label}</span>
+                  <span className="block text-meta text-ink-soft">{stage.help}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <div className="mt-4 flex flex-wrap gap-3">
           <button type="button" className={primaryButton} onClick={() => void save()} disabled={busy}>
-            {busy ? 'Saving…' : 'Save wording'}
+            {busy ? 'Saving…' : 'Save'}
           </button>
-          <button type="button" className={secondaryButton} onClick={startNewRound}>
-            Start a new round
+          <button type="button" className={secondaryButton} onClick={() => startNewRound('baseline')}>
+            Start the baseline
+          </button>
+          <button type="button" className={secondaryButton} onClick={() => startNewRound('review')}>
+            Start a review round
           </button>
 
         </div>
@@ -123,7 +163,20 @@ export const RoundEditor = () => {
                       : [];
               return (
                 <div key={question.id} className="border-t border-line pt-4 first:border-0 first:pt-0">
-                  <p className="text-meta text-ink-faint">{question.id}</p>
+                  <p className="text-meta text-ink-faint">
+                    {question.id}
+                    {question.tracking === true && (
+                      <span className="ml-2 rounded-full border border-accent px-2 py-0.5 text-eyebrow uppercase text-ink-soft">
+                        Tracked · locked
+                      </span>
+                    )}
+                  </p>
+                  {question.tracking === true && (
+                    <p className="mt-1 text-meta text-ink-soft">
+                      Asked word for word in every round so the baseline can be compared with each review. Changing it —
+                      even adding an option — would break that comparison, so it cannot be edited here.
+                    </p>
+                  )}
                   <label htmlFor={`${question.id}-prompt`} className="mt-1 mb-1 block text-meta font-semibold text-ink-soft">
                     Question wording
                   </label>
@@ -132,6 +185,7 @@ export const RoundEditor = () => {
                     className={textInput}
                     rows={2}
                     value={override.prompt ?? question.prompt}
+                    disabled={question.tracking === true}
                     onChange={(event) => setOverride(question.id, { prompt: event.target.value })}
                   />
                   <label htmlFor={`${question.id}-help`} className="mt-2 mb-1 block text-meta font-semibold text-ink-soft">
@@ -141,6 +195,7 @@ export const RoundEditor = () => {
                     id={`${question.id}-help`}
                     className={textInput}
                     value={override.help ?? question.help ?? ''}
+                    disabled={question.tracking === true}
                     onChange={(event) => setOverride(question.id, { help: event.target.value })}
                   />
                   {options.length > 0 && (
@@ -158,6 +213,7 @@ export const RoundEditor = () => {
                               id={`${question.id}-${option.id}`}
                               className={textInput}
                               value={override.optionLabels?.[option.id] ?? option.label}
+                              disabled={question.tracking === true}
                               onChange={(event) =>
                                 setOverride(question.id, {
                                   optionLabels: { ...(override.optionLabels ?? {}), [option.id]: event.target.value },

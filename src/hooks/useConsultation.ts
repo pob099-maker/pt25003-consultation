@@ -77,6 +77,7 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
     const sectionSteps = [
       ...questionnaire.core,
       ...(roleSection === null ? [] : [roleSection]),
+      ...(questionnaire.stage === 'review' ? questionnaire.followUp : []),
       ...questionnaire.projectDesign,
     ].map((section) => ({ id: section.id, title: section.title, intro: section.intro, section }));
     return [ABOUT_YOU, ...sectionSteps, STAY_INVOLVED];

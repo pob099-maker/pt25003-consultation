@@ -11,6 +11,7 @@ import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
 import { RoundEditor } from './RoundEditor';
 import { PhoneScriptPanel } from './PhoneScriptPanel';
+import { ChangePanel } from './ChangePanel';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
@@ -37,7 +38,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [includeTest, setIncludeTest] = useState(data.demoMode);
-  const [tab, setTab] = useState<'priorities' | 'comments' | 'contacts' | 'phone' | 'rounds'>('priorities');
+  const [tab, setTab] = useState<'priorities' | 'change' | 'comments' | 'contacts' | 'phone' | 'rounds'>('priorities');
 
   const filtered = useMemo(
     () =>
@@ -202,6 +203,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         {(
           [
             ['priorities', 'Priorities'],
+            ['change', 'Change over time'],
             ['comments', `Comments (${comments.length})`],
             ['contacts', `Contacts (${contacts.length})`],
             ['phone', 'Phone script'],
@@ -489,6 +491,8 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           {contacts.length === 0 && <p className="text-ink-soft">No contact records yet.</p>}
         </div>
       )}
+
+      {!data.loading && tab === 'change' && <ChangePanel responses={data.responses} />}
 
       {tab === 'phone' && <PhoneScriptPanel />}
 

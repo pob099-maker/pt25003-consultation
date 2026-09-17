@@ -130,6 +130,7 @@ const CORE: readonly Section[] = [
     questions: [
       {
         id: 'q1_constraints',
+        tracking: true,
         kind: 'multi',
         prompt: 'Where do you see the biggest hold-ups in the potato industry — the places where mechanisation, automation or a better workflow would make the most difference?',
         help: 'Choose as many as apply.',
@@ -138,6 +139,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q2_top_three',
+        tracking: true,
         kind: 'rank',
         prompt: 'Of those, which three should we be putting the most effort into?',
         help: 'Tap them in order, most important first.',
@@ -181,6 +183,7 @@ const CORE: readonly Section[] = [
     questions: [
       {
         id: 'q5_areas',
+        tracking: true,
         kind: 'rating',
         prompt: 'Where should we put our effort first?',
         help: 'Rate each one from 1 (not a priority) to 5 (very high priority). Skip any you have no view on.',
@@ -201,6 +204,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q7_evidence',
+        tracking: true,
         kind: 'multi',
         prompt: 'What would it take to convince you to try something new?',
         help: 'Choose as many as apply.',
@@ -221,6 +225,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q_trial',
+        tracking: true,
         kind: 'single',
         // Trialability — whether something can be tried on a small scale before
         // committing — is one of the strongest predictors of adoption in ADOPT,
@@ -237,6 +242,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q_trust',
+        tracking: true,
         kind: 'multi',
         // Who actually shifts somebody's thinking is arguably the single most
         // useful answer for designing extension, and it was missing. A finding
@@ -306,6 +312,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'farm_scale',
+        tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes of potatoes do you grow in a year?',
         help: 'A broad band is plenty. It lets us tell whether a finding belongs to smaller operations or to everybody.',
@@ -334,6 +341,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'farm_adopted',
+        tracking: true,
         kind: 'multi',
         prompt: 'What have you put on, trialled, or had a serious look at?',
         help: 'Tick any that apply. It does not matter whether you kept it.',
@@ -374,6 +382,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'farm_barriers',
+        tracking: true,
         kind: 'multi',
         prompt: 'What has held you back most?',
         help: 'Tick any that apply.',
@@ -429,6 +438,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'con_scale',
+        tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes of potatoes do you handle in a year, across all your clients?',
         help: 'A broad band is plenty.',
@@ -556,6 +566,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'pro_scale',
+        tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes do you handle in a year?',
         help: 'A broad band is plenty.',
@@ -603,6 +614,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'pro_systems',
+        tracking: true,
         kind: 'multi',
         prompt: 'What have you put in, trialled, or had a serious look at?',
         help: 'Tick any that apply.',
@@ -622,6 +634,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'pro_barriers',
+        tracking: true,
         kind: 'multi',
         prompt: 'What has held that back?',
         help: 'Tick any that apply.',
@@ -678,6 +691,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'mach_barriers',
+        tracking: true,
         kind: 'multi',
         prompt: 'What stops your potato customers going ahead?',
         help: 'Tick any that apply.',
@@ -1012,6 +1026,61 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
   },
 };
 
+/**
+ * Review rounds only. Bennett's hierarchy asks whether people saw what a
+ * project produced and whether it changed anything they do — the two levels a
+ * baseline cannot measure, because nothing has been produced yet.
+ */
+const FOLLOW_UP: readonly Section[] = [
+  {
+    id: 'follow_up',
+    title: 'Since we last asked',
+    intro: 'Two quick questions about what has happened since the project started.',
+    questions: [
+      {
+        id: 'fu_seen',
+        kind: 'multi',
+        tracking: true,
+        prompt: 'Have you seen or used anything from the Potato Mechanisation Project?',
+        help: 'Tick any that apply.',
+        options: opts(
+          ['field_day', 'A field day or demonstration'],
+          ['case_study', 'A case study'],
+          ['video', 'A video'],
+          ['factsheet', 'A factsheet or checklist'],
+          ['roi_tool', 'An ROI calculator or decision tool'],
+          ['webinar', 'A webinar or online briefing'],
+          ['one_to_one', 'A one-to-one conversation'],
+          ['article', 'A PotatoLink article or update'],
+          ['none', 'Nothing yet'],
+          ['other', 'Other'],
+        ),
+        allowOther: true,
+      },
+      {
+        id: 'fu_changed',
+        kind: 'single',
+        tracking: true,
+        prompt: 'Has any of it changed what you do, or plan to do?',
+        options: opts(
+          ['changed', 'Yes — we have changed how we do something'],
+          ['planning', 'We are planning a change'],
+          ['considering', 'We are looking into it'],
+          ['no_change', 'No change'],
+          ['not_applicable', 'Have not seen enough to say'],
+        ),
+      },
+      {
+        id: 'fu_what',
+        kind: 'text',
+        prompt: 'If something changed, what was it — and what made the difference?',
+        help: 'Optional. A sentence is plenty.',
+        rows: 3,
+      },
+    ],
+  },
+];
+
 const PROJECT_DESIGN: readonly Section[] = [
   {
     id: 'project_design',
@@ -1153,10 +1222,12 @@ export const interestsForPathway = (
 export const DEFAULT_QUESTIONNAIRE: Questionnaire = {
   roundId: '2026-round-1',
   roundLabel: 'PT25003 consultation, round 1',
+  stage: 'baseline',
   roles: ROLES,
   regions: REGIONS,
   core: CORE,
   pathways: PATHWAYS,
+  followUp: FOLLOW_UP,
   projectDesign: PROJECT_DESIGN,
   interestOptions: INTEREST_OPTIONS,
   pathwayInterests: PATHWAY_INTERESTS,

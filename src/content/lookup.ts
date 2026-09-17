@@ -3,8 +3,13 @@ import type { Question, Questionnaire, Section } from '../types';
 export const allSections = (questionnaire: Questionnaire): readonly Section[] => [
   ...questionnaire.core,
   ...Object.values(questionnaire.pathways),
+  ...questionnaire.followUp,
   ...questionnaire.projectDesign,
 ];
+
+/** The questions asked identically every round, for the change-over-time view. */
+export const trackingQuestions = (questionnaire: Questionnaire): readonly Question[] =>
+  allQuestions(questionnaire).filter((question) => question.tracking === true);
 
 export const allQuestions = (questionnaire: Questionnaire): readonly Question[] =>
   allSections(questionnaire).flatMap((section) => section.questions);

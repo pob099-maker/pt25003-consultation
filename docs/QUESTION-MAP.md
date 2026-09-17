@@ -39,7 +39,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### Where do you see the biggest hold-ups in the potato industry — the places where mechanisation, automation or a better workflow would make the most difference?
 
-`q1_constraints` · tick any + other
+`q1_constraints` · tick any + other · **tracked every round**
 
 - Ground preparation and planting
 - Crop monitoring and decision support
@@ -58,7 +58,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### Of those, which three should we be putting the most effort into?
 
-`q2_top_three` · pick top 3
+`q2_top_three` · pick top 3 · **tracked every round**
 
 - drawn from whatever was ticked in `q1_constraints`
 
@@ -87,7 +87,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### Where should we put our effort first?
 
-`q5_areas` · rate 1-5 × 12
+`q5_areas` · rate 1-5 × 12 · **tracked every round**
 
 - Precision planting and crop establishment
 - Autonomous or semi-autonomous field operations
@@ -110,7 +110,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### What would it take to convince you to try something new?
 
-`q7_evidence` · tick any + other
+`q7_evidence` · tick any + other · **tracked every round**
 
 - Local demonstration under Australian potato conditions
 - Independent economic analysis or ROI assessment
@@ -126,7 +126,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### Before you committed to something new, how much would it matter to try it on part of the operation first?
 
-`q_trial` · one only
+`q_trial` · one only · **tracked every round**
 
 - Essential — I would not go ahead without it
 - Helpful, but not a deal-breaker
@@ -135,7 +135,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### When you are weighing up new gear or a new way of doing things, whose opinion actually counts?
 
-`q_trust` · tick any + other
+`q_trust` · tick any + other · **tracked every round**
 
 - Other growers and neighbours
 - Grower groups and study groups
@@ -161,7 +161,7 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 
 #### Roughly how many tonnes of potatoes do you grow in a year?
 
-`farm_scale` · one only
+`farm_scale` · one only · **tracked every round**
 
 - Under 1,000 tonnes
 - 1,000 to 5,000 tonnes
@@ -189,7 +189,7 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 
 #### What have you put on, trialled, or had a serious look at?
 
-`farm_adopted` · tick any + other
+`farm_adopted` · tick any + other · **tracked every round**
 
 - GPS guidance or autosteer
 - Section control on the boom or planter
@@ -220,7 +220,7 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 
 #### What has held you back most?
 
-`farm_barriers` · tick any + other
+`farm_barriers` · tick any + other · **tracked every round**
 
 - Upfront capital cost
 - Uncertain return on investment
@@ -269,7 +269,7 @@ Contractor · 8 questions · about 4.3 min
 
 #### Roughly how many tonnes of potatoes do you handle in a year, across all your clients?
 
-`con_scale` · one only
+`con_scale` · one only · **tracked every round**
 
 - Under 1,000 tonnes
 - 1,000 to 5,000 tonnes
@@ -372,7 +372,7 @@ Processor, packhouse or storage business · 7 questions · about 3.9 min
 
 #### Roughly how many tonnes do you handle in a year?
 
-`pro_scale` · one only
+`pro_scale` · one only · **tracked every round**
 
 - Under 1,000 tonnes
 - 1,000 to 5,000 tonnes
@@ -415,7 +415,7 @@ Processor, packhouse or storage business · 7 questions · about 3.9 min
 
 #### What have you put in, trialled, or had a serious look at?
 
-`pro_systems` · tick any + other
+`pro_systems` · tick any + other · **tracked every round**
 
 - Optical sizing and shape grading
 - Optical defect detection
@@ -430,7 +430,7 @@ Processor, packhouse or storage business · 7 questions · about 3.9 min
 
 #### What has held that back?
 
-`pro_barriers` · tick any + other
+`pro_barriers` · tick any + other · **tracked every round**
 
 - Upfront capital cost
 - Uncertain return on investment
@@ -504,7 +504,7 @@ Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 m
 
 #### What stops your potato customers going ahead?
 
-`mach_barriers` · tick any + other
+`mach_barriers` · tick any + other · **tracked every round**
 
 - Upfront capital cost
 - Uncertain return on investment
@@ -782,6 +782,39 @@ Adviser, consultant, researcher or educator · 6 questions · about 3.8 min
 #### Are there projects, data sources, researchers or demonstration sites we should be talking to?
 
 `adv_connections` · open text
+
+## Review rounds only — Since we last asked
+
+Not asked at baseline: there is nothing yet to have seen or changed.
+
+### Have you seen or used anything from the Potato Mechanisation Project?
+
+`fu_seen` · tick any + other · **tracked every round**
+
+- A field day or demonstration
+- A case study
+- A video
+- A factsheet or checklist
+- An ROI calculator or decision tool
+- A webinar or online briefing
+- A one-to-one conversation
+- A PotatoLink article or update
+- Nothing yet
+- Other
+
+### Has any of it changed what you do, or plan to do?
+
+`fu_changed` · one only · **tracked every round**
+
+- Yes — we have changed how we do something
+- We are planning a change
+- We are looking into it
+- No change
+- Have not seen enough to say
+
+### If something changed, what was it — and what made the difference?
+
+`fu_what` · open text
 
 ## 6. Everybody — How we should go about it
 

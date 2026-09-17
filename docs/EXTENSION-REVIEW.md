@@ -105,11 +105,70 @@ with Hort Innovation.
 | --- | --- |
 | Trialability was implied but never asked | Added: *"Before you committed to something new, how much would it matter to try it on part of the operation first?"* |
 | Nothing identified who respondents trust | Added: *"When you are weighing up new gear or a new way of doing things, whose opinion actually counts?"* |
-| Evaluation not designed in | Open: agree which core questions will be repeated in a later round to measure change |
+| Evaluation not designed in | **Done:** a baseline-and-review design with a locked set of tracked questions — see section 5 |
 | Some technical terms remain ("interoperability") | Glossed on screen; to be tested with growers reading cold |
 | Group discussions could be miscounted as individual responses | Planned: group sessions recorded as group records with counts, never as individual rows |
 
-## 5. The "is it wanky" test
+## 5. Evaluation plan: baseline and review
+
+The consultation is the project's baseline, and it is repeated to measure change — the
+before-and-after that Bennett's hierarchy and Hort Innovation's monitoring and evaluation plans ask
+for.
+
+### Schedule
+
+| Round | When | Purpose |
+| --- | --- | --- |
+| Pilot | Now | The team tests the instrument. Never compared with anything. |
+| **Baseline** | At launch | The starting point every later round is measured against. |
+| **Mid-project review** | Roughly half-way | Early read on change, and a chance to adjust course. |
+| **End-of-project review** | Before final reporting | The measure of change the final report rests on. |
+
+Three measured rounds rather than annual ones, because asking the same people too often wears out
+the goodwill the consultation depends on.
+
+### Tracked questions
+
+Asked word for word in every round, and locked against editing in the admin area and in the data
+layer. Changing a tracked question — even adding an option, which draws answers away from the
+others — would break the comparison.
+
+| Measures | Tracked questions | Bennett level |
+| --- | --- | --- |
+| Where the pressure is | Constraints; top three ranked | Situation |
+| Priorities | Ratings across the twelve areas | Situation |
+| **What is in use** | What growers and packhouses have adopted, trialled or considered | **Practice change** |
+| What holds people back | Barriers to adoption | Situation / practice |
+| What it takes to convince them | Evidence needed; importance of trying small first | Attitudes and aspirations |
+| Who they listen to | Whose opinion counts | Knowledge pathways |
+| Scale | Tonnage band | For segmenting every other measure |
+| **What they saw** | *Review rounds only:* what project outputs they have seen or used | **Reactions** |
+| **What changed** | *Review rounds only:* whether it changed what they do or plan to do | **Practice change** |
+
+Role and region are asked in every round as well, since every comparison needs them.
+
+Everything else may change between rounds, so topical questions can be added without disturbing
+the comparison.
+
+### What the comparison can and cannot claim
+
+Responses are anonymous, and the project decided not to offer a code that would link one person's
+answers across rounds. Each round is therefore a separate picture of the industry, and the
+comparison is between pictures — a **repeated cross-section**, not a panel.
+
+That supports statements such as *"the share of growers using optical grading rose from 18% to
+31% between baseline and the end of the project."* It supports weaker claims about *why*, because
+different people answer each round. Two safeguards:
+
+- **Composition is reported beside every comparison**, by role, so a change in who answered is not
+  read as a change of mind.
+- **Figures from fewer than ten people are flagged** as thin.
+
+Attribution to the project rests on the review-round questions — what people saw from the project,
+and whether it changed what they did — together with the qualitative follow-up asked alongside
+them.
+
+## 6. The "is it wanky" test
 
 The grower-facing test is plain words, obvious usefulness, and no sense of being studied. The
 instrument avoids consultancy language, never uses "stakeholder engagement", gives a phone number
@@ -118,13 +177,13 @@ to a named person, and explains in one line why each piece of personal informati
 The honest test is not this document. It is two or three growers reading it cold, with somebody
 watching where they hesitate.
 
-## 6. What a reviewer is asked to look at
+## 7. What a reviewer is asked to look at
 
 1. Do the role branches cover the value chain, and is anybody missing?
 2. Are the tick-box options the right ones, in growers' own words?
 3. Are the five open questions the right ones to leave open?
 4. Is anything likely to read as jargon, or as the project talking to itself?
-5. Which core questions should be repeated later to measure change?
+5. Is the tracked set right for measuring change, and is anything missing from it?
 6. Does the phone and group-discussion approach keep answers genuinely comparable?
 7. Does anything here raise a research ethics question for publication?
 

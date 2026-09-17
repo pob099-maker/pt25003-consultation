@@ -59,7 +59,8 @@ const optionsOf = (question: Question): readonly Option[] => {
 
 const questionNode = (question: Question, depth: number): string => {
   const heading = '#'.repeat(depth);
-  const lines = [`${heading} ${question.prompt}`, '', `\`${question.id}\` · ${kindLabel(question)}`, ''];
+  const tracked = question.tracking === true ? ' · **tracked every round**' : '';
+  const lines = [`${heading} ${question.prompt}`, '', `\`${question.id}\` · ${kindLabel(question)}${tracked}`, ''];
   const options = optionsOf(question);
   if (options.length > 0 && question.kind !== 'rank') {
     lines.push(bullets(options), '');
@@ -110,6 +111,12 @@ export const buildQuestionMap = (questionnaire: Questionnaire): string => {
       '',
     );
     for (const question of section.questions) lines.push(questionNode(question, 4));
+  }
+
+  for (const section of questionnaire.followUp) {
+    lines.push(`## Review rounds only — ${section.title}`, '');
+    lines.push('Not asked at baseline: there is nothing yet to have seen or changed.', '');
+    for (const question of section.questions) lines.push(questionNode(question, 3));
   }
 
   for (const section of questionnaire.projectDesign) {

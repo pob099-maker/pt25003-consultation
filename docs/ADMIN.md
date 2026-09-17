@@ -31,6 +31,33 @@ while something a few people put first is an acute one.
 The mean of the 1–5 ratings, alongside the share who rated it 4 or 5. Areas nobody rated are not
 counted as zeros — an unanswered question is not a low score.
 
+## Baseline and review rounds
+
+The consultation is designed to be run three times: a **baseline** at launch, a **review** about
+half-way through the project, and a final **review** before reporting. The **Change over time** tab
+compares them.
+
+On the **Question wording** tab:
+
+- **Start the baseline** when the pilot is finished and the link is about to go out. There is only
+  one baseline.
+- **Start a review round** when it is time to measure again. A review round also asks what people
+  have seen from the project and whether it changed anything they do — questions that make no sense
+  at baseline.
+
+Questions marked **Tracked · locked** are asked word for word in every round. They cannot be edited,
+because changing one — even adding an option — would make the baseline and the review measure
+different things. Everything else can be reworded freely between rounds.
+
+Reading the **Change over time** tab:
+
+- Each round is a separate picture of the industry. Responses are anonymous, so this compares
+  pictures, not the same people over time.
+- Check **Who answered** first. If the baseline was mostly growers and the review mostly packhouses,
+  the numbers will move for that reason alone.
+- Greyed figures come from fewer than ten people. Report them with that caveat, or not at all.
+- Pilot rounds never appear here.
+
 ## Piloting before the link goes out
 
 Let the team use the real thing, on a **pilot round**, rather than testing and then deleting.

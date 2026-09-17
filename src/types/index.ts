@@ -27,7 +27,22 @@ interface QuestionBase {
   readonly help?: string;
   /** Every question is optional unless this is true. Only role is required. */
   readonly required?: boolean;
+  /**
+   * Asked word-for-word in every round, and locked against editing, so the
+   * baseline can be compared with every review that follows. Changing the
+   * wording or the options of a tracked question — even adding an option,
+   * which draws ticks away from the others — breaks that comparison.
+   */
+  readonly tracking?: boolean;
 }
+
+/**
+ * Where a round sits in the evaluation.
+ * - pilot: internal testing; never compared with anything
+ * - baseline: the starting point every later round is measured against
+ * - review: a later round, which also asks what people saw and changed
+ */
+export type RoundStage = 'pilot' | 'baseline' | 'review';
 
 export type Question =
   | (QuestionBase & { readonly kind: 'multi'; readonly options: readonly Option[]; readonly allowOther?: boolean })
@@ -59,12 +74,19 @@ export interface Questionnaire {
   /** Consultation round. Historic responses keep the round they were taken in. */
   readonly roundId: string;
   readonly roundLabel: string;
+  readonly stage: RoundStage;
   readonly roles: readonly RoleOption[];
   readonly regions: readonly Option[];
   /** Sections shown to everybody, before the role-specific pathway. */
   readonly core: readonly Section[];
   /** Role-specific sections, keyed by pathway id. */
   readonly pathways: Readonly<Record<string, Section>>;
+  /**
+   * Shown only in review rounds: whether people saw anything from the project
+   * and whether it changed what they do. There is nothing to react to at
+   * baseline, so asking there would only collect noise.
+   */
+  readonly followUp: readonly Section[];
   /** Sections shown to everybody, after the role-specific pathway. */
   readonly projectDesign: readonly Section[];
   /** Ways to stay involved that are offered to everybody. */
