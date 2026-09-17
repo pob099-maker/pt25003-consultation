@@ -194,3 +194,26 @@ export const freeTextEntries = (
   }
   return entries.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
 };
+
+/**
+ * Among interviews, how often each item was raised before the list was read.
+ * Only interviews can say this: a form shows everyone the list up front.
+ */
+export const unpromptedCounts = (
+  responses: readonly ConsultationResponse[],
+  questionId: string,
+): { readonly interviews: number; readonly counts: ReadonlyMap<string, number> } => {
+  const counts = new Map<string, number>();
+  let interviews = 0;
+  for (const response of responses) {
+    if (!response.method.startsWith('interview_')) continue;
+    const answer = response.answers[questionId];
+    if (answer === undefined || answer.kind !== 'multi') continue;
+    interviews += 1;
+    const prompted = answer.prompted ?? [];
+    for (const id of answer.values) {
+      if (!prompted.includes(id)) counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+  }
+  return { interviews, counts };
+};

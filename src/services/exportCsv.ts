@@ -1,5 +1,5 @@
 import { toCsv, type CsvRow } from '../lib/csv';
-import { allQuestions, interestLabel, optionLabel, regionLabel, roleLabel } from '../content/lookup';
+import { allQuestions, interestLabel, optionLabel, questionById, regionLabel, roleLabel } from '../content/lookup';
 import type { ConsultationResponse, ContactRecord, Questionnaire } from '../types';
 import type { TagMap } from './tags';
 
@@ -12,10 +12,20 @@ const RESPONSE_FIXED = [
   'pathway',
   'regions',
   'region_other',
+  'method',
   'test_data',
+  'prompted_items',
 ] as const;
 
 const join = (values: readonly string[]): string => values.join('; ');
+
+export const METHOD_LABEL: Readonly<Record<ConsultationResponse['method'], string>> = {
+  online: 'Online',
+  interview_in_person: 'Interview — in person',
+  interview_video: 'Interview — video call',
+  interview_phone: 'Interview — phone',
+  workshop: 'Workshop',
+};
 
 export const responseHeaders = (questionnaire: Questionnaire): readonly string[] => {
   const headers: string[] = [...RESPONSE_FIXED];
@@ -42,7 +52,17 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
     pathway: response.pathway ?? '',
     regions: join(response.regions.map((id) => regionLabel(questionnaire, id))),
     region_other: response.regionOther,
+    method: METHOD_LABEL[response.method],
     test_data: response.isTestData ? 'yes' : 'no',
+    // One column rather than one per question: an interview marks a handful of
+    // items as prompted, and forty mostly-empty columns help nobody.
+    prompted_items: join(
+      Object.entries(response.answers).flatMap(([questionId, answer]) =>
+        answer.kind === 'multi'
+          ? (answer.prompted ?? []).map((id) => `${questionId}: ${optionLabel(questionById(questionnaire, questionId), id)}`)
+          : [],
+      ),
+    ),
   };
 
   for (const question of allQuestions(questionnaire)) {

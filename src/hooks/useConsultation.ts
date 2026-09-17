@@ -44,9 +44,19 @@ const ABOUT_YOU: Step = {
 
 const STAY_INVOLVED: Step = { id: 'stay_involved', title: 'Optional: Stay involved', section: null };
 
-export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONNAIRE) => {
+export interface ConsultationOptions {
+  /** Where the draft is kept. Interviews use their own key. */
+  readonly storageKey?: string;
+  /** Whether to record how far the session got. Off for interviews. */
+  readonly trackProgress?: boolean;
+}
+
+export const useConsultation = (
+  questionnaire: Questionnaire = DEFAULT_QUESTIONNAIRE,
+  { storageKey = STORAGE_KEYS.draft, trackProgress = true }: ConsultationOptions = {},
+) => {
   const [draft, setDraft] = useState<Draft>(() => {
-    const saved = readJson<Draft>(STORAGE_KEYS.draft);
+    const saved = readJson<Draft>(storageKey);
     // A saved draft from an earlier round is not resumable: the questions have
     // changed underneath it, so start clean rather than mix rounds.
     if (saved !== null && saved.roundId === questionnaire.roundId) {
@@ -54,11 +64,11 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
     }
     return emptyDraft(questionnaire);
   });
-  const isResumed = useRef(readJson<Draft>(STORAGE_KEYS.draft) !== null);
+  const isResumed = useRef(readJson<Draft>(storageKey) !== null);
 
   useEffect(() => {
-    writeJson(STORAGE_KEYS.draft, draft);
-  }, [draft]);
+    writeJson(storageKey, draft);
+  }, [draft, storageKey]);
 
   /** Kept in a ref so the progress ping reads the current draft without
    *  every callback that touches it being rebuilt on each keystroke. */
@@ -103,6 +113,7 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
    *  that was typed goes with it. See services/progress.ts. */
   const ping = useCallback(
     (stepIndex: number, completed: boolean) => {
+      if (!trackProgress) return;
       const current = latest.current;
       recordProgress({
         id: current.progressId,
@@ -116,7 +127,7 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
         completed,
       });
     },
-    [steps, pathwayOf],
+    [steps, pathwayOf, trackProgress],
   );
 
   const goTo = useCallback(
@@ -133,9 +144,9 @@ export const useConsultation = (questionnaire: Questionnaire = DEFAULT_QUESTIONN
   const back = useCallback(() => goTo(stepIndex - 1), [goTo, stepIndex]);
 
   const reset = useCallback(() => {
-    removeKey(STORAGE_KEYS.draft);
+    removeKey(storageKey);
     setDraft(emptyDraft(questionnaire));
-  }, [questionnaire]);
+  }, [questionnaire, storageKey]);
 
   return {
     draft,

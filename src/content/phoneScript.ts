@@ -19,11 +19,15 @@ const optionLines = (options: readonly Option[]): string =>
 
 const questionBlock = (question: Question, index: number): string => {
   const head = `**${index}. ${question.prompt}**`;
-  const help = question.help === undefined ? '' : `\n\n_${question.help}_`;
+  const guideLines: string[] = [];
+  if (question.guide?.open !== undefined) guideLines.push(`> Open with: "${question.guide.open}"`);
+  if (question.guide?.probe !== undefined) guideLines.push(`> Then probe: "${question.guide.probe}"`);
+  const guide = guideLines.length === 0 ? '' : `\n\n${guideLines.join('\n')}`;
+  const help = `${guide}${question.help === undefined ? '' : `\n\n_${question.help}_`}`;
 
   switch (question.kind) {
     case 'multi':
-      return `${head}${help}\n\n_Read the list, tick everything they say. Do not read it twice._\n\n${optionLines(question.options)}`;
+      return `${head}${help}\n\n_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._\n\n${optionLines(question.options)}`;
     case 'single':
       return `${head}${help}\n\n_One answer only._\n\n${optionLines(question.options)}`;
     case 'text':

@@ -1,4 +1,4 @@
-import type { AnswerMap, ConsultationResponse, ContactRecord, RoleId } from '../types';
+import type { AnswerMap, CollectionMethod, ConsultationResponse, ContactRecord, RoleId } from '../types';
 
 /**
  * Row shapes for the two tables. They are deliberately unrelated: no column
@@ -17,6 +17,10 @@ export interface ResponseRow {
   submitted_at: string;
   duration_seconds: number;
   is_test_data: boolean;
+  method: CollectionMethod;
+  collected_by: string | null;
+  consent_verbal: boolean | null;
+  session_id: string | null;
 }
 
 export interface ContactRow {
@@ -48,6 +52,10 @@ export const toResponseRow = (response: ConsultationResponse): ResponseRow => ({
   submitted_at: response.submittedAt,
   duration_seconds: response.durationSeconds,
   is_test_data: response.isTestData,
+  method: response.method,
+  collected_by: response.collectedBy,
+  consent_verbal: response.consentVerbal,
+  session_id: response.sessionId,
 });
 
 export const fromResponseRow = (row: ResponseRow): ConsultationResponse => ({
@@ -62,6 +70,12 @@ export const fromResponseRow = (row: ResponseRow): ConsultationResponse => ({
   submittedAt: row.submitted_at,
   durationSeconds: row.duration_seconds ?? 0,
   isTestData: row.is_test_data ?? false,
+  // A row written before the column existed was taken online: that was the
+  // only way in.
+  method: row.method ?? 'online',
+  collectedBy: row.collected_by ?? null,
+  consentVerbal: row.consent_verbal ?? null,
+  sessionId: row.session_id ?? null,
 });
 
 export const toContactRow = (contact: ContactRecord): ContactRow => ({

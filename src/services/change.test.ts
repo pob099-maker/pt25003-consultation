@@ -17,6 +17,10 @@ const response = (roundId: string, answers: AnswerMap, role: ConsultationRespons
   submittedAt: '2026-09-01T00:10:00.000Z',
   durationSeconds: 600,
   isTestData: false,
+  method: 'online',
+  collectedBy: null,
+  consentVerbal: null,
+  sessionId: null,
 });
 
 const rounds: readonly RoundInfo[] = [

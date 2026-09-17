@@ -417,6 +417,10 @@ export const seedResponses = (): readonly ConsultationResponse[] =>
       submittedAt,
       durationSeconds,
       isTestData: true,
+      method: 'online',
+      collectedBy: null,
+      consentVerbal: null,
+      sessionId: null,
     };
   });
 

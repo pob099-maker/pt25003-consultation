@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { interestLabel, optionLabel, questionById, roleLabel } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
 import { contactsCsv, freeTextCsv, responsesCsv } from '../../services/exportCsv';
-import { freeTextEntries, overview, rankConstraints, rateAreas, tallyMulti } from '../../services/analysis';
+import { freeTextEntries, overview, rankConstraints, rateAreas, tallyMulti, unpromptedCounts } from '../../services/analysis';
 import { THEME_TAGS, saveTags, tagKey } from '../../services/tags';
 import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
@@ -36,6 +37,9 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   // quietly inflate the real numbers once the consultation is live.
   const [roundFilter, setRoundFilter] = useState(questionnaire.roundId);
   const [roleFilter, setRoleFilter] = useState('all');
+  // People tell a person different things than a form, so every figure can be
+  // split by how it was collected.
+  const [methodFilter, setMethodFilter] = useState<'all' | 'online' | 'interview' | 'workshop'>('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [includeTest, setIncludeTest] = useState(data.demoMode);
   const [tab, setTab] = useState<'priorities' | 'change' | 'comments' | 'contacts' | 'phone' | 'rounds'>('priorities');
@@ -44,12 +48,15 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     () =>
       data.responses.filter((response) => {
         if (roundFilter !== 'all' && response.roundId !== roundFilter) return false;
+        if (methodFilter === 'online' && response.method !== 'online') return false;
+        if (methodFilter === 'interview' && !response.method.startsWith('interview_')) return false;
+        if (methodFilter === 'workshop' && response.method !== 'workshop') return false;
         if (!includeTest && response.isTestData) return false;
         if (roleFilter !== 'all' && response.role !== roleFilter) return false;
         if (regionFilter !== 'all' && !response.regions.includes(regionFilter)) return false;
         return true;
       }),
-    [data.responses, includeTest, roleFilter, regionFilter, roundFilter],
+    [data.responses, includeTest, roleFilter, regionFilter, roundFilter, methodFilter],
   );
 
   const contacts = useMemo(
@@ -71,6 +78,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const stats = useMemo(() => overview(questionnaire, filtered), [questionnaire, filtered]);
   const ranked = useMemo(() => rankConstraints(questionnaire, filtered, 'q2_top_three'), [questionnaire, filtered]);
   const mentioned = useMemo(() => tallyMulti(questionnaire, filtered, 'q1_constraints'), [questionnaire, filtered]);
+  const unprompted = useMemo(() => unpromptedCounts(filtered, 'q1_constraints'), [filtered]);
   const areas = useMemo(() => rateAreas(questionnaire, filtered, 'q5_areas'), [questionnaire, filtered]);
   const evidence = useMemo(() => tallyMulti(questionnaire, filtered, 'q7_evidence'), [questionnaire, filtered]);
   const trusted = useMemo(() => tallyMulti(questionnaire, filtered, 'q_trust'), [questionnaire, filtered]);
@@ -119,9 +127,14 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     <Layout>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h1>Consultation results</h1>
-        <button type="button" className="text-meta text-primary-ink underline underline-offset-4" onClick={onSignOut}>
-          Sign out
-        </button>
+        <span className="flex flex-wrap items-baseline gap-4">
+          <Link to="/interview" className={primaryButton}>
+            Start an interview
+          </Link>
+          <button type="button" className="text-meta text-primary-ink underline underline-offset-4" onClick={onSignOut}>
+            Sign out
+          </button>
+        </span>
       </div>
       <p className="mt-2 text-meta text-ink-soft">
         {questionnaire.roundLabel}. Contact details are listed separately and are not linked to any set of answers.
@@ -146,7 +159,23 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         <Stat label="Contact records" value={String(contacts.length)} note="Opted in to follow-up" />
       </section>
 
-      <section className={`${card} mt-5 grid gap-4 sm:grid-cols-4`} aria-label="Filters">
+      <section className={`${card} mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5`} aria-label="Filters">
+        <div>
+          <label htmlFor="filter-method" className="mb-1 block text-meta font-semibold text-ink-soft">
+            Collected
+          </label>
+          <select
+            id="filter-method"
+            className={textInput}
+            value={methodFilter}
+            onChange={(e) => setMethodFilter(e.target.value as typeof methodFilter)}
+          >
+            <option value="all">Every way</option>
+            <option value="online">Online</option>
+            <option value="interview">Interviews</option>
+            <option value="workshop">Workshops</option>
+          </select>
+        </div>
         <div>
           <label htmlFor="filter-round" className="mb-1 block text-meta font-semibold text-ink-soft">
             Round
@@ -282,11 +311,24 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           <div className="grid gap-6 md:grid-cols-2">
             <section className={card}>
               <h2 className="text-subtitle font-semibold">Constraints named</h2>
+              {unprompted.interviews > 0 && (
+                <p className="mt-1 text-meta text-ink-soft">
+                  Beside each, how many of the {unprompted.interviews} interviewees raised it before the list was read —
+                  the stronger signal.
+                </p>
+              )}
               <ul className="mt-3 grid gap-2 text-body">
                 {mentioned.map((row) => (
                   <li key={row.id} className="flex justify-between gap-3">
                     <span>{row.label}</span>
-                    <span className="text-ink-soft">{row.count} · {percent(row.share)}</span>
+                    <span className="text-ink-soft">
+                      {row.count} · {percent(row.share)}
+                      {unprompted.interviews > 0 && (
+                        <span className="ml-2 font-semibold text-ink">
+                          {unprompted.counts.get(row.id) ?? 0} unprompted
+                        </span>
+                      )}
+                    </span>
                   </li>
                 ))}
               </ul>

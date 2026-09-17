@@ -9,7 +9,12 @@ const roleIds = ROLES.map((role) => role.id) as [string, ...string[]];
  * record "not a priority" for a question nobody answered.
  */
 const answerSchema = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('multi'), values: z.array(z.string()).max(40), other: z.string().max(500).optional() }),
+  z.object({
+    kind: z.literal('multi'),
+    values: z.array(z.string()).max(40),
+    other: z.string().max(500).optional(),
+    prompted: z.array(z.string()).max(40).optional(),
+  }),
   z.object({ kind: z.literal('single'), value: z.string().min(1).max(120) }),
   z.object({ kind: z.literal('text'), value: z.string().max(4000) }),
   z.object({ kind: z.literal('rating'), values: z.record(z.string(), z.number().int().min(1).max(5)) }),
@@ -28,7 +33,27 @@ export const consultationResponseSchema = z.object({
   submittedAt: z.string().datetime(),
   durationSeconds: z.number().int().min(0).max(60 * 60 * 24),
   isTestData: z.boolean(),
-});
+  method: z.enum(['online', 'interview_in_person', 'interview_video', 'interview_phone', 'workshop']),
+  collectedBy: z.string().uuid().nullable(),
+  consentVerbal: z.boolean().nullable(),
+  sessionId: z.string().uuid().nullable(),
+})
+  // An interview needs a spoken consent and a named interviewer. The database
+  // checks this too; checking here as well gives the interviewer a readable
+  // message instead of a constraint name.
+  .refine(
+    (response) =>
+      !response.method.startsWith('interview_') || (response.consentVerbal === true && response.collectedBy !== null),
+    { message: 'An interview needs the consent read aloud and agreed to before it can be saved.', path: ['consentVerbal'] },
+  )
+  // Anything marked as prompted has to have been mentioned at all.
+  .refine(
+    (response) =>
+      Object.values(response.answers).every(
+        (answer) => answer.kind !== 'multi' || (answer.prompted ?? []).every((id) => answer.values.includes(id)),
+      ),
+    { message: 'A prompted item must also be one of the items mentioned.', path: ['answers'] },
+  );
 
 export const contactRecordSchema = z
   .object({

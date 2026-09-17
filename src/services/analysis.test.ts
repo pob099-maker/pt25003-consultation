@@ -19,6 +19,10 @@ const bare = (answers: ConsultationResponse['answers']): ConsultationResponse =>
   submittedAt: '2026-09-01T00:10:00.000Z',
   durationSeconds: 600,
   isTestData: true,
+  method: 'online',
+  collectedBy: null,
+  consentVerbal: null,
+  sessionId: null,
 });
 
 describe('rankConstraints', () => {

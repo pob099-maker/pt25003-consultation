@@ -35,4 +35,6 @@ export const STORAGE_KEYS = {
   tags: 'pt25003.tags.v1',
   theme: 'pt25003.theme.v1',
   progressOptOut: 'pt25003.progress-optout.v1',
+  interviewDraft: 'pt25003.interview-draft.v1',
+  interviewSetup: 'pt25003.interview-setup.v1',
 } as const;

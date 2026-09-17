@@ -47,9 +47,12 @@ _First, how you see the industry as a whole — not just your own place._
 
 **1. Where do you see the biggest hold-ups in the potato industry — the places where mechanisation, automation or a better workflow would make the most difference?**
 
+> Open with: "What's the part of the job that gives the most grief right now — yours, or the industry's?"
+> Then probe: "Where does that actually bite — which part of the season?"
+
 _Choose as many as apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Ground preparation and planting
   - Crop monitoring and decision support
@@ -68,15 +71,21 @@ _Read the list, tick everything they say. Do not read it twice._
 
 **2. Of those, which three should we be putting the most effort into?**
 
+> Open with: "If the project could only work on three of those, which three would you pick?"
+> Then probe: "Why that one first?"
+
 _Tap them in order, most important first._
 
 _Read back what they ticked a moment ago, and ask for their top 3 in order._
 
 **3. For the one at the top of your list, what does it actually cost a business?**
 
+> Open with: "When that goes wrong, what does it actually cost?"
+> Then probe: "Is that mostly money, time, or people?"
+
 _Choose as many as apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Labour availability
   - Labour cost
@@ -93,6 +102,9 @@ _Read the list, tick everything they say. Do not read it twice._
 
 **4. In a tough season, or when everything lands at once, what happens if nothing changes?**
 
+> Open with: "Think of a bad year. What happened?"
+> Then probe: "What would have made the difference?"
+
 _Optional. For example: harvest runs late, quality drops, throughput falls away, extra labour cost, crop left in the ground, a safety risk, or a market missed._
 
 _Let them talk. Write it down in their words, not yours._
@@ -100,6 +112,9 @@ _Let them talk. Write it down in their words, not yours._
 ## Where we should put our effort
 
 **5. Where should we put our effort first?**
+
+> Open with: "I'll read out some areas the project could work on. Tell me how much each one matters to you, one to five."
+> Then probe: "Of all of those, which would you put at the very top?"
 
 _Rate each one from 1 (not a priority) to 5 (very high priority). Skip any you have no view on._
 
@@ -123,13 +138,19 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
 
 **6. If we could only take on one or two of those, which would you pick — and why?**
 
+> Open with: "If you were running the project, what would you do first?"
+> Then probe: "Why that one?"
+
 _Let them talk. Write it down in their words, not yours._
 
 **7. What would it take to convince you to try something new?**
 
+> Open with: "What would it take for you to actually try something new?"
+> Then probe: "Whose word would you take on it?"
+
 _Choose as many as apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Local demonstration under Australian potato conditions
   - Independent economic analysis or ROI assessment — An independent look at whether the money spent comes back.
@@ -145,6 +166,9 @@ _Read the list, tick everything they say. Do not read it twice._
 
 **8. Before you committed to something new, how much would it matter to try it on part of the operation first?**
 
+> Open with: "Would you need to try it on part of the place before you committed?"
+> Then probe: "How big a trial would you need to see?"
+
 _One answer only._
 
   - Essential — I would not go ahead without it
@@ -154,9 +178,12 @@ _One answer only._
 
 **9. When you are weighing up new gear or a new way of doing things, whose opinion actually counts?**
 
+> Open with: "When you're weighing up a new bit of gear, who do you actually listen to?"
+> Then probe: "Who's the one person whose view would settle it?"
+
 _Tick any that genuinely sway you — not everyone you hear from._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Other growers and neighbours
   - Grower groups and study groups
@@ -184,6 +211,8 @@ _For: Potato grower or business owner; Farm manager, supervisor or machinery ope
 
 **1. Roughly how many tonnes of potatoes do you grow in a year?**
 
+> Open with: "Roughly how many tonnes do you grow in a year? A ballpark is fine."
+
 _A broad band is plenty. It lets us tell whether a finding belongs to smaller operations or to everybody._
 
 _One answer only._
@@ -197,9 +226,12 @@ _One answer only._
 
 **2. Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?**
 
+> Open with: "Where does the pressure land on your place?"
+> Then probe: "Which of those costs you most?"
+
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Ground preparation and bed forming
   - Planting
@@ -216,9 +248,12 @@ _Read the list, tick everything they say. Do not read it twice._
 
 **3. What have you put on, trialled, or had a serious look at?**
 
+> Open with: "What have you put on, or had a good look at, in the last few years?"
+> Then probe: "What made you look at it in the first place?"
+
 _Tick any that apply. It does not matter whether you kept it._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - GPS guidance or autosteer
   - Section control on the boom or planter
@@ -249,9 +284,12 @@ _One answer only._
 
 **5. What has held you back most?**
 
+> Open with: "What's stopped you going further with it?"
+> Then probe: "If that was sorted tomorrow, would you go ahead?"
+
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Upfront capital cost
   - Uncertain return on investment
@@ -268,7 +306,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Labour hours saved
   - Cost per hectare
@@ -296,6 +334,9 @@ _One answer only._
 
 **8. Is anything being pushed at the moment that you reckon will not work in Australian potatoes? What is the concern?**
 
+> Open with: "Is there anything being pushed at the moment that you reckon won't work here?"
+> Then probe: "What makes you say that?"
+
 _Optional, and genuinely useful. Nobody ticks a box to disagree with the industry, so this is the place to say it._
 
 _Let them talk. Write it down in their words, not yours._
@@ -305,6 +346,8 @@ _Let them talk. Write it down in their words, not yours._
 _For: Contractor._
 
 **1. Roughly how many tonnes of potatoes do you handle in a year, across all your clients?**
+
+> Open with: "Roughly how many tonnes go through your hands in a year, across all your clients?"
 
 _A broad band is plenty._
 
@@ -319,9 +362,12 @@ _One answer only._
 
 **2. Which jobs put you under the most pressure in the peak?**
 
+> Open with: "When you're flat out, which jobs are the ones that bite?"
+> Then probe: "What happens to the next client when one of those runs over?"
+
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Planting
   - Hilling and bed forming
@@ -339,7 +385,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Not enough machines
   - Not enough skilled operators
@@ -356,7 +402,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Getting parts during the season
   - Local dealer support
@@ -370,7 +416,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Setting a harvester up for the conditions
   - Running gear in a way that limits damage
@@ -386,7 +432,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Load tracking and logistics coordination
   - Harvesters that sense and adjust themselves
@@ -402,7 +448,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - A full day at commercial rates, not a half-hour show
   - Payment for your time and machine
@@ -423,6 +469,8 @@ _For: Processor, packhouse or storage business._
 
 **1. Roughly how many tonnes do you handle in a year?**
 
+> Open with: "Roughly how many tonnes do you handle in a year?"
+
 _A broad band is plenty._
 
 _One answer only._
@@ -436,9 +484,12 @@ _One answer only._
 
 **2. Where are the pinch points — labour, throughput, quality, handling or safety?**
 
+> Open with: "Walk me through the shed — where does it slow down or go wrong?"
+> Then probe: "Where do you lose the most people-hours?"
+
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Receival and tipping
   - Sampling and testing on arrival
@@ -457,7 +508,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Bruising from drops and transfers
   - Greening
@@ -474,7 +525,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Optical sizing and shape grading
   - Optical defect detection
@@ -491,7 +542,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Upfront capital cost
   - Uncertain return on investment
@@ -508,7 +559,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Throughput
   - Labour needed
@@ -531,9 +582,12 @@ _For: Machinery dealer, manufacturer or service provider._
 
 **1. What can Australian potato businesses actually buy or trial today?**
 
+> Open with: "What can growers actually buy or trial right now?"
+> Then probe: "What's coming in the next couple of years?"
+
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
@@ -553,7 +607,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
@@ -573,7 +627,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Upfront capital cost
   - Uncertain return on investment
@@ -590,7 +644,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - More field technicians
   - Parts held in country through the season
@@ -605,7 +659,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Row spacing and bed configuration
   - Soil types and conditions
@@ -637,9 +691,12 @@ _For: Technology provider._
 
 **1. What sort of technology do you offer?**
 
+> Open with: "Tell me about what you do, in plain terms."
+> Then probe: "Where would it sit on a potato operation?"
+
 _Tick any that apply. There is room to describe it properly at the end._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
@@ -659,7 +716,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Labour needed for a job
   - Getting work done in the window
@@ -687,7 +744,7 @@ _One answer only._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Reliable connectivity
   - Power at the site
@@ -703,7 +760,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Commercial results from overseas
   - Australian trial data
@@ -717,7 +774,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - A host site
   - Independent measurement
@@ -739,9 +796,12 @@ _For: Industry body or other stakeholder._
 
 **1. What do the businesses you represent raise with you most often?**
 
+> Open with: "What do your members bring up with you most?"
+> Then probe: "Is that getting better or worse?"
+
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Labour availability and cost
   - Skills and training
@@ -758,7 +818,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Independent evidence they can trust
   - Demonstrations they can visit
@@ -773,7 +833,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Machinery operators
   - Smaller family operations
@@ -797,9 +857,12 @@ _For: Adviser, consultant, researcher or educator._
 
 **1. Where are the biggest holes in what we actually know?**
 
+> Open with: "Where do you reckon the industry is flying blind?"
+> Then probe: "What would it take to fill that gap?"
+
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - What handling damage really costs through the chain
   - Return on investment under Australian conditions
@@ -816,7 +879,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
@@ -836,7 +899,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Bruise and damage incidence, by sampling point
   - Yield
@@ -856,7 +919,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Machinery operators
   - Smaller family operations
@@ -872,7 +935,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Tick any that apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Short written case studies with the numbers in them
   - Field days where people can see it running
@@ -896,9 +959,14 @@ _Let them talk. Write it down in their words, not yours._
 
 **1. What could we do that would be genuinely useful — to your business, or to the industry?**
 
+> Open with: "What could we do that you'd actually use?"
+> Then probe: "What would make it worth your time?"
+
 _Let them talk. Write it down in their words, not yours._
 
 **2. And what should we not waste time or money on?**
+
+> Open with: "And what should we not bother with?"
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -906,7 +974,7 @@ _Let them talk. Write it down in their words, not yours._
 
 _Choose as many as apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Short practical case studies
   - Videos from commercial operations
@@ -925,7 +993,7 @@ _Read the list, tick everything they say. Do not read it twice._
 
 _Choose as many as apply._
 
-_Read the list, tick everything they say. Do not read it twice._
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Early morning
   - Late morning

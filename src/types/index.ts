@@ -34,6 +34,17 @@ interface QuestionBase {
    * which draws ticks away from the others — breaks that comparison.
    */
   readonly tracking?: boolean;
+  /**
+   * How a person would raise this in conversation. The interviewer screen shows
+   * this instead of reading the question out; anything missing falls back to
+   * the question itself and a sensible probe for its kind.
+   */
+  readonly guide?: {
+    /** A natural way in. */
+    readonly open?: string;
+    /** One follow-up, to get past the first answer. */
+    readonly probe?: string;
+  };
 }
 
 /**
@@ -97,13 +108,31 @@ export interface Questionnaire {
 }
 
 export type Answer =
-  | { readonly kind: 'multi'; readonly values: readonly string[]; readonly other?: string }
+  | {
+      readonly kind: 'multi';
+      readonly values: readonly string[];
+      readonly other?: string;
+      /**
+       * In an interview, the subset of `values` that only came up after the
+       * interviewer read the list. Everything in `values` was mentioned;
+       * anything not in here was raised unprompted — which is the stronger
+       * finding, and the one a form cannot measure.
+       */
+      readonly prompted?: readonly string[];
+    }
   | { readonly kind: 'single'; readonly value: string }
   | { readonly kind: 'text'; readonly value: string }
   | { readonly kind: 'rating'; readonly values: Readonly<Record<string, number>> }
   | { readonly kind: 'rank'; readonly values: readonly string[] };
 
 export type AnswerMap = Readonly<Record<string, Answer>>;
+
+export type CollectionMethod =
+  | 'online'
+  | 'interview_in_person'
+  | 'interview_video'
+  | 'interview_phone'
+  | 'workshop';
 
 /** Anonymous consultation data. Carries nothing that identifies a person. */
 export interface ConsultationResponse {
@@ -119,6 +148,14 @@ export interface ConsultationResponse {
   /** Whole-consultation duration in seconds, for the completion-time figure. */
   readonly durationSeconds: number;
   readonly isTestData: boolean;
+  /** How it was collected. People tell a person different things than a form. */
+  readonly method: CollectionMethod;
+  /** The staff member, for an interview. Staff identity, never the respondent's. */
+  readonly collectedBy: string | null;
+  /** A spoken consent was read and agreed to, for an interview. */
+  readonly consentVerbal: boolean | null;
+  /** The live session a workshop answer came from. */
+  readonly sessionId: string | null;
 }
 
 /**

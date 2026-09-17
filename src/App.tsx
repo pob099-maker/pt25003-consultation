@@ -8,6 +8,7 @@ import { Consultation } from './pages/Consultation';
 import { Privacy } from './pages/Privacy';
 import { ThankYou } from './pages/ThankYou';
 import { Admin } from './pages/admin/Admin';
+import { Interview } from './pages/Interview';
 import { flushOutbox } from './services/submit';
 
 /**
@@ -40,6 +41,7 @@ export const App = () => {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/interview" element={<Interview />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </QuestionnaireProvider>

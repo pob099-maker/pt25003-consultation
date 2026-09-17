@@ -130,6 +130,7 @@ const CORE: readonly Section[] = [
     questions: [
       {
         id: 'q1_constraints',
+        guide: { open: 'What\'s the part of the job that gives the most grief right now — yours, or the industry\'s?', probe: 'Where does that actually bite — which part of the season?' },
         tracking: true,
         kind: 'multi',
         prompt: 'Where do you see the biggest hold-ups in the potato industry — the places where mechanisation, automation or a better workflow would make the most difference?',
@@ -139,6 +140,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q2_top_three',
+        guide: { open: 'If the project could only work on three of those, which three would you pick?', probe: 'Why that one first?' },
         tracking: true,
         kind: 'rank',
         prompt: 'Of those, which three should we be putting the most effort into?',
@@ -149,6 +151,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q3_impact',
+        guide: { open: 'When that goes wrong, what does it actually cost?', probe: 'Is that mostly money, time, or people?' },
         kind: 'multi',
         prompt: 'For the one at the top of your list, what does it actually cost a business?',
         help: 'Choose as many as apply.',
@@ -170,6 +173,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q4_bad_season',
+        guide: { open: 'Think of a bad year. What happened?', probe: 'What would have made the difference?' },
         kind: 'text',
         prompt: 'In a tough season, or when everything lands at once, what happens if nothing changes?',
         help: 'Optional. For example: harvest runs late, quality drops, throughput falls away, extra labour cost, crop left in the ground, a safety risk, or a market missed.',
@@ -183,6 +187,7 @@ const CORE: readonly Section[] = [
     questions: [
       {
         id: 'q5_areas',
+        guide: { open: 'I\'ll read out some areas the project could work on. Tell me how much each one matters to you, one to five.', probe: 'Of all of those, which would you put at the very top?' },
         tracking: true,
         kind: 'rating',
         prompt: 'Where should we put our effort first?',
@@ -198,12 +203,14 @@ const CORE: readonly Section[] = [
     questions: [
       {
         id: 'q6_first_opportunities',
+        guide: { open: 'If you were running the project, what would you do first?', probe: 'Why that one?' },
         kind: 'text',
         prompt: 'If we could only take on one or two of those, which would you pick — and why?',
         rows: 4,
       },
       {
         id: 'q7_evidence',
+        guide: { open: 'What would it take for you to actually try something new?', probe: 'Whose word would you take on it?' },
         tracking: true,
         kind: 'multi',
         prompt: 'What would it take to convince you to try something new?',
@@ -225,6 +232,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q_trial',
+        guide: { open: 'Would you need to try it on part of the place before you committed?', probe: 'How big a trial would you need to see?' },
         tracking: true,
         kind: 'single',
         // Trialability — whether something can be tried on a small scale before
@@ -242,6 +250,7 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q_trust',
+        guide: { open: 'When you\'re weighing up a new bit of gear, who do you actually listen to?', probe: 'Who\'s the one person whose view would settle it?' },
         tracking: true,
         kind: 'multi',
         // Who actually shifts somebody's thinking is arguably the single most
@@ -312,6 +321,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'farm_scale',
+        guide: { open: 'Roughly how many tonnes do you grow in a year? A ballpark is fine.' },
         tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes of potatoes do you grow in a year?',
@@ -320,6 +330,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'farm_pressure',
+        guide: { open: 'Where does the pressure land on your place?', probe: 'Which of those costs you most?' },
         kind: 'multi',
         prompt: 'Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?',
         help: 'Tick any that apply.',
@@ -341,6 +352,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'farm_adopted',
+        guide: { open: 'What have you put on, or had a good look at, in the last few years?', probe: 'What made you look at it in the first place?' },
         tracking: true,
         kind: 'multi',
         prompt: 'What have you put on, trialled, or had a serious look at?',
@@ -382,6 +394,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'farm_barriers',
+        guide: { open: 'What\'s stopped you going further with it?', probe: 'If that was sorted tomorrow, would you go ahead?' },
         tracking: true,
         kind: 'multi',
         prompt: 'What has held you back most?',
@@ -424,6 +437,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'farm_scepticism',
+        guide: { open: 'Is there anything being pushed at the moment that you reckon won\'t work here?', probe: 'What makes you say that?' },
         kind: 'text',
         prompt: 'Is anything being pushed at the moment that you reckon will not work in Australian potatoes? What is the concern?',
         help: 'Optional, and genuinely useful. Nobody ticks a box to disagree with the industry, so this is the place to say it.',
@@ -438,13 +452,16 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'con_scale',
+        guide: { open: 'Roughly how many tonnes go through your hands in a year, across all your clients?' },
         tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes of potatoes do you handle in a year, across all your clients?',
         help: 'A broad band is plenty.',
         options: TONNAGE,
       },
-      { id: 'con_peak',
+      {
+        id: 'con_peak',
+        guide: { open: 'When you\'re flat out, which jobs are the ones that bite?', probe: 'What happens to the next client when one of those runs over?' },
         kind: 'multi',
         prompt: 'Which jobs put you under the most pressure in the peak?',
         help: 'Tick any that apply.',
@@ -566,6 +583,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'pro_scale',
+        guide: { open: 'Roughly how many tonnes do you handle in a year?' },
         tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes do you handle in a year?',
@@ -574,6 +592,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'pro_constraints',
+        guide: { open: 'Walk me through the shed — where does it slow down or go wrong?', probe: 'Where do you lose the most people-hours?' },
         kind: 'multi',
         prompt: 'Where are the pinch points — labour, throughput, quality, handling or safety?',
         help: 'Tick any that apply.',
@@ -675,6 +694,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'mach_available',
+        guide: { open: 'What can growers actually buy or trial right now?', probe: 'What\'s coming in the next couple of years?' },
         kind: 'multi',
         prompt: 'What can Australian potato businesses actually buy or trial today?',
         help: 'Tick any that apply.',
@@ -755,6 +775,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'tech_offer',
+        guide: { open: 'Tell me about what you do, in plain terms.', probe: 'Where would it sit on a potato operation?' },
         kind: 'multi',
         prompt: 'What sort of technology do you offer?',
         help: 'Tick any that apply. There is room to describe it properly at the end.',
@@ -864,6 +885,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'ind_priorities',
+        guide: { open: 'What do your members bring up with you most?', probe: 'Is that getting better or worse?' },
         kind: 'multi',
         prompt: 'What do the businesses you represent raise with you most often?',
         help: 'Tick any that apply.',
@@ -932,6 +954,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
     questions: [
       {
         id: 'adv_gaps',
+        guide: { open: 'Where do you reckon the industry is flying blind?', probe: 'What would it take to fill that gap?' },
         kind: 'multi',
         prompt: 'Where are the biggest holes in what we actually know?',
         help: 'Tick any that apply.',
@@ -1039,6 +1062,7 @@ const FOLLOW_UP: readonly Section[] = [
     questions: [
       {
         id: 'fu_seen',
+        guide: { open: 'Since we last spoke, have you come across anything from the project?', probe: 'Where did you come across it?' },
         kind: 'multi',
         tracking: true,
         prompt: 'Have you seen or used anything from the Potato Mechanisation Project?',
@@ -1059,6 +1083,7 @@ const FOLLOW_UP: readonly Section[] = [
       },
       {
         id: 'fu_changed',
+        guide: { open: 'Has any of it changed what you\'re doing, or planning to do?', probe: 'What was it that made the difference?' },
         kind: 'single',
         tracking: true,
         prompt: 'Has any of it changed what you do, or plan to do?',
@@ -1088,11 +1113,18 @@ const PROJECT_DESIGN: readonly Section[] = [
     questions: [
       {
         id: 'pd_most_useful',
+        guide: { open: 'What could we do that you\'d actually use?', probe: 'What would make it worth your time?' },
         kind: 'text',
         prompt: 'What could we do that would be genuinely useful — to your business, or to the industry?',
         rows: 4,
       },
-      { id: 'pd_avoid', kind: 'text', prompt: 'And what should we not waste time or money on?', rows: 3 },
+      {
+        id: 'pd_avoid',
+        guide: { open: 'And what should we not bother with?' },
+        kind: 'text',
+        prompt: 'And what should we not waste time or money on?',
+        rows: 3,
+      },
       {
         id: 'pd_formats',
         kind: 'multi',
