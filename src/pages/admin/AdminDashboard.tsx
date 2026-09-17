@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { currentProject } from '../../content/projects';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
@@ -562,14 +563,14 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         <button
           type="button"
           className={primaryButton}
-          onClick={() => downloadCsv(`pt25003-responses-${stamp}.csv`, responsesCsv(questionnaire, filtered))}
+          onClick={() => downloadCsv(`${currentProject().id.toLowerCase()}-responses-${stamp}.csv`, responsesCsv(questionnaire, filtered))}
         >
           Export responses (CSV)
         </button>
         <button
           type="button"
           className={secondaryButton}
-          onClick={() => downloadCsv(`pt25003-contacts-${stamp}.csv`, contactsCsv(questionnaire, contacts))}
+          onClick={() => downloadCsv(`${currentProject().id.toLowerCase()}-contacts-${stamp}.csv`, contactsCsv(questionnaire, contacts))}
         >
           Export contacts and EOI (CSV)
         </button>
@@ -578,7 +579,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           className={secondaryButton}
           onClick={() =>
             downloadCsv(
-              `pt25003-comments-${stamp}.csv`,
+              `${currentProject().id.toLowerCase()}-comments-${stamp}.csv`,
               freeTextCsv(comments, data.tags, (role) => roleLabel(questionnaire, role)),
             )
           }

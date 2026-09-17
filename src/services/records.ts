@@ -1,3 +1,4 @@
+import { currentProject } from '../content/projects';
 import type { AnswerMap, CollectionMethod, ConsultationResponse, ContactRecord, RoleId } from '../types';
 
 /**
@@ -7,6 +8,7 @@ import type { AnswerMap, CollectionMethod, ConsultationResponse, ContactRecord, 
  */
 export interface ResponseRow {
   id: string;
+  project_id?: string;
   round_id: string;
   role: string | null;
   pathway: string | null;
@@ -25,6 +27,7 @@ export interface ResponseRow {
 
 export interface ContactRow {
   id: string;
+  project_id?: string;
   round_id: string;
   interests: string[];
   name: string;
@@ -42,6 +45,7 @@ export interface ContactRow {
 
 export const toResponseRow = (response: ConsultationResponse): ResponseRow => ({
   id: response.id,
+  project_id: currentProject().id,
   round_id: response.roundId,
   role: response.role,
   pathway: response.pathway,
@@ -80,6 +84,7 @@ export const fromResponseRow = (row: ResponseRow): ConsultationResponse => ({
 
 export const toContactRow = (contact: ContactRecord): ContactRow => ({
   id: contact.id,
+  project_id: currentProject().id,
   round_id: contact.roundId,
   interests: [...contact.interests],
   name: contact.name,

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { currentProject } from '../../content/projects';
 import { card, primaryButton, secondaryButton, textInput } from '../../components/ui';
-import { DEFAULT_QUESTIONNAIRE } from '../../content/questionnaire';
-import { allSections } from '../../content/lookup';
+import { allQuestions, allSections } from '../../content/lookup';
+import { libraryIds, libraryQuestion } from '../../content/library';
 import { loadActiveRound, saveRound, type QuestionOverride, type RoundConfig } from '../../services/rounds';
 import type { RoundStage } from '../../types';
 
@@ -12,12 +13,80 @@ const STAGES: readonly { id: RoundStage; label: string; help: string }[] = [
 ];
 
 const emptyRound = (): RoundConfig => ({
-  roundId: DEFAULT_QUESTIONNAIRE.roundId,
-  label: DEFAULT_QUESTIONNAIRE.roundLabel,
-  stage: DEFAULT_QUESTIONNAIRE.stage,
+  roundId: currentProject().questionnaire.roundId,
+  label: currentProject().questionnaire.roundLabel,
+  stage: currentProject().questionnaire.stage,
   isActive: true,
   overrides: {},
 });
+
+/**
+ * Questions from the shared library that this project's questionnaire does not
+ * already ask. Only shown when there are any — for project one, the library
+ * and the questionnaire are the same list.
+ */
+const LibraryAdditions = ({
+  sectionId,
+  overrides,
+  onChange,
+}: {
+  sectionId: string;
+  overrides: RoundConfig['overrides'];
+  onChange: (questionId: string, addTo: string | undefined) => void;
+}) => {
+  const [choice, setChoice] = useState('');
+  const asked = new Set(allQuestions(currentProject().questionnaire).map((question) => question.id));
+  const available = libraryIds().filter((id) => !asked.has(id));
+  if (available.length === 0) return null;
+  const added = available.filter((id) => overrides[id]?.addTo === sectionId);
+  const addable = available.filter((id) => overrides[id]?.addTo === undefined);
+  return (
+    <div className="mt-4 border-t border-line pt-4">
+      <p className="text-meta font-semibold text-ink-soft">Added from the question library</p>
+      <ul className="mt-2 grid gap-1">
+        {added.map((id) => (
+          <li key={id} className="flex items-center justify-between gap-3 text-body">
+            <span>{libraryQuestion(id)?.prompt ?? id}</span>
+            <button type="button" className={secondaryButton} onClick={() => onChange(id, undefined)}>
+              Remove
+            </button>
+          </li>
+        ))}
+      </ul>
+      {addable.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          <label htmlFor={`add-${sectionId}`} className="sr-only">
+            Question to add
+          </label>
+          <select
+            id={`add-${sectionId}`}
+            className={`${textInput} max-w-md`}
+            value={choice}
+            onChange={(event) => setChoice(event.target.value)}
+          >
+            <option value="">Choose a question…</option>
+            {addable.map((id) => (
+              <option key={id} value={id}>
+                {libraryQuestion(id)?.prompt ?? id}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className={secondaryButton}
+            disabled={choice === ''}
+            onClick={() => {
+              onChange(choice, sectionId);
+              setChoice('');
+            }}
+          >
+            Add
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 /**
  * Lets project staff change the words without changing what a historic answer
@@ -57,7 +126,7 @@ export const RoundEditor = () => {
     const name = stage === 'baseline' ? 'baseline' : stage === 'review' ? 'review' : 'pilot';
     setRound({
       roundId: `${suffix}-${name}`,
-      label: `PT25003 consultation, ${name}, ${suffix}`,
+      label: `${currentProject().reference} consultation, ${name}, ${suffix}`,
       stage,
       isActive: true,
       overrides: round.overrides,
@@ -147,7 +216,7 @@ export const RoundEditor = () => {
         )}
       </section>
 
-      {allSections(DEFAULT_QUESTIONNAIRE).map((section) => (
+      {allSections(currentProject().questionnaire).map((section) => (
         <section key={section.id} className={card}>
           <h3 className="text-subtitle font-semibold">{section.title}</h3>
           <div className="mt-3 grid gap-5">
@@ -171,6 +240,17 @@ export const RoundEditor = () => {
                       </span>
                     )}
                   </p>
+                  {question.tracking !== true && (
+                    <label className="mt-1 flex items-center gap-2 text-meta text-ink-soft">
+                      <input
+                        type="checkbox"
+                        className="size-4 accent-primary"
+                        checked={override.retired === true}
+                        onChange={(event) => setOverride(question.id, { retired: event.target.checked })}
+                      />
+                      Retire from this round — answers already given are kept
+                    </label>
+                  )}
                   {question.tracking === true && (
                     <p className="mt-1 text-meta text-ink-soft">
                       Asked word for word in every round so the baseline can be compared with each review. Changing it —
@@ -229,6 +309,11 @@ export const RoundEditor = () => {
               );
             })}
           </div>
+          <LibraryAdditions
+            sectionId={section.id}
+            overrides={round.overrides}
+            onChange={(questionId, addTo) => setOverride(questionId, { addTo })}
+          />
         </section>
       ))}
     </div>

@@ -48,6 +48,7 @@ jobs:
           VITE_BASE: ${{ vars.VITE_BASE || '/' }}
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_PROJECT_ID: ${{ vars.VITE_PROJECT_ID }}
           VITE_HOME_URL: ${{ vars.VITE_HOME_URL }}
           VITE_PROJECT_CONTACTS: ${{ vars.VITE_PROJECT_CONTACTS }}
           VITE_PRIVACY_CONTACT_NAME: ${{ vars.VITE_PRIVACY_CONTACT_NAME }}

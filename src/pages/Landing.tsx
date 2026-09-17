@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { currentProject } from '../content/projects';
 import { Layout } from '../components/Layout';
 import { PreferToTalk } from '../components/PreferToTalk';
 import { card, primaryButton, quietButton } from '../components/ui';
@@ -12,7 +13,7 @@ export const Landing = () => {
       {/* Centred as the one title on the page. The paragraphs under it stay
           left-aligned and measured: centred body text gives the eye no
           reliable left edge to return to, and this page is read, not skimmed. */}
-      <h1 className="text-center">Potato Mechanisation Project Consultation</h1>
+      <h1 className="text-center">{currentProject().name} Consultation</h1>
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>

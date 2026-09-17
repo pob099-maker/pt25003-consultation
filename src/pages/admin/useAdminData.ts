@@ -1,3 +1,4 @@
+import { currentProject } from '../../content/projects';
 import { useCallback, useEffect, useState } from 'react';
 import { getSupabase } from '../../lib/supabase';
 import { isBackendConfigured } from '../../lib/config';
@@ -50,8 +51,8 @@ export const useAdminData = (): AdminData => {
       const supabase = getSupabase();
       if (supabase === null) return;
       const [responseResult, contactResult, loadedTags, loadedProgress] = await Promise.all([
-        supabase.from(RESPONSES_TABLE).select('*').order('submitted_at', { ascending: false }),
-        supabase.from(CONTACTS_TABLE).select('*').order('submitted_at', { ascending: false }),
+        supabase.from(RESPONSES_TABLE).select('*').eq('project_id', currentProject().id).order('submitted_at', { ascending: false }),
+        supabase.from(CONTACTS_TABLE).select('*').eq('project_id', currentProject().id).order('submitted_at', { ascending: false }),
         loadTags(),
         loadProgress(),
       ]);

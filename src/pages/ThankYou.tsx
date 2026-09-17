@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { currentProject } from '../content/projects';
 import { Link, useLocation } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { accentPanel, primaryButton, secondaryButton } from '../components/ui';
@@ -16,7 +17,7 @@ export const ThankYou = () => {
 
   const share = async (): Promise<void> => {
     const url = `${window.location.origin}/`;
-    const shareData = { title: 'Potato Mechanisation Project Consultation', url };
+    const shareData = { title: `${currentProject().name} Consultation`, url };
     if (typeof navigator.share === 'function') {
       try {
         await navigator.share(shareData);
@@ -35,7 +36,7 @@ export const ThankYou = () => {
 
   return (
     <Layout>
-      <h1 className="text-center">Thank you for contributing to the Potato Mechanisation Project consultation.</h1>
+      <h1 className="text-center">Thank you for contributing to the {currentProject().name} consultation.</h1>
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>

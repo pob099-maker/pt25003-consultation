@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { currentProject } from '../../content/projects';
 import { Link, useParams } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { QrCode } from '../../components/QrCode';
@@ -156,7 +157,9 @@ export const WorkshopPresent = () => {
     <div className="min-h-dvh bg-paper px-4 py-6 text-ink sm:px-10 sm:py-8">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b-2 border-accent/60 pb-4 no-print">
         <div>
-          <p className="text-eyebrow uppercase text-ink-faint">Potato Mechanisation · PT25003</p>
+          <p className="text-eyebrow uppercase text-ink-faint">
+            {currentProject().shortName} · {currentProject().reference}
+          </p>
           <h1 className="text-title">{state?.found === true ? state.title : 'Workshop'}</h1>
         </div>
         <span className="flex items-center gap-4">

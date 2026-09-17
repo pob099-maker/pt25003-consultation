@@ -3,6 +3,7 @@ import { getSupabase } from '../lib/supabase';
 import { STORAGE_KEYS, readJson, writeJson } from '../lib/storage';
 import { allQuestions, optionLabel, questionById } from '../content/lookup';
 import { toCsv } from '../lib/csv';
+import { currentProject } from '../content/projects';
 import type { Question, Questionnaire, Result } from '../types';
 
 export const GROUPS_TABLE = 'consultation_group_records';
@@ -35,6 +36,7 @@ export interface GroupRecord {
 
 interface GroupRow {
   id: string;
+  project_id?: string;
   round_id: string;
   title: string;
   region: string;
@@ -85,6 +87,7 @@ export const groupRecordSchema = z
 
 const toRow = (record: GroupRecord): GroupRow => ({
   id: record.id,
+  project_id: currentProject().id,
   round_id: record.roundId,
   title: record.title,
   region: record.region,
@@ -117,7 +120,7 @@ const demoRecords = (): GroupRecord[] => readJson<GroupRecord[]>(STORAGE_KEYS.de
 export const loadGroups = async (): Promise<readonly GroupRecord[]> => {
   const supabase = getSupabase();
   if (supabase === null) return demoRecords();
-  const { data, error } = await supabase.from(GROUPS_TABLE).select('*').order('held_on', { ascending: false });
+  const { data, error } = await supabase.from(GROUPS_TABLE).select('*').eq('project_id', currentProject().id).order('held_on', { ascending: false });
   if (error !== null || data === null) return [];
   return (data as GroupRow[]).map(fromRow);
 };

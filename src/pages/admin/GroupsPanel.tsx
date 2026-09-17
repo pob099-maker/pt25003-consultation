@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { currentProject } from '../../content/projects';
 import { Link } from 'react-router-dom';
 import { accentPanel, card, primaryButton, secondaryButton } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
@@ -139,7 +140,7 @@ export const GroupsPanel = ({ roundFilter }: { roundFilter: string }) => {
               className={secondaryButton}
               onClick={() =>
                 downloadCsv(
-                  `pt25003-groups-${new Date().toISOString().slice(0, 10)}.csv`,
+                  `${currentProject().id.toLowerCase()}-groups-${new Date().toISOString().slice(0, 10)}.csv`,
                   groupsCsv(questionnaire, shown),
                 )
               }

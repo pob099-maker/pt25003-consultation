@@ -4,6 +4,7 @@ import { STORAGE_KEYS, readJson, writeJson } from '../lib/storage';
 import { questionById } from '../content/lookup';
 import type { Answer, AnswerMap, Option, Question, Questionnaire, Result } from '../types';
 import { groupQuestions } from './groups';
+import { currentProject } from '../content/projects';
 
 export const WORKSHOPS_TABLE = 'consultation_workshops';
 
@@ -200,6 +201,7 @@ export const createWorkshop = async (input: {
     }
     const { error } = await supabase.from(WORKSHOPS_TABLE).insert({
       id: summary.id,
+      project_id: currentProject().id,
       code: summary.code,
       title,
       round_id: summary.roundId,
@@ -243,6 +245,7 @@ export const listWorkshops = async (): Promise<readonly WorkshopSummary[]> => {
   const { data, error } = await supabase
     .from(WORKSHOPS_TABLE)
     .select('id, code, title, round_id, status, question_ids, created_at')
+    .eq('project_id', currentProject().id)
     .order('created_at', { ascending: false });
   if (error !== null || data === null) return [];
   return (

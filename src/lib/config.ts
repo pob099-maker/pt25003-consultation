@@ -28,6 +28,8 @@ export const parseContacts = (raw: string): readonly ProjectContact[] =>
 const DEFAULT_CONTACTS = "Peter O'Brien|0409 773 111|";
 
 export const config = {
+  /** Which project this deployment serves. One database can hold several. */
+  projectId: read(import.meta.env.VITE_PROJECT_ID, 'PT25003'),
   supabaseUrl: read(import.meta.env.VITE_SUPABASE_URL, ''),
   supabaseAnonKey: read(import.meta.env.VITE_SUPABASE_ANON_KEY, ''),
   homeUrl: read(import.meta.env.VITE_HOME_URL, 'https://potatolink.com.au'),

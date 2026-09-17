@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { currentProject } from '../content/projects';
 import { Layout } from '../components/Layout';
 import { config } from '../lib/config';
 import { secondaryButton } from '../components/ui';
@@ -15,7 +16,7 @@ export const Privacy = () => (
   <Layout>
     <h1 className="prose-measure">Privacy statement</h1>
     <p className="prose-measure mt-4 text-ink-soft">
-      This statement covers the online consultation for the Potato Mechanisation Project (PT25003).
+      This statement covers the online consultation for the {currentProject().name} ({currentProject().reference}).
     </p>
 
     <Section title="What information is collected">

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { currentProject } from '../../content/projects';
 import { MarkdownView } from '../../components/MarkdownView';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { buildPhoneScript } from '../../content/phoneScript';
@@ -76,7 +77,7 @@ export const PhoneScriptPanel = () => {
             className={primaryButton}
             onClick={() =>
               downloadText(
-                `pt25003-phone-script-${new Date().toISOString().slice(0, 10)}.md`,
+                `${currentProject().id.toLowerCase()}-phone-script-${new Date().toISOString().slice(0, 10)}.md`,
                 script,
                 'text/markdown',
               )

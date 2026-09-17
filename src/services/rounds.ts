@@ -1,5 +1,7 @@
 import { getSupabase } from '../lib/supabase';
-import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
+import { currentProject } from '../content/projects';
+import { libraryQuestion } from '../content/library';
+import { allQuestions } from '../content/lookup';
 import type { Option, Question, Questionnaire, RoundStage, Section } from '../types';
 
 export const ROUNDS_TABLE = 'consultation_rounds';
@@ -16,6 +18,17 @@ export interface QuestionOverride {
   readonly help?: string;
   readonly optionLabels?: Readonly<Record<string, string>>;
   readonly addedOptions?: readonly Option[];
+  /**
+   * Leave the question out of this round. Its id, and every answer already
+   * given to it, stay as they were — retiring is not deleting. Tracked
+   * questions cannot be retired: the change-over-time view depends on them.
+   */
+  readonly retired?: boolean;
+  /**
+   * Bring a question in from the shared library, at the end of the section
+   * with this id. Ignored for a question the questionnaire already has.
+   */
+  readonly addTo?: string;
 }
 
 export interface RoundConfig {
@@ -57,23 +70,40 @@ const applyToQuestion = (question: Question, override: QuestionOverride | undefi
   return base;
 };
 
-const applyToSection = (section: Section, overrides: RoundConfig['overrides']): Section => ({
-  ...section,
-  questions: section.questions.map((question) => applyToQuestion(question, overrides[question.id])),
-});
+const isRetired = (question: Question, override: QuestionOverride | undefined): boolean =>
+  override?.retired === true && question.tracking !== true;
 
-export const applyRound = (base: Questionnaire, round: RoundConfig): Questionnaire => ({
-  ...base,
-  roundId: round.roundId,
-  roundLabel: round.label,
-  stage: round.stage,
-  core: base.core.map((section) => applyToSection(section, round.overrides)),
-  followUp: base.followUp.map((section) => applyToSection(section, round.overrides)),
-  pathways: Object.fromEntries(
-    Object.entries(base.pathways).map(([key, section]) => [key, applyToSection(section, round.overrides)]),
-  ),
-  projectDesign: base.projectDesign.map((section) => applyToSection(section, round.overrides)),
-});
+const applyToSection = (
+  section: Section,
+  overrides: RoundConfig['overrides'],
+  existing: ReadonlySet<string>,
+): Section => {
+  const added = Object.entries(overrides)
+    .filter(([id, override]) => override.addTo === section.id && !existing.has(id))
+    .map(([id]) => libraryQuestion(id))
+    .filter((question): question is Question => question !== undefined);
+  return {
+    ...section,
+    questions: [...section.questions, ...added]
+      .filter((question) => !isRetired(question, overrides[question.id]))
+      .map((question) => applyToQuestion(question, overrides[question.id])),
+  };
+};
+
+export const applyRound = (base: Questionnaire, round: RoundConfig): Questionnaire => {
+  const existing = new Set(allQuestions(base).map((question) => question.id));
+  const apply = (section: Section): Section => applyToSection(section, round.overrides, existing);
+  return {
+    ...base,
+    roundId: round.roundId,
+    roundLabel: round.label,
+    stage: round.stage,
+    core: base.core.map(apply),
+    followUp: base.followUp.map(apply),
+    pathways: Object.fromEntries(Object.entries(base.pathways).map(([key, section]) => [key, apply(section)])),
+    projectDesign: base.projectDesign.map(apply),
+  };
+};
 
 interface RoundRow {
   round_id: string;
@@ -102,6 +132,7 @@ export const loadActiveRound = async (): Promise<RoundConfig | null> => {
   const { data, error } = await supabase
     .from(ROUNDS_TABLE)
     .select('round_id, label, stage, is_active, overrides')
+    .eq('project_id', currentProject().id)
     .eq('is_active', true)
     .limit(1)
     .maybeSingle();
@@ -116,6 +147,7 @@ export const loadAllRounds = async (): Promise<readonly RoundConfig[]> => {
   const { data, error } = await supabase
     .from(ROUNDS_TABLE)
     .select('round_id, label, stage, is_active, overrides, created_at')
+    .eq('project_id', currentProject().id)
     .order('created_at', { ascending: true });
   if (error !== null || data === null) return [];
   return (data as RoundRow[]).map(fromRow);
@@ -129,12 +161,14 @@ export const saveRound = async (round: RoundConfig): Promise<string | null> => {
     const { error: clearError } = await supabase
       .from(ROUNDS_TABLE)
       .update({ is_active: false })
+      .eq('project_id', currentProject().id)
       .neq('round_id', round.roundId);
     if (clearError !== null) return clearError.message;
   }
   const { error } = await supabase.from(ROUNDS_TABLE).upsert(
     {
       round_id: round.roundId,
+      project_id: currentProject().id,
       label: round.label,
       stage: round.stage,
       is_active: round.isActive,
@@ -147,5 +181,6 @@ export const saveRound = async (round: RoundConfig): Promise<string | null> => {
 
 export const activeQuestionnaire = async (): Promise<Questionnaire> => {
   const round = await loadActiveRound();
-  return round === null ? DEFAULT_QUESTIONNAIRE : applyRound(DEFAULT_QUESTIONNAIRE, round);
+  const base = currentProject().questionnaire;
+  return round === null ? base : applyRound(base, round);
 };

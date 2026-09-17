@@ -1,3 +1,4 @@
+import { currentProject } from '../content/projects';
 import { getSupabase } from '../lib/supabase';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import type { RoleId } from '../types';
@@ -170,7 +171,7 @@ export const summariseProgress = (rows: readonly ProgressRow[]): ProgressSummary
 export const loadProgress = async (): Promise<readonly ProgressRow[]> => {
   const supabase = getSupabase();
   if (supabase === null) return [];
-  const { data, error } = await supabase.from(PROGRESS_TABLE).select('*');
+  const { data, error } = await supabase.from(PROGRESS_TABLE).select('*').eq('project_id', currentProject().id);
   if (error !== null || data === null) return [];
   return data as ProgressRow[];
 };

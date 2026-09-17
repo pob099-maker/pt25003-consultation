@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { currentProject } from '../content/projects';
 import { Link } from 'react-router-dom';
 import agAimsMark from '../assets/agaims-mark.png';
 import { ThemeToggle } from './ThemeToggle';
@@ -26,12 +27,12 @@ export const Layout = ({ children }: { children: ReactNode }) => (
         <Link to="/" className="flex items-center gap-2.5 text-primary-ink">
           <AgAimsMark />
           <span className="leading-tight">
-            <span className="block font-display text-title font-extrabold">Potato Mechanisation</span>
+            <span className="block font-display text-title font-extrabold">{currentProject().shortName}</span>
             <span className="block font-display text-eyebrow uppercase text-ink-faint">Industry consultation</span>
           </span>
         </Link>
         <div className="flex items-center gap-3">
-          <span className="text-eyebrow uppercase text-ink-faint">PT25003</span>
+          <span className="text-eyebrow uppercase text-ink-faint">{currentProject().reference}</span>
           <ThemeToggle />
         </div>
       </div>
@@ -47,7 +48,7 @@ export const Layout = ({ children }: { children: ReactNode }) => (
         <Link to="/about" className="underline underline-offset-4">
           How your information is used
         </Link>
-        <span>Hort Innovation project PT25003</span>
+        <span>Hort Innovation project {currentProject().reference}</span>
         {/* Quiet on purpose. Respondents need no account, and a prominent
             "log in" invites them to wonder whether they do — but the project
             team needs a way in that does not involve remembering a URL. */}

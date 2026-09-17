@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { currentProject } from '../../content/projects';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -96,7 +97,7 @@ const Joining = ({ live, onJoin }: { live: LiveWorkshop; onJoin: (role: RoleId |
           Answer each question as it comes up on the screen. You won&rsquo;t be asked your name.
         </p>
         <p className="mt-2 text-meta text-ink-soft">
-          Your answers are saved as one anonymous response to the PT25003 consultation. The room only sees totals,
+          Your answers are saved as one anonymous response to the {currentProject().reference} consultation. The room only sees totals,
           and only once at least {live.minAnswers} people have answered.{' '}
           <Link to="/privacy" className={quietButton}>
             Privacy

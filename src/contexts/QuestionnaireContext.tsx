@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
+import { currentProject } from '../content/projects';
 import { activeQuestionnaire } from '../services/rounds';
 import type { Questionnaire } from '../types';
 
-const QuestionnaireContext = createContext<Questionnaire>(DEFAULT_QUESTIONNAIRE);
+const QuestionnaireContext = createContext<Questionnaire>(currentProject().questionnaire);
 
 export const useQuestionnaire = (): Questionnaire => useContext(QuestionnaireContext);
 
@@ -13,7 +13,7 @@ export const useQuestionnaire = (): Questionnaire => useContext(QuestionnaireCon
  * on that call: an unreachable backend simply means the built-in wording.
  */
 export const QuestionnaireProvider = ({ children }: { children: ReactNode }) => {
-  const [questionnaire, setQuestionnaire] = useState<Questionnaire>(DEFAULT_QUESTIONNAIRE);
+  const [questionnaire, setQuestionnaire] = useState<Questionnaire>(() => currentProject().questionnaire);
 
   useEffect(() => {
     let cancelled = false;

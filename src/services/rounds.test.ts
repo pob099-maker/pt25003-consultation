@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
-import { questionById, trackingQuestions } from '../content/lookup';
+import { allQuestions, questionById, trackingQuestions } from '../content/lookup';
 import { applyRound, type RoundConfig } from './rounds';
 
 describe('applyRound', () => {
@@ -95,5 +95,49 @@ describe('follow-up questions', () => {
     const coreIds = DEFAULT_QUESTIONNAIRE.core.flatMap((section) => section.questions.map((q) => q.id));
     expect(followUpIds).toContain('fu_seen');
     expect(coreIds).not.toContain('fu_seen');
+  });
+});
+
+describe('retiring and adding questions', () => {
+  const round = (overrides: RoundConfig['overrides']): RoundConfig => ({
+    roundId: '2027-review',
+    label: 'Review',
+    stage: 'review',
+    isActive: true,
+    overrides,
+  });
+
+  it('leaves a retired question out of the round', () => {
+    const updated = applyRound(DEFAULT_QUESTIONNAIRE, round({ q3_impact: { retired: true } }));
+    expect(questionById(updated, 'q3_impact')).toBeUndefined();
+    expect(questionById(DEFAULT_QUESTIONNAIRE, 'q3_impact')).toBeDefined();
+  });
+
+  it('refuses to retire a tracked question', () => {
+    const updated = applyRound(DEFAULT_QUESTIONNAIRE, round({ q1_constraints: { retired: true } }));
+    expect(questionById(updated, 'q1_constraints')).toBeDefined();
+  });
+
+  it('adds a library question to a project that lacks it, at the end of the named section', () => {
+    const [first, ...rest] = DEFAULT_QUESTIONNAIRE.core;
+    if (first === undefined) throw new Error('no core section');
+    const moved = first.questions.find((question) => question.id === 'q3_impact');
+    if (moved === undefined) throw new Error('q3_impact not in first section');
+    // A project whose questionnaire does not ask q3_impact.
+    const smaller = {
+      ...DEFAULT_QUESTIONNAIRE,
+      core: [{ ...first, questions: first.questions.filter((question) => question.id !== 'q3_impact') }, ...rest],
+    };
+    expect(questionById(smaller, 'q3_impact')).toBeUndefined();
+    const lastSection = rest.at(-1) ?? first;
+    const updated = applyRound(smaller, round({ q3_impact: { addTo: lastSection.id, prompt: 'Reworded' } }));
+    const section = updated.core.find((candidate) => candidate.id === lastSection.id);
+    expect(section?.questions.at(-1)?.id).toBe('q3_impact');
+    expect(section?.questions.at(-1)?.prompt).toBe('Reworded');
+  });
+
+  it('never adds a second copy of a question already asked', () => {
+    const updated = applyRound(DEFAULT_QUESTIONNAIRE, round({ q3_impact: { addTo: 'nowhere-in-particular' } }));
+    expect(allQuestions(updated).filter((question) => question.id === 'q3_impact')).toHaveLength(1);
   });
 });
