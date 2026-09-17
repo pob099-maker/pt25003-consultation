@@ -22,6 +22,8 @@ interface Props {
   readonly onChange: (answer: Answer | undefined) => void;
   /** Already came up in the conversation, so it is confirmed rather than asked. */
   readonly covered?: boolean;
+  /** Asked in every round: shown so the interviewer makes sure to cover it. */
+  readonly mustAsk?: boolean;
   readonly onToggleCovered?: () => void;
 }
 
@@ -44,6 +46,7 @@ export const InterviewQuestion = ({
   answers,
   onChange,
   covered = false,
+  mustAsk = false,
   onToggleCovered,
 }: Props) => {
   const groupId = useId();
@@ -80,7 +83,14 @@ export const InterviewQuestion = ({
   ) : (
     <div className="mb-3 flex flex-col items-start gap-3 rounded-lg border-l-4 sm:flex-row sm:justify-between border-accent bg-sunk px-4 py-3">
       <div className="w-full min-w-0 sm:flex-1">
-        <p className="text-eyebrow uppercase text-ink-faint">Open with</p>
+        <p className="flex flex-wrap items-center gap-2 text-eyebrow uppercase text-ink-faint">
+          Open with
+          {mustAsk && (
+            <span className="rounded-full border border-primary px-2 py-0.5 normal-case tracking-normal text-primary-ink">
+              Must ask — tracked every round
+            </span>
+          )}
+        </p>
         <p className="text-subtitle font-semibold text-ink">&ldquo;{open}&rdquo;</p>
         <p className="mt-2 text-eyebrow uppercase text-ink-faint">Then probe</p>
         <p className="text-body text-ink-soft">&ldquo;{probe}&rdquo;</p>

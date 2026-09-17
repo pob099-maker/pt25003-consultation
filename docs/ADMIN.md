@@ -186,6 +186,11 @@ interests they agreed to.
   the prompt changes to a quick check ("earlier you mentioned … — have I got that right?") and you
   record the answer as usual. The export lists these in `covered_earlier`, so an analyst can tell a
   confirmed answer from one asked outright.
+- **Short call.** When setting up, choose *Short call* (about five minutes) to ask only the tracked
+  questions — the ones repeated at baseline, mid-project and end — so a busy grower still counts
+  towards the comparison. In a full interview those questions carry a *Must ask* badge. The link at
+  the top switches length mid-call without losing anything; the export records it in
+  `interview_length`.
 - Skip anything that did not come up — an empty answer is recorded as not asked, never as a zero.
   Ratings are still read as written.
 

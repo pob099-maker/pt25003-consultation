@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { AboutYou } from '../components/AboutYou';
 import { InterviewQuestion } from '../components/InterviewQuestion';
 import { InterviewNav } from '../components/InterviewNav';
 import { InterviewNotes } from '../components/InterviewNotes';
+import { LENGTH_ID, lengthAnswer, shortInterview, type InterviewLength } from '../services/interviewLength';
 import { COVERED_ID, GENERAL_NOTES, coveredEarlier, noteId, toggleCovered } from '../services/interviewNotes';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { StayInvolved } from '../components/StayInvolved';
@@ -24,7 +25,18 @@ type InterviewMethod = Extract<CollectionMethod, `interview_${string}`>;
 interface Setup {
   readonly method: InterviewMethod;
   readonly consent: true;
+  /** Absent on a setup saved before short calls existed: that was a full interview. */
+  readonly length?: InterviewLength;
 }
+
+const LENGTHS: readonly { id: InterviewLength; label: string; help: string }[] = [
+  { id: 'full', label: 'Full interview', help: 'About ten minutes. Every question for their part of the industry.' },
+  {
+    id: 'short',
+    label: 'Short call',
+    help: 'About five minutes. Only the questions asked in every round, so the call still counts towards the baseline, mid-project and final comparison.',
+  },
+];
 
 const METHODS: readonly { id: InterviewMethod; label: string; help: string }[] = [
   { id: 'interview_in_person', label: 'Face to face', help: 'On farm, in the shed, at a field day.' },
@@ -44,6 +56,7 @@ const CONTACT_FORM_ID = 'interview-eoi-form';
 const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
   const [method, setMethod] = useState<InterviewMethod | null>(null);
   const [consent, setConsent] = useState(false);
+  const [length, setLength] = useState<InterviewLength>('full');
   const [tried, setTried] = useState(false);
   const ready = method !== null && consent;
 
@@ -70,6 +83,30 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
             </li>
           ))}
         </ul>
+      </fieldset>
+
+      <fieldset className={card}>
+        <legend className="mb-2 text-subtitle font-semibold text-ink">How long have they got?</legend>
+        <ul className="grid gap-2">
+          {LENGTHS.map((option) => (
+            <li key={option.id}>
+              <label className={`${choiceRow} cursor-pointer ${length === option.id ? choiceRowSelected : ''}`}>
+                <input
+                  type="radio"
+                  name="length"
+                  className="mt-1 size-5 shrink-0 accent-primary"
+                  checked={length === option.id}
+                  onChange={() => setLength(option.id)}
+                />
+                <span>
+                  <span className="block text-body text-ink">{option.label}</span>
+                  <span className="block text-meta text-ink-soft">{option.help}</span>
+                </span>
+              </label>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-meta text-ink-soft">You can switch during the call without losing anything.</p>
       </fieldset>
 
       <section className={accentPanel} aria-labelledby="consent-heading">
@@ -102,7 +139,7 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
           className={primaryButton}
           onClick={() => {
             setTried(true);
-            if (method !== null && consent) onStart({ method, consent: true });
+            if (method !== null && consent) onStart({ method, consent: true, length });
           }}
         >
           Start the interview
@@ -113,8 +150,13 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
 };
 
 const InterviewSession = ({ staffId, email }: { staffId: string; email: string | null }) => {
-  const questionnaire = useQuestionnaire();
+  const fullQuestionnaire = useQuestionnaire();
   const [setup, setSetup] = useState<Setup | null>(() => readJson<Setup>(STORAGE_KEYS.interviewSetup));
+  const length: InterviewLength = setup?.length ?? 'full';
+  const questionnaire = useMemo(
+    () => (length === 'short' ? shortInterview(fullQuestionnaire) : fullQuestionnaire),
+    [length, fullQuestionnaire],
+  );
   const state = useConsultation(questionnaire, { storageKey: STORAGE_KEYS.interviewDraft, trackProgress: false });
   const { draft, step, stepIndex, steps, pathway } = state;
   const [interests, setInterests] = useState<readonly string[]>([]);
@@ -179,7 +221,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
       pathway,
       regions: draft.regions,
       regionOther: draft.regionOther,
-      answers: draft.answers,
+      answers: { ...draft.answers, [LENGTH_ID]: lengthAnswer(length) },
       startedAt: draft.startedAt,
       submittedAt: now.toISOString(),
       durationSeconds: Math.max(0, Math.round((now.getTime() - new Date(draft.startedAt).getTime()) / 1000)),
@@ -229,8 +271,23 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
   return (
     <div>
       <p className="mb-4 rounded-lg border border-line bg-sunk px-4 py-2 text-meta text-ink-soft">
-        <strong className="text-ink">Interview</strong> · {methodLabel} · consent recorded
-        {email !== null ? ` · by ${email}` : ''}
+        <strong className="text-ink">{length === 'short' ? 'Short call' : 'Interview'}</strong> · {methodLabel} ·
+        consent recorded
+        {email !== null ? ` · by ${email}` : ''} ·{' '}
+        <button
+          type="button"
+          className="text-primary-ink underline underline-offset-4"
+          onClick={() => {
+            // Same question ids either way, so every answer so far carries over.
+            const next: Setup = { ...setup, length: length === 'short' ? 'full' : 'short' };
+            startSetup(next);
+            state.goTo(0);
+          }}
+        >
+          {length === 'short'
+            ? 'They have more time — switch to the full interview'
+            : 'Short on time? Switch to a short call'}
+        </button>
       </p>
 
       <InterviewNav
@@ -276,6 +333,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
             question={question}
             answers={draft.answers}
             onChange={(answer) => state.setAnswer(question.id, answer)}
+            mustAsk={length === 'full' && question.tracking === true}
             covered={covered.includes(question.id)}
             onToggleCovered={() => state.setAnswer(COVERED_ID, toggleCovered(draft.answers, question.id))}
           />
