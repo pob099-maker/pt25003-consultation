@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
@@ -14,8 +14,13 @@ import { RoundEditor } from './RoundEditor';
 import { PhoneScriptPanel } from './PhoneScriptPanel';
 import { ChangePanel } from './ChangePanel';
 import { TeamPanel } from './TeamPanel';
+import { GroupsPanel } from './GroupsPanel';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
+
+const TABS = ['priorities', 'change', 'groups', 'comments', 'contacts', 'phone', 'rounds', 'team'] as const;
+type Tab = (typeof TABS)[number];
+const isTab = (value: string | null): value is Tab => TABS.includes(value as Tab);
 
 const Stat = ({ label, value, note }: { label: string; value: string; note?: string }) => (
   <div className={card}>
@@ -43,9 +48,10 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const [methodFilter, setMethodFilter] = useState<'all' | 'online' | 'interview' | 'workshop'>('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [includeTest, setIncludeTest] = useState(data.demoMode);
-  const [tab, setTab] = useState<'priorities' | 'change' | 'comments' | 'contacts' | 'phone' | 'rounds' | 'team'>(
-    'priorities',
-  );
+  // A link can open a particular tab, e.g. back from recording a group.
+  const [searchParams] = useSearchParams();
+  const requestedTab = searchParams.get('tab');
+  const [tab, setTab] = useState<Tab>(isTab(requestedTab) ? requestedTab : 'priorities');
 
   const filtered = useMemo(
     () =>
@@ -236,6 +242,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           [
             ['priorities', 'Priorities'],
             ['change', 'Change over time'],
+            ['groups', 'Groups'],
             ['comments', `Comments (${comments.length})`],
             ['contacts', `Contacts (${contacts.length})`],
             ['phone', 'Phone script'],
@@ -543,6 +550,8 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       {tab === 'phone' && <PhoneScriptPanel />}
 
       {tab === 'team' && <TeamPanel />}
+
+      {tab === 'groups' && <GroupsPanel roundFilter={roundFilter} />}
 
       {!data.loading && tab === 'rounds' && <RoundEditor />}
 

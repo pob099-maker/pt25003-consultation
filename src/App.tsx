@@ -10,6 +10,7 @@ import { ThankYou } from './pages/ThankYou';
 import { Admin } from './pages/admin/Admin';
 import { Interview } from './pages/Interview';
 import { SetPassword } from './pages/SetPassword';
+import { GroupRecordPage } from './pages/GroupRecordPage';
 import { flushOutbox } from './services/submit';
 
 /**
@@ -44,6 +45,8 @@ export const App = () => {
             <Route path="/admin" element={<Admin />} />
             <Route path="/interview" element={<Interview />} />
             <Route path="/set-password" element={<SetPassword />} />
+            <Route path="/group" element={<GroupRecordPage />} />
+            <Route path="/group/:id" element={<GroupRecordPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </QuestionnaireProvider>

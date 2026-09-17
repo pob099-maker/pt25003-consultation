@@ -37,4 +37,5 @@ export const STORAGE_KEYS = {
   progressOptOut: 'pt25003.progress-optout.v1',
   interviewDraft: 'pt25003.interview-draft.v1',
   interviewSetup: 'pt25003.interview-setup.v1',
+  demoGroups: 'pt25003.demo-groups.v1',
 } as const;
