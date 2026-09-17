@@ -22,6 +22,8 @@ export interface RatedArea {
   readonly responses: number;
   /** Share rating the area 4 or 5. */
   readonly highPriorityShare: number;
+  /** How many gave each score, 1 to 5. */
+  readonly scores: readonly number[];
 }
 
 const round = (value: number, places = 2): number => Number(value.toFixed(places));
@@ -113,6 +115,7 @@ export const rateAreas = (
         mean: values.length === 0 ? 0 : round(total / values.length),
         responses: values.length,
         highPriorityShare: values.length === 0 ? 0 : round(high / values.length),
+        scores: [1, 2, 3, 4, 5].map((score) => values.filter((value) => value === score).length),
       };
     })
     .sort((a, b) => b.mean - a.mean);

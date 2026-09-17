@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react';
 import { currentProject } from '../../content/projects';
+import { DivergingBar, ScaleLegend } from '../../components/DivergingBar';
+import { DownloadChartButton } from '../../components/DownloadChartButton';
+import { barChartSvg, divergingChartSvg } from '../../lib/chartImage';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
@@ -7,7 +10,14 @@ import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { interestLabel, optionLabel, questionById, roleLabel } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
 import { contactsCsv, freeTextCsv, responsesCsv } from '../../services/exportCsv';
-import { freeTextEntries, overview, rankConstraints, rateAreas, tallyMulti, unpromptedCounts } from '../../services/analysis';
+import {
+  freeTextEntries,
+  overview,
+  rankConstraints,
+  rateAreas,
+  tallyMulti,
+  unpromptedCounts,
+} from '../../services/analysis';
 import { THEME_TAGS, saveTags, tagKey } from '../../services/tags';
 import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
@@ -28,12 +38,6 @@ const Stat = ({ label, value, note }: { label: string; value: string; note?: str
     <p className="text-meta text-ink-soft">{label}</p>
     <p className="mt-1 text-title font-bold text-ink">{value}</p>
     {note !== undefined && <p className="mt-1 text-meta text-ink-faint">{note}</p>}
-  </div>
-);
-
-const Bar = ({ share }: { share: number }) => (
-  <div className="h-1.5 w-full overflow-hidden rounded-full bg-sunk" aria-hidden="true">
-    <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(2, Math.round(share * 100))}%` }} />
   </div>
 );
 
@@ -72,8 +76,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const contacts = useMemo(
     () =>
       data.contacts.filter(
-        (contact) =>
-          (roundFilter === 'all' || contact.roundId === roundFilter) && (includeTest || !contact.isTestData),
+        (contact) => (roundFilter === 'all' || contact.roundId === roundFilter) && (includeTest || !contact.isTestData),
       ),
     [data.contacts, includeTest, roundFilter],
   );
@@ -90,13 +93,25 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const mentioned = useMemo(() => tallyMulti(questionnaire, filtered, 'q1_constraints'), [questionnaire, filtered]);
   const unprompted = useMemo(() => unpromptedCounts(filtered, 'q1_constraints'), [filtered]);
   const areas = useMemo(() => rateAreas(questionnaire, filtered, 'q5_areas'), [questionnaire, filtered]);
+  const priorityScale = useMemo((): [string, string] => {
+    const question = questionById(questionnaire, 'q5_areas');
+    return question?.kind === 'rating'
+      ? [question.scale[0]?.label ?? 'Low', question.scale.at(-1)?.label ?? 'High']
+      : ['Low', 'High'];
+  }, [questionnaire]);
+  // What every downloaded chart says about where its numbers came from.
+  const chartNote = `${filtered.length} responses · ${currentProject().reference} consultation · ${new Date().toLocaleDateString(
+    'en-AU',
+    { day: 'numeric', month: 'short', year: 'numeric' },
+  )}`;
   const evidence = useMemo(() => tallyMulti(questionnaire, filtered, 'q7_evidence'), [questionnaire, filtered]);
   const trusted = useMemo(() => tallyMulti(questionnaire, filtered, 'q_trust'), [questionnaire, filtered]);
   const trial = useMemo(() => {
     const counts = new Map<string, number>();
     for (const response of filtered) {
       const answer = response.answers['q_trial'];
-      if (answer !== undefined && answer.kind === 'single') counts.set(answer.value, (counts.get(answer.value) ?? 0) + 1);
+      if (answer !== undefined && answer.kind === 'single')
+        counts.set(answer.value, (counts.get(answer.value) ?? 0) + 1);
     }
     const question = questionById(questionnaire, 'q_trial');
     return [...counts.entries()]
@@ -166,7 +181,11 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       )}
 
       <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Overview">
-        <Stat label="Responses" value={String(stats.total)} note={includeTest ? 'Includes test data' : 'Real responses only'} />
+        <Stat
+          label="Responses"
+          value={String(stats.total)}
+          note={includeTest ? 'Includes test data' : 'Real responses only'}
+        />
         <Stat label="Reached the final section" value={percent(stats.completionRate)} />
         <Stat label="Median time taken" value={`${stats.medianMinutes} min`} />
         <Stat label="Contact records" value={String(contacts.length)} note="Opted in to follow-up" />
@@ -193,7 +212,12 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           <label htmlFor="filter-round" className="mb-1 block text-meta font-semibold text-ink-soft">
             Round
           </label>
-          <select id="filter-round" className={textInput} value={roundFilter} onChange={(e) => setRoundFilter(e.target.value)}>
+          <select
+            id="filter-round"
+            className={textInput}
+            value={roundFilter}
+            onChange={(e) => setRoundFilter(e.target.value)}
+          >
             <option value="all">All rounds</option>
             {rounds.map((round) => (
               <option key={round} value={round}>
@@ -206,7 +230,12 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           <label htmlFor="filter-role" className="mb-1 block text-meta font-semibold text-ink-soft">
             Role
           </label>
-          <select id="filter-role" className={textInput} value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+          <select
+            id="filter-role"
+            className={textInput}
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+          >
             <option value="all">All roles</option>
             {questionnaire.roles.map((role) => (
               <option key={role.id} value={role.id}>
@@ -219,7 +248,12 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           <label htmlFor="filter-region" className="mb-1 block text-meta font-semibold text-ink-soft">
             Region
           </label>
-          <select id="filter-region" className={textInput} value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)}>
+          <select
+            id="filter-region"
+            className={textInput}
+            value={regionFilter}
+            onChange={(e) => setRegionFilter(e.target.value)}
+          >
             <option value="all">All regions</option>
             {questionnaire.regions.map((region) => (
               <option key={region.id} value={region.id}>
@@ -273,23 +307,55 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       {!data.loading && tab === 'priorities' && (
         <div className="mt-6 grid gap-6">
           <section className={card}>
-            <h2 className="text-subtitle font-semibold">Ranked constraints</h2>
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <h2 className="text-subtitle font-semibold">Ranked constraints</h2>
+              {ranked.length > 0 && (
+                <DownloadChartButton
+                  name="ranked-constraints"
+                  build={(palette) => {
+                    const top = Math.max(...ranked.map((row) => row.weightedScore), 1);
+                    return barChartSvg(
+                      {
+                        title: 'Ranked constraints: weighted score',
+                        note: `3 points for a first choice, 2 for second, 1 for third · ${chartNote}`,
+                      },
+                      ranked.map((row) => ({
+                        label: row.label,
+                        value: row.weightedScore / top,
+                        text: `${row.weightedScore} (${row.firstChoices} first)`,
+                      })),
+                      palette,
+                    );
+                  }}
+                />
+              )}
+            </div>
             <p className="mt-1 text-meta text-ink-soft">
               Weighted score gives 3 points to a first choice, 2 to a second and 1 to a third.
             </p>
             <table className="mt-3 w-full text-body">
               <thead>
                 <tr className="border-b border-line text-left text-meta text-ink-soft">
-                  <th scope="col" className="py-2">Constraint</th>
-                  <th scope="col" className="py-2 text-right">Score</th>
-                  <th scope="col" className="py-2 text-right">1st</th>
-                  <th scope="col" className="py-2 text-right">Named</th>
+                  <th scope="col" className="py-2">
+                    Constraint
+                  </th>
+                  <th scope="col" className="py-2 text-right">
+                    Score
+                  </th>
+                  <th scope="col" className="py-2 text-right">
+                    1st
+                  </th>
+                  <th scope="col" className="py-2 text-right">
+                    Named
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {ranked.map((row) => (
                   <tr key={row.id} className="border-b border-line last:border-0">
-                    <th scope="row" className="py-2 pr-3 text-left font-normal">{row.label}</th>
+                    <th scope="row" className="py-2 pr-3 text-left font-normal">
+                      {row.label}
+                    </th>
                     <td className="py-2 text-right font-semibold">{row.weightedScore}</td>
                     <td className="py-2 text-right">{row.firstChoices}</td>
                     <td className="py-2 text-right">{row.count}</td>
@@ -297,7 +363,9 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                 ))}
                 {ranked.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="py-3 text-ink-faint">Nothing ranked yet.</td>
+                    <td colSpan={4} className="py-3 text-ink-faint">
+                      Nothing ranked yet.
+                    </td>
                   </tr>
                 )}
               </tbody>
@@ -305,18 +373,42 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           </section>
 
           <section className={card}>
-            <h2 className="text-subtitle font-semibold">Priority areas, mean rating</h2>
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <h2 className="text-subtitle font-semibold">Priority areas, mean rating</h2>
+              {areas.some((area) => area.responses > 0) && (
+                <DownloadChartButton
+                  name="priority-areas"
+                  build={(palette) =>
+                    divergingChartSvg(
+                      { title: 'Priority areas: how each was rated', note: chartNote },
+                      areas
+                        .filter((area) => area.responses > 0)
+                        .map((area) => ({
+                          label: area.label,
+                          scores: area.scores,
+                          text: `${area.mean.toFixed(1)} · ${percent(area.highPriorityShare)} 4–5`,
+                        })),
+                      priorityScale,
+                      palette,
+                    )
+                  }
+                />
+              )}
+            </div>
+            <div className="mt-2">
+              <ScaleLegend low={priorityScale[0]} high={priorityScale[1]} />
+            </div>
             <ol className="mt-3 grid gap-3">
               {areas.map((area) => (
                 <li key={area.id}>
                   <div className="flex items-baseline justify-between gap-3">
                     <span>{area.label}</span>
                     <span className="shrink-0 text-meta text-ink-soft">
-                      {area.mean.toFixed(2)} · {percent(area.highPriorityShare)} rated 4–5
+                      {area.mean.toFixed(2)} · {percent(area.highPriorityShare)} rated 4–5 · {area.responses} rated
                     </span>
                   </div>
                   <div className="mt-1">
-                    <Bar share={area.mean / 5} />
+                    <DivergingBar scores={area.scores} />
                   </div>
                 </li>
               ))}
@@ -354,7 +446,9 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                 {evidence.map((row) => (
                   <li key={row.id} className="flex justify-between gap-3">
                     <span>{row.label}</span>
-                    <span className="text-ink-soft">{row.count} · {percent(row.share)}</span>
+                    <span className="text-ink-soft">
+                      {row.count} · {percent(row.share)}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -371,9 +465,15 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
               <table className="mt-3 w-full text-body">
                 <thead>
                   <tr className="border-b border-line text-left text-meta text-ink-soft">
-                    <th scope="col" className="py-2">Furthest step reached</th>
-                    <th scope="col" className="py-2 text-right">Sessions</th>
-                    <th scope="col" className="py-2 text-right">Stopped here</th>
+                    <th scope="col" className="py-2">
+                      Furthest step reached
+                    </th>
+                    <th scope="col" className="py-2 text-right">
+                      Sessions
+                    </th>
+                    <th scope="col" className="py-2 text-right">
+                      Stopped here
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -390,7 +490,9 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                   ))}
                 </tbody>
               </table>
-              <h3 className="mt-5 text-meta font-semibold uppercase tracking-wide text-ink-faint">Finishing by branch</h3>
+              <h3 className="mt-5 text-meta font-semibold uppercase tracking-wide text-ink-faint">
+                Finishing by branch
+              </h3>
               <ul className="mt-2 grid gap-1 text-body">
                 {funnel.byPathway.map((row) => (
                   <li key={row.pathway} className="flex justify-between gap-3">
@@ -412,7 +514,9 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                 {trusted.map((row) => (
                   <li key={row.id} className="flex justify-between gap-3">
                     <span>{row.label}</span>
-                    <span className="text-ink-soft">{row.count} · {percent(row.share)}</span>
+                    <span className="text-ink-soft">
+                      {row.count} · {percent(row.share)}
+                    </span>
                   </li>
                 ))}
                 {trusted.length === 0 && <li className="text-ink-faint">No answers yet.</li>}
@@ -521,11 +625,15 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           {contacts.map((contact) => (
             <article key={contact.id} className={card}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="text-subtitle font-semibold">{contact.name.trim().length > 0 ? contact.name : 'No name given'}</h3>
+                <h3 className="text-subtitle font-semibold">
+                  {contact.name.trim().length > 0 ? contact.name : 'No name given'}
+                </h3>
                 <span className="text-meta text-ink-faint">{contact.submittedAt.slice(0, 10)}</span>
               </div>
               <p className="text-meta text-ink-soft">
-                {[contact.organisation, contact.broadRole, contact.region].filter((part) => part.trim().length > 0).join(' · ')}
+                {[contact.organisation, contact.broadRole, contact.region]
+                  .filter((part) => part.trim().length > 0)
+                  .join(' · ')}
               </p>
               <p className="mt-2 text-body">
                 {contact.email.trim().length > 0 && (
@@ -563,14 +671,24 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         <button
           type="button"
           className={primaryButton}
-          onClick={() => downloadCsv(`${currentProject().id.toLowerCase()}-responses-${stamp}.csv`, responsesCsv(questionnaire, filtered))}
+          onClick={() =>
+            downloadCsv(
+              `${currentProject().id.toLowerCase()}-responses-${stamp}.csv`,
+              responsesCsv(questionnaire, filtered),
+            )
+          }
         >
           Export responses (CSV)
         </button>
         <button
           type="button"
           className={secondaryButton}
-          onClick={() => downloadCsv(`${currentProject().id.toLowerCase()}-contacts-${stamp}.csv`, contactsCsv(questionnaire, contacts))}
+          onClick={() =>
+            downloadCsv(
+              `${currentProject().id.toLowerCase()}-contacts-${stamp}.csv`,
+              contactsCsv(questionnaire, contacts),
+            )
+          }
         >
           Export contacts and EOI (CSV)
         </button>

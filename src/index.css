@@ -94,6 +94,15 @@
 
   --color-danger: #a13544;
 
+  /* A 1-to-5 scale, drawn either side of the middle score: slate for low,
+     sand for the middle, gold into brown for high. Not red and green, which
+     read as wrong and right, and which a colour-blind reader cannot tell apart. */
+  --color-scale-1: #5f7187;
+  --color-scale-2: #a9b6c6;
+  --color-scale-3: #d9d0c0;
+  --color-scale-4: #d6a455;
+  --color-scale-5: #6e4320;
+
   --font-sans: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Cabinet Grotesk', 'Satoshi', ui-sans-serif, system-ui, sans-serif;
 
@@ -152,6 +161,12 @@
     --color-danger: #e8909e;
     --color-primary-ink: #d9a868;
 
+    --color-scale-1: #8fa3bb;
+    --color-scale-2: #4f5d6e;
+    --color-scale-3: #5a4b3a;
+    --color-scale-4: #a8793a;
+    --color-scale-5: #e7bd78;
+
     color-scheme: dark;
   }
 }
@@ -172,7 +187,30 @@
 
   --color-danger: #e8909e;
 
+  --color-scale-1: #8fa3bb;
+  --color-scale-2: #4f5d6e;
+  --color-scale-3: #5a4b3a;
+  --color-scale-4: #a8793a;
+  --color-scale-5: #e7bd78;
+
   color-scheme: dark;
+}
+
+/* Downloaded chart images are always drawn on white, whatever the screen is
+ * set to: they end up in reports and slide decks. These never flip. */
+:root {
+  --export-paper: #ffffff;
+  --export-ink: #2b231b;
+  --export-ink-soft: #6b5c4c;
+  --export-faint: #cbbca3;
+  --export-line: #e2d8c6;
+  --export-bar: #6e4320;
+  --export-track: #f0e8d9;
+  --export-scale-1: #5f7187;
+  --export-scale-2: #a9b6c6;
+  --export-scale-3: #d9d0c0;
+  --export-scale-4: #d6a455;
+  --export-scale-5: #6e4320;
 }
 
 html {

@@ -208,6 +208,19 @@ Each phone's answers become one anonymous response, marked *Workshop* in the
 *Save my answers and finish*. A phone closed before the end without doing that
 still counts in the live totals, but not in the responses.
 
+## Charts and pictures for reports
+
+- **Priority areas** are drawn split at the middle score: low ratings run left
+  of the centre line, high ratings right. A row that leans right is a priority;
+  a long middle block means people are unsure.
+- **Change over time** draws a line per option from the baseline to each
+  review. The biggest risers are gold-brown, the biggest fallers slate, and the
+  three highest are in dark ink; the rest are faint. The table is still there
+  under **The numbers**.
+- **Download chart** (beside each chart, and on the workshop screen once
+  results are showing) saves a PNG on a white background, titled, with how many
+  people answered — ready for Word or PowerPoint.
+
 ## Tagging comments
 
 Open the **Comments** tab. Each free-text answer shows the role, the date and the question. Tap any

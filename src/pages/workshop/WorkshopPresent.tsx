@@ -183,6 +183,14 @@ const Stage = ({
               results={live.results}
               answered={live.answered}
               large
+              heading={{
+                title: screenPrompt(question),
+                note: `${live.answered} people answered · ${live.title} · ${new Date().toLocaleDateString('en-AU', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}`,
+              }}
               onHideWord={
                 question.kind === 'text'
                   ? (word) => {
