@@ -96,6 +96,7 @@ supabase/
 
 ## Documentation
 
+- [docs/EXTENSION-REVIEW.md](docs/EXTENSION-REVIEW.md) — why it is built this way, checked against ADOPT, Rogers and Bennett
 - [docs/GO_LIVE.md](docs/GO_LIVE.md) — step by step from empty repository to a link you can email
 - [docs/DNS-REQUEST.md](docs/DNS-REQUEST.md) — the one DNS record to ask for, written ready to send
 - [docs/SETUP.md](docs/SETUP.md) — Supabase project, migrations, admin accounts, environment
