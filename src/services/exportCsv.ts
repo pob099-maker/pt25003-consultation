@@ -2,6 +2,7 @@ import { toCsv, type CsvRow } from '../lib/csv';
 import { allQuestions, interestLabel, optionLabel, questionById, regionLabel, roleLabel } from '../content/lookup';
 import type { ConsultationResponse, ContactRecord, Questionnaire } from '../types';
 import type { TagMap } from './tags';
+import { coveredEarlier, notesText } from './interviewNotes';
 
 const RESPONSE_FIXED = [
   'response_id',
@@ -15,6 +16,8 @@ const RESPONSE_FIXED = [
   'method',
   'test_data',
   'prompted_items',
+  'covered_earlier',
+  'interview_notes',
 ] as const;
 
 const join = (values: readonly string[]): string => values.join('; ');
@@ -63,6 +66,9 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
           : [],
       ),
     ),
+    // Answered from something said earlier in the conversation, not asked outright.
+    covered_earlier: join(coveredEarlier(response.answers)),
+    interview_notes: notesText(questionnaire, response.answers),
   };
 
   for (const question of allQuestions(questionnaire)) {

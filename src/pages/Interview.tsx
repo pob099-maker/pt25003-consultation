@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { AboutYou } from '../components/AboutYou';
 import { InterviewQuestion } from '../components/InterviewQuestion';
+import { InterviewNav } from '../components/InterviewNav';
+import { InterviewNotes } from '../components/InterviewNotes';
+import { COVERED_ID, GENERAL_NOTES, coveredEarlier, noteId, toggleCovered } from '../services/interviewNotes';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { StayInvolved } from '../components/StayInvolved';
 import { accentPanel, card, choiceRow, choiceRowSelected, primaryButton, secondaryButton } from '../components/ui';
@@ -159,6 +162,10 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
 
   const isLastStep = stepIndex === steps.length - 1;
   const totalSteps = pathway === null ? steps.length + 1 : steps.length;
+  const covered = coveredEarlier(draft.answers);
+  const notesKey = noteId(step.section?.id ?? GENERAL_NOTES);
+  const currentNote = draft.answers[notesKey];
+  const notes = currentNote?.kind === 'text' ? currentNote.value : '';
   const methodLabel = METHODS.find((option) => option.id === setup.method)?.label ?? setup.method;
 
   const finish = async (contact: ContactFormValues | null): Promise<void> => {
@@ -226,6 +233,14 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
         {email !== null ? ` · by ${email}` : ''}
       </p>
 
+      <InterviewNav
+        steps={steps}
+        current={stepIndex}
+        answers={draft.answers}
+        roleChosen={draft.role !== null}
+        onJump={state.goTo}
+      />
+
       <ProgressIndicator current={stepIndex} total={totalSteps} label={step.title} />
       <h2 className="text-title font-bold">{step.title}</h2>
 
@@ -261,8 +276,16 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
             question={question}
             answers={draft.answers}
             onChange={(answer) => state.setAnswer(question.id, answer)}
+            covered={covered.includes(question.id)}
+            onToggleCovered={() => state.setAnswer(COVERED_ID, toggleCovered(draft.answers, question.id))}
           />
         ))}
+
+        <InterviewNotes
+          title={step.section === null ? 'general' : step.title}
+          value={notes}
+          onChange={(value) => state.setAnswer(notesKey, value.length === 0 ? undefined : { kind: 'text', value })}
+        />
 
         {isLastStep && (
           <>

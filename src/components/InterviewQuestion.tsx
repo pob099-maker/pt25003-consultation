@@ -20,6 +20,9 @@ interface Props {
   readonly question: Question;
   readonly answers: AnswerMap;
   readonly onChange: (answer: Answer | undefined) => void;
+  /** Already came up in the conversation, so it is confirmed rather than asked. */
+  readonly covered?: boolean;
+  readonly onToggleCovered?: () => void;
 }
 
 /**
@@ -35,18 +38,54 @@ interface Props {
  * Ratings and rankings are read as written: a scale only compares if everyone
  * hears the same scale.
  */
-export const InterviewQuestion = ({ questionnaire, question, answers, onChange }: Props) => {
+export const InterviewQuestion = ({
+  questionnaire,
+  question,
+  answers,
+  onChange,
+  covered = false,
+  onToggleCovered,
+}: Props) => {
   const groupId = useId();
   const answer = answers[question.id];
   const open = guideOverrideFor(questionnaire, question, answers) ?? question.guide?.open ?? question.prompt;
   const probe = question.guide?.probe ?? DEFAULT_PROBE[question.kind];
 
-  const guide = (
-    <div className="mb-3 rounded-lg border-l-4 border-accent bg-sunk px-4 py-3">
-      <p className="text-eyebrow uppercase text-ink-faint">Open with</p>
-      <p className="text-subtitle font-semibold text-ink">&ldquo;{open}&rdquo;</p>
-      <p className="mt-2 text-eyebrow uppercase text-ink-faint">Then probe</p>
-      <p className="text-body text-ink-soft">&ldquo;{probe}&rdquo;</p>
+  const coveredToggle =
+    onToggleCovered === undefined ? null : (
+      <button
+        type="button"
+        aria-pressed={covered}
+        onClick={onToggleCovered}
+        className={`shrink-0 rounded-md border px-3 py-1.5 text-meta font-semibold ${
+          covered ? 'border-primary bg-primary text-white' : 'border-line-strong bg-surface text-ink'
+        }`}
+      >
+        {covered ? '✓ Came up earlier' : 'Came up earlier'}
+      </button>
+    );
+
+  // Once it has come up, there is nothing to open with: the interviewer only
+  // checks they heard it right, which is quicker and does not repeat them.
+  const guide = covered ? (
+    <div className="mb-3 flex flex-col items-start gap-3 rounded-lg border-l-4 sm:flex-row sm:justify-between border-primary bg-selected px-4 py-3">
+      <div className="w-full min-w-0 sm:flex-1">
+        <p className="text-eyebrow uppercase text-ink-faint">Already came up — just check</p>
+        <p className="text-body text-ink">
+          &ldquo;Earlier you mentioned … — have I got that right?&rdquo; <span className="text-ink-soft">({open})</span>
+        </p>
+      </div>
+      {coveredToggle}
+    </div>
+  ) : (
+    <div className="mb-3 flex flex-col items-start gap-3 rounded-lg border-l-4 sm:flex-row sm:justify-between border-accent bg-sunk px-4 py-3">
+      <div className="w-full min-w-0 sm:flex-1">
+        <p className="text-eyebrow uppercase text-ink-faint">Open with</p>
+        <p className="text-subtitle font-semibold text-ink">&ldquo;{open}&rdquo;</p>
+        <p className="mt-2 text-eyebrow uppercase text-ink-faint">Then probe</p>
+        <p className="text-body text-ink-soft">&ldquo;{probe}&rdquo;</p>
+      </div>
+      {coveredToggle}
     </div>
   );
 
@@ -107,8 +146,8 @@ export const InterviewQuestion = ({ questionnaire, question, answers, onChange }
       </h3>
       {guide}
       <p className="text-meta font-semibold text-ink-soft">
-        Listen for these — don&rsquo;t read them out. Mark what they raise. If they&rsquo;re stuck, read the list and mark
-        anything else as <em>after prompting</em>.
+        Listen for these — don&rsquo;t read them out. Mark what they raise. If they&rsquo;re stuck, read the list and
+        mark anything else as <em>after prompting</em>.
       </p>
       <p className="mt-1 text-meta text-ink-faint" aria-live="polite">
         {values.length === 0

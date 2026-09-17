@@ -172,6 +172,23 @@ is not quietly biased towards the people comfortable with an online form.
 If they also want to be contacted about activities, ask before entering their details, and tick the
 interests they agreed to.
 
+### Letting the conversation run
+
+**Start an interview** (top of the admin area) is built for a conversation, not a read-out survey.
+
+- **Jump to any section.** The row of sections at the top goes anywhere, in any order — when a
+  grower starts on labour while you are asking about harvest, tap that section and record it there.
+  ✓ marks a finished section, ◐ a part-finished one. On a phone, swipe the row sideways.
+- **Notes and quotes.** Every section has a notes box for the good quote or the side story that fits
+  no question. Notes are filed under the section they were taken in, appear in the **Comments** tab,
+  and are exported in one `interview_notes` column. Leave names out.
+- **Came up earlier.** If they have already answered a question in passing, tap **Came up earlier**:
+  the prompt changes to a quick check ("earlier you mentioned … — have I got that right?") and you
+  record the answer as usual. The export lists these in `covered_earlier`, so an analyst can tell a
+  confirmed answer from one asked outright.
+- Skip anything that did not come up — an empty answer is recorded as not asked, never as a zero.
+  Ratings are still read as written.
+
 ## Group discussions and live workshops
 
 There are two ways to capture a room, and they are counted differently.

@@ -1,4 +1,5 @@
 import { optionLabel, questionById } from '../content/lookup';
+import { isNoteId, noteLabel } from './interviewNotes';
 import type { ConsultationResponse, Questionnaire } from '../types';
 
 export interface Tally {
@@ -188,7 +189,7 @@ export const freeTextEntries = (
       entries.push({
         responseId: response.id,
         questionId,
-        questionPrompt: question?.prompt ?? questionId,
+        questionPrompt: isNoteId(questionId) ? noteLabel(questionnaire, questionId) : (question?.prompt ?? questionId),
         role: response.role,
         text: answer.value.trim(),
         submittedAt: response.submittedAt,
