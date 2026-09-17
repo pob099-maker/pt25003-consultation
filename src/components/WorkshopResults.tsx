@@ -1,4 +1,6 @@
+import { useEffect, useMemo, useState } from 'react';
 import type { Question } from '../types';
+import { estimateWidth, layoutCloud } from '../services/wordCloud';
 import {
   cloudWords,
   isChoiceQuestion,
@@ -58,6 +60,33 @@ const RatingBars = ({ rows, answered, large }: { rows: readonly RatingRow[]; ans
   );
 };
 
+/** Measures text in the display face, so the layout matches what is drawn. */
+const useMeasure = () => {
+  const [fontsReady, setFontsReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    void document.fonts?.ready.then(() => {
+      if (!cancelled) setFontsReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return useMemo(() => {
+    const context = document.createElement('canvas').getContext('2d');
+    if (context === null) return estimateWidth;
+    const family = getComputedStyle(document.documentElement).getPropertyValue('--font-display') || 'sans-serif';
+    return (word: string, size: number): number => {
+      context.font = `700 ${size}px ${family}`;
+      return context.measureText(word).width;
+    };
+    // fontsReady: measure again once the real typeface has loaded.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fontsReady]);
+};
+
+const TONES = ['fill-primary-ink', 'fill-ink', 'fill-ink-soft'] as const;
+
 const WordCloud = ({
   words,
   answered,
@@ -69,47 +98,73 @@ const WordCloud = ({
   large: boolean;
   onHide?: (word: string) => void;
 }) => {
-  const top = words[0]?.count ?? 1;
-  const [min, max] = large ? [1.4, 5] : [0.95, 2.4];
+  const measure = useMeasure();
+  const layout = useMemo(() => {
+    const top = words[0]?.count ?? 1;
+    const input = words.map((item) => ({
+      word: item.word,
+      // Area, not height, should follow the count, so size grows with its square root.
+      size: 30 + 70 * (top === 1 ? 1 : Math.sqrt((item.count - 1) / (top - 1))),
+    }));
+    return layoutCloud(input, measure, large ? 2 : 1.3);
+  }, [words, measure, large]);
+  const counts = new Map(words.map((item) => [item.word, item.count]));
+  const margin = 12;
+  const { x, y, w, h } = layout.bounds;
+
   return (
     <figure>
-      {words.length === 0 ? (
+      {layout.words.length === 0 ? (
         <p className="text-body text-ink-soft">Nothing to show.</p>
       ) : (
-        <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 py-4">
-          {words.map((item, index) => {
-            const size = min + (max - min) * (top === 1 ? 1 : (item.count - 1) / (top - 1));
-            const style = {
-              fontSize: `${size.toFixed(2)}rem`,
-              lineHeight: 1.1,
-            };
-            const tone = index % 3 === 0 ? 'text-primary-ink' : index % 3 === 1 ? 'text-ink' : 'text-ink-soft';
-            const label = `${item.word}, ${item.count} ${item.count === 1 ? 'person' : 'people'}`;
+        <svg
+          viewBox={`${x - margin} ${y - margin} ${w + margin * 2} ${h + margin * 2}`}
+          className="mx-auto block w-full"
+          style={{ maxHeight: large ? '40vh' : '60vh' }}
+          role="img"
+          aria-label={`Word cloud: ${words.map((item) => `${item.word} (${item.count})`).join(', ')}`}
+        >
+          {layout.words.map((placed, index) => {
+            const count = counts.get(placed.word) ?? 0;
+            const title = `${placed.word}: ${count} ${count === 1 ? 'person' : 'people'}`;
+            const hide = onHide === undefined ? undefined : () => onHide(placed.word);
             return (
-              <li key={item.word}>
-                {onHide === undefined ? (
-                  <span className={`font-display font-bold ${tone}`} style={style} title={label}>
-                    {item.word}
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    className={`font-display font-bold ${tone} rounded hover:line-through`}
-                    style={style}
-                    title={`${label} — click to hide`}
-                    aria-label={`Hide "${item.word}" from the screen`}
-                    onClick={() => onHide(item.word)}
-                  >
-                    {item.word}
-                  </button>
-                )}
-              </li>
+              <text
+                key={placed.word}
+                x={placed.x}
+                y={placed.y}
+                fontSize={placed.size}
+                textAnchor="middle"
+                dominantBaseline="central"
+                transform={placed.rotated ? `rotate(-90 ${placed.x} ${placed.y})` : undefined}
+                className={`font-display font-bold ${TONES[index % TONES.length]} ${
+                  hide === undefined ? '' : 'cursor-pointer hover:line-through'
+                }`}
+                role={hide === undefined ? undefined : 'button'}
+                tabIndex={hide === undefined ? undefined : 0}
+                aria-label={hide === undefined ? undefined : `Hide "${placed.word}" from the screen`}
+                onClick={hide}
+                onKeyDown={
+                  hide === undefined
+                    ? undefined
+                    : (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          hide();
+                        }
+                      }
+                }
+              >
+                <title>{hide === undefined ? title : `${title} — click to hide`}</title>
+                {placed.word}
+              </text>
             );
           })}
-        </ul>
+        </svg>
       )}
       <figcaption className="mt-2 text-meta text-ink-soft">
         {answered} {answered === 1 ? 'person' : 'people'} answered. Bigger means more people said it.
+        {layout.words.length < words.length && ` ${words.length - layout.words.length} more didn’t fit.`}
       </figcaption>
     </figure>
   );
