@@ -4,9 +4,19 @@ import { App } from './App';
 import './index.css';
 import { applyStoredTheme } from './components/ThemeToggle';
 import { getSupabase } from './lib/supabase';
+import { isDemoSite } from './lib/config';
 
 // Before the first render, so a reader who chose dark never sees a flash of cream.
 applyStoredTheme();
+
+// The demonstration site is for people we send it to, not for search results.
+if (isDemoSite()) {
+  const robots = document.createElement('meta');
+  robots.name = 'robots';
+  robots.content = 'noindex, nofollow';
+  document.head.appendChild(robots);
+  document.title = `Demo · ${document.title}`;
+}
 
 /**
  * Supabase's standard invitation and reset emails return people with their

@@ -4,6 +4,8 @@ import { Layout } from '../components/Layout';
 import { PreferToTalk } from '../components/PreferToTalk';
 import { card, primaryButton, quietButton } from '../components/ui';
 import { STORAGE_KEYS, readJson } from '../lib/storage';
+import { isDemoSite } from '../lib/config';
+import { DemoWelcome } from '../components/DemoWelcome';
 
 export const Landing = () => {
   const hasDraft = readJson<{ stepIndex: number }>(STORAGE_KEYS.draft) !== null;
@@ -14,6 +16,8 @@ export const Landing = () => {
           left-aligned and measured: centred body text gives the eye no
           reliable left edge to return to, and this page is read, not skimmed. */}
       <h1 className="text-center">{currentProject().name} Consultation</h1>
+
+      {isDemoSite() && <DemoWelcome />}
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>

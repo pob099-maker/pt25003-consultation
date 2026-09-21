@@ -29,15 +29,22 @@ export const removeKey = (key: string): void => {
   }
 };
 
+/**
+ * The demo is served from the same address as the live tool, so the browser
+ * treats them as one site and they would share this storage. Its own prefix
+ * keeps a demo answer from ever sitting in the live outbox, waiting to be sent.
+ */
+const PREFIX = import.meta.env.VITE_DEMO === 'true' ? 'pt25003-demo' : 'pt25003';
+
 export const STORAGE_KEYS = {
-  draft: 'pt25003.draft.v1',
-  outbox: 'pt25003.outbox.v1',
-  tags: 'pt25003.tags.v1',
-  theme: 'pt25003.theme.v1',
-  progressOptOut: 'pt25003.progress-optout.v1',
-  interviewDraft: 'pt25003.interview-draft.v1',
-  interviewSetup: 'pt25003.interview-setup.v1',
-  demoGroups: 'pt25003.demo-groups.v1',
-  demoWorkshops: 'pt25003.demo-workshops.v1',
-  workshopParticipant: 'pt25003.workshop',
+  draft: `${PREFIX}.draft.v1`,
+  outbox: `${PREFIX}.outbox.v1`,
+  tags: `${PREFIX}.tags.v1`,
+  theme: `${PREFIX}.theme.v1`,
+  progressOptOut: `${PREFIX}.progress-optout.v1`,
+  interviewDraft: `${PREFIX}.interview-draft.v1`,
+  interviewSetup: `${PREFIX}.interview-setup.v1`,
+  demoGroups: `${PREFIX}.demo-groups.v1`,
+  demoWorkshops: `${PREFIX}.demo-workshops.v1`,
+  workshopParticipant: `${PREFIX}.workshop`,
 } as const;

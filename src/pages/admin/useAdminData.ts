@@ -4,7 +4,8 @@ import { getSupabase } from '../../lib/supabase';
 import { isBackendConfigured } from '../../lib/config';
 import { CONTACTS_TABLE, RESPONSES_TABLE } from '../../services/submit';
 import { fromContactRow, fromResponseRow, type ContactRow, type ResponseRow } from '../../services/records';
-import { seedContacts, seedResponses } from '../../services/seed';
+import { seedContacts } from '../../services/seed';
+import { demoResponses } from '../../services/demoData';
 import { loadTags, type TagMap } from '../../services/tags';
 import { loadProgress, type ProgressRow } from '../../services/progress';
 import type { ConsultationResponse, ContactRecord } from '../../types';
@@ -41,7 +42,7 @@ export const useAdminData = (): AdminData => {
       setError(null);
       if (demoMode) {
         if (!cancelled) {
-          setResponses(seedResponses());
+          setResponses(demoResponses(currentProject().questionnaire));
           setContacts(seedContacts());
           setTags(await loadTags());
           setLoading(false);
@@ -51,8 +52,16 @@ export const useAdminData = (): AdminData => {
       const supabase = getSupabase();
       if (supabase === null) return;
       const [responseResult, contactResult, loadedTags, loadedProgress] = await Promise.all([
-        supabase.from(RESPONSES_TABLE).select('*').eq('project_id', currentProject().id).order('submitted_at', { ascending: false }),
-        supabase.from(CONTACTS_TABLE).select('*').eq('project_id', currentProject().id).order('submitted_at', { ascending: false }),
+        supabase
+          .from(RESPONSES_TABLE)
+          .select('*')
+          .eq('project_id', currentProject().id)
+          .order('submitted_at', { ascending: false }),
+        supabase
+          .from(CONTACTS_TABLE)
+          .select('*')
+          .eq('project_id', currentProject().id)
+          .order('submitted_at', { ascending: false }),
         loadTags(),
         loadProgress(),
       ]);
@@ -65,9 +74,7 @@ export const useAdminData = (): AdminData => {
       setResponses((responseResult.data as ResponseRow[]).map(fromResponseRow));
       // A reader without the contacts policy gets an error here, not a crash:
       // the priorities still render, the contact list simply stays empty.
-      setContacts(
-        contactResult.error === null ? (contactResult.data as ContactRow[]).map(fromContactRow) : [],
-      );
+      setContacts(contactResult.error === null ? (contactResult.data as ContactRow[]).map(fromContactRow) : []);
       setTags(loadedTags);
       setProgress(loadedProgress);
       setLoading(false);

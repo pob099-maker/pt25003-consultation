@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { currentProject } from '../../content/projects';
+import { isDemoSite } from '../../lib/config';
 import { DivergingBar, ScaleLegend } from '../../components/DivergingBar';
 import { DownloadChartButton } from '../../components/DownloadChartButton';
 import { barChartSvg, divergingChartSvg } from '../../lib/chartImage';
@@ -170,8 +171,19 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
 
       {data.demoMode && (
         <p className={`${accentPanel} mt-5 text-body`} role="status">
-          No backend is configured, so this screen is showing the seeded <strong>test data</strong> that ships with the
-          app. Set the Supabase environment variables to see real responses.
+          {isDemoSite() ? (
+            <>
+              <strong>This is a demonstration.</strong> Every response here is invented — a baseline of 45 people and a
+              mid-project review of 38, collected online, by interview and in workshops — so you can see how the results
+              screens work. Try <strong>Change over time</strong>, the <strong>Collected</strong> filter and{' '}
+              <strong>Download chart</strong>. Nothing you do here is saved anywhere but this browser.
+            </>
+          ) : (
+            <>
+              No backend is configured, so this screen is showing generated <strong>demonstration data</strong>. Set the
+              Supabase environment variables to see real responses.
+            </>
+          )}
         </p>
       )}
       {data.error !== null && (

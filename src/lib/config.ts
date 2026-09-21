@@ -38,9 +38,16 @@ export const config = {
   projectContacts: parseContacts(read(import.meta.env.VITE_PROJECT_CONTACTS, DEFAULT_CONTACTS)),
 } as const;
 
-/** False in a fresh checkout, and in tests, where the credentials are blanked. */
+/**
+ * The public demonstration build (served at /demo/). It runs on invented data
+ * and never talks to a database — even if credentials were somehow present,
+ * this switch alone keeps it off, so a demo can never write to the real one.
+ */
+export const isDemoSite = (): boolean => import.meta.env.VITE_DEMO === 'true';
+
+/** False in a fresh checkout, in tests where the credentials are blanked, and always on the demo site. */
 export const isBackendConfigured = (): boolean =>
-  config.supabaseUrl.length > 0 && config.supabaseAnonKey.length > 0;
+  !isDemoSite() && config.supabaseUrl.length > 0 && config.supabaseAnonKey.length > 0;
 
 /** Digits only, so a mobile number with spaces still dials from a phone. */
 export const telHref = (phone: string): string => `tel:${phone.replace(/[^\d+]/g, '')}`;

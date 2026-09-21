@@ -2,6 +2,7 @@ import { getSupabase } from '../lib/supabase';
 import { currentProject } from '../content/projects';
 import { libraryQuestion } from '../content/library';
 import { allQuestions } from '../content/lookup';
+import { DEMO_ROUNDS } from './demoData';
 import type { Option, Question, Questionnaire, RoundStage, Section } from '../types';
 
 export const ROUNDS_TABLE = 'consultation_rounds';
@@ -39,10 +40,7 @@ export interface RoundConfig {
   readonly overrides: Readonly<Record<string, QuestionOverride>>;
 }
 
-const applyToOptions = (
-  options: readonly Option[],
-  override: QuestionOverride | undefined,
-): readonly Option[] => {
+const applyToOptions = (options: readonly Option[], override: QuestionOverride | undefined): readonly Option[] => {
   if (override === undefined) return options;
   const renamed = options.map((option) => {
     const label = override.optionLabels?.[option.id];
@@ -143,7 +141,9 @@ export const loadActiveRound = async (): Promise<RoundConfig | null> => {
 
 export const loadAllRounds = async (): Promise<readonly RoundConfig[]> => {
   const supabase = getSupabase();
-  if (supabase === null) return [];
+  // No database: the demo's own baseline and review, so change over time has something to show.
+  if (supabase === null)
+    return DEMO_ROUNDS.map((round) => ({ ...round, isActive: round.stage === 'review', overrides: {} }));
   const { data, error } = await supabase
     .from(ROUNDS_TABLE)
     .select('round_id, label, stage, is_active, overrides, created_at')
