@@ -47,7 +47,8 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const data = useAdminData();
   // Defaults to the round that is collecting now, so a pilot run does not
   // quietly inflate the real numbers once the consultation is live.
-  const [roundFilter, setRoundFilter] = useState(questionnaire.roundId);
+  // With no database the responses are the demonstration's own rounds, so start by showing all of them.
+  const [roundFilter, setRoundFilter] = useState(data.demoMode ? 'all' : questionnaire.roundId);
   const [roleFilter, setRoleFilter] = useState('all');
   // People tell a person different things than a form, so every figure can be
   // split by how it was collected.
@@ -84,10 +85,10 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
 
   /** Every round that has actually collected something, newest label first. */
   const rounds = useMemo(() => {
-    const seen = new Set<string>([questionnaire.roundId]);
+    const seen = new Set<string>(data.demoMode ? [] : [questionnaire.roundId]);
     for (const response of data.responses) seen.add(response.roundId);
     return [...seen];
-  }, [data.responses, questionnaire.roundId]);
+  }, [data.responses, data.demoMode, questionnaire.roundId]);
 
   const stats = useMemo(() => overview(questionnaire, filtered), [questionnaire, filtered]);
   const ranked = useMemo(() => rankConstraints(questionnaire, filtered, 'q2_top_three'), [questionnaire, filtered]);
