@@ -1,4 +1,6 @@
-import { config } from '../lib/config';
+import { config, isDemoSite } from '../lib/config';
+import { selectedProjectId } from '../lib/projectSelection';
+import { REGIONAL_EXAMPLE } from './exampleProject';
 import type { Questionnaire } from '../types';
 import { DEFAULT_QUESTIONNAIRE } from './questionnaire';
 
@@ -71,6 +73,11 @@ export interface ProjectDefinition {
   readonly purpose: ProjectPurpose;
   /** Every round of the project starts from this, then applies its overrides. */
   readonly questionnaire: Questionnaire;
+  /**
+   * A worked example rather than a real project. Offered only on the
+   * demonstration site, so nobody can collect real answers into it.
+   */
+  readonly example?: boolean;
 }
 
 export const PROJECTS: Readonly<Record<string, ProjectDefinition>> = {
@@ -82,6 +89,15 @@ export const PROJECTS: Readonly<Record<string, ProjectDefinition>> = {
     purpose: 'tracked_rounds',
     questionnaire: DEFAULT_QUESTIONNAIRE,
   },
+  REGIONAL: {
+    id: 'REGIONAL',
+    name: 'Regional program (example)',
+    shortName: 'Regional program',
+    reference: 'EXAMPLE',
+    purpose: 'tracked_rounds',
+    questionnaire: REGIONAL_EXAMPLE,
+    example: true,
+  },
 };
 
 export const DEFAULT_PROJECT_ID = 'PT25003';
@@ -90,4 +106,21 @@ export const DEFAULT_PROJECT_ID = 'PT25003';
 export const projectFor = (id: string): ProjectDefinition =>
   PROJECTS[id] ?? (PROJECTS[DEFAULT_PROJECT_ID] as ProjectDefinition);
 
-export const currentProject = (): ProjectDefinition => projectFor(config.projectId);
+/**
+ * The projects this person can switch between: everything in the registry,
+ * minus the worked examples unless this is the demonstration site.
+ */
+export const availableProjects = (): readonly ProjectDefinition[] =>
+  Object.values(PROJECTS).filter((project) => project.example !== true || isDemoSite());
+
+/**
+ * What this browser is looking at: the project chosen by project staff, or the
+ * one this deployment was built for. A chosen project that no longer exists,
+ * or an example on a live site, falls back to the deployment's own.
+ */
+export const currentProject = (): ProjectDefinition => {
+  const chosen = selectedProjectId();
+  const picked = chosen === null ? undefined : PROJECTS[chosen];
+  if (picked !== undefined && (picked.example !== true || isDemoSite())) return picked;
+  return projectFor(config.projectId);
+};

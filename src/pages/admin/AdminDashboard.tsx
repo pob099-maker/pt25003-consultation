@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { currentProject } from '../../content/projects';
+import { ProjectSwitcher } from './ProjectSwitcher';
 import { isDemoSite } from '../../lib/config';
 import { DivergingBar, ScaleLegend } from '../../components/DivergingBar';
 import { DownloadChartButton } from '../../components/DownloadChartButton';
@@ -154,7 +155,8 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     <Layout>
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h1>Consultation results</h1>
-        <span className="flex flex-wrap items-baseline gap-4">
+        <span className="flex flex-wrap items-center gap-4">
+          <ProjectSwitcher />
           <Link to="/interview" className={primaryButton}>
             Start an interview
           </Link>

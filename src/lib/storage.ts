@@ -34,7 +34,22 @@ export const removeKey = (key: string): void => {
  * treats them as one site and they would share this storage. Its own prefix
  * keeps a demo answer from ever sitting in the live outbox, waiting to be sent.
  */
-const PREFIX = import.meta.env.VITE_DEMO === 'true' ? 'pt25003-demo' : 'pt25003';
+const BASE = import.meta.env.VITE_DEMO === 'true' ? 'pt25003-demo' : 'pt25003';
+
+/**
+ * A draft belongs to the project it was started in. The deployment's own
+ * project keeps the original key names, so a response already queued on
+ * somebody's phone is still found and sent.
+ */
+const chosen = ((): string => {
+  try {
+    return window.localStorage.getItem('pt25003.project.v1') ?? '';
+  } catch {
+    return '';
+  }
+})();
+const deploymentProject = (import.meta.env.VITE_PROJECT_ID ?? 'PT25003').trim();
+const PREFIX = chosen === '' || chosen === deploymentProject ? BASE : `${BASE}.${chosen.toLowerCase()}`;
 
 export const STORAGE_KEYS = {
   draft: `${PREFIX}.draft.v1`,
