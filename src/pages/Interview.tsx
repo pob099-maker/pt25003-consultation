@@ -5,7 +5,7 @@ import { AboutYou } from '../components/AboutYou';
 import { InterviewQuestion } from '../components/InterviewQuestion';
 import { InterviewNav } from '../components/InterviewNav';
 import { InterviewNotes } from '../components/InterviewNotes';
-import { LENGTH_ID, lengthAnswer, shortInterview, type InterviewLength } from '../services/interviewLength';
+import { LENGTH_ID, lengthAnswer, shortVersion, type FormLength } from '../services/formLength';
 import { COVERED_ID, GENERAL_NOTES, coveredEarlier, noteId, toggleCovered } from '../services/interviewNotes';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { StayInvolved } from '../components/StayInvolved';
@@ -26,10 +26,10 @@ interface Setup {
   readonly method: InterviewMethod;
   readonly consent: true;
   /** Absent on a setup saved before short calls existed: that was a full interview. */
-  readonly length?: InterviewLength;
+  readonly length?: FormLength;
 }
 
-const LENGTHS: readonly { id: InterviewLength; label: string; help: string }[] = [
+const LENGTHS: readonly { id: FormLength; label: string; help: string }[] = [
   { id: 'full', label: 'Full interview', help: 'About ten minutes. Every question for their part of the industry.' },
   {
     id: 'short',
@@ -56,7 +56,7 @@ const CONTACT_FORM_ID = 'interview-eoi-form';
 const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
   const [method, setMethod] = useState<InterviewMethod | null>(null);
   const [consent, setConsent] = useState(false);
-  const [length, setLength] = useState<InterviewLength>('full');
+  const [length, setLength] = useState<FormLength>('full');
   const [tried, setTried] = useState(false);
   const ready = method !== null && consent;
 
@@ -152,9 +152,9 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
 const InterviewSession = ({ staffId, email }: { staffId: string; email: string | null }) => {
   const fullQuestionnaire = useQuestionnaire();
   const [setup, setSetup] = useState<Setup | null>(() => readJson<Setup>(STORAGE_KEYS.interviewSetup));
-  const length: InterviewLength = setup?.length ?? 'full';
+  const length: FormLength = setup?.length ?? 'full';
   const questionnaire = useMemo(
-    () => (length === 'short' ? shortInterview(fullQuestionnaire) : fullQuestionnaire),
+    () => (length === 'short' ? shortVersion(fullQuestionnaire) : fullQuestionnaire),
     [length, fullQuestionnaire],
   );
   const state = useConsultation(questionnaire, { storageKey: STORAGE_KEYS.interviewDraft, trackProgress: false });

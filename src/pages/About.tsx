@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { PreferToTalk } from '../components/PreferToTalk';
 import { ProgressOptOut } from '../components/ProgressOptOut';
@@ -17,6 +17,8 @@ const POINTS = [
 
 export const About = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const quick = params.get('quick') === '1';
   return (
     <Layout>
       <h1 className="prose-measure">Before you start</h1>
@@ -38,11 +40,15 @@ export const About = () => {
       <PreferToTalk />
 
       <p className="prose-measure mt-5 text-meta text-ink-soft">
-        The full detail is in the <Link to="/privacy" className="underline underline-offset-4">privacy statement</Link>.
+        The full detail is in the{' '}
+        <Link to="/privacy" className="underline underline-offset-4">
+          privacy statement
+        </Link>
+        .
       </p>
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-        <Link to="/consultation" className={primaryButton}>
+        <Link to={quick ? '/consultation?quick=1' : '/consultation'} className={primaryButton}>
           Continue
         </Link>
         <button type="button" className={secondaryButton} onClick={() => navigate('/')}>

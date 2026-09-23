@@ -190,9 +190,25 @@ interests they agreed to.
   questions — the ones repeated at baseline, mid-project and end — so a busy grower still counts
   towards the comparison. In a full interview those questions carry a *Must ask* badge. The link at
   the top switches length mid-call without losing anything; the export records it in
-  `interview_length`.
+  `short_or_full`.
 - Skip anything that did not come up — an empty answer is recorded as not asked, never as a zero.
   Ratings are still read as written.
+
+## Short and full versions
+
+The landing page offers two ways in:
+
+- **Short version, about five minutes** — only the tracked questions, the ones repeated at baseline,
+  mid-project and end. It still counts in every comparison.
+- **Full version, about ten minutes** — everything, including the free-text questions and the
+  project-design section.
+
+At the end of the short version, people are asked — once, politely — whether they would like to
+answer the rest. Saying yes keeps every answer already given and skips straight to the first thing
+not yet answered. Saying no goes to the optional contact step and submits.
+
+Which one somebody used is in the `short_or_full` column of the export, for both online responses
+and interviews, so a thin answer set is never mistaken for somebody dropping out.
 
 ## Group discussions and live workshops
 

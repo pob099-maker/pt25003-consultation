@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { QuestionField } from '../components/QuestionField';
@@ -12,13 +12,20 @@ import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { useConsultation } from '../hooks/useConsultation';
 import type { ContactFormValues } from '../schemas/consultation';
 import { submitContact, submitResponse } from '../services/submit';
+import { LENGTH_ID, lengthAnswer, shortVersion } from '../services/formLength';
+import { accentPanel } from '../components/ui';
 import type { ConsultationResponse, ContactRecord } from '../types';
 
 const CONTACT_FORM_ID = 'eoi-form';
 
 export const Consultation = () => {
   const navigate = useNavigate();
-  const questionnaire = useQuestionnaire();
+  const [params, setParams] = useSearchParams();
+  const short = params.get('quick') === '1';
+  const full = useQuestionnaire();
+  // The short version asks only the questions repeated in every round. Ids are
+  // the same in both, so switching part-way keeps every answer already given.
+  const questionnaire = useMemo(() => (short ? shortVersion(full) : full), [short, full]);
   const state = useConsultation(questionnaire);
   const { draft, step, stepIndex, steps, pathway } = state;
   const [interests, setInterests] = useState<readonly string[]>([]);
@@ -35,6 +42,27 @@ export const Consultation = () => {
   }, []);
 
   const isLastStep = stepIndex === steps.length - 1;
+  /** The last step with questions on it: after this comes only "stay involved". */
+  const isLastContentStep = stepIndex === steps.length - 2;
+  const [upgrading, setUpgrading] = useState(false);
+
+  /** Switch to the full version and go to the first thing not yet answered. */
+  const continueToFull = (): void => {
+    setUpgrading(true);
+    setParams({});
+  };
+
+  useEffect(() => {
+    if (!upgrading || short) return;
+    setUpgrading(false);
+    const next = steps.findIndex(
+      (candidate) =>
+        candidate.section !== null &&
+        candidate.section.questions.some((question) => draft.answers[question.id] === undefined),
+    );
+    state.goTo(next === -1 ? steps.length - 1 : next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once the switch has taken effect
+  }, [upgrading, short, steps]);
   // Before a role is chosen there is no role-specific section in the list yet.
   // Counting it anyway keeps the total honest: a progress bar that grows from
   // "of 5" to "of 6" the moment somebody answers reads as moving backwards.
@@ -63,7 +91,7 @@ export const Consultation = () => {
       pathway,
       regions: draft.regions,
       regionOther: draft.regionOther,
-      answers: draft.answers,
+      answers: { ...draft.answers, [LENGTH_ID]: lengthAnswer(short ? 'short' : 'full') },
       startedAt: draft.startedAt,
       submittedAt: now.toISOString(),
       durationSeconds: Math.max(0, Math.round((now.getTime() - new Date(draft.startedAt).getTime()) / 1000)),
@@ -156,6 +184,27 @@ export const Consultation = () => {
           </div>
         )}
 
+        {short && isLastContentStep && (
+          <section className={`${accentPanel} mt-8`} aria-labelledby="more-questions">
+            <h2 id="more-questions" className="text-subtitle font-semibold">
+              That&rsquo;s the short version — thank you
+            </h2>
+            <p className="mt-2 text-body text-ink">
+              If you have another five minutes, the full version asks about your own operation: what you have already
+              tried, what gets in the way, and how you&rsquo;d like to hear about results. It helps us more than
+              anything else, but the answers you have given already count.
+            </p>
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <button type="button" className={primaryButton} onClick={continueToFull}>
+                Yes, ask me the rest
+              </button>
+              <button type="button" className={secondaryButton} onClick={state.next}>
+                No thanks, finish up
+              </button>
+            </div>
+          </section>
+        )}
+
         {isLastStep && (
           <StayInvolved
             interestOptions={interestsForPathway(questionnaire, pathway)}
@@ -180,9 +229,12 @@ export const Consultation = () => {
             {submitting ? 'Submitting…' : 'Submit consultation'}
           </button>
         ) : (
-          <button type="button" className={primaryButton} onClick={handleNext}>
-            Next
-          </button>
+          // On the short version's last page the choice above is the way on.
+          !(short && isLastContentStep) && (
+            <button type="button" className={primaryButton} onClick={handleNext}>
+              Next
+            </button>
+          )
         )}
         {stepIndex > 0 && (
           <button type="button" className={secondaryButton} onClick={state.back} disabled={submitting}>

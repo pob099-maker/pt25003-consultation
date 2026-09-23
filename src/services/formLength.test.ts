@@ -3,12 +3,12 @@ import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { allQuestions, trackingQuestions } from '../content/lookup';
 import { consultationResponseSchema } from '../schemas/consultation';
 import { responseRow } from './exportCsv';
-import { LENGTH_ID, lengthAnswer, lengthOf, shortInterview } from './interviewLength';
+import { LENGTH_ID, lengthAnswer, lengthOf, shortVersion } from './formLength';
 
 const q = DEFAULT_QUESTIONNAIRE;
-const short = shortInterview(q);
+const short = shortVersion(q);
 
-describe('shortInterview', () => {
+describe('shortVersion', () => {
   it('keeps every tracked question and nothing else', () => {
     const kept = allQuestions(short).map((question) => question.id);
     expect(kept.sort()).toEqual(trackingQuestions(q).map((question) => question.id).sort());
@@ -55,6 +55,31 @@ describe('recording the length', () => {
       sessionId: null,
     };
     expect(consultationResponseSchema.safeParse(response).success).toBe(true);
-    expect(responseRow(q, response).interview_length).toBe('short');
+    expect(responseRow(q, response).short_or_full).toBe('short');
+  });
+});
+
+describe('the short online form', () => {
+  it('is short enough to be honest about five minutes', () => {
+    // A grower's short form: the shared tracked questions plus their own branch.
+    const forGrower = [...short.core, short.pathways.farm].flatMap((section) => section?.questions ?? []);
+    expect(forGrower.length).toBeLessThanOrEqual(10);
+    expect(forGrower.some((question) => question.kind === 'text')).toBe(false);
+  });
+
+  it('asks the same questions the full version does, word for word', () => {
+    for (const question of allQuestions(short)) {
+      const inFull = allQuestions(q).find((candidate) => candidate.id === question.id);
+      expect(inFull?.prompt).toBe(question.prompt);
+      expect(inFull?.kind).toBe(question.kind);
+    }
+  });
+
+  it('keeps every answer when somebody switches to the full version', () => {
+    const answered = Object.fromEntries(
+      allQuestions(short).map((question) => [question.id, { kind: 'text', value: 'x' } as const]),
+    );
+    const stillAsked = allQuestions(q).filter((question) => answered[question.id] !== undefined);
+    expect(stillAsked).toHaveLength(allQuestions(short).length);
   });
 });

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { currentProject } from '../content/projects';
 import { Layout } from '../components/Layout';
 import { PreferToTalk } from '../components/PreferToTalk';
-import { card, primaryButton, quietButton } from '../components/ui';
+import { card, primaryButton, quietButton, secondaryButton } from '../components/ui';
 import { STORAGE_KEYS, readJson } from '../lib/storage';
 import { isDemoSite } from '../lib/config';
 import { DemoWelcome } from '../components/DemoWelcome';
@@ -31,7 +31,23 @@ export const Landing = () => {
         </p>
       </div>
 
-      <p className="mt-5 text-body font-semibold text-ink">This consultation should take around 8–10 minutes.</p>
+      <section className={`${card} mt-6`} aria-labelledby="how-long">
+        <h2 id="how-long" className="text-subtitle font-semibold">
+          Two ways to have your say
+        </h2>
+        <p className="mt-2 text-ink-soft">
+          Pick whichever suits the day. The short one asks the questions we most need answered; the full one lets you
+          tell us more about your own operation. You can start short and keep going if you have time.
+        </p>
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <Link to="/about?quick=1" className={primaryButton}>
+            {hasDraft ? 'Continue' : 'Short version · about 5 minutes'}
+          </Link>
+          <Link to="/about" className={secondaryButton}>
+            {hasDraft ? 'Continue the full version' : 'Full version · about 10 minutes'}
+          </Link>
+        </div>
+      </section>
 
       <section className={`${card} mt-6 prose-measure`} aria-labelledby="confidentiality">
         <h2 id="confidentiality" className="text-subtitle font-semibold">
@@ -45,14 +61,11 @@ export const Landing = () => {
 
       <PreferToTalk />
 
-      <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <Link to="/about" className={primaryButton}>
-          {hasDraft ? 'Continue consultation' : 'Start consultation'}
-        </Link>
+      <p className="mt-7">
         <Link to="/privacy" className={quietButton}>
           Learn how your information will be used
         </Link>
-      </div>
+      </p>
 
       {hasDraft && (
         <p className="mt-4 text-meta text-ink-soft">

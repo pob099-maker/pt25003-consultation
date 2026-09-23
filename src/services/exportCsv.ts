@@ -3,7 +3,7 @@ import { allQuestions, interestLabel, optionLabel, questionById, regionLabel, ro
 import type { ConsultationResponse, ContactRecord, Questionnaire } from '../types';
 import type { TagMap } from './tags';
 import { coveredEarlier, notesText } from './interviewNotes';
-import { lengthOf } from './interviewLength';
+import { lengthOf } from './formLength';
 
 const RESPONSE_FIXED = [
   'response_id',
@@ -17,7 +17,7 @@ const RESPONSE_FIXED = [
   'method',
   'test_data',
   'prompted_items',
-  'interview_length',
+  'short_or_full',
   'covered_earlier',
   'interview_notes',
 ] as const;
@@ -69,7 +69,7 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
       ),
     ),
     // Answered from something said earlier in the conversation, not asked outright.
-    interview_length: lengthOf(response.answers) ?? '',
+    short_or_full: lengthOf(response.answers) ?? '',
     covered_earlier: join(coveredEarlier(response.answers)),
     interview_notes: notesText(questionnaire, response.answers),
   };
