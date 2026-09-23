@@ -378,6 +378,17 @@ const TRUST_ANSWERS: readonly (readonly string[])[] = [
   ['industry_body', 'state_ag', 'extension'],
 ];
 
+/**
+ * How long before "now" each seeded row is dated. Stated once, so the SQL
+ * generator can write the same number instead of re-deriving it from the
+ * clock: a generated file that changes with the time of day fails its own
+ * up-to-date check on whichever day nobody regenerated it.
+ */
+export const SEED_DAYS_AGO = {
+  response: (index: number, total: number): number => total - index,
+  contacts: [6, 4] as const,
+} as const;
+
 const isoDaysAgo = (days: number): string => {
   const date = new Date();
   date.setDate(date.getDate() - days);
@@ -387,7 +398,7 @@ const isoDaysAgo = (days: number): string => {
 
 export const seedResponses = (): readonly ConsultationResponse[] =>
   SPECS.map((spec, index) => {
-    const submittedAt = isoDaysAgo(SPECS.length - index);
+    const submittedAt = isoDaysAgo(SEED_DAYS_AGO.response(index, SPECS.length));
     const durationSeconds = spec.minutes * 60;
     const answers: AnswerMap = {
       q1_constraints: { kind: 'multi', values: spec.constraints, other: '' },
@@ -438,7 +449,7 @@ export const seedContacts = (): readonly ContactRecord[] => [
     preferredContactMethod: 'email',
     preferredContactTime: 'Weekday mornings, outside harvest',
     comments: 'Happy to host a harvester damage demonstration.',
-    submittedAt: isoDaysAgo(6),
+    submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[0]),
     isTestData: true,
   },
   {
@@ -454,7 +465,7 @@ export const seedContacts = (): readonly ContactRecord[] => [
     preferredContactMethod: 'phone',
     preferredContactTime: 'Afternoons',
     comments: '',
-    submittedAt: isoDaysAgo(4),
+    submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[1]),
     isTestData: true,
   },
 ];

@@ -1,5 +1,5 @@
 import type { ConsultationResponse, ContactRecord } from '../types';
-import { seedContacts, seedResponses } from './seed';
+import { SEED_DAYS_AGO, seedContacts, seedResponses } from './seed';
 
 /**
  * Renders the seeded test data as SQL, so the rows loaded into a Supabase
@@ -14,25 +14,20 @@ const quote = (text: string): string => `'${text.replaceAll("'", "''")}'`;
 const array = (values: readonly string[]): string =>
   values.length === 0 ? `'{}'::text[]` : `array[${values.map(quote).join(',')}]::text[]`;
 
-const daysAgo = (iso: string): number => {
-  const days = (Date.now() - new Date(iso).getTime()) / 86_400_000;
-  return Math.max(1, Math.round(days));
-};
-
-const responseInsert = (response: ConsultationResponse): string =>
+const responseInsert = (response: ConsultationResponse, daysAgo: number): string =>
   [
     'insert into public.consultation_responses',
     '  (id, round_id, role, pathway, regions, region_other, answers, started_at, submitted_at, duration_seconds, is_test_data)',
     'values (',
     `  ${quote(response.id)}, ${quote(response.roundId)}, ${quote(response.role ?? '')}, ${quote(response.pathway ?? '')}, ${array(response.regions)}, ${quote(response.regionOther)},`,
     `  ${quote(JSON.stringify(response.answers))}::jsonb,`,
-    `  now() - interval '${daysAgo(response.submittedAt)} days' - interval '${response.durationSeconds} seconds',`,
-    `  now() - interval '${daysAgo(response.submittedAt)} days',`,
+    `  now() - interval '${daysAgo} days' - interval '${response.durationSeconds} seconds',`,
+    `  now() - interval '${daysAgo} days',`,
     `  ${response.durationSeconds}, true`,
     ') on conflict (id) do nothing;',
   ].join('\n');
 
-const contactInsert = (contact: ContactRecord): string =>
+const contactInsert = (contact: ContactRecord, daysAgo: number): string =>
   [
     'insert into public.consultation_contacts',
     '  (id, round_id, interests, name, organisation, broad_role, region, email, phone,',
@@ -42,7 +37,7 @@ const contactInsert = (contact: ContactRecord): string =>
     `  ${quote(contact.name)}, ${quote(contact.organisation)}, ${quote(contact.broadRole)}, ${quote(contact.region)},`,
     `  ${quote(contact.email)}, ${quote(contact.phone)}, ${quote(contact.preferredContactMethod)},`,
     `  ${quote(contact.preferredContactTime)}, ${quote(contact.comments)},`,
-    `  now() - interval '${daysAgo(contact.submittedAt)} days', true`,
+    `  now() - interval '${daysAgo} days', true`,
     ') on conflict (id) do nothing;',
   ].join('\n');
 
@@ -62,8 +57,8 @@ export const buildSeedSql = (roundId: string, roundLabel: string): string =>
     `values (${quote(roundId)}, ${quote(roundLabel)}, true)`,
     'on conflict (round_id) do nothing;',
     '',
-    ...seedResponses().map(responseInsert),
+    ...seedResponses().map((response, index, all) => responseInsert(response, SEED_DAYS_AGO.response(index, all.length))),
     '',
-    ...seedContacts().map(contactInsert),
+    ...seedContacts().map((contact, index) => contactInsert(contact, SEED_DAYS_AGO.contacts[index] ?? 1)),
     '',
   ].join('\n');
