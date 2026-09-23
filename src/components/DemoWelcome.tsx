@@ -23,14 +23,22 @@ const TOUR: readonly { to: string; title: string; what: string }[] = [
     what: 'The big-screen view for a field day: a QR code, live answers, bar charts and word clouds. To play the audience, open the join link in a second tab of this browser.',
   },
   {
-    to: '/consultation',
-    title: 'The online form',
-    what: 'What a grower, contractor or processor sees — the questions change with their role.',
+    to: '/',
+    title: 'What a grower opens',
+    what: 'The first page a respondent sees: a short version, a full one, and the offer to be rung instead. The questions change with their role.',
   },
 ];
 
-/** A guided start for somebody we have sent the demonstration link to. */
-export const DemoWelcome = () => (
+/**
+ * A guided start for somebody we have sent the demonstration link to.
+ *
+ * It sits on the results screen, because that is where the demonstration link
+ * now lands: the people we send it to want to see what the tool produces, and
+ * the respondent's view is one of the stops rather than the front door.
+ *
+ * `here` drops the stop you are already looking at.
+ */
+export const DemoWelcome = ({ here }: { here?: string }) => (
   <section className={`${accentPanel} mt-6`} aria-labelledby="demo-welcome">
     <h2 id="demo-welcome" className="text-subtitle font-semibold">
       Welcome to the demonstration
@@ -40,8 +48,14 @@ export const DemoWelcome = () => (
       collected online, by interview and in workshops. Nothing here is real, and nothing you enter is saved — click
       anything.
     </p>
+    <p className="mt-3 text-body text-ink">
+      It works in three levels. The tool is the software; a <strong>project</strong> is a piece of work with its own
+      questions, team and data, like this one or a regional program beside it; and a <strong>consultation</strong> is
+      one period of asking inside a project, a baseline now and a review a year on. The picker at the top of the results
+      screen moves between projects, and nothing crosses between them.
+    </p>
     <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-      {TOUR.map((stop) => (
+      {TOUR.filter((stop) => stop.to !== here).map((stop) => (
         <li key={stop.to}>
           <Link to={stop.to} className="block h-full rounded-lg border border-line bg-surface p-4 hover:border-primary">
             <span className="block text-body font-semibold text-primary-ink">{stop.title} →</span>

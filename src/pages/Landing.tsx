@@ -5,7 +5,6 @@ import { PreferToTalk } from '../components/PreferToTalk';
 import { card, primaryButton, quietButton, secondaryButton } from '../components/ui';
 import { STORAGE_KEYS, readJson } from '../lib/storage';
 import { isDemoSite } from '../lib/config';
-import { DemoWelcome } from '../components/DemoWelcome';
 
 export const Landing = () => {
   const hasDraft = readJson<{ stepIndex: number }>(STORAGE_KEYS.draft) !== null;
@@ -17,7 +16,16 @@ export const Landing = () => {
           reliable left edge to return to, and this page is read, not skimmed. */}
       <h1 className="text-center">{currentProject().name} Consultation</h1>
 
-      {isDemoSite() && <DemoWelcome />}
+      {/* The tour lives on the results screen now. This is the way back for
+          somebody who arrived here from it, or from a link with the hash on. */}
+      {isDemoSite() && (
+        <p className="mt-4 text-meta text-ink-soft">
+          This is the page a grower opens.{' '}
+          <Link to="/admin" className="underline underline-offset-4">
+            Back to the demonstration tour
+          </Link>
+        </p>
+      )}
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>

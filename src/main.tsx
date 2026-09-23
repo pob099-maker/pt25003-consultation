@@ -16,6 +16,13 @@ if (isDemoSite()) {
   robots.content = 'noindex, nofollow';
   document.head.appendChild(robots);
   document.title = `Demo · ${document.title}`;
+  // The link we send lands on the results screen, where the tour and the
+  // project picker are: somebody sent a demonstration wants to see what the
+  // tool produces, not to fill in a form. Only the bare link is redirected —
+  // a hash means a page was asked for, including the respondent's own view.
+  if (window.location.hash === '') {
+    window.history.replaceState(null, '', `${window.location.pathname}#/admin`);
+  }
 }
 
 /**

@@ -29,6 +29,7 @@ import { PhoneScriptPanel } from './PhoneScriptPanel';
 import { ChangePanel } from './ChangePanel';
 import { TeamPanel } from './TeamPanel';
 import { GroupsPanel } from './GroupsPanel';
+import { DemoWelcome } from '../../components/DemoWelcome';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
@@ -180,9 +181,14 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           <Link to="/workshop" className={secondaryButton}>
             Run a workshop
           </Link>
-          <button type="button" className="text-meta text-primary-ink underline underline-offset-4" onClick={onSignOut}>
-            Sign out
-          </button>
+          {/* Nobody signed in to the demonstration, and this is the first
+              screen its visitors see: offering to sign them out of nothing
+              only makes them wonder what they are logged into. */}
+          {!isDemoSite() && (
+            <button type="button" className="text-meta text-primary-ink underline underline-offset-4" onClick={onSignOut}>
+              Sign out
+            </button>
+          )}
         </span>
       </div>
       <p className="mt-2 text-body text-ink">
@@ -194,21 +200,14 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         separately and are not linked to any set of answers.
       </p>
 
-      {data.demoMode && (
+      {/* The demonstration link lands here, so the tour is here rather than on
+          the landing page. A developer with no backend gets the plain notice
+          instead: they know what they are looking at. */}
+      {isDemoSite() && <DemoWelcome here="/admin" />}
+      {data.demoMode && !isDemoSite() && (
         <p className={`${accentPanel} mt-5 text-body`} role="status">
-          {isDemoSite() ? (
-            <>
-              <strong>This is a demonstration.</strong> Every response here is invented — a baseline of 45 people and a
-              mid-project review of 38, collected online, by interview and in workshops — so you can see how the results
-              screens work. Try <strong>Change over time</strong>, the <strong>Collected</strong> filter and{' '}
-              <strong>Download chart</strong>. Nothing you do here is saved anywhere but this browser.
-            </>
-          ) : (
-            <>
-              No backend is configured, so this screen is showing generated <strong>demonstration data</strong>. Set the
-              Supabase environment variables to see real responses.
-            </>
-          )}
+          No backend is configured, so this screen is showing generated <strong>demonstration data</strong>. Set the
+          Supabase environment variables to see real responses.
         </p>
       )}
       {data.error !== null && (
