@@ -1,0 +1,43 @@
+name: Keep the database awake
+
+# A free Supabase project is paused after roughly a week without traffic, and a
+# paused project means answers queue on respondents' phones instead of arriving.
+# There is a scheduled task on Peter's machine doing the same thing, but that
+# one only fires when the laptop happens to be on; this one always runs.
+#
+# It reads the question wording with the public key — the same request every
+# respondent's browser makes — and nothing else.
+
+on:
+  schedule:
+    # 03:11 UTC daily (about 1pm in Adelaide), off the hour because GitHub
+    # delays jobs scheduled on it.
+    - cron: '11 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read the active round
+        env:
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "No database configured for this repository; nothing to keep awake."
+            exit 0
+          fi
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/consultation_rounds?select=round_id&limit=1")
+          echo "HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "The consultation database did not answer. It may be paused:"
+            echo "open the Supabase dashboard for this project and press Restore."
+            exit 1
+          fi
