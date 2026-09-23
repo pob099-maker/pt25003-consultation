@@ -40,11 +40,11 @@ export const ThankYou = () => {
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>
-          Your input will help identify practical priorities for mechanisation, automation, demonstration and extension
-          across the potato industry.
+          What you have told us feeds straight into where the project puts its effort on mechanisation, automation and
+          demonstration work.
         </p>
         <p>
-          We will use responses to develop a “what we heard” summary and guide future project activities.
+          We will put together a summary of what we heard and send it out, so you can see what came of it.
           {state.sharedContact === true
             ? ' Because you provided contact details, the project team may contact you about the activities you selected.'
             : ' If you chose to provide contact details, the project team may contact you about the activities you selected.'}
@@ -67,9 +67,14 @@ export const ThankYou = () => {
           View the privacy statement
         </Link>
         <button type="button" className={secondaryButton} onClick={() => void share()}>
-          Share with a colleague
+          Invite someone else to have their say
         </button>
       </div>
+
+      <p className="mt-3 text-meta text-ink-soft">
+        Inviting someone sends them the consultation link so they can answer for themselves. Your own answers stay
+        private and are never shared.
+      </p>
 
       {shareNote !== null && (
         <p className="mt-4 text-meta text-ink-soft" role="status">

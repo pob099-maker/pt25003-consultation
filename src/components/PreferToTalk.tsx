@@ -19,9 +19,8 @@ export const PreferToTalk = () => {
         Would you rather talk to someone?
       </h2>
       <p className="mt-2 text-ink-soft">
-        If filling in a form online does not suit you, you do not have to. Ring or email the project team and somebody
-        will take your input over the phone, or arrange a time to talk it through in person. Your answers count the
-        same either way.
+        If filling in a form does not suit you, give us a ring or send an email and we will take it over the phone, or
+        arrange a time to talk it through in person. Your answers count the same either way.
       </p>
       <ul className="mt-3 grid gap-2">
         {contacts.map((contact) => (

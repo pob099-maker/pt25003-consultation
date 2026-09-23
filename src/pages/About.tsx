@@ -7,12 +7,12 @@ import { card, primaryButton, secondaryButton } from '../components/ui';
 const POINTS = [
   'Taking part is voluntary.',
   'You can skip any question you would rather not answer, and stop at any time.',
-  'Your answers will be used to guide the research, demonstration and extension priorities of the Potato Mechanisation Project.',
-  'Results will be summarised in aggregate form.',
-  'Contact details are optional. They are only collected if you ask to be contacted or express interest in follow-up activities.',
-  'Please do not enter commercially confidential information unless you are comfortable doing so.',
-  'You do not have to do this online. You can give the same input by phone, or in person, if you would rather.',
-  'We record which step you reach, so we can tell whether a section is too long. That record holds no answers and nothing you type, and you can switch it off below.',
+  'Your answers guide what the project works on, including research, demonstrations and extension.',
+  'Results are reported as totals, not as individual answers.',
+  'Contact details are optional. We only take them if you ask us to get in touch about something.',
+  'Please leave out anything commercially sensitive unless you are comfortable putting it down.',
+  'You do not have to do this online. You can give the same input over the phone or in person if you would rather.',
+  'We record which step you reach, so we can tell whether a section is too long. It holds no answers and nothing you type, and you can switch it off below.',
 ] as const;
 
 export const About = () => {

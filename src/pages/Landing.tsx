@@ -21,13 +21,12 @@ export const Landing = () => {
 
       <div className="prose-measure mt-5 space-y-4 text-ink-soft">
         <p>
-          The Potato Mechanisation Project is seeking practical input from across the Australian potato industry to help
-          identify priority opportunities for mechanisation, automation, digital tools, demonstrations and practical
-          extension.
+          The Potato Mechanisation Project is asking growers, contractors, packers and the people who supply them where
+          mechanisation and automation would make the most practical difference.
         </p>
         <p>
-          Your feedback will help guide future project activities, including case studies, field demonstrations,
-          business-case tools and PotatoLink resources.
+          What you tell us guides what the project takes on, including field demonstrations, case studies and the
+          business-case work that follows.
         </p>
       </div>
 
@@ -36,8 +35,8 @@ export const Landing = () => {
           Two ways to have your say
         </h2>
         <p className="mt-2 text-ink-soft">
-          Pick whichever suits the day. The short one asks the questions we most need answered; the full one lets you
-          tell us more about your own operation. You can start short and keep going if you have time.
+          Pick whichever suits the day. The short one asks what we most need to know. The full one lets you tell us more
+          about your own operation. You can start short and keep going if you have the time.
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <Link to="/about?quick=1" className={primaryButton}>
@@ -54,8 +53,8 @@ export const Landing = () => {
           Confidentiality
         </h2>
         <p className="mt-2 text-ink-soft">
-          You can respond anonymously. Findings will be reported in aggregated form and will not identify individual
-          people or businesses without permission.
+          You can answer anonymously. Results are reported as totals, and no individual person or business is named
+          without permission.
         </p>
       </section>
 

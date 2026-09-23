@@ -187,19 +187,19 @@ export const Consultation = () => {
         {short && isLastContentStep && (
           <section className={`${accentPanel} mt-8`} aria-labelledby="more-questions">
             <h2 id="more-questions" className="text-subtitle font-semibold">
-              That&rsquo;s the short version — thank you
+              That is the short version, thank you
             </h2>
             <p className="mt-2 text-body text-ink">
-              If you have another five minutes, the full version asks about your own operation: what you have already
-              tried, what gets in the way, and how you&rsquo;d like to hear about results. It helps us more than
-              anything else, but the answers you have given already count.
+              If you have another five minutes, the full version asks about your own operation, what you have tried
+              already, and what gets in the way. It is the part that helps us most, and the answers you have given
+              already count either way.
             </p>
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">
               <button type="button" className={primaryButton} onClick={continueToFull}>
-                Yes, ask me the rest
+                Yes, keep going
               </button>
               <button type="button" className={secondaryButton} onClick={state.next}>
-                No thanks, finish up
+                No thanks, that will do
               </button>
             </div>
           </section>
