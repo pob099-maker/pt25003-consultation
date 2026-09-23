@@ -63,16 +63,16 @@ const CONSTRAINTS = opts(
  */
 const AREAS = opts(
   ['precision_planting', 'Precision planting and crop establishment'],
-  ['autonomy', 'Autonomous or semi-autonomous field operations', 'Machines that run with limited or no driver input.'],
+  ['autonomy', 'Autonomous and self-steering field machinery', 'Machines that run with limited or no driver input.'],
   ['harvest_efficiency', 'Harvest efficiency and damage reduction'],
   ['harvest_logistics', 'Harvest logistics and transport coordination'],
-  ['optical_sorting', 'Optical sorting, grading and quality measurement', 'Cameras and sensors that grade tubers as they pass.'],
+  ['optical_sorting', 'Optical sorting and grading', 'Cameras and sensors that grade tubers as they pass.'],
   ['packhouse_automation', 'Packhouse and receival automation'],
   ['robotics', 'Robotics for repetitive manual tasks'],
-  ['sensors', 'Sensors and machine data for operational decisions'],
+  ['sensors', 'Sensors and machine data for day-to-day decisions'],
   ['irrigation_automation', 'Irrigation automation linked to crop and soil information'],
   ['predictive_maintenance', 'Predictive maintenance and machinery uptime', 'Using machine data to service a part before it fails.'],
-  ['interoperability', 'Data standards and system interoperability', 'Making equipment and software from different suppliers share data.'],
+  ['interoperability', 'Getting different brands and systems to work together', 'Data standards, so gear and software from different suppliers share information.'],
   ['training', 'Training, skills and workforce pathways'],
 );
 
@@ -240,7 +240,7 @@ const CORE: readonly Section[] = [
         // the CSIRO tool Australian extension leans on. It was implied by the
         // evidence question above but never asked, and "a demonstration
         // somewhere" is not the same thing as "on my own place, on a few rows".
-        prompt: 'Before you committed to something new, how much would it matter to try it on part of the operation first?',
+        prompt: 'Before you committed to something new, how much would it matter to try it on part of your own operation first?',
         options: opts(
           ['essential', 'Essential — I would not go ahead without it'],
           ['helpful', 'Helpful, but not a deal-breaker'],

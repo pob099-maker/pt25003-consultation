@@ -90,16 +90,16 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 `q5_areas` · rate 1-5 × 12 · **tracked every round**
 
 - Precision planting and crop establishment
-- Autonomous or semi-autonomous field operations
+- Autonomous and self-steering field machinery
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
-- Optical sorting, grading and quality measurement
+- Optical sorting and grading
 - Packhouse and receival automation
 - Robotics for repetitive manual tasks
-- Sensors and machine data for operational decisions
+- Sensors and machine data for day-to-day decisions
 - Irrigation automation linked to crop and soil information
 - Predictive maintenance and machinery uptime
-- Data standards and system interoperability
+- Getting different brands and systems to work together
 - Training, skills and workforce pathways
 
 ## 4. Everybody — What would convince you
@@ -124,7 +124,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Better compatibility with existing equipment or data systems
 - Other
 
-### Before you committed to something new, how much would it matter to try it on part of the operation first?
+### Before you committed to something new, how much would it matter to try it on part of your own operation first?
 
 `q_trial` · one only · **tracked every round**
 
@@ -471,16 +471,16 @@ Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 m
 `mach_available` · tick any + other
 
 - Precision planting and crop establishment
-- Autonomous or semi-autonomous field operations
+- Autonomous and self-steering field machinery
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
-- Optical sorting, grading and quality measurement
+- Optical sorting and grading
 - Packhouse and receival automation
 - Robotics for repetitive manual tasks
-- Sensors and machine data for operational decisions
+- Sensors and machine data for day-to-day decisions
 - Irrigation automation linked to crop and soil information
 - Predictive maintenance and machinery uptime
-- Data standards and system interoperability
+- Getting different brands and systems to work together
 - Training, skills and workforce pathways
 - Other
 
@@ -489,16 +489,16 @@ Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 m
 `mach_ready` · tick any + other
 
 - Precision planting and crop establishment
-- Autonomous or semi-autonomous field operations
+- Autonomous and self-steering field machinery
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
-- Optical sorting, grading and quality measurement
+- Optical sorting and grading
 - Packhouse and receival automation
 - Robotics for repetitive manual tasks
-- Sensors and machine data for operational decisions
+- Sensors and machine data for day-to-day decisions
 - Irrigation automation linked to crop and soil information
 - Predictive maintenance and machinery uptime
-- Data standards and system interoperability
+- Getting different brands and systems to work together
 - Training, skills and workforce pathways
 - Other
 
@@ -565,16 +565,16 @@ Technology provider · 7 questions · about 3.8 min
 `tech_offer` · tick any + other
 
 - Precision planting and crop establishment
-- Autonomous or semi-autonomous field operations
+- Autonomous and self-steering field machinery
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
-- Optical sorting, grading and quality measurement
+- Optical sorting and grading
 - Packhouse and receival automation
 - Robotics for repetitive manual tasks
-- Sensors and machine data for operational decisions
+- Sensors and machine data for day-to-day decisions
 - Irrigation automation linked to crop and soil information
 - Predictive maintenance and machinery uptime
-- Data standards and system interoperability
+- Getting different brands and systems to work together
 - Training, skills and workforce pathways
 - Other
 
@@ -720,16 +720,16 @@ Adviser, consultant, researcher or educator · 6 questions · about 3.8 min
 `adv_evaluate` · tick any + other
 
 - Precision planting and crop establishment
-- Autonomous or semi-autonomous field operations
+- Autonomous and self-steering field machinery
 - Harvest efficiency and damage reduction
 - Harvest logistics and transport coordination
-- Optical sorting, grading and quality measurement
+- Optical sorting and grading
 - Packhouse and receival automation
 - Robotics for repetitive manual tasks
-- Sensors and machine data for operational decisions
+- Sensors and machine data for day-to-day decisions
 - Irrigation automation linked to crop and soil information
 - Predictive maintenance and machinery uptime
-- Data standards and system interoperability
+- Getting different brands and systems to work together
 - Training, skills and workforce pathways
 - Other
 
@@ -934,27 +934,27 @@ The two lists are different axes — where the trouble is, and what could be don
 ### Ground preparation and planting
 
 - Precision planting and crop establishment
-- Autonomous or semi-autonomous field operations
+- Autonomous and self-steering field machinery
 
 ### Crop monitoring and decision support
 
-- Sensors and machine data for operational decisions
-- Data standards and system interoperability
+- Sensors and machine data for day-to-day decisions
+- Getting different brands and systems to work together
 
 ### Irrigation operation and automation
 
 - Irrigation automation linked to crop and soil information
-- Sensors and machine data for operational decisions
+- Sensors and machine data for day-to-day decisions
 
 ### Crop protection operations
 
-- Autonomous or semi-autonomous field operations
-- Sensors and machine data for operational decisions
+- Autonomous and self-steering field machinery
+- Sensors and machine data for day-to-day decisions
 
 ### Harvesting
 
 - Harvest efficiency and damage reduction
-- Autonomous or semi-autonomous field operations
+- Autonomous and self-steering field machinery
 
 ### In-field transport and harvest logistics
 
@@ -963,11 +963,11 @@ The two lists are different axes — where the trouble is, and what could be don
 ### Receival
 
 - Packhouse and receival automation
-- Optical sorting, grading and quality measurement
+- Optical sorting and grading
 
 ### Washing, grading and sorting
 
-- Optical sorting, grading and quality measurement
+- Optical sorting and grading
 - Packhouse and receival automation
 
 ### Packing
@@ -977,13 +977,13 @@ The two lists are different axes — where the trouble is, and what could be don
 
 ### Storage and handling
 
-- Sensors and machine data for operational decisions
+- Sensors and machine data for day-to-day decisions
 - Packhouse and receival automation
 
 ### Data capture, traceability and system integration
 
-- Data standards and system interoperability
-- Sensors and machine data for operational decisions
+- Getting different brands and systems to work together
+- Sensors and machine data for day-to-day decisions
 
 ### Machinery maintenance and reliability
 

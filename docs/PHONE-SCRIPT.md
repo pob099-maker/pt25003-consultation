@@ -122,16 +122,16 @@ _Scale: 1 = not a priority, 2 = low priority, 3 = moderate priority, 4 = high pr
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - Precision planting and crop establishment
-  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
+  - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
+  - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
   - Robotics for repetitive manual tasks
-  - Sensors and machine data for operational decisions
+  - Sensors and machine data for day-to-day decisions
   - Irrigation automation linked to crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
   - Training, skills and workforce pathways
 
 ## What would convince you
@@ -164,7 +164,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Better compatibility with existing equipment or data systems
   - Other
 
-**8. Before you committed to something new, how much would it matter to try it on part of the operation first?**
+**8. Before you committed to something new, how much would it matter to try it on part of your own operation first?**
 
 > Open with: "Would you need to try it on part of the place before you committed?"
 > Then probe: "How big a trial would you need to see?"
@@ -590,16 +590,16 @@ _Tick any that apply._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
-  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
+  - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
+  - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
   - Robotics for repetitive manual tasks
-  - Sensors and machine data for operational decisions
+  - Sensors and machine data for day-to-day decisions
   - Irrigation automation linked to crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
   - Training, skills and workforce pathways
   - Other
 
@@ -610,16 +610,16 @@ _Tick any that apply._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
-  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
+  - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
+  - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
   - Robotics for repetitive manual tasks
-  - Sensors and machine data for operational decisions
+  - Sensors and machine data for day-to-day decisions
   - Irrigation automation linked to crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
   - Training, skills and workforce pathways
   - Other
 
@@ -699,16 +699,16 @@ _Tick any that apply. There is room to describe it properly at the end._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
-  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
+  - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
+  - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
   - Robotics for repetitive manual tasks
-  - Sensors and machine data for operational decisions
+  - Sensors and machine data for day-to-day decisions
   - Irrigation automation linked to crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
   - Training, skills and workforce pathways
   - Other
 
@@ -882,16 +882,16 @@ _Tick any that apply._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
-  - Autonomous or semi-autonomous field operations — Machines that run with limited or no driver input.
+  - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and damage reduction
   - Harvest logistics and transport coordination
-  - Optical sorting, grading and quality measurement — Cameras and sensors that grade tubers as they pass.
+  - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
   - Robotics for repetitive manual tasks
-  - Sensors and machine data for operational decisions
+  - Sensors and machine data for day-to-day decisions
   - Irrigation automation linked to crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Data standards and system interoperability — Making equipment and software from different suppliers share data.
+  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
   - Training, skills and workforce pathways
   - Other
 
