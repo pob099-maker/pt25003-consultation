@@ -1,4 +1,5 @@
 import type { Question, Questionnaire, Section } from '../types';
+import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL } from '../services/callback';
 
 export const allSections = (questionnaire: Questionnaire): readonly Section[] => [
   ...questionnaire.core,
@@ -42,6 +43,9 @@ export const roleLabel = (questionnaire: Questionnaire, id: string | null): stri
  * same whichever perspective the person came through. */
 export const interestLabel = (questionnaire: Questionnaire, id: string): string => {
   if (id === 'none') return 'None of these';
+  // Not one of the questionnaire's options: it is how somebody asked to be
+  // rung rather than something they volunteered for.
+  if (id === CALLBACK_INTEREST_ID) return CALLBACK_INTEREST_LABEL;
   const common = questionnaire.interestOptions.find((option) => option.id === id);
   if (common !== undefined) return common.label;
   for (const options of Object.values(questionnaire.pathwayInterests)) {

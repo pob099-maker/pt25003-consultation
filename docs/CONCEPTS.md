@@ -19,6 +19,38 @@ Two facts are structural, because the software has to reason about them:
 Everything else — names, dates, how many you run — belongs to whoever is reporting, and can change
 whenever they like.
 
+## Three levels, and what belongs to each
+
+One tool, several projects, several consultations inside each project. PT25003 is a project on the
+tool, and PotatoLink phase 2 will be another one beside it rather than a version of this one.
+
+```
+The tool            the consultation tool itself, one codebase, one database
+  Project           PT25003 · PotatoLink phase 2 · a regional program
+    Consultation    Baseline · Mid-term review · Final review
+      Response      one person, once, however they answered
+```
+
+| Level | Owns | Shared with the level above |
+| --- | --- | --- |
+| **Tool** | The question library, the measurement wording, how anything is collected and analysed | — |
+| **Project** | Its own questions, team, contacts, respondents and reporting. Its own name for "consultation" | The tool's machinery, and nothing else. No project can see another's data |
+| **Consultation** | Its dates, its name, whether it is the starting point | The project's questions, minus whatever this one adds or retires |
+| **Response** | One person's answers | The consultation's wording |
+
+Two practical consequences:
+
+- **A project is the privacy boundary.** Every table carries `project_id`, and a query that forgets
+  it is a bug, not a wider view. Team logins are per project too.
+- **A respondent never chooses a level.** The link they were sent belongs to one project and one
+  live consultation. Today that means the deployment's own project, with `/#/p/<project>` as a
+  short link for a second one; a project with a life of its own gets its own address, and the short
+  link keeps working when it does.
+
+Where the words go wrong: calling PT25003 "the consultation" makes phase 2 sound like a *later
+consultation of the same project*, which would put both under one set of repeat questions and one
+starting point. It is a project of its own, with its own starting point.
+
 ## Four concepts, one name each
 
 | Use | Don't use | What it is |

@@ -40,6 +40,11 @@ export const Privacy = () => (
         contacted: your name, organisation, broad role, region, email address, phone number, preferred contact method and
         time, the activities you are interested in, and any comments you add.
       </p>
+      <p>
+        If you ask us to ring you, that request is held in the same place and treated the same way: your name, your
+        phone number, roughly when to ring, and anything you tell us to look out for. It is used to arrange the call and
+        for nothing else, and you can ask us to delete it once we have spoken.
+      </p>
     </Section>
 
     <Section title="Why it is collected">

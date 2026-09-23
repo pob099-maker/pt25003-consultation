@@ -134,7 +134,9 @@ delete from public.consultation_progress;
 ## Who volunteered for what
 
 The **Contacts** tab opens with a tally of what people offered — how many are willing to join the
-project reference group, host a trial, supply a machine for a demonstration, and so on. That is the
+project reference group, host a trial, supply a machine for a demonstration, and so on. A request for
+a call back is not in that tally: it is a job to do this week rather than something volunteered for,
+and it is counted separately above the list. That is the
 list to work from when the reference group is being filled or a demonstration site is needed.
 
 The options people saw depended on their pathway, because helping with a trial means different
@@ -161,13 +163,27 @@ It is built from the wording that is live right now, so it changes when you chan
 call and the form ask the same things by construction rather than by anybody remembering.
 
 
-The landing page and the consent page both offer a phone call or a visit instead, naming whoever is
-listed in `VITE_PROJECT_CONTACTS` — currently Peter O'Brien on 0409 773 111. Adding a second name is
-a change to that one setting, not to the code.
+The landing page and the consent page both offer a phone call or a visit instead. There are two ways
+in, because they suit different people.
 
- When somebody takes that up, complete the consultation with them over the phone and
-submit it the same way — their answers then sit in the same data as everyone else's, and the analysis
-is not quietly biased towards the people comfortable with an online form.
+**A number to ring** is whoever is listed in `VITE_PROJECT_CONTACTS` — currently Peter O'Brien on
+0409 773 111. Adding a second or third name is a change to that one setting, not to the code: the
+format is `Name|Phone|Email`, several separated by a semicolon, and phone or email may be left out
+within an entry.
+
+**Ask us to ring you** takes a name, a number, roughly when to ring and anything we should know. It
+needs nobody's number published, and it suits somebody who is on a machine and cannot talk now. The
+request lands in the **Contacts** tab like any other contact record, marked *Asked us to ring them*
+and held at the top of the list whenever it came in, with a note above the list saying how many are
+waiting. Ring inside a day or two: an expression of interest keeps for a month, a request for a call
+goes stale in days, and a stale one is worse than never having offered.
+
+Anyone on the team can take the call. Nothing about the request names a particular person, so it is
+whoever is free, and the number on the card dials from a phone or a tablet.
+
+When somebody takes either up, complete the consultation with them over the phone and submit it the
+same way — their answers then sit in the same data as everyone else's, and the analysis is not
+quietly biased towards the people comfortable with an online form.
 
 If they also want to be contacted about activities, ask before entering their details, and tick the
 interests they agreed to.
@@ -332,3 +348,5 @@ linked to the person in the first place, which is what the privacy statement pro
 - Clear the test data (see `docs/SETUP.md`, step 6).
 - Check `VITE_HOME_URL` and the privacy contact address point where you want.
 - Walk through the consultation on a phone, as a respondent, once.
+- Agree who checks the Contacts tab for call-back requests, and how often. The offer is only worth
+  making if somebody rings.

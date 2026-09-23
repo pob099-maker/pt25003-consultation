@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { currentProject } from '../../content/projects';
 import { ProjectSwitcher } from './ProjectSwitcher';
-import { isDemoSite } from '../../lib/config';
+import { isDemoSite, telHref } from '../../lib/config';
 import { DivergingBar, ScaleLegend } from '../../components/DivergingBar';
 import { DownloadChartButton } from '../../components/DownloadChartButton';
 import { barChartSvg, divergingChartSvg } from '../../lib/chartImage';
@@ -20,6 +20,7 @@ import {
   tallyMulti,
   unpromptedCounts,
 } from '../../services/analysis';
+import { CALLBACK_INTEREST_ID, isCallbackRequest } from '../../services/callback';
 import { THEME_TAGS, saveTags, tagKey } from '../../services/tags';
 import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
@@ -130,12 +131,28 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     data.setTags(await saveTags(responseId, questionId, next, data.tags));
   };
 
+  /**
+   * Somebody waiting for a call comes first, whenever they asked. The rest of
+   * the list is people who volunteered for something months out; a callback
+   * request goes stale in days, and a stale one is worse than never offering.
+   * The sort is stable, so newest-first survives inside each group.
+   */
+  const contactList = useMemo(
+    () => [...contacts].sort((a, b) => Number(isCallbackRequest(b)) - Number(isCallbackRequest(a))),
+    [contacts],
+  );
+  const waitingForCall = useMemo(() => contacts.filter(isCallbackRequest).length, [contacts]);
+
   // What people volunteered for, counted. This is the list the project works
   // from when it comes to filling the reference group or finding a trial host.
   const interestTally = useMemo(() => {
     const counts = new Map<string, number>();
     for (const contact of contacts) {
-      for (const id of contact.interests) counts.set(id, (counts.get(id) ?? 0) + 1);
+      // A call back is a job to do, not something volunteered for. It is
+      // counted above; leaving it here would put it among the trial hosts.
+      for (const id of contact.interests) {
+        if (id !== CALLBACK_INTEREST_ID) counts.set(id, (counts.get(id) ?? 0) + 1);
+      }
     }
     return [...counts.entries()]
       .map(([id, count]) => ({ id, label: interestLabel(questionnaire, id), count }))
@@ -208,7 +225,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         />
         <Stat label="Reached the final section" value={percent(stats.completionRate)} />
         <Stat label="Median time taken" value={`${stats.medianMinutes} min`} />
-        <Stat label="Contact records" value={String(contacts.length)} note="Opted in to follow-up" />
+        <Stat label="Contact records" value={String(contacts.length)} note="Asked to be contacted" />
       </section>
 
       <section className={`${card} mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5`} aria-label="Filters">
@@ -629,6 +646,14 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             These records exist only because somebody asked to be contacted. They carry no link to any consultation
             answers.
           </p>
+          {waitingForCall > 0 && (
+            <p className={`${accentPanel} text-body`}>
+              {waitingForCall === 1
+                ? 'One person has asked us to ring them, and is at the top of the list.'
+                : `${waitingForCall} people have asked us to ring them, and are at the top of the list.`}{' '}
+              Ring them inside a day or two if you can, and take their answers on the phone screen.
+            </p>
+          )}
           {interestTally.length > 0 && (
             <section className={card}>
               <h2 className="text-subtitle font-semibold">What people volunteered for</h2>
@@ -642,7 +667,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
               </ul>
             </section>
           )}
-          {contacts.map((contact) => (
+          {contactList.map((contact) => (
             <article key={contact.id} className={card}>
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="text-subtitle font-semibold">
@@ -650,6 +675,11 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                 </h3>
                 <span className="text-meta text-ink-faint">{contact.submittedAt.slice(0, 10)}</span>
               </div>
+              {isCallbackRequest(contact) && (
+                <p className="mt-1 inline-block rounded-md border border-primary bg-selected px-2 py-1 text-meta font-semibold text-ink">
+                  Asked us to ring them
+                </p>
+              )}
               <p className="text-meta text-ink-soft">
                 {[contact.organisation, contact.broadRole, contact.region]
                   .filter((part) => part.trim().length > 0)
@@ -662,11 +692,23 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                   </a>
                 )}
                 {contact.email.trim().length > 0 && contact.phone.trim().length > 0 && ' · '}
-                {contact.phone}
+                {contact.phone.trim().length > 0 && (
+                  <a className="underline underline-offset-4" href={telHref(contact.phone)}>
+                    {contact.phone}
+                  </a>
+                )}
               </p>
-              <p className="mt-2 text-meta text-ink-soft">
-                Interested in: {contact.interests.map((id) => interestLabel(questionnaire, id)).join(', ')}
-              </p>
+              {/* The badge above already says a callback was asked for, so the
+                  line is only worth printing when there is something else on it. */}
+              {contact.interests.some((id) => id !== CALLBACK_INTEREST_ID) && (
+                <p className="mt-2 text-meta text-ink-soft">
+                  Interested in:{' '}
+                  {contact.interests
+                    .filter((id) => id !== CALLBACK_INTEREST_ID)
+                    .map((id) => interestLabel(questionnaire, id))
+                    .join(', ')}
+                </p>
+              )}
               {contact.preferredContactTime.trim().length > 0 && (
                 <p className="mt-1 text-meta text-ink-soft">Best time: {contact.preferredContactTime}</p>
               )}

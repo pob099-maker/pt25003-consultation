@@ -1,4 +1,5 @@
 import { DEFAULT_QUESTIONNAIRE, ROLES } from '../content/questionnaire';
+import { CALLBACK_INTEREST_ID } from './callback';
 import type { Answer, AnswerMap, ConsultationResponse, ContactRecord, RoleId } from '../types';
 
 /**
@@ -386,7 +387,7 @@ const TRUST_ANSWERS: readonly (readonly string[])[] = [
  */
 export const SEED_DAYS_AGO = {
   response: (index: number, total: number): number => total - index,
-  contacts: [6, 4] as const,
+  contacts: [6, 4, 1] as const,
 } as const;
 
 const isoDaysAgo = (days: number): string => {
@@ -466,6 +467,25 @@ export const seedContacts = (): readonly ContactRecord[] => [
     preferredContactTime: 'Afternoons',
     comments: '',
     submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[1]),
+    isTestData: true,
+  },
+  {
+    // Somebody who asked to be rung rather than filling anything in. Worth
+    // seeding: it is the one contact record that needs acting on this week,
+    // and the list is built to put it first.
+    id: '00000000-0000-4000-9000-000000000003',
+    roundId: DEFAULT_QUESTIONNAIRE.roundId,
+    interests: [CALLBACK_INTEREST_ID],
+    name: 'TEST DATA — Sam Ruddock',
+    organisation: '',
+    broadRole: '',
+    region: '',
+    email: '',
+    phone: '0400 000 111',
+    preferredContactMethod: 'phone',
+    preferredContactTime: 'Early morning (before 8), Evening (after 6)',
+    comments: 'On the harvester most of the day. Ring the mobile.',
+    submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[2]),
     isTestData: true,
   },
 ];

@@ -105,3 +105,13 @@ values (
   'Afternoons', '',
   now() - interval '4 days', true
 ) on conflict (id) do nothing;
+insert into public.consultation_contacts
+  (id, round_id, interests, name, organisation, broad_role, region, email, phone,
+   preferred_contact_method, preferred_contact_time, comments, submitted_at, is_test_data)
+values (
+  '00000000-0000-4000-9000-000000000003', '2026-round-1', array['callback']::text[],
+  'TEST DATA — Sam Ruddock', '', '', '',
+  '', '0400 000 111', 'phone',
+  'Early morning (before 8), Evening (after 6)', 'On the harvester most of the day. Ring the mobile.',
+  now() - interval '1 days', true
+) on conflict (id) do nothing;

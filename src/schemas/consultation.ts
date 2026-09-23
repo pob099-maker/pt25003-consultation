@@ -99,3 +99,22 @@ export const contactFormSchema = z.object({
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;
+
+/**
+ * What somebody gives us when they ask to be rung instead of filling in a
+ * form. Separate from the contact form because it demands different things:
+ * a number is compulsory here, and a rough time to ring is the whole point.
+ * Nothing else is asked, so the offer stays quick enough to accept.
+ */
+export const callbackRequestSchema = z.object({
+  name: z.string().trim().min(1, 'Please tell us who to ask for.').max(120),
+  phone: z
+    .string()
+    .trim()
+    .max(40)
+    .refine((value) => value.replace(/\D/g, '').length >= 8, 'Please give a number we can ring, including the area code.'),
+  times: z.array(z.string().max(20)).min(1, 'Please tell us roughly when to ring.').max(8),
+  note: z.string().trim().max(500),
+});
+
+export type CallbackRequestValues = z.infer<typeof callbackRequestSchema>;
