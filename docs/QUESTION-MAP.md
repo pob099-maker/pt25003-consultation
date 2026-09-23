@@ -37,7 +37,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ## 2. Everybody — Where the pressure is
 
-### Where do you see the biggest hold-ups in the potato industry — the places where mechanisation, automation or a better workflow would make the most difference?
+### Which parts of the job give the most grief right now, for you or for the industry generally?
 
 `q1_constraints` · tick any + other · **tracked every round**
 
@@ -85,7 +85,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ## 3. Everybody — Where we should put our effort
 
-### Where should we put our effort first?
+### How much should the project prioritise each of these?
 
 `q5_areas` · rate 1-5 × 12 · **tracked every round**
 

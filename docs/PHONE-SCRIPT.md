@@ -45,12 +45,12 @@ Then work down this script and enter the answers into the consultation afterward
 
 _First, how you see the industry as a whole — not just your own place._
 
-**1. Where do you see the biggest hold-ups in the potato industry — the places where mechanisation, automation or a better workflow would make the most difference?**
+**1. Which parts of the job give the most grief right now, for you or for the industry generally?**
 
-> Open with: "What's the part of the job that gives the most grief right now — yours, or the industry's?"
-> Then probe: "Where does that actually bite — which part of the season?"
+> Open with: "What's the part of the job that gives you the most grief right now, yours or the industry's?"
+> Then probe: "Where does that actually bite, which part of the season?"
 
-_Choose as many as apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -111,12 +111,12 @@ _Let them talk. Write it down in their words, not yours._
 
 ## Where we should put our effort
 
-**5. Where should we put our effort first?**
+**5. How much should the project prioritise each of these?**
 
 > Open with: "I'll read out some areas the project could work on. Tell me how much each one matters to you, one to five."
 > Then probe: "Of all of those, which would you put at the very top?"
 
-_Rate each one from 1 (not a priority) to 5 (very high priority). Skip any you have no view on._
+_1 is not a priority, 5 is a very high priority. Skip any you have no view on._
 
 _Scale: 1 = not a priority, 2 = low priority, 3 = moderate priority, 4 = high priority, 5 = very high priority._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
