@@ -93,6 +93,57 @@ Then walk the consultation through once on a phone-sized window. What to look fo
 - A submission with no contact details creates a row in `consultation_responses` and **nothing** in
   `consultation_contacts`.
 
+## 8. Optional: an email when somebody asks to be rung
+
+Without this, a request for a call sits in the Contacts tab until somebody thinks to look. With it,
+an email arrives within seconds of the request. Everything else works whether or not you set it up,
+and if the email ever fails the request is still in the Contacts tab: the row is saved before any of
+this runs.
+
+You need an account with something that sends email. Resend is free at this volume and is what the
+function calls.
+
+1. Sign up at <https://resend.com> **with the address you want the alerts to go to**. Until a domain
+   is verified, Resend will only deliver to that same address, which is all this needs. Verifying
+   `agaims.com.au` later (three DNS records) lets it send from `consultation@agaims.com.au` and to
+   anybody on the team.
+2. Create an API key there and copy it. You only see it once.
+3. In a terminal in this repository, sign in to Supabase and set the function's secrets. Generate
+   `NOTIFY_SECRET` yourself: any long random string, for example `openssl rand -hex 24` in Git Bash.
+
+   ```bash
+   npx supabase login
+   npx supabase link --project-ref YOUR_PROJECT_REF
+   npx supabase secrets set RESEND_API_KEY=re_yourkey NOTIFY_TO=peter.obrien@agaims.com.au NOTIFY_FROM="PT25003 consultation <onboarding@resend.dev>" NOTIFY_SECRET=your_long_random_string NOTIFY_ADMIN_URL="https://consultation.agaims.com.au/#/admin?tab=contacts"
+   npx supabase functions deploy notify-callback --no-verify-jwt
+   ```
+
+   `NOTIFY_TO` takes several addresses separated by commas, so who gets the alert is a setting
+   rather than a deploy.
+4. In the Supabase dashboard, open **Database → Webhooks → Create a new hook**:
+
+   | Field | Value |
+   | --- | --- |
+   | Name | `notify_callback` |
+   | Table | `public.consultation_contacts` |
+   | Events | Insert |
+   | Type | Supabase Edge Functions → `notify-callback`, method POST |
+   | HTTP headers | `x-callback-secret` : the same `NOTIFY_SECRET` |
+
+   The header is the only thing stopping a stranger posting invented callbacks into your inbox, so
+   it is not optional and it never goes in git.
+5. Test it on the live site with your own number, then delete that row in **Table editor →
+   consultation_contacts**.
+
+The email carries a name, a phone number, the window they gave and anything they typed. That is the
+same information the Contacts tab holds, and the privacy statement already says contact details are
+used to arrange contact and are restricted to the project team. Nothing about their consultation
+answers is in it, because a contact record has never been connected to one.
+
+Expressions of interest do not email anybody: they are not urgent, and an alert that fires for
+everything gets filtered within a week. To change that, drop the `interests` check in
+`supabase/functions/notify-callback/index.ts`.
+
 ## Running without a backend
 
 With the two Supabase variables blank, the app still works: responses are held in the browser's

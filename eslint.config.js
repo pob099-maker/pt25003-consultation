@@ -17,6 +17,12 @@ export default tseslint.config(
     },
   },
   {
+    // Edge Functions run on Deno, not in a browser: same language, different
+    // globals, and no React rules to apply.
+    files: ['supabase/functions/**/*.ts'],
+    languageOptions: { globals: globals.deno },
+  },
+  {
     // Application code uses named exports only. Config files are exempt:
     // Vite requires a default export from vite.config.ts.
     files: ['src/**/*.{ts,tsx}'],

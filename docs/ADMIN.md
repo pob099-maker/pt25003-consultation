@@ -181,6 +181,10 @@ goes stale in days, and a stale one is worse than never having offered.
 Anyone on the team can take the call. Nothing about the request names a particular person, so it is
 whoever is free, and the number on the card dials from a phone or a tablet.
 
+If an email alert has been set up (`docs/SETUP.md`, section 8), each request also emails whoever is
+on that list within seconds of being made. The email is a nudge; the Contacts tab is still the
+record.
+
 When somebody takes either up, complete the consultation with them over the phone and submit it the
 same way — their answers then sit in the same data as everyone else's, and the analysis is not
 quietly biased towards the people comfortable with an online form.
