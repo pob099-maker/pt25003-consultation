@@ -12,6 +12,7 @@ import { Interview } from './pages/Interview';
 import { SetPassword } from './pages/SetPassword';
 import { GroupRecordPage } from './pages/GroupRecordPage';
 import { ProjectLink } from './pages/ProjectLink';
+import { QuestionPaper } from './pages/QuestionPaper';
 import { WorkshopHost } from './pages/workshop/WorkshopHost';
 import { WorkshopPresent } from './pages/workshop/WorkshopPresent';
 import { WorkshopJoin } from './pages/workshop/WorkshopJoin';
@@ -45,6 +46,7 @@ export const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/consultation" element={<Consultation />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/questions" element={<QuestionPaper />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/interview" element={<Interview />} />

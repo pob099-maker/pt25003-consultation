@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { currentProject, purposeTemplate } from '../../content/projects';
 import { ReadinessPanel } from './ReadinessPanel';
 import type { ConsultationResponse } from '../../types';
@@ -149,6 +150,16 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
   return (
     <div className="mt-6 grid gap-5">
       <ReadinessPanel responses={responses} />
+
+      {/* The wording lives on this tab, so this is where somebody thinks to
+          look for a copy of it to send to a colleague or a reference group. */}
+      <p className="text-meta text-ink-soft">
+        To read or send the whole questionnaire,{' '}
+        <Link to="/questions" className="underline underline-offset-4">
+          open the printable question paper
+        </Link>
+        . It marks which questions the short version asks, and saves as a PDF.
+      </p>
 
       <section className={card}>
         <h2 className="text-subtitle font-semibold">This {COLLECTION.one}</h2>

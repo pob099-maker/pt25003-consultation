@@ -308,6 +308,22 @@ deliberately pessimistic — a form that beats its estimate costs nobody anythin
 The line above the checks names the project's **purpose** (baseline/mid/final, one-off
 consultation, or feedback after each event), which decides which rounds can be started.
 
+## The questions as a document
+
+**Question wording → open the printable question paper** (or `/#/questions`) lays the whole
+questionnaire out to be read: every question in order, its options, what kind of answer it takes,
+who is asked it, and a marker on each one saying whether the short version asks it too. The short
+version is also listed on its own at the top, in order.
+
+**Save as PDF or print** opens the browser's print dialog; choose Save as PDF as the destination.
+There is no PDF library in the app. The browser already makes them, with the reader's own paper
+size, and adding one would put several hundred kilobytes into a bundle that has to load on a phone
+in a shed.
+
+It is built from the wording that is live right now, so a copy is out of date the moment somebody
+changes a question. Print it again rather than sending an old one on. The page needs no sign-in,
+because it contains only what a respondent is shown anyway.
+
 ## Changing question wording
 
 Sign in at `/#/admin`, open the **Question wording** tab, and edit away. Every question in the

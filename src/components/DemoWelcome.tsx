@@ -23,6 +23,11 @@ const TOUR: readonly { to: string; title: string; what: string }[] = [
     what: 'The big-screen view for a field day: a QR code, live answers, bar charts and word clouds. To play the audience, open the join link in a second tab of this browser.',
   },
   {
+    to: '/questions',
+    title: 'Every question, on paper',
+    what: 'The whole questionnaire as a document, marked with which questions the short version asks. Saves as a PDF through your browser.',
+  },
+  {
     to: '/',
     title: 'What a grower opens',
     what: 'The first page a respondent sees: a short version, a full one, and the offer to be rung instead. The questions change with their role.',
