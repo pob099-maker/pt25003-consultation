@@ -56,7 +56,10 @@ export const Layout = ({ children }: { children: ReactNode }) => (
         <Link to="/about" className="underline underline-offset-4">
           How your information is used
         </Link>
-        <span>Hort Innovation project {currentProject().reference}</span>
+        {/* Which consultation this page belongs to, and nothing about who
+            funds it. With more than one project on the tool, the name is the
+            useful fact; the reference sits in the header on every page. */}
+        <span>{currentProject().name}</span>
         {/* Quiet on purpose. Respondents need no account, and a prominent
             "log in" invites them to wonder whether they do — but the project
             team needs a way in that does not involve remembering a URL. */}

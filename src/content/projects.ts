@@ -67,7 +67,7 @@ export interface ProjectDefinition {
   readonly name: string;
   /** Header title: "Potato Mechanisation" */
   readonly shortName: string;
-  /** The funding body's reference, shown in the header and footer. */
+  /** The project's own reference code, shown in the header. */
   readonly reference: string;
   /** What the project is measuring, and so which rounds it runs. */
   readonly purpose: ProjectPurpose;

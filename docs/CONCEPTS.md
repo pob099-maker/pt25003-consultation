@@ -70,7 +70,7 @@ argument for "repeat questions" in one line.
 
 The same machinery serves whoever is asking:
 
-- Hort Innovation: *Baseline* → *Mid-term review* → *Final review*
+- A three-year funded project: *Baseline* → *Mid-term review* → *Final review*
 - A regional program: *Baseline 2027* → *Annual survey 2028* → *Annual survey 2029*
 - A short piece of work: *Before* → *After*
 - A one-off: *Industry consultation* — nothing repeats, so nothing locks
