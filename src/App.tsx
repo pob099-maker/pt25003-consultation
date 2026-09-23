@@ -11,6 +11,7 @@ import { Admin } from './pages/admin/Admin';
 import { Interview } from './pages/Interview';
 import { SetPassword } from './pages/SetPassword';
 import { GroupRecordPage } from './pages/GroupRecordPage';
+import { ProjectLink } from './pages/ProjectLink';
 import { WorkshopHost } from './pages/workshop/WorkshopHost';
 import { WorkshopPresent } from './pages/workshop/WorkshopPresent';
 import { WorkshopJoin } from './pages/workshop/WorkshopJoin';
@@ -52,6 +53,7 @@ export const App = () => {
             <Route path="/group/:id" element={<GroupRecordPage />} />
             <Route path="/workshop" element={<WorkshopHost />} />
             <Route path="/workshop/:code" element={<WorkshopPresent />} />
+            <Route path="/p/:projectId" element={<ProjectLink />} />
             <Route path="/w" element={<WorkshopJoin />} />
             <Route path="/w/:code" element={<WorkshopJoin />} />
             <Route path="*" element={<Navigate to="/" replace />} />

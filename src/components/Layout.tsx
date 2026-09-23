@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import agAimsMark from '../assets/agaims-mark.png';
 import { ThemeToggle } from './ThemeToggle';
 import { isDemoSite } from '../lib/config';
+import { ProjectNotice } from './ProjectNotice';
 
 /**
  * The AgAims mark, the same artwork the Fieldwork app carries. The white is
@@ -28,6 +29,7 @@ export const Layout = ({ children }: { children: ReactNode }) => (
         Demonstration site · every response is invented · nothing you enter is saved
       </p>
     )}
+    <ProjectNotice />
     <header className="border-b-2 border-accent/60 bg-surface no-print">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
         <Link to="/" className="flex items-center gap-2.5 text-primary-ink">

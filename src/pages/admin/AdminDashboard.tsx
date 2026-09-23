@@ -168,8 +168,13 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           </button>
         </span>
       </div>
-      <p className="mt-2 text-meta text-ink-soft">
-        {questionnaire.roundLabel}. Contact details are listed separately and are not linked to any set of answers.
+      <p className="mt-2 text-body text-ink">
+        Working in <strong>{currentProject().name}</strong>
+        {currentProject().reference.length > 0 ? ` (${currentProject().reference})` : ''}.
+      </p>
+      <p className="mt-1 text-meta text-ink-soft">
+        {questionnaire.roundLabel}. Everything on this screen belongs to this project. Contact details are listed
+        separately and are not linked to any set of answers.
       </p>
 
       {data.demoMode && (
