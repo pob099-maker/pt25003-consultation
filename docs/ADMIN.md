@@ -268,6 +268,26 @@ The themes are fixed so that tagging stays consistent between people: Labour, Ti
 Harvesting, Planting, Logistics, Grading, Packhouse, Quality, Damage, Reliability, Safety,
 Irrigation, Data, Training, ROI, Service support.
 
+## Before you share the link
+
+The top of the **Question wording** tab checks the things that are awkward to fix once people
+have started answering:
+
+- how long the short and full versions take, for the branch that takes longest
+- how many questions repeat every round, shared and per branch
+- two written questions back to back, which is where people give up on a phone
+- wording worth a second look: office or trade language, a sentence too long to hold in your head,
+  a technical term with nothing explaining it, or two questions in one box
+- whether every part of the industry has questions of its own
+- whether test responses are still in the results
+
+Nothing blocks a launch. Each item says what it found and what it costs to leave it; the wording
+notes are prompts to think, never rules, and nothing is rewritten for you. The estimates are
+deliberately pessimistic — a form that beats its estimate costs nobody anything.
+
+The line above the checks names the project's **purpose** (baseline/mid/final, one-off
+consultation, or feedback after each event), which decides which rounds can be started.
+
 ## Changing question wording
 
 Sign in at `/#/admin`, open the **Question wording** tab, and edit away. Every question in the

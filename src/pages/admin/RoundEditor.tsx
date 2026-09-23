@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { currentProject } from '../../content/projects';
+import { currentProject, purposeTemplate } from '../../content/projects';
+import { ReadinessPanel } from './ReadinessPanel';
+import type { ConsultationResponse } from '../../types';
 import { card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { allQuestions, allSections } from '../../content/lookup';
 import { libraryIds, libraryQuestion } from '../../content/library';
@@ -8,8 +10,16 @@ import type { RoundStage } from '../../types';
 
 const STAGES: readonly { id: RoundStage; label: string; help: string }[] = [
   { id: 'pilot', label: 'Pilot', help: 'Internal testing. Never compared with anything.' },
-  { id: 'baseline', label: 'Baseline', help: 'The starting point every later round is measured against. There is only one.' },
-  { id: 'review', label: 'Review', help: 'A later round. Also asks what people saw from the project and whether it changed anything.' },
+  {
+    id: 'baseline',
+    label: 'Baseline',
+    help: 'The starting point every later round is measured against. There is only one.',
+  },
+  {
+    id: 'review',
+    label: 'Review',
+    help: 'A later round. Also asks what people saw from the project and whether it changed anything.',
+  },
 ];
 
 const emptyRound = (): RoundConfig => ({
@@ -94,7 +104,7 @@ const LibraryAdditions = ({
  * every stored response points at them, so renaming an option relabels the
  * same thing, while a new id would be a new thing.
  */
-export const RoundEditor = () => {
+export const RoundEditor = ({ responses = [] }: { responses?: readonly ConsultationResponse[] }) => {
   const [round, setRound] = useState<RoundConfig>(emptyRound);
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -136,8 +146,12 @@ export const RoundEditor = () => {
     );
   };
 
+  const purpose = purposeTemplate(currentProject().purpose);
+
   return (
     <div className="mt-6 grid gap-5">
+      <ReadinessPanel responses={responses} />
+
       <section className={card}>
         <h2 className="text-subtitle font-semibold">Consultation round</h2>
         <p className="mt-1 text-meta text-ink-soft">
@@ -197,15 +211,21 @@ export const RoundEditor = () => {
           <button type="button" className={primaryButton} onClick={() => void save()} disabled={busy}>
             {busy ? 'Saving…' : 'Save'}
           </button>
-          <button type="button" className={secondaryButton} onClick={() => startNewRound('baseline')}>
-            Start the baseline
-          </button>
-          <button type="button" className={secondaryButton} onClick={() => startNewRound('review')}>
-            Start a review round
-          </button>
-
+          {purpose.stages.includes('baseline') && (
+            <button type="button" className={secondaryButton} onClick={() => startNewRound('baseline')}>
+              Start the baseline
+            </button>
+          )}
+          {purpose.stages.includes('review') && (
+            <button type="button" className={secondaryButton} onClick={() => startNewRound('review')}>
+              Start a review round
+            </button>
+          )}
         </div>
         <p className="mt-3 text-meta text-ink-soft">
+          <strong className="text-ink">{purpose.label}:</strong> {purpose.what}
+        </p>
+        <p className="mt-2 text-meta text-ink-soft">
           The <strong>Phone script</strong> tab follows whatever is written below, so somebody taking a response over
           the phone asks exactly what the form asks. Look there again after you change any wording.
         </p>
@@ -257,7 +277,10 @@ export const RoundEditor = () => {
                       even adding an option — would break that comparison, so it cannot be edited here.
                     </p>
                   )}
-                  <label htmlFor={`${question.id}-prompt`} className="mt-1 mb-1 block text-meta font-semibold text-ink-soft">
+                  <label
+                    htmlFor={`${question.id}-prompt`}
+                    className="mt-1 mb-1 block text-meta font-semibold text-ink-soft"
+                  >
                     Question wording
                   </label>
                   <textarea
@@ -268,7 +291,10 @@ export const RoundEditor = () => {
                     disabled={question.tracking === true}
                     onChange={(event) => setOverride(question.id, { prompt: event.target.value })}
                   />
-                  <label htmlFor={`${question.id}-help`} className="mt-2 mb-1 block text-meta font-semibold text-ink-soft">
+                  <label
+                    htmlFor={`${question.id}-help`}
+                    className="mt-2 mb-1 block text-meta font-semibold text-ink-soft"
+                  >
                     Guidance below the question
                   </label>
                   <input
@@ -286,7 +312,10 @@ export const RoundEditor = () => {
                       <ul className="mt-2 grid gap-2">
                         {options.map((option) => (
                           <li key={option.id}>
-                            <label htmlFor={`${question.id}-${option.id}`} className="mb-1 block text-meta text-ink-faint">
+                            <label
+                              htmlFor={`${question.id}-${option.id}`}
+                              className="mb-1 block text-meta text-ink-faint"
+                            >
                               {option.id}
                             </label>
                             <input

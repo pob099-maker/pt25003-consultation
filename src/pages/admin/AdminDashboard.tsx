@@ -678,7 +678,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
 
       {tab === 'groups' && <GroupsPanel roundFilter={roundFilter} />}
 
-      {!data.loading && tab === 'rounds' && <RoundEditor />}
+      {!data.loading && tab === 'rounds' && <RoundEditor responses={data.responses} />}
 
       <section className="mt-8 flex flex-wrap gap-3 no-print" aria-label="Exports">
         <button
