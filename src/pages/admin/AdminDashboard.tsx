@@ -223,7 +223,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         </div>
         <div>
           <label htmlFor="filter-round" className="mb-1 block text-meta font-semibold text-ink-soft">
-            Round
+            Consultation
           </label>
           <select
             id="filter-round"
@@ -231,7 +231,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             value={roundFilter}
             onChange={(e) => setRoundFilter(e.target.value)}
           >
-            <option value="all">All rounds</option>
+            <option value="all">All consultations</option>
             {rounds.map((round) => (
               <option key={round} value={round}>
                 {round === questionnaire.roundId ? `${round} (collecting now)` : round}

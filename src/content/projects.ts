@@ -23,10 +23,10 @@ export interface PurposeTemplate {
 export const PURPOSES: readonly PurposeTemplate[] = [
   {
     id: 'tracked_rounds',
-    label: 'Baseline, mid-project and final',
-    what: 'Measure where things stand now, then ask the same questions again part-way through and at the end.',
+    label: 'Measures change over time',
+    what: 'Ask where things stand now, then ask the same questions again part-way through and at the end.',
     consequence:
-      'Lets you say what changed and by how much. The questions marked as asked every round are locked once the baseline starts.',
+      'Lets you say what changed and by how much. The repeat questions are fixed once the starting point takes its first response.',
     stages: ['baseline', 'review'],
   },
   {
@@ -34,7 +34,7 @@ export const PURPOSES: readonly PurposeTemplate[] = [
     label: 'One-off consultation',
     what: 'Ask what matters once, to set priorities or scope a piece of work.',
     consequence:
-      'Nothing is repeated, so there is no change to show later. Written questions are worth more here than anywhere else.',
+      'Nothing repeats, so there is no change to show later. Written questions are worth more here than anywhere else.',
     stages: ['baseline'],
   },
   {

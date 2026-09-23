@@ -5,22 +5,18 @@ import type { ConsultationResponse } from '../../types';
 import { card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { allQuestions, allSections } from '../../content/lookup';
 import { libraryIds, libraryQuestion } from '../../content/library';
-import { loadActiveRound, saveRound, type QuestionOverride, type RoundConfig } from '../../services/rounds';
+import {
+  loadActiveRound,
+  loadAllRounds,
+  saveRound,
+  type QuestionOverride,
+  type RoundConfig,
+} from '../../services/rounds';
 import type { RoundStage } from '../../types';
+import { COLLECTION, ROLE_HELP, ROLE_LABEL, planSentence } from '../../content/vocabulary';
 
-const STAGES: readonly { id: RoundStage; label: string; help: string }[] = [
-  { id: 'pilot', label: 'Pilot', help: 'Internal testing. Never compared with anything.' },
-  {
-    id: 'baseline',
-    label: 'Baseline',
-    help: 'The starting point every later round is measured against. There is only one.',
-  },
-  {
-    id: 'review',
-    label: 'Review',
-    help: 'A later round. Also asks what people saw from the project and whether it changed anything.',
-  },
-];
+/** What a consultation is, structurally. The project gives it its own name. */
+const ROLES: readonly RoundStage[] = ['pilot', 'baseline', 'review'];
 
 const emptyRound = (): RoundConfig => ({
   roundId: currentProject().questionnaire.roundId,
@@ -106,6 +102,7 @@ const LibraryAdditions = ({
  */
 export const RoundEditor = ({ responses = [] }: { responses?: readonly ConsultationResponse[] }) => {
   const [round, setRound] = useState<RoundConfig>(emptyRound);
+  const [history, setHistory] = useState<readonly RoundConfig[]>([]);
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -113,6 +110,7 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
     void loadActiveRound().then((loaded) => {
       if (loaded !== null) setRound(loaded);
     });
+    void loadAllRounds().then(setHistory);
   }, []);
 
   const setOverride = (questionId: string, patch: Partial<QuestionOverride>): void =>
@@ -131,18 +129,18 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
     setStatus(error === null ? 'Saved. New responses will use this wording.' : error);
   };
 
-  const startNewRound = (stage: RoundStage): void => {
+  /** Presets, so nobody has to invent a name. Every one of them can be typed over. */
+  const startNew = (stage: RoundStage, name: string): void => {
     const suffix = new Date().toISOString().slice(0, 10);
-    const name = stage === 'baseline' ? 'baseline' : stage === 'review' ? 'review' : 'pilot';
     setRound({
-      roundId: `${suffix}-${name}`,
-      label: `${currentProject().reference} consultation, ${name}, ${suffix}`,
+      roundId: `${suffix}-${stage}`,
+      label: name,
       stage,
       isActive: true,
       overrides: round.overrides,
     });
     setStatus(
-      `A new ${name} round is prepared. Responses already collected keep their own round and are untouched. Save to start it.`,
+      `"${name}" is ready to start. Everything already collected keeps the ${COLLECTION.one} it was given in and is untouched. Save to begin.`,
     );
   };
 
@@ -153,15 +151,36 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
       <ReadinessPanel responses={responses} />
 
       <section className={card}>
-        <h2 className="text-subtitle font-semibold">Consultation round</h2>
-        <p className="mt-1 text-meta text-ink-soft">
-          Starting a new round leaves every existing response exactly as it is. Results can then be filtered or compared
-          by round.
+        <h2 className="text-subtitle font-semibold">This {COLLECTION.one}</h2>
+        <p className="mt-1 text-body text-ink">
+          {planSentence(
+            currentProject().name,
+            purpose.stages.includes('review'),
+            round.label.trim().length > 0 ? round : null,
+          )}
+        </p>
+        {history.length > 0 && (
+          <ol className="mt-3 flex flex-wrap items-center gap-2 text-meta">
+            {history.map((entry) => (
+              <li
+                key={entry.roundId}
+                className={`rounded-full border px-3 py-1 ${
+                  entry.roundId === round.roundId ? 'border-primary bg-selected text-ink' : 'border-line text-ink-soft'
+                }`}
+              >
+                {entry.label} <span className="text-ink-faint">· {ROLE_LABEL[entry.stage].toLowerCase()}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+        <p className="mt-3 text-meta text-ink-soft">
+          The people you ask never see any of this. They see a {COLLECTION.one}; the names below are for your own
+          reporting.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="round-id" className="mb-1 block text-meta font-semibold text-ink-soft">
-              Round id
+              Short code, used in exports
             </label>
             <input
               id="round-id"
@@ -172,7 +191,7 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
           </div>
           <div>
             <label htmlFor="round-label" className="mb-1 block text-meta font-semibold text-ink-soft">
-              Round name
+              What you call it
             </label>
             <input
               id="round-label"
@@ -183,25 +202,25 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
           </div>
         </div>
         <fieldset className="mt-4">
-          <legend className="mb-1 text-meta font-semibold text-ink-soft">Stage</legend>
+          <legend className="mb-1 text-meta font-semibold text-ink-soft">What this one is</legend>
           <div className="grid gap-2 sm:grid-cols-3">
-            {STAGES.map((stage) => (
+            {ROLES.map((role) => (
               <label
-                key={stage.id}
+                key={role}
                 className={`flex cursor-pointer gap-2 rounded-lg border p-3 ${
-                  round.stage === stage.id ? 'border-primary bg-selected' : 'border-line bg-surface'
+                  round.stage === role ? 'border-primary bg-selected' : 'border-line bg-surface'
                 }`}
               >
                 <input
                   type="radio"
                   name="round-stage"
                   className="mt-1 accent-primary"
-                  checked={round.stage === stage.id}
-                  onChange={() => setRound({ ...round, stage: stage.id })}
+                  checked={round.stage === role}
+                  onChange={() => setRound({ ...round, stage: role })}
                 />
                 <span>
-                  <span className="block font-semibold text-ink">{stage.label}</span>
-                  <span className="block text-meta text-ink-soft">{stage.help}</span>
+                  <span className="block font-semibold text-ink">{ROLE_LABEL[role]}</span>
+                  <span className="block text-meta text-ink-soft">{ROLE_HELP[role]}</span>
                 </span>
               </label>
             ))}
@@ -212,14 +231,19 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
             {busy ? 'Saving…' : 'Save'}
           </button>
           {purpose.stages.includes('baseline') && (
-            <button type="button" className={secondaryButton} onClick={() => startNewRound('baseline')}>
-              Start the baseline
+            <button type="button" className={secondaryButton} onClick={() => startNew('baseline', 'Baseline')}>
+              Start the starting point
             </button>
           )}
           {purpose.stages.includes('review') && (
-            <button type="button" className={secondaryButton} onClick={() => startNewRound('review')}>
-              Start a review round
-            </button>
+            <>
+              <button type="button" className={secondaryButton} onClick={() => startNew('review', 'Mid-term review')}>
+                Start a follow-up
+              </button>
+              <button type="button" className={secondaryButton} onClick={() => startNew('review', 'Final review')}>
+                Start the final one
+              </button>
+            </>
           )}
         </div>
         <p className="mt-3 text-meta text-ink-soft">

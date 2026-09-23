@@ -48,16 +48,16 @@ export const readinessChecks = (
       ? {
           id: 'tracked',
           state: 'pass',
-          title: `${tracked.length} questions are asked every round${branchMost > 0 ? `, plus up to ${branchMost} on each branch` : ''}`,
-          detail: 'Baseline, mid-project and final can be compared on these, word for word.',
+          title: `${tracked.length} questions are asked every time${branchMost > 0 ? `, plus up to ${branchMost} on each branch` : ''}`,
+          detail: 'Every consultation can be compared with the starting point on these, word for word.',
         }
       : {
           id: 'tracked',
           state: 'warn',
           title:
             tracked.length < TRACKED_MIN
-              ? `Only ${tracked.length} question${tracked.length === 1 ? '' : 's'} repeat every round`
-              : `${tracked.length} questions repeat every round`,
+              ? `Only ${tracked.length} question${tracked.length === 1 ? '' : 's'} repeats every time`
+              : `${tracked.length} questions repeat every time`,
           detail:
             tracked.length < TRACKED_MIN
               ? 'These are the only questions that can show change later. Four to eight is the usual range.'
@@ -77,7 +77,7 @@ export const readinessChecks = (
           id: 'short-length',
           state: 'warn',
           title: `The short version takes ${spoken(estimates.short)}`,
-          detail: `It is meant to be the quick way in, under ${SHORT_TARGET_MINUTES} minutes. Ask fewer questions every round, or shorten a rating grid.`,
+          detail: `It is meant to be the quick way in, under ${SHORT_TARGET_MINUTES} minutes. Ask fewer questions every time, or shorten a rating grid.`,
         },
   );
 
@@ -170,8 +170,8 @@ export const readinessChecks = (
           title: 'No test responses in the results',
           detail:
             pilotRows > 0
-              ? `${pilotRows} response${pilotRows === 1 ? '' : 's'} sit in earlier rounds, which is as it should be.`
-              : 'Nothing to clear before the round starts.',
+              ? `${pilotRows} response${pilotRows === 1 ? '' : 's'} sit in earlier consultations, which is as it should be.`
+              : 'Nothing to clear before it starts.',
         }
       : {
           id: 'test-data',

@@ -3,6 +3,7 @@ import { accentPanel, card } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { roleLabel } from '../../content/lookup';
 import { compareRounds, THIN, type RoundInfo } from '../../services/change';
+import { ROLE_LABEL } from '../../content/vocabulary';
 import { loadAllRounds } from '../../services/rounds';
 import { SlopeChart } from '../../components/SlopeChart';
 import { DownloadChartButton } from '../../components/DownloadChartButton';
@@ -10,10 +11,14 @@ import { slopeChartSvg } from '../../lib/chartImage';
 import { currentProject } from '../../content/projects';
 import type { ConsultationResponse } from '../../types';
 
-const STAGE_LABEL: Readonly<Record<RoundInfo['stage'], string>> = {
-  pilot: 'Pilot',
-  baseline: 'Baseline',
-  review: 'Review',
+/** What each consultation is, structurally. Its own name does the rest. */
+const STAGE_LABEL = ROLE_LABEL;
+
+/** Long project names do not fit a chart column, so the chart uses a short form. */
+const shortName = (label: string, roundId: string): string => {
+  const trimmed = label.trim();
+  if (trimmed.length === 0) return roundId;
+  return trimmed.length <= 22 ? trimmed : `${trimmed.slice(0, 21).trimEnd()}…`;
 };
 
 const formatValue = (value: number | null, measure: 'share' | 'mean'): string => {
@@ -67,36 +72,35 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
   const { columns } = comparison;
   const showCharts = comparison.hasBaseline && comparison.hasReview && columns.length >= 2;
   // Short names for the chart: "Baseline", "Review 1", "Review 2".
-  const chartColumns = columns.map((column, index) =>
-    column.stage === 'review'
-      ? `Review ${columns.slice(0, index + 1).filter((item) => item.stage === 'review').length}`
-      : STAGE_LABEL[column.stage],
-  );
+  // Each column is called whatever the project called that consultation.
+  const chartColumns = columns.map((column) => shortName(column.label, column.roundId));
 
   return (
     <div className="mt-6 grid gap-5">
       <section className={accentPanel}>
         <h2 className="text-subtitle font-semibold">Change over time</h2>
         <p className="mt-2 text-ink-soft">
-          The questions marked as tracked are asked word for word in every round. This compares the baseline with each
-          review round, so you can see whether priorities, adoption and barriers have moved.
+          The repeat questions are asked word for word every time. This compares the starting point with each follow-up,
+          so you can see whether priorities, adoption and barriers have moved.
         </p>
         <p className="mt-2 text-meta text-ink-soft">
-          Responses are anonymous, so each round is a separate picture of the industry — this compares pictures, not the
-          same people over time. Check <strong>who answered</strong> below before reading a change as a change of mind:
-          a different mix of respondents moves the numbers too. Figures from fewer than {THIN} people are greyed.
+          Responses are anonymous, so each consultation is a separate picture of the industry. This compares pictures,
+          not the same people over time. Check <strong>who answered</strong> below before reading a change as a change
+          of mind: a different mix of respondents moves the numbers too. Figures from fewer than {THIN} people are
+          greyed.
         </p>
       </section>
 
       {!comparison.hasBaseline && (
         <p className={`${card} text-ink-soft`}>
-          No baseline round yet. When the pilot is finished, go to <strong>Question wording</strong> and press{' '}
-          <strong>Start the baseline</strong>. Everything here is measured against it.
+          No starting point yet. When you have finished practising, go to <strong>Question wording</strong> and press{' '}
+          <strong>Start the starting point</strong>. Everything here is measured against it.
         </p>
       )}
       {comparison.hasBaseline && !comparison.hasReview && (
         <p className={`${card} text-ink-soft`}>
-          The baseline is collecting. Change appears here once a review round has responses — usually mid-project.
+          The starting point is collecting. Change appears here once a follow-up has responses, usually part-way through
+          the project.
         </p>
       )}
 
