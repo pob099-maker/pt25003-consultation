@@ -121,19 +121,34 @@ function calls.
 
    `NOTIFY_TO` takes several addresses separated by commas, so who gets the alert is a setting
    rather than a deploy.
-4. In the Supabase dashboard, open **Database → Webhooks → Create a new hook**:
+4. Turn on Database Webhooks. In the dashboard that is **Integrations → Database Webhooks**, and
+   press **Install integration** if it is not installed yet. That adds the `pg_net` extension, which
+   is what lets Postgres call out.
 
-   | Field | Value |
-   | --- | --- |
-   | Name | `notify_callback` |
-   | Table | `public.consultation_contacts` |
-   | Events | Insert |
-   | Type | Supabase Edge Functions → `notify-callback`, method POST |
-   | HTTP headers | `x-callback-secret` : the same `NOTIFY_SECRET` |
+5. Create the hook in the **SQL Editor** rather than in the form. A webhook is a trigger, the form
+   spreads one header across two boxes that are easy to fill in the wrong order, and a header that
+   is even slightly wrong fails silently: the function answers 403 and no email is sent. Paste this,
+   with your own project ref and the `NOTIFY_SECRET` from step 3:
 
-   The header is the only thing stopping a stranger posting invented callbacks into your inbox, so
-   it is not optional and it never goes in git.
-5. Test it on the live site with your own number, then delete that row in **Table editor →
+   ```sql
+   drop trigger if exists notify_callback on public.consultation_contacts;
+
+   create trigger notify_callback
+   after insert on public.consultation_contacts
+   for each row execute function supabase_functions.http_request(
+     'https://YOUR_PROJECT_REF.supabase.co/functions/v1/notify-callback',
+     'POST',
+     '{"Content-Type":"application/json","x-callback-secret":"your_long_random_string"}',
+     '{}',
+     '5000'
+   );
+   ```
+
+   The editor warns about a destructive operation, because of the word `drop`. It is dropping that
+   one trigger and building it again, and no data is touched. It also sometimes leaves a stale
+   "Success" message on screen, so prove it from outside rather than believing the editor.
+
+6. Test it on the live site with your own number, then delete that row in **Table editor →
    consultation_contacts**.
 
 The email carries a name, a phone number, the window they gave and anything they typed. That is the
