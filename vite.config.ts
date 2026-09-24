@@ -13,6 +13,9 @@ export default defineConfig({
     // Tests must never reach a real backend. Vite loads .env files into the
     // test process, so a developer with .env.local present would otherwise
     // have `npm test` writing rows into a live Supabase project.
-    env: { VITE_SUPABASE_URL: '', VITE_SUPABASE_ANON_KEY: '' },
+    // The contacts too, for a different reason: a test that renders the
+    // landing page should describe the shipped default, not whoever happens to
+    // be listed in the developer's .env.local.
+    env: { VITE_SUPABASE_URL: '', VITE_SUPABASE_ANON_KEY: '', VITE_PROJECT_CONTACTS: '' },
   },
 });

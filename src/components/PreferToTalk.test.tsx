@@ -16,4 +16,10 @@ describe('PreferToTalk', () => {
   it('starts closed, so the landing page is not a form', () => {
     expect(html).not.toContain('When is the best time to ring?');
   });
+
+  it("names who would be ringing, and publishes nobody's number by default", () => {
+    // The apostrophe comes back HTML-escaped, so match either side of it.
+    expect(html).toContain('Brien or Steph Tabone');
+    expect(html).not.toContain('tel:');
+  });
 });

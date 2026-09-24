@@ -5,6 +5,7 @@ import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { callbackRequestSchema, type CallbackRequestValues } from '../schemas/consultation';
 import { CALL_TIMES, callTimeSummary, nextTimes, toCallbackRecord } from '../services/callback';
 import { submitContact } from '../services/submit';
+import { config, contactNames } from '../lib/config';
 import { choiceRow, choiceRowSelected, primaryButton, secondaryButton, textInput } from './ui';
 
 interface Sent {
@@ -25,6 +26,9 @@ interface Sent {
  */
 export const CallbackRequest = () => {
   const questionnaire = useQuestionnaire();
+  // Named, so somebody knows who is going to be on the other end. With nobody
+  // configured it stays honest rather than promising a person who is not there.
+  const ringer = contactNames(config.projectContacts) || 'somebody from the project team';
   const [open, setOpen] = useState(false);
   // The button that opened the form is gone once it opens, so focus would
   // otherwise fall back to the top of the page and a screen reader would never
@@ -61,7 +65,7 @@ export const CallbackRequest = () => {
     return (
       <div className="mt-4 rounded-lg border border-primary bg-selected p-4" role="status">
         <p className="text-body text-ink">
-          Thanks {sent.name.split(' ')[0]}. Somebody from the project team will give you a ring on {sent.phone}.
+          Thanks {sent.name.split(' ')[0]}. {ringer} will give you a ring on {sent.phone}.
         </p>
         {/* Read back rather than worked into the sentence: the windows are
             labels, and a sentence built around two of them stops being one. */}
@@ -83,7 +87,7 @@ export const CallbackRequest = () => {
           Ask us to ring you
         </button>
         <p className="mt-2 text-meta text-ink-soft">
-          Leave a name and a number and somebody from the project team will ring you at a time that suits.
+          Leave a name and a number and {ringer} will ring you at a time that suits.
         </p>
       </div>
     );

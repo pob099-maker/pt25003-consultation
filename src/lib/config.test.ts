@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseContacts, telHref } from './config';
+import { contactNames, parseContacts, telHref } from './config';
 
 describe('parseContacts', () => {
   it('reads one contact', () => {
@@ -14,10 +14,25 @@ describe('parseContacts', () => {
     expect(contacts[1]).toEqual({ name: 'Jane Citizen', phone: '', email: 'jane@example.com' });
   });
 
-  it('drops an entry with no way to reach the person', () => {
-    // A name on its own reads as an offer to talk that cannot be taken up.
-    expect(parseContacts('Nobody||')).toEqual([]);
+  it('keeps a name with no number, because the call-back form is the way in', () => {
+    expect(parseContacts("Peter O'Brien;Steph Tabone")).toEqual([
+      { name: "Peter O'Brien", phone: '', email: '' },
+      { name: 'Steph Tabone', phone: '', email: '' },
+    ]);
+  });
+
+  it('drops an entry with no name, which is nobody', () => {
     expect(parseContacts('')).toEqual([]);
+    expect(parseContacts('|0409 773 111|')).toEqual([]);
+  });
+});
+
+describe('contactNames', () => {
+  it('reads as a sentence would', () => {
+    expect(contactNames(parseContacts("Peter O'Brien"))).toBe("Peter O'Brien");
+    expect(contactNames(parseContacts("Peter O'Brien;Steph Tabone"))).toBe("Peter O'Brien or Steph Tabone");
+    expect(contactNames(parseContacts('A;B;C'))).toBe('A, B or C');
+    expect(contactNames([])).toBe('');
   });
 });
 

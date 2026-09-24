@@ -7,16 +7,18 @@ import { accentPanel } from './ui';
  * fill in a form, and an online-only invitation quietly excludes them — which
  * biases the findings towards whoever is comfortable with a web page.
  *
- * Two ways in, because they suit different people. A number to ring suits
- * somebody who wants it dealt with now; leaving a number suits somebody who
- * is in a tractor and cannot talk, and it does not depend on one person
- * answering their mobile. The numbers come from configuration, so another name
- * can be added without a code change, and the list disappears rather than
- * making an offer with nothing behind it. The callback offer stands either
- * way: it needs nobody's number published.
+ * Leaving a number is the way in. A published mobile is optional on top of it:
+ * it suits somebody who wants the thing dealt with now, and it puts one person
+ * on the hook, which is why this project stopped publishing one. Either way the
+ * people who would be ringing are named, because "somebody will ring you" and
+ * "Peter or Steph will ring you" are different promises.
  */
 export const PreferToTalk = () => {
-  const contacts = config.projectContacts;
+  // Only the people who published a way to reach them get a line of their own.
+  // The rest are named in the call-back offer underneath, which is the way in.
+  const contacts = config.projectContacts.filter(
+    (contact) => contact.phone.length > 0 || contact.email.length > 0,
+  );
 
   return (
     <section className={`${accentPanel} mt-4 prose-measure`} aria-labelledby="prefer-to-talk">
