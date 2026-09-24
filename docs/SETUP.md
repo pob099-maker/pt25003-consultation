@@ -103,10 +103,11 @@ this runs.
 You need an account with something that sends email. Resend is free at this volume and is what the
 function calls.
 
-1. Sign up at <https://resend.com> **with the address you want the alerts to go to**. Until a domain
-   is verified, Resend will only deliver to that same address, which is all this needs. Verifying
-   `agaims.com.au` later (three DNS records) lets it send from `consultation@agaims.com.au` and to
-   anybody on the team.
+1. Sign up at <https://resend.com>. Until a domain is verified, Resend delivers only to the address
+   that owns the account, so **whichever address you sign up with is where the alerts go**. It will
+   not always accept a work address; a personal one is fine, and the alert still reaches you.
+   Verifying a domain later (three DNS records) lets it send from an address on that domain, to
+   anybody on the team, with no redeploy.
 2. Create an API key there and copy it. You only see it once.
 3. In a terminal in this repository, sign in to Supabase and set the function's secrets. Generate
    `NOTIFY_SECRET` yourself: any long random string, for example `openssl rand -hex 24` in Git Bash.
@@ -114,7 +115,7 @@ function calls.
    ```bash
    npx supabase login
    npx supabase link --project-ref YOUR_PROJECT_REF
-   npx supabase secrets set RESEND_API_KEY=re_yourkey NOTIFY_TO=peter.obrien@agaims.com.au NOTIFY_FROM="PT25003 consultation <onboarding@resend.dev>" NOTIFY_SECRET=your_long_random_string NOTIFY_ADMIN_URL="https://consultation.agaims.com.au/#/admin?tab=contacts"
+   npx supabase secrets set RESEND_API_KEY=re_yourkey NOTIFY_TO=the.address.that.owns.the.resend.account NOTIFY_FROM="PT25003 consultation <onboarding@resend.dev>" NOTIFY_SECRET=your_long_random_string NOTIFY_ADMIN_URL="https://consultation.agaims.com.au/#/admin?tab=contacts"
    npx supabase functions deploy notify-callback --no-verify-jwt
    ```
 
