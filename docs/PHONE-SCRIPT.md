@@ -27,23 +27,23 @@ Then work down this script and enter the answers into the consultation afterward
 
 **Which growing regions are you talking about?** _Optional, more than one is fine._
 
-  - South Australia — Murraylands and Riverland
-  - South Australia — South East and Adelaide Hills
-  - Victoria — Ballarat and Central Highlands
-  - Victoria — Gippsland
-  - Victoria — other districts
-  - Tasmania — North and North West
-  - Tasmania — other districts
+  - South Australia: Murraylands and Riverland
+  - South Australia: South East and Adelaide Hills
+  - Victoria: Ballarat and Central Highlands
+  - Victoria: Gippsland
+  - Victoria: other districts
+  - Tasmania: North and North West
+  - Tasmania: other districts
   - New South Wales
-  - Queensland — Lockyer Valley, Atherton and other districts
+  - Queensland: Lockyer Valley, Atherton and other districts
   - Western Australia
-  - National / multiple regions
+  - More than one region, or all of Australia
   - Other region
   - Prefer not to say
 
 ## Where the pressure is
 
-_First, how you see the industry as a whole — not just your own place._
+_First, how you see the industry as a whole. Your own place comes later._
 
 **1. Which parts of the job give the most grief right now, for you or for the industry generally?**
 
@@ -55,7 +55,7 @@ _Tick as many as you like._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Ground preparation and planting
-  - Crop monitoring and decision support
+  - Crop monitoring and agronomy decisions
   - Irrigation operation and automation
   - Crop protection operations
   - Harvesting
@@ -64,9 +64,9 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Washing, grading and sorting
   - Packing
   - Storage and handling
-  - Data capture, traceability and system integration
+  - Records, traceability and getting systems to talk to each other
   - Machinery maintenance and reliability
-  - Access to skilled operators and technicians
+  - Finding skilled operators and technicians
   - Other
 
 **2. Of those, which three should we be putting the most effort into?**
@@ -83,21 +83,21 @@ _Read back what they ticked a moment ago, and ask for their top 3 in order._
 > Open with: "When that goes wrong, what does it actually cost?"
 > Then probe: "Is that mostly money, time, or people?"
 
-_Choose as many as apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Labour availability
   - Labour cost
-  - Timeliness of operations
+  - Getting jobs done on time
   - Yield loss
-  - Quality loss or reduced pack-out
+  - Quality loss or a smaller pack-out
   - Bruising, damage or handling loss
   - Workplace health and safety
   - Machine downtime or reliability
   - Energy, fuel or water use
-  - Difficulty accessing skilled operators or technicians
-  - Lack of useful operational data
+  - Trouble finding skilled operators or technicians
+  - Not knowing what is actually happening
   - Other
 
 **4. In a tough season, or when everything lands at once, what happens if nothing changes?**
@@ -105,7 +105,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 > Open with: "Think of a bad year. What happened?"
 > Then probe: "What would have made the difference?"
 
-_Optional. For example: harvest runs late, quality drops, throughput falls away, extra labour cost, crop left in the ground, a safety risk, or a market missed._
+_Optional. For example: harvest runs late, quality drops, less goes through the shed, extra labour cost, crop left in the ground, a safety risk, or a market missed._
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -123,20 +123,20 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
 
   - Precision planting and crop establishment
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
-  - Harvest efficiency and damage reduction
-  - Harvest logistics and transport coordination
+  - Harvest efficiency and less damage
+  - Carting and harvest logistics
   - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual tasks
+  - Robots for repetitive hand work
   - Sensors and machine data for day-to-day decisions
-  - Irrigation automation linked to crop and soil information
+  - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
   - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
-  - Training, skills and workforce pathways
+  - Training, skills and getting new people in
 
 ## What would convince you
 
-**6. If we could only take on one or two of those, which would you pick — and why?**
+**6. If we could only take on one or two of those, which would you pick, and why?**
 
 > Open with: "If you were running the project, what would you do first?"
 > Then probe: "Why that one?"
@@ -148,20 +148,20 @@ _Let them talk. Write it down in their words, not yours._
 > Open with: "What would it take for you to actually try something new?"
 > Then probe: "Whose word would you take on it?"
 
-_Choose as many as apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
-  - Local demonstration under Australian potato conditions
-  - Independent economic analysis or ROI assessment — An independent look at whether the money spent comes back.
-  - Practical operating data
+  - A demonstration in an Australian potato crop
+  - Independent analysis of whether it pays — Somebody with no stake in it working out whether the money comes back.
+  - Figures from it working in the paddock
   - Case study from a similar business
-  - Peer grower or industry experience
+  - What another grower found when they ran it
   - Good local service, parts and technical support
   - Training for operators and managers
-  - Finance, leasing or ownership-model options
-  - Clear safety or regulatory guidance
-  - Better compatibility with existing equipment or data systems
+  - Finance, leasing or sharing the cost
+  - Clear guidance on safety and the rules
+  - It works with the gear and software we already run
   - Other
 
 **8. Before you committed to something new, how much would it matter to try it on part of your own operation first?**
@@ -171,17 +171,17 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 _One answer only._
 
-  - Essential — I would not go ahead without it
+  - Essential. I would not go ahead without it
   - Helpful, but not a deal-breaker
-  - Not needed — the evidence would be enough
-  - Not my call to make in my role
+  - Not needed. The evidence would be enough
+  - Not my call to make
 
 **9. When you are weighing up new gear or a new way of doing things, whose opinion actually counts?**
 
 > Open with: "When you're weighing up a new bit of gear, who do you actually listen to?"
 > Then probe: "Who's the one person whose view would settle it?"
 
-_Tick any that genuinely sway you — not everyone you hear from._
+_Tick the ones that would change your mind._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -189,7 +189,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Grower groups and study groups
   - An independent agronomist or consultant
   - Machinery dealers
-  - Manufacturer representatives
+  - Manufacturer reps
   - Processor or packer field officers
   - Industry bodies
   - Researchers and universities
@@ -213,7 +213,7 @@ _For: Potato grower or business owner; Farm manager, supervisor or machinery ope
 
 > Open with: "Roughly how many tonnes do you grow in a year? A ballpark is fine."
 
-_A broad band is plenty. It lets us tell whether a finding belongs to smaller operations or to everybody._
+_A rough band is plenty. It tells us whether something is a small-operation problem or everybody's._
 
 _One answer only._
 
@@ -224,12 +224,12 @@ _One answer only._
   - More than 50,000 tonnes
   - Prefer not to say
 
-**2. Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?**
+**2. Which parts of your own operation give you the most trouble?**
 
 > Open with: "Where does the pressure land on your place?"
 > Then probe: "Which of those costs you most?"
 
-_Tick any that apply._
+_Labour, timeliness, safety, quality, reliability, whatever it is for you. Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -251,7 +251,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 > Open with: "What have you put on, or had a good look at, in the last few years?"
 > Then probe: "What made you look at it in the first place?"
 
-_Tick any that apply. It does not matter whether you kept it._
+_Tick as many as you like. It does not matter whether you kept it._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -266,8 +266,8 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Optical grading on farm
   - Machine telemetry or maintenance alerts
   - Drones, satellite or aerial imagery
-  - Farm management or record-keeping software
-  - Robotics or autonomous machines
+  - Farm software for records and paperwork
+  - Robots or driverless machines
   - Nothing much yet
   - Other
 
@@ -279,7 +279,7 @@ _One answer only._
   - Working, but it needs sorting out
   - We tried it and stopped
   - We looked into it and did not go ahead
-  - Mixed — some of it worked, some did not
+  - Some of it worked, some did not
   - Nothing has really applied to us yet
 
 **5. What has held you back most?**
@@ -287,24 +287,24 @@ _One answer only._
 > Open with: "What's stopped you going further with it?"
 > Then probe: "If that was sorted tomorrow, would you go ahead?"
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
-  - Upfront capital cost
-  - Uncertain return on investment
-  - Reliability or downtime concerns
-  - Lack of local service or support
-  - Lack of suitable operators or training
-  - Poor fit with existing systems
-  - Lack of evidence under Australian conditions
-  - Data or integration issues
-  - Safety or regulatory concerns
+  - The up-front cost
+  - Not sure it would pay for itself
+  - Breakdowns and downtime
+  - No service or support close by
+  - Not enough trained operators
+  - Does not fit the gear we already run
+  - No proof it works in Australian conditions
+  - Data, or getting systems to talk to each other
+  - Safety or regulation
   - Other
 
-**6. When you are weighing up a machinery purchase, which numbers do you actually look at?**
+**6. When you are weighing up a machinery purchase, which numbers do you look at?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -315,29 +315,29 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Pack-out — The share of the crop that makes saleable grade.
   - Quality
   - Bruising or damage
-  - Throughput
+  - How much you get through in a day
   - Getting the job done in the window
   - Safety
   - Water, fuel or energy use
   - Maintenance and downtime
   - Other
 
-**7. Is there anything running now that would make a good local case study or demonstration?**
+**7. Is there anything running now that would make a good local case study or a demonstration?**
 
-_We are looking for gear that is working in the paddock, not a sales pitch._
+_Something working on a real job. It does not have to be new or flash._
 
 _One answer only._
 
-  - Yes — something on our own place
-  - Yes — somewhere else I know of
-  - Not that comes to mind
+  - Yes, something on our own place
+  - Yes, somewhere else I know of
+  - Nothing comes to mind
 
-**8. Is anything being pushed at the moment that you reckon will not work in Australian potatoes? What is the concern?**
+**8. Is anything being pushed at the moment that you reckon will not work in Australian potatoes?**
 
 > Open with: "Is there anything being pushed at the moment that you reckon won't work here?"
 > Then probe: "What makes you say that?"
 
-_Optional, and genuinely useful. Nobody ticks a box to disagree with the industry, so this is the place to say it._
+_Optional, and worth saying. Tell us what the concern is. Nobody ticks a box to disagree with the industry, so this is the place to do it._
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -365,7 +365,7 @@ _One answer only._
 > Open with: "When you're flat out, which jobs are the ones that bite?"
 > Then probe: "What happens to the next client when one of those runs over?"
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -383,7 +383,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **3. What stops you getting through more work, or doing it better?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -400,7 +400,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **4. On the machinery side, what causes you the most grief?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -414,7 +414,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **5. Where are the biggest gaps in operator skills?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -428,9 +428,9 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Getting new operators up to speed quickly
   - Other
 
-**6. What would make the biggest difference to the service you can offer?**
+**6. What would make the biggest difference to the job you can do for your clients?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -444,13 +444,13 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Training for your operators
   - Other
 
-**7. If we ran a demonstration, what would it take for it to be worth your while?**
+**7. If we ran a demonstration, what would it take to make it worth your while?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
-  - A full day at commercial rates, not a half-hour show
+  - A full day at commercial rates
   - Payment for your time and machine
   - No risk to the client crop
   - Held outside the peak
@@ -482,12 +482,12 @@ _One answer only._
   - More than 50,000 tonnes
   - Prefer not to say
 
-**2. Where are the pinch points — labour, throughput, quality, handling or safety?**
+**2. Where are the pinch points in the shed?**
 
-> Open with: "Walk me through the shed — where does it slow down or go wrong?"
-> Then probe: "Where do you lose the most people-hours?"
+> Open with: "Walk me through the shed. Where does it slow down or go wrong?"
+> Then probe: "Where do you lose the most time?"
 
-_Tick any that apply._
+_Labour, throughput, quality, handling, safety, wherever it bites. Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -506,7 +506,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **3. Which losses or quality problems cost you the most?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -523,7 +523,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **4. What have you put in, trialled, or had a serious look at?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -540,24 +540,24 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **5. What has held that back?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
-  - Upfront capital cost
-  - Uncertain return on investment
-  - Reliability or downtime concerns
-  - Lack of local service or support
-  - Lack of suitable operators or training
-  - Poor fit with existing systems
-  - Lack of evidence under Australian conditions
-  - Data or integration issues
-  - Safety or regulatory concerns
+  - The up-front cost
+  - Not sure it would pay for itself
+  - Breakdowns and downtime
+  - No service or support close by
+  - Not enough trained operators
+  - Does not fit the gear we already run
+  - No proof it works in Australian conditions
+  - Data, or getting systems to talk to each other
+  - Safety or regulation
   - Other
 
 **6. Which numbers matter most when you judge whether something is working?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -580,69 +580,69 @@ _Let them talk. Write it down in their words, not yours._
 
 _For: Machinery dealer, manufacturer or service provider._
 
-**1. What can Australian potato businesses actually buy or trial today?**
+**1. What can Australian potato businesses buy or trial today?**
 
 > Open with: "What can growers actually buy or trial right now?"
 > Then probe: "What's coming in the next couple of years?"
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
-  - Harvest efficiency and damage reduction
-  - Harvest logistics and transport coordination
+  - Harvest efficiency and less damage
+  - Carting and harvest logistics
   - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual tasks
+  - Robots for repetitive hand work
   - Sensors and machine data for day-to-day decisions
-  - Irrigation automation linked to crop and soil information
+  - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
   - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
-  - Training, skills and workforce pathways
+  - Training, skills and getting new people in
   - Other
 
-**2. And of those, which would you say are genuinely ready — not just promising?**
+**2. And of those, which are ready to put on a commercial job today?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
-  - Harvest efficiency and damage reduction
-  - Harvest logistics and transport coordination
+  - Harvest efficiency and less damage
+  - Carting and harvest logistics
   - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual tasks
+  - Robots for repetitive hand work
   - Sensors and machine data for day-to-day decisions
-  - Irrigation automation linked to crop and soil information
+  - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
   - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
-  - Training, skills and workforce pathways
+  - Training, skills and getting new people in
   - Other
 
 **3. What stops your potato customers going ahead?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
-  - Upfront capital cost
-  - Uncertain return on investment
-  - Reliability or downtime concerns
-  - Lack of local service or support
-  - Lack of suitable operators or training
-  - Poor fit with existing systems
-  - Lack of evidence under Australian conditions
-  - Data or integration issues
-  - Safety or regulatory concerns
+  - The up-front cost
+  - Not sure it would pay for itself
+  - Breakdowns and downtime
+  - No service or support close by
+  - Not enough trained operators
+  - Does not fit the gear we already run
+  - No proof it works in Australian conditions
+  - Data, or getting systems to talk to each other
+  - Safety or regulation
   - Other
 
-**4. What would the industry need on the service side to support more of this gear?**
+**4. What would the industry need on the service side to keep more of this gear running?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -655,9 +655,9 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Better manuals and documentation
   - Other
 
-**5. Where does imported equipment not quite fit Australian conditions?**
+**5. Where does imported gear not quite fit Australian conditions?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -673,7 +673,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **6. Would you be interested in being part of a demonstration, case study or technical briefing?**
 
-_There is a place to leave your details at the end if so._
+_There is a spot at the end to leave your details._
 
 _One answer only._
 
@@ -694,27 +694,27 @@ _For: Technology provider._
 > Open with: "Tell me about what you do, in plain terms."
 > Then probe: "Where would it sit on a potato operation?"
 
-_Tick any that apply. There is room to describe it properly at the end._
+_Tick as many as you like. There is room to describe it properly at the end._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
-  - Harvest efficiency and damage reduction
-  - Harvest logistics and transport coordination
+  - Harvest efficiency and less damage
+  - Carting and harvest logistics
   - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual tasks
+  - Robots for repetitive hand work
   - Sensors and machine data for day-to-day decisions
-  - Irrigation automation linked to crop and soil information
+  - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
   - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
-  - Training, skills and workforce pathways
+  - Training, skills and getting new people in
   - Other
 
 **2. What problem does it solve for a potato business?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -740,9 +740,9 @@ _One answer only._
   - Sold commercially in Australia
   - Established in Australian potato operations
 
-**4. What does a business need to have in place for it to work properly?**
+**4. What does a business need to have in place before it will work properly?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -758,7 +758,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **5. What evidence can you point to on how well it performs?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -772,13 +772,13 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **6. What would you need from us for a credible Australian evaluation?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - A host site
   - Independent measurement
-  - A full season rather than a snapshot
+  - A full season of results
   - Some funding support
   - Help integrating with what the host already runs
   - Agreed success criteria up front
@@ -799,7 +799,7 @@ _For: Industry body or other stakeholder._
 > Open with: "What do your members bring up with you most?"
 > Then probe: "Is that getting better or worse?"
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -816,7 +816,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **2. Where could a project like this be most useful to your members?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -831,7 +831,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **3. Whose voice usually gets missed in these conversations?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -845,7 +845,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Particular regions
   - Other
 
-**4. Are there groups, programs or people we should be working with rather than around?**
+**4. Are there groups, programs or people we should be working with?**
 
 _Optional. Names are more use to us than categories here._
 
@@ -860,7 +860,7 @@ _For: Adviser, consultant, researcher or educator._
 > Open with: "Where do you reckon the industry is flying blind?"
 > Then probe: "What would it take to fill that gap?"
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -877,27 +877,27 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **2. What deserves a proper independent look?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
-  - Harvest efficiency and damage reduction
-  - Harvest logistics and transport coordination
+  - Harvest efficiency and less damage
+  - Carting and harvest logistics
   - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
   - Packhouse and receival automation
-  - Robotics for repetitive manual tasks
+  - Robots for repetitive hand work
   - Sensors and machine data for day-to-day decisions
-  - Irrigation automation linked to crop and soil information
+  - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
   - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
-  - Training, skills and workforce pathways
+  - Training, skills and getting new people in
   - Other
 
 **3. If we run a demonstration, what should we be measuring?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -917,7 +917,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **4. Whose voice usually gets missed in these conversations?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -931,9 +931,9 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Particular regions
   - Other
 
-**5. How do findings actually reach potato businesses?**
+**5. How do findings reach potato businesses?**
 
-_Tick any that apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -957,7 +957,7 @@ _Let them talk. Write it down in their words, not yours._
 
 ## How we should go about it
 
-**1. What could we do that would be genuinely useful — to your business, or to the industry?**
+**1. What could we do that would be worth your while, for your business or for the industry?**
 
 > Open with: "What could we do that you'd actually use?"
 > Then probe: "What would make it worth your time?"
@@ -972,7 +972,7 @@ _Let them talk. Write it down in their words, not yours._
 
 **3. How do you like to get this sort of information?**
 
-_Choose as many as apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -983,7 +983,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Webinars
   - Short online briefings
   - Machinery or operator checklists
-  - ROI calculators and decision tools
+  - Tools for working out whether it pays
   - Technical factsheets
   - One-to-one discussions
   - PotatoLink articles or updates
@@ -991,7 +991,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **4. If we wanted a yarn later on, when suits you best?**
 
-_Choose as many as apply._
+_Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -1009,14 +1009,14 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 **Would you like to be involved in any of this?** _Read the list. Ticking something is an expression of interest, not a commitment — say so._
 
   - Joining the project reference group — A small group that meets a few times a year to steer the project.
-  - Confidential follow-up discussion
-  - Receiving a summary of findings
-  - Joining a future online discussion
-  - Participating in a small peer group
-  - Contributing to a case study
-  - Contributing de-identified operational data
-  - Reviewing a draft ROI or decision-support tool
-  - Receiving PotatoLink updates about mechanisation
+  - A confidential chat with somebody from the project
+  - A summary of what we heard
+  - A future online discussion
+  - A small peer group
+  - Helping with a case study
+  - Sharing operating data with your name taken off it
+  - Looking over a draft tool for working out whether something pays
+  - PotatoLink updates about mechanisation
 
 If they say yes to anything, take their name, organisation, region, and an email or a phone number, plus when suits for a call. Tell them it is kept separately from their answers and used only for what they picked.
 

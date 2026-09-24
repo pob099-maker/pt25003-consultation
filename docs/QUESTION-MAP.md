@@ -21,17 +21,17 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 `regions` · tick any + other
 
-- South Australia — Murraylands and Riverland
-- South Australia — South East and Adelaide Hills
-- Victoria — Ballarat and Central Highlands
-- Victoria — Gippsland
-- Victoria — other districts
-- Tasmania — North and North West
-- Tasmania — other districts
+- South Australia: Murraylands and Riverland
+- South Australia: South East and Adelaide Hills
+- Victoria: Ballarat and Central Highlands
+- Victoria: Gippsland
+- Victoria: other districts
+- Tasmania: North and North West
+- Tasmania: other districts
 - New South Wales
-- Queensland — Lockyer Valley, Atherton and other districts
+- Queensland: Lockyer Valley, Atherton and other districts
 - Western Australia
-- National / multiple regions
+- More than one region, or all of Australia
 - Other region
 - Prefer not to say
 
@@ -42,7 +42,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 `q1_constraints` · tick any + other · **tracked every round**
 
 - Ground preparation and planting
-- Crop monitoring and decision support
+- Crop monitoring and agronomy decisions
 - Irrigation operation and automation
 - Crop protection operations
 - Harvesting
@@ -51,9 +51,9 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Washing, grading and sorting
 - Packing
 - Storage and handling
-- Data capture, traceability and system integration
+- Records, traceability and getting systems to talk to each other
 - Machinery maintenance and reliability
-- Access to skilled operators and technicians
+- Finding skilled operators and technicians
 - Other
 
 ### Of those, which three should we be putting the most effort into?
@@ -68,15 +68,15 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 - Labour availability
 - Labour cost
-- Timeliness of operations
+- Getting jobs done on time
 - Yield loss
-- Quality loss or reduced pack-out
+- Quality loss or a smaller pack-out
 - Bruising, damage or handling loss
 - Workplace health and safety
 - Machine downtime or reliability
 - Energy, fuel or water use
-- Difficulty accessing skilled operators or technicians
-- Lack of useful operational data
+- Trouble finding skilled operators or technicians
+- Not knowing what is actually happening
 - Other
 
 ### In a tough season, or when everything lands at once, what happens if nothing changes?
@@ -91,20 +91,20 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 - Precision planting and crop establishment
 - Autonomous and self-steering field machinery
-- Harvest efficiency and damage reduction
-- Harvest logistics and transport coordination
+- Harvest efficiency and less damage
+- Carting and harvest logistics
 - Optical sorting and grading
 - Packhouse and receival automation
-- Robotics for repetitive manual tasks
+- Robots for repetitive hand work
 - Sensors and machine data for day-to-day decisions
-- Irrigation automation linked to crop and soil information
+- Irrigation automation that uses crop and soil information
 - Predictive maintenance and machinery uptime
 - Getting different brands and systems to work together
-- Training, skills and workforce pathways
+- Training, skills and getting new people in
 
 ## 4. Everybody — What would convince you
 
-### If we could only take on one or two of those, which would you pick — and why?
+### If we could only take on one or two of those, which would you pick, and why?
 
 `q6_first_opportunities` · open text
 
@@ -112,26 +112,26 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 `q7_evidence` · tick any + other · **tracked every round**
 
-- Local demonstration under Australian potato conditions
-- Independent economic analysis or ROI assessment
-- Practical operating data
+- A demonstration in an Australian potato crop
+- Independent analysis of whether it pays
+- Figures from it working in the paddock
 - Case study from a similar business
-- Peer grower or industry experience
+- What another grower found when they ran it
 - Good local service, parts and technical support
 - Training for operators and managers
-- Finance, leasing or ownership-model options
-- Clear safety or regulatory guidance
-- Better compatibility with existing equipment or data systems
+- Finance, leasing or sharing the cost
+- Clear guidance on safety and the rules
+- It works with the gear and software we already run
 - Other
 
 ### Before you committed to something new, how much would it matter to try it on part of your own operation first?
 
 `q_trial` · one only · **tracked every round**
 
-- Essential — I would not go ahead without it
+- Essential. I would not go ahead without it
 - Helpful, but not a deal-breaker
-- Not needed — the evidence would be enough
-- Not my call to make in my role
+- Not needed. The evidence would be enough
+- Not my call to make
 
 ### When you are weighing up new gear or a new way of doing things, whose opinion actually counts?
 
@@ -141,7 +141,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Grower groups and study groups
 - An independent agronomist or consultant
 - Machinery dealers
-- Manufacturer representatives
+- Manufacturer reps
 - Processor or packer field officers
 - Industry bodies
 - Researchers and universities
@@ -170,7 +170,7 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - More than 50,000 tonnes
 - Prefer not to say
 
-#### Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?
+#### Which parts of your own operation give you the most trouble?
 
 `farm_pressure` · tick any + other
 
@@ -202,8 +202,8 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - Optical grading on farm
 - Machine telemetry or maintenance alerts
 - Drones, satellite or aerial imagery
-- Farm management or record-keeping software
-- Robotics or autonomous machines
+- Farm software for records and paperwork
+- Robots or driverless machines
 - Nothing much yet
 - Other
 
@@ -215,25 +215,25 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - Working, but it needs sorting out
 - We tried it and stopped
 - We looked into it and did not go ahead
-- Mixed — some of it worked, some did not
+- Some of it worked, some did not
 - Nothing has really applied to us yet
 
 #### What has held you back most?
 
 `farm_barriers` · tick any + other · **tracked every round**
 
-- Upfront capital cost
-- Uncertain return on investment
-- Reliability or downtime concerns
-- Lack of local service or support
-- Lack of suitable operators or training
-- Poor fit with existing systems
-- Lack of evidence under Australian conditions
-- Data or integration issues
-- Safety or regulatory concerns
+- The up-front cost
+- Not sure it would pay for itself
+- Breakdowns and downtime
+- No service or support close by
+- Not enough trained operators
+- Does not fit the gear we already run
+- No proof it works in Australian conditions
+- Data, or getting systems to talk to each other
+- Safety or regulation
 - Other
 
-#### When you are weighing up a machinery purchase, which numbers do you actually look at?
+#### When you are weighing up a machinery purchase, which numbers do you look at?
 
 `farm_measures` · tick any + other
 
@@ -244,22 +244,22 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - Pack-out
 - Quality
 - Bruising or damage
-- Throughput
+- How much you get through in a day
 - Getting the job done in the window
 - Safety
 - Water, fuel or energy use
 - Maintenance and downtime
 - Other
 
-#### Is there anything running now that would make a good local case study or demonstration?
+#### Is there anything running now that would make a good local case study or a demonstration?
 
 `farm_case_study` · one only
 
-- Yes — something on our own place
-- Yes — somewhere else I know of
-- Not that comes to mind
+- Yes, something on our own place
+- Yes, somewhere else I know of
+- Nothing comes to mind
 
-#### Is anything being pushed at the moment that you reckon will not work in Australian potatoes? What is the concern?
+#### Is anything being pushed at the moment that you reckon will not work in Australian potatoes?
 
 `farm_scepticism` · open text
 
@@ -335,7 +335,7 @@ Contractor · 8 questions · about 4.3 min
 - Getting new operators up to speed quickly
 - Other
 
-#### What would make the biggest difference to the service you can offer?
+#### What would make the biggest difference to the job you can do for your clients?
 
 `con_tech` · tick any + other
 
@@ -349,11 +349,11 @@ Contractor · 8 questions · about 4.3 min
 - Training for your operators
 - Other
 
-#### If we ran a demonstration, what would it take for it to be worth your while?
+#### If we ran a demonstration, what would it take to make it worth your while?
 
 `con_demo` · tick any + other
 
-- A full day at commercial rates, not a half-hour show
+- A full day at commercial rates
 - Payment for your time and machine
 - No risk to the client crop
 - Held outside the peak
@@ -381,7 +381,7 @@ Processor, packhouse or storage business · 7 questions · about 3.9 min
 - More than 50,000 tonnes
 - Prefer not to say
 
-#### Where are the pinch points — labour, throughput, quality, handling or safety?
+#### Where are the pinch points in the shed?
 
 `pro_constraints` · tick any + other
 
@@ -432,15 +432,15 @@ Processor, packhouse or storage business · 7 questions · about 3.9 min
 
 `pro_barriers` · tick any + other · **tracked every round**
 
-- Upfront capital cost
-- Uncertain return on investment
-- Reliability or downtime concerns
-- Lack of local service or support
-- Lack of suitable operators or training
-- Poor fit with existing systems
-- Lack of evidence under Australian conditions
-- Data or integration issues
-- Safety or regulatory concerns
+- The up-front cost
+- Not sure it would pay for itself
+- Breakdowns and downtime
+- No service or support close by
+- Not enough trained operators
+- Does not fit the gear we already run
+- No proof it works in Australian conditions
+- Data, or getting systems to talk to each other
+- Safety or regulation
 - Other
 
 #### Which numbers matter most when you judge whether something is working?
@@ -466,58 +466,58 @@ Processor, packhouse or storage business · 7 questions · about 3.9 min
 
 Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 min
 
-#### What can Australian potato businesses actually buy or trial today?
+#### What can Australian potato businesses buy or trial today?
 
 `mach_available` · tick any + other
 
 - Precision planting and crop establishment
 - Autonomous and self-steering field machinery
-- Harvest efficiency and damage reduction
-- Harvest logistics and transport coordination
+- Harvest efficiency and less damage
+- Carting and harvest logistics
 - Optical sorting and grading
 - Packhouse and receival automation
-- Robotics for repetitive manual tasks
+- Robots for repetitive hand work
 - Sensors and machine data for day-to-day decisions
-- Irrigation automation linked to crop and soil information
+- Irrigation automation that uses crop and soil information
 - Predictive maintenance and machinery uptime
 - Getting different brands and systems to work together
-- Training, skills and workforce pathways
+- Training, skills and getting new people in
 - Other
 
-#### And of those, which would you say are genuinely ready — not just promising?
+#### And of those, which are ready to put on a commercial job today?
 
 `mach_ready` · tick any + other
 
 - Precision planting and crop establishment
 - Autonomous and self-steering field machinery
-- Harvest efficiency and damage reduction
-- Harvest logistics and transport coordination
+- Harvest efficiency and less damage
+- Carting and harvest logistics
 - Optical sorting and grading
 - Packhouse and receival automation
-- Robotics for repetitive manual tasks
+- Robots for repetitive hand work
 - Sensors and machine data for day-to-day decisions
-- Irrigation automation linked to crop and soil information
+- Irrigation automation that uses crop and soil information
 - Predictive maintenance and machinery uptime
 - Getting different brands and systems to work together
-- Training, skills and workforce pathways
+- Training, skills and getting new people in
 - Other
 
 #### What stops your potato customers going ahead?
 
 `mach_barriers` · tick any + other · **tracked every round**
 
-- Upfront capital cost
-- Uncertain return on investment
-- Reliability or downtime concerns
-- Lack of local service or support
-- Lack of suitable operators or training
-- Poor fit with existing systems
-- Lack of evidence under Australian conditions
-- Data or integration issues
-- Safety or regulatory concerns
+- The up-front cost
+- Not sure it would pay for itself
+- Breakdowns and downtime
+- No service or support close by
+- Not enough trained operators
+- Does not fit the gear we already run
+- No proof it works in Australian conditions
+- Data, or getting systems to talk to each other
+- Safety or regulation
 - Other
 
-#### What would the industry need on the service side to support more of this gear?
+#### What would the industry need on the service side to keep more of this gear running?
 
 `mach_capacity` · tick any + other
 
@@ -530,7 +530,7 @@ Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 m
 - Better manuals and documentation
 - Other
 
-#### Where does imported equipment not quite fit Australian conditions?
+#### Where does imported gear not quite fit Australian conditions?
 
 `mach_gaps` · tick any + other
 
@@ -566,16 +566,16 @@ Technology provider · 7 questions · about 3.8 min
 
 - Precision planting and crop establishment
 - Autonomous and self-steering field machinery
-- Harvest efficiency and damage reduction
-- Harvest logistics and transport coordination
+- Harvest efficiency and less damage
+- Carting and harvest logistics
 - Optical sorting and grading
 - Packhouse and receival automation
-- Robotics for repetitive manual tasks
+- Robots for repetitive hand work
 - Sensors and machine data for day-to-day decisions
-- Irrigation automation linked to crop and soil information
+- Irrigation automation that uses crop and soil information
 - Predictive maintenance and machinery uptime
 - Getting different brands and systems to work together
-- Training, skills and workforce pathways
+- Training, skills and getting new people in
 - Other
 
 #### What problem does it solve for a potato business?
@@ -604,7 +604,7 @@ Technology provider · 7 questions · about 3.8 min
 - Sold commercially in Australia
 - Established in Australian potato operations
 
-#### What does a business need to have in place for it to work properly?
+#### What does a business need to have in place before it will work properly?
 
 `tech_requirements` · tick any + other
 
@@ -636,7 +636,7 @@ Technology provider · 7 questions · about 3.8 min
 
 - A host site
 - Independent measurement
-- A full season rather than a snapshot
+- A full season of results
 - Some funding support
 - Help integrating with what the host already runs
 - Agreed success criteria up front
@@ -692,7 +692,7 @@ Industry body or other stakeholder · 4 questions · about 2.4 min
 - Particular regions
 - Other
 
-#### Are there groups, programs or people we should be working with rather than around?
+#### Are there groups, programs or people we should be working with?
 
 `ind_connections` · open text
 
@@ -721,16 +721,16 @@ Adviser, consultant, researcher or educator · 6 questions · about 3.8 min
 
 - Precision planting and crop establishment
 - Autonomous and self-steering field machinery
-- Harvest efficiency and damage reduction
-- Harvest logistics and transport coordination
+- Harvest efficiency and less damage
+- Carting and harvest logistics
 - Optical sorting and grading
 - Packhouse and receival automation
-- Robotics for repetitive manual tasks
+- Robots for repetitive hand work
 - Sensors and machine data for day-to-day decisions
-- Irrigation automation linked to crop and soil information
+- Irrigation automation that uses crop and soil information
 - Predictive maintenance and machinery uptime
 - Getting different brands and systems to work together
-- Training, skills and workforce pathways
+- Training, skills and getting new people in
 - Other
 
 #### If we run a demonstration, what should we be measuring?
@@ -765,7 +765,7 @@ Adviser, consultant, researcher or educator · 6 questions · about 3.8 min
 - Particular regions
 - Other
 
-#### How do findings actually reach potato businesses?
+#### How do findings reach potato businesses?
 
 `adv_sharing` · tick any + other
 
@@ -806,19 +806,19 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 
 `fu_changed` · one only · **tracked every round**
 
-- Yes — we have changed how we do something
+- Yes, we have changed how we do something
 - We are planning a change
 - We are looking into it
 - No change
 - Have not seen enough to say
 
-### If something changed, what was it — and what made the difference?
+### If something changed, what was it, and what made the difference?
 
 `fu_what` · open text
 
 ## 6. Everybody — How we should go about it
 
-### What could we do that would be genuinely useful — to your business, or to the industry?
+### What could we do that would be worth your while, for your business or for the industry?
 
 `pd_most_useful` · open text
 
@@ -837,7 +837,7 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 - Webinars
 - Short online briefings
 - Machinery or operator checklists
-- ROI calculators and decision tools
+- Tools for working out whether it pays
 - Technical factsheets
 - One-to-one discussions
 - PotatoLink articles or updates
@@ -865,14 +865,14 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 #### Offered to everyone
 
 - Joining the project reference group
-- Confidential follow-up discussion
-- Receiving a summary of findings
-- Joining a future online discussion
-- Participating in a small peer group
-- Contributing to a case study
-- Contributing de-identified operational data
-- Reviewing a draft ROI or decision-support tool
-- Receiving PotatoLink updates about mechanisation
+- A confidential chat with somebody from the project
+- A summary of what we heard
+- A future online discussion
+- A small peer group
+- Helping with a case study
+- Sharing operating data with your name taken off it
+- Looking over a draft tool for working out whether something pays
+- PotatoLink updates about mechanisation
 
 #### Only on the Your farming operation branch
 
@@ -891,7 +891,7 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 
 - Hosting a trial in your packhouse, receival or store
 - Allowing throughput, grading or damage measurements on your line
-- Taking part in an independent grading accuracy assessment
+- Taking part in an independent check of grading accuracy
 
 #### Only on the Machinery supply and service branch
 
@@ -904,7 +904,7 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 
 - Providing your technology for an independent evaluation
 - Helping design what a credible trial would measure
-- Working on data compatibility with other systems
+- Working on getting systems to talk to each other
 
 #### Only on the Your members and the wider industry branch
 
@@ -936,14 +936,14 @@ The two lists are different axes — where the trouble is, and what could be don
 - Precision planting and crop establishment
 - Autonomous and self-steering field machinery
 
-### Crop monitoring and decision support
+### Crop monitoring and agronomy decisions
 
 - Sensors and machine data for day-to-day decisions
 - Getting different brands and systems to work together
 
 ### Irrigation operation and automation
 
-- Irrigation automation linked to crop and soil information
+- Irrigation automation that uses crop and soil information
 - Sensors and machine data for day-to-day decisions
 
 ### Crop protection operations
@@ -953,12 +953,12 @@ The two lists are different axes — where the trouble is, and what could be don
 
 ### Harvesting
 
-- Harvest efficiency and damage reduction
+- Harvest efficiency and less damage
 - Autonomous and self-steering field machinery
 
 ### In-field transport and harvest logistics
 
-- Harvest logistics and transport coordination
+- Carting and harvest logistics
 
 ### Receival
 
@@ -973,14 +973,14 @@ The two lists are different axes — where the trouble is, and what could be don
 ### Packing
 
 - Packhouse and receival automation
-- Robotics for repetitive manual tasks
+- Robots for repetitive hand work
 
 ### Storage and handling
 
 - Sensors and machine data for day-to-day decisions
 - Packhouse and receival automation
 
-### Data capture, traceability and system integration
+### Records, traceability and getting systems to talk to each other
 
 - Getting different brands and systems to work together
 - Sensors and machine data for day-to-day decisions
@@ -989,9 +989,9 @@ The two lists are different axes — where the trouble is, and what could be don
 
 - Predictive maintenance and machinery uptime
 
-### Access to skilled operators and technicians
+### Finding skilled operators and technicians
 
-- Training, skills and workforce pathways
+- Training, skills and getting new people in
 
 ## Branch lengths
 

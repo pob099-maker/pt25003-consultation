@@ -15,17 +15,17 @@ export const ROLES = [
 ] as const;
 
 const REGIONS = opts(
-  ['sa_murraylands', 'South Australia — Murraylands and Riverland'],
-  ['sa_southeast', 'South Australia — South East and Adelaide Hills'],
-  ['vic_ballarat', 'Victoria — Ballarat and Central Highlands'],
-  ['vic_gippsland', 'Victoria — Gippsland'],
-  ['vic_other', 'Victoria — other districts'],
-  ['tas_north', 'Tasmania — North and North West'],
-  ['tas_other', 'Tasmania — other districts'],
+  ['sa_murraylands', 'South Australia: Murraylands and Riverland'],
+  ['sa_southeast', 'South Australia: South East and Adelaide Hills'],
+  ['vic_ballarat', 'Victoria: Ballarat and Central Highlands'],
+  ['vic_gippsland', 'Victoria: Gippsland'],
+  ['vic_other', 'Victoria: other districts'],
+  ['tas_north', 'Tasmania: North and North West'],
+  ['tas_other', 'Tasmania: other districts'],
   ['nsw', 'New South Wales'],
-  ['qld', 'Queensland — Lockyer Valley, Atherton and other districts'],
+  ['qld', 'Queensland: Lockyer Valley, Atherton and other districts'],
   ['wa', 'Western Australia'],
-  ['national', 'National / multiple regions'],
+  ['national', 'More than one region, or all of Australia'],
   ['other', 'Other region'],
   ['no_say', 'Prefer not to say'],
 );
@@ -40,7 +40,7 @@ const REGIONS = opts(
  */
 const CONSTRAINTS = opts(
   ['planting', 'Ground preparation and planting'],
-  ['monitoring', 'Crop monitoring and decision support'],
+  ['monitoring', 'Crop monitoring and agronomy decisions'],
   ['irrigation', 'Irrigation operation and automation'],
   ['crop_protection', 'Crop protection operations'],
   ['harvest', 'Harvesting'],
@@ -49,9 +49,9 @@ const CONSTRAINTS = opts(
   ['grading', 'Washing, grading and sorting'],
   ['packing', 'Packing'],
   ['storage', 'Storage and handling'],
-  ['data', 'Data capture, traceability and system integration'],
+  ['data', 'Records, traceability and getting systems to talk to each other'],
   ['maintenance', 'Machinery maintenance and reliability'],
-  ['skills', 'Access to skilled operators and technicians'],
+  ['skills', 'Finding skilled operators and technicians'],
   ['other', 'Other'],
 );
 
@@ -64,16 +64,16 @@ const CONSTRAINTS = opts(
 const AREAS = opts(
   ['precision_planting', 'Precision planting and crop establishment'],
   ['autonomy', 'Autonomous and self-steering field machinery', 'Machines that run with limited or no driver input.'],
-  ['harvest_efficiency', 'Harvest efficiency and damage reduction'],
-  ['harvest_logistics', 'Harvest logistics and transport coordination'],
+  ['harvest_efficiency', 'Harvest efficiency and less damage'],
+  ['harvest_logistics', 'Carting and harvest logistics'],
   ['optical_sorting', 'Optical sorting and grading', 'Cameras and sensors that grade tubers as they pass.'],
   ['packhouse_automation', 'Packhouse and receival automation'],
-  ['robotics', 'Robotics for repetitive manual tasks'],
+  ['robotics', 'Robots for repetitive hand work'],
   ['sensors', 'Sensors and machine data for day-to-day decisions'],
-  ['irrigation_automation', 'Irrigation automation linked to crop and soil information'],
+  ['irrigation_automation', 'Irrigation automation that uses crop and soil information'],
   ['predictive_maintenance', 'Predictive maintenance and machinery uptime', 'Using machine data to service a part before it fails.'],
   ['interoperability', 'Getting different brands and systems to work together', 'Data standards, so gear and software from different suppliers share information.'],
-  ['training', 'Training, skills and workforce pathways'],
+  ['training', 'Training, skills and getting new people in'],
 );
 
 const AREAS_WITH_OTHER = [...AREAS, { id: 'other', label: 'Other' }] as const;
@@ -126,7 +126,7 @@ const CORE: readonly Section[] = [
   {
     id: 'core_constraints',
     title: 'Where the pressure is',
-    intro: 'First, how you see the industry as a whole — not just your own place.',
+    intro: 'First, how you see the industry as a whole. Your own place comes later.',
     questions: [
       {
         id: 'q1_constraints',
@@ -154,19 +154,19 @@ const CORE: readonly Section[] = [
         guide: { open: 'When that goes wrong, what does it actually cost?', probe: 'Is that mostly money, time, or people?' },
         kind: 'multi',
         prompt: 'For the one at the top of your list, what does it actually cost a business?',
-        help: 'Choose as many as apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['labour_avail', 'Labour availability'],
           ['labour_cost', 'Labour cost'],
-          ['timeliness', 'Timeliness of operations'],
+          ['timeliness', 'Getting jobs done on time'],
           ['yield', 'Yield loss'],
-          ['quality', 'Quality loss or reduced pack-out'],
+          ['quality', 'Quality loss or a smaller pack-out'],
           ['damage', 'Bruising, damage or handling loss'],
           ['whs', 'Workplace health and safety'],
           ['downtime', 'Machine downtime or reliability'],
           ['inputs', 'Energy, fuel or water use'],
-          ['skills', 'Difficulty accessing skilled operators or technicians'],
-          ['data', 'Lack of useful operational data'],
+          ['skills', 'Trouble finding skilled operators or technicians'],
+          ['data', 'Not knowing what is actually happening'],
           ['other', 'Other'],
         ),
         allowOther: true,
@@ -176,7 +176,7 @@ const CORE: readonly Section[] = [
         guide: { open: 'Think of a bad year. What happened?', probe: 'What would have made the difference?' },
         kind: 'text',
         prompt: 'In a tough season, or when everything lands at once, what happens if nothing changes?',
-        help: 'Optional. For example: harvest runs late, quality drops, throughput falls away, extra labour cost, crop left in the ground, a safety risk, or a market missed.',
+        help: 'Optional. For example: harvest runs late, quality drops, less goes through the shed, extra labour cost, crop left in the ground, a safety risk, or a market missed.',
         rows: 4,
       },
     ],
@@ -205,7 +205,7 @@ const CORE: readonly Section[] = [
         id: 'q6_first_opportunities',
         guide: { open: 'If you were running the project, what would you do first?', probe: 'Why that one?' },
         kind: 'text',
-        prompt: 'If we could only take on one or two of those, which would you pick — and why?',
+        prompt: 'If we could only take on one or two of those, which would you pick, and why?',
         rows: 4,
       },
       {
@@ -214,18 +214,18 @@ const CORE: readonly Section[] = [
         tracking: true,
         kind: 'multi',
         prompt: 'What would it take to convince you to try something new?',
-        help: 'Choose as many as apply.',
+        help: 'Tick as many as you like.',
         options: opts(
-          ['local_demo', 'Local demonstration under Australian potato conditions'],
-          ['roi', 'Independent economic analysis or ROI assessment', 'An independent look at whether the money spent comes back.'],
-          ['operating_data', 'Practical operating data'],
+          ['local_demo', 'A demonstration in an Australian potato crop'],
+          ['roi', 'Independent analysis of whether it pays', 'Somebody with no stake in it working out whether the money comes back.'],
+          ['operating_data', 'Figures from it working in the paddock'],
           ['case_study', 'Case study from a similar business'],
-          ['peer', 'Peer grower or industry experience'],
+          ['peer', 'What another grower found when they ran it'],
           ['service', 'Good local service, parts and technical support'],
           ['training', 'Training for operators and managers'],
-          ['finance', 'Finance, leasing or ownership-model options'],
-          ['safety', 'Clear safety or regulatory guidance'],
-          ['compatibility', 'Better compatibility with existing equipment or data systems'],
+          ['finance', 'Finance, leasing or sharing the cost'],
+          ['safety', 'Clear guidance on safety and the rules'],
+          ['compatibility', 'It works with the gear and software we already run'],
           ['other', 'Other'],
         ),
         allowOther: true,
@@ -242,10 +242,10 @@ const CORE: readonly Section[] = [
         // somewhere" is not the same thing as "on my own place, on a few rows".
         prompt: 'Before you committed to something new, how much would it matter to try it on part of your own operation first?',
         options: opts(
-          ['essential', 'Essential — I would not go ahead without it'],
+          ['essential', 'Essential. I would not go ahead without it'],
           ['helpful', 'Helpful, but not a deal-breaker'],
-          ['not_needed', 'Not needed — the evidence would be enough'],
-          ['not_my_call', 'Not my call to make in my role'],
+          ['not_needed', 'Not needed. The evidence would be enough'],
+          ['not_my_call', 'Not my call to make'],
         ),
       },
       {
@@ -258,13 +258,13 @@ const CORE: readonly Section[] = [
         // nobody hears from a source they trust is a finding that changes
         // nothing on a farm.
         prompt: 'When you are weighing up new gear or a new way of doing things, whose opinion actually counts?',
-        help: 'Tick any that genuinely sway you — not everyone you hear from.',
+        help: 'Tick the ones that would change your mind.',
         options: opts(
           ['neighbours', 'Other growers and neighbours'],
           ['grower_groups', 'Grower groups and study groups'],
           ['agronomist', 'An independent agronomist or consultant'],
           ['dealer', 'Machinery dealers'],
-          ['manufacturer', 'Manufacturer representatives'],
+          ['manufacturer', 'Manufacturer reps'],
           ['processor_field', 'Processor or packer field officers'],
           ['industry_body', 'Industry bodies'],
           ['researchers', 'Researchers and universities'],
@@ -283,15 +283,15 @@ const CORE: readonly Section[] = [
 ];
 
 const ADOPTION_BARRIERS = opts(
-  ['capital', 'Upfront capital cost'],
-  ['roi', 'Uncertain return on investment'],
-  ['reliability', 'Reliability or downtime concerns'],
-  ['service', 'Lack of local service or support'],
-  ['operators', 'Lack of suitable operators or training'],
-  ['fit', 'Poor fit with existing systems'],
-  ['evidence', 'Lack of evidence under Australian conditions'],
-  ['data', 'Data or integration issues'],
-  ['safety', 'Safety or regulatory concerns'],
+  ['capital', 'The up-front cost'],
+  ['roi', 'Not sure it would pay for itself'],
+  ['reliability', 'Breakdowns and downtime'],
+  ['service', 'No service or support close by'],
+  ['operators', 'Not enough trained operators'],
+  ['fit', 'Does not fit the gear we already run'],
+  ['evidence', 'No proof it works in Australian conditions'],
+  ['data', 'Data, or getting systems to talk to each other'],
+  ['safety', 'Safety or regulation'],
   ['other', 'Other'],
 );
 
@@ -317,7 +317,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
   farm: {
     id: 'farm',
     title: 'Your farming operation',
-    intro: 'Now a few questions about your own place, so we know where the pressure actually falls.',
+    intro: 'Now a few questions about your own place, so we know where the pressure falls.',
     questions: [
       {
         id: 'farm_scale',
@@ -325,15 +325,15 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes of potatoes do you grow in a year?',
-        help: 'A broad band is plenty. It lets us tell whether a finding belongs to smaller operations or to everybody.',
+        help: 'A rough band is plenty. It tells us whether something is a small-operation problem or everybody\'s.',
         options: TONNAGE,
       },
       {
         id: 'farm_pressure',
         guide: { open: 'Where does the pressure land on your place?', probe: 'Which of those costs you most?' },
         kind: 'multi',
-        prompt: 'Which parts of your operation give you the most trouble — labour, timeliness, safety, quality or reliability?',
-        help: 'Tick any that apply.',
+        prompt: 'Which parts of your own operation give you the most trouble?',
+        help: 'Labour, timeliness, safety, quality, reliability, whatever it is for you. Tick as many as you like.',
         options: opts(
           ['land_prep', 'Ground preparation and bed forming'],
           ['planting', 'Planting'],
@@ -356,7 +356,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'multi',
         prompt: 'What have you put on, trialled, or had a serious look at?',
-        help: 'Tick any that apply. It does not matter whether you kept it.',
+        help: 'Tick as many as you like. It does not matter whether you kept it.',
         options: opts(
           ['guidance', 'GPS guidance or autosteer'],
           ['section_control', 'Section control on the boom or planter'],
@@ -369,8 +369,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
           ['optical_grading', 'Optical grading on farm'],
           ['machine_telemetry', 'Machine telemetry or maintenance alerts'],
           ['imagery', 'Drones, satellite or aerial imagery'],
-          ['farm_software', 'Farm management or record-keeping software'],
-          ['robotics', 'Robotics or autonomous machines'],
+          ['farm_software', 'Farm software for records and paperwork'],
+          ['robotics', 'Robots or driverless machines'],
           ['none', 'Nothing much yet'],
           ['other', 'Other'],
         ),
@@ -388,7 +388,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
           ['refine', 'Working, but it needs sorting out'],
           ['stopped', 'We tried it and stopped'],
           ['not_adopted', 'We looked into it and did not go ahead'],
-          ['varies', 'Mixed — some of it worked, some did not'],
+          ['varies', 'Some of it worked, some did not'],
           ['not_relevant', 'Nothing has really applied to us yet'],
         ),
       },
@@ -398,15 +398,15 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'multi',
         prompt: 'What has held you back most?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: ADOPTION_BARRIERS,
         allowOther: true,
       },
       {
         id: 'farm_measures',
         kind: 'multi',
-        prompt: 'When you are weighing up a machinery purchase, which numbers do you actually look at?',
-        help: 'Tick any that apply.',
+        prompt: 'When you are weighing up a machinery purchase, which numbers do you look at?',
+        help: 'Tick as many as you like.',
         options: opts(
           ['labour_hours', 'Labour hours saved'],
           ['cost_ha', 'Cost per hectare'],
@@ -415,7 +415,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
           ['packout', 'Pack-out', 'The share of the crop that makes saleable grade.'],
           ['quality', 'Quality'],
           ['damage', 'Bruising or damage'],
-          ['throughput', 'Throughput'],
+          ['throughput', 'How much you get through in a day'],
           ['timeliness', 'Getting the job done in the window'],
           ['safety', 'Safety'],
           ['inputs', 'Water, fuel or energy use'],
@@ -427,20 +427,20 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'farm_case_study',
         kind: 'single',
-        prompt: 'Is there anything running now that would make a good local case study or demonstration?',
-        help: 'We are looking for gear that is working in the paddock, not a sales pitch.',
+        prompt: 'Is there anything running now that would make a good local case study or a demonstration?',
+        help: 'Something working on a real job. It does not have to be new or flash.',
         options: opts(
-          ['own_farm', 'Yes — something on our own place'],
-          ['known_farm', 'Yes — somewhere else I know of'],
-          ['no', 'Not that comes to mind'],
+          ['own_farm', 'Yes, something on our own place'],
+          ['known_farm', 'Yes, somewhere else I know of'],
+          ['no', 'Nothing comes to mind'],
         ),
       },
       {
         id: 'farm_scepticism',
         guide: { open: 'Is there anything being pushed at the moment that you reckon won\'t work here?', probe: 'What makes you say that?' },
         kind: 'text',
-        prompt: 'Is anything being pushed at the moment that you reckon will not work in Australian potatoes? What is the concern?',
-        help: 'Optional, and genuinely useful. Nobody ticks a box to disagree with the industry, so this is the place to say it.',
+        prompt: 'Is anything being pushed at the moment that you reckon will not work in Australian potatoes?',
+        help: 'Optional, and worth saying. Tell us what the concern is. Nobody ticks a box to disagree with the industry, so this is the place to do it.',
         rows: 4,
       },
     ],
@@ -464,7 +464,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         guide: { open: 'When you\'re flat out, which jobs are the ones that bite?', probe: 'What happens to the next client when one of those runs over?' },
         kind: 'multi',
         prompt: 'Which jobs put you under the most pressure in the peak?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['planting', 'Planting'],
           ['hilling', 'Hilling and bed forming'],
@@ -484,7 +484,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'con_limits',
         kind: 'multi',
         prompt: 'What stops you getting through more work, or doing it better?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['machine_availability', 'Not enough machines'],
           ['operators', 'Not enough skilled operators'],
@@ -503,7 +503,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'con_service',
         kind: 'multi',
         prompt: 'On the machinery side, what causes you the most grief?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['parts_in_season', 'Getting parts during the season'],
           ['dealer_support', 'Local dealer support'],
@@ -519,7 +519,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'con_skills',
         kind: 'multi',
         prompt: 'Where are the biggest gaps in operator skills?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['harvester_setup', 'Setting a harvester up for the conditions'],
           ['damage', 'Running gear in a way that limits damage'],
@@ -536,8 +536,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'con_tech',
         kind: 'multi',
-        prompt: 'What would make the biggest difference to the service you can offer?',
-        help: 'Tick any that apply.',
+        prompt: 'What would make the biggest difference to the job you can do for your clients?',
+        help: 'Tick as many as you like.',
         options: opts(
           ['logistics', 'Load tracking and logistics coordination'],
           ['harvester_sensing', 'Harvesters that sense and adjust themselves'],
@@ -554,10 +554,10 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'con_demo',
         kind: 'multi',
-        prompt: 'If we ran a demonstration, what would it take for it to be worth your while?',
-        help: 'Tick any that apply.',
+        prompt: 'If we ran a demonstration, what would it take to make it worth your while?',
+        help: 'Tick as many as you like.',
         options: opts(
-          ['commercial_rates', 'A full day at commercial rates, not a half-hour show'],
+          ['commercial_rates', 'A full day at commercial rates'],
           ['paid', 'Payment for your time and machine'],
           ['no_crop_risk', 'No risk to the client crop'],
           ['off_peak', 'Held outside the peak'],
@@ -592,10 +592,10 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       },
       {
         id: 'pro_constraints',
-        guide: { open: 'Walk me through the shed — where does it slow down or go wrong?', probe: 'Where do you lose the most people-hours?' },
+        guide: { open: 'Walk me through the shed. Where does it slow down or go wrong?', probe: 'Where do you lose the most time?' },
         kind: 'multi',
-        prompt: 'Where are the pinch points — labour, throughput, quality, handling or safety?',
-        help: 'Tick any that apply.',
+        prompt: 'Where are the pinch points in the shed?',
+        help: 'Labour, throughput, quality, handling, safety, wherever it bites. Tick as many as you like.',
         options: opts(
           ['receival', 'Receival and tipping'],
           ['sampling', 'Sampling and testing on arrival'],
@@ -616,7 +616,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'pro_losses',
         kind: 'multi',
         prompt: 'Which losses or quality problems cost you the most?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['bruising', 'Bruising from drops and transfers'],
           ['greening', 'Greening'],
@@ -636,7 +636,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'multi',
         prompt: 'What have you put in, trialled, or had a serious look at?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['optical_size', 'Optical sizing and shape grading'],
           ['optical_defect', 'Optical defect detection'],
@@ -656,7 +656,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'multi',
         prompt: 'What has held that back?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: ADOPTION_BARRIERS,
         allowOther: true,
       },
@@ -664,7 +664,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'pro_measures',
         kind: 'multi',
         prompt: 'Which numbers matter most when you judge whether something is working?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['throughput', 'Throughput'],
           ['labour', 'Labour needed'],
@@ -690,22 +690,22 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
   machinery: {
     id: 'machinery',
     title: 'Machinery supply and service',
-    intro: 'A few questions from the supply side, where you see the whole industry rather than one farm.',
+    intro: 'A few questions from the supply side, where you see across the whole industry.',
     questions: [
       {
         id: 'mach_available',
         guide: { open: 'What can growers actually buy or trial right now?', probe: 'What\'s coming in the next couple of years?' },
         kind: 'multi',
-        prompt: 'What can Australian potato businesses actually buy or trial today?',
-        help: 'Tick any that apply.',
+        prompt: 'What can Australian potato businesses buy or trial today?',
+        help: 'Tick as many as you like.',
         options: AREAS_WITH_OTHER,
         allowOther: true,
       },
       {
         id: 'mach_ready',
         kind: 'multi',
-        prompt: 'And of those, which would you say are genuinely ready — not just promising?',
-        help: 'Tick any that apply.',
+        prompt: 'And of those, which are ready to put on a commercial job today?',
+        help: 'Tick as many as you like.',
         options: AREAS_WITH_OTHER,
         allowOther: true,
       },
@@ -714,15 +714,15 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'multi',
         prompt: 'What stops your potato customers going ahead?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: ADOPTION_BARRIERS,
         allowOther: true,
       },
       {
         id: 'mach_capacity',
         kind: 'multi',
-        prompt: 'What would the industry need on the service side to support more of this gear?',
-        help: 'Tick any that apply.',
+        prompt: 'What would the industry need on the service side to keep more of this gear running?',
+        help: 'Tick as many as you like.',
         options: opts(
           ['field_techs', 'More field technicians'],
           ['parts_holding', 'Parts held in country through the season'],
@@ -738,8 +738,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'mach_gaps',
         kind: 'multi',
-        prompt: 'Where does imported equipment not quite fit Australian conditions?',
-        help: 'Tick any that apply.',
+        prompt: 'Where does imported gear not quite fit Australian conditions?',
+        help: 'Tick as many as you like.',
         options: opts(
           ['row_spacing', 'Row spacing and bed configuration'],
           ['soil', 'Soil types and conditions'],
@@ -757,7 +757,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'mach_contribute',
         kind: 'single',
         prompt: 'Would you be interested in being part of a demonstration, case study or technical briefing?',
-        help: 'There is a place to leave your details at the end if so.',
+        help: 'There is a spot at the end to leave your details.',
         options: opts(['yes', 'Yes'], ['maybe', 'Possibly, depending on the detail'], ['no', 'No']),
       },
       {
@@ -771,14 +771,14 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
   technology: {
     id: 'technology',
     title: 'Your technology',
-    intro: 'A few questions about what you offer. Keep it to a level of detail you are comfortable sharing.',
+    intro: 'A few questions about what you offer. Tell us as much as you are comfortable sharing.',
     questions: [
       {
         id: 'tech_offer',
         guide: { open: 'Tell me about what you do, in plain terms.', probe: 'Where would it sit on a potato operation?' },
         kind: 'multi',
         prompt: 'What sort of technology do you offer?',
-        help: 'Tick any that apply. There is room to describe it properly at the end.',
+        help: 'Tick as many as you like. There is room to describe it properly at the end.',
         options: AREAS_WITH_OTHER,
         allowOther: true,
       },
@@ -786,7 +786,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'tech_problem',
         kind: 'multi',
         prompt: 'What problem does it solve for a potato business?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['labour', 'Labour needed for a job'],
           ['timeliness', 'Getting work done in the window'],
@@ -817,8 +817,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'tech_requirements',
         kind: 'multi',
-        prompt: 'What does a business need to have in place for it to work properly?',
-        help: 'Tick any that apply.',
+        prompt: 'What does a business need to have in place before it will work properly?',
+        help: 'Tick as many as you like.',
         options: opts(
           ['connectivity', 'Reliable connectivity'],
           ['power', 'Power at the site'],
@@ -836,7 +836,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'tech_evidence',
         kind: 'multi',
         prompt: 'What evidence can you point to on how well it performs?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['overseas_commercial', 'Commercial results from overseas'],
           ['au_trial', 'Australian trial data'],
@@ -852,11 +852,11 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'tech_demo',
         kind: 'multi',
         prompt: 'What would you need from us for a credible Australian evaluation?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['host_site', 'A host site'],
           ['independent_measure', 'Independent measurement'],
-          ['full_season', 'A full season rather than a snapshot'],
+          ['full_season', 'A full season of results'],
           ['funding', 'Some funding support'],
           ['integration_help', 'Help integrating with what the host already runs'],
           ['success_criteria', 'Agreed success criteria up front'],
@@ -888,7 +888,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         guide: { open: 'What do your members bring up with you most?', probe: 'Is that getting better or worse?' },
         kind: 'multi',
         prompt: 'What do the businesses you represent raise with you most often?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['labour', 'Labour availability and cost'],
           ['skills', 'Skills and training'],
@@ -907,7 +907,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'ind_role',
         kind: 'multi',
         prompt: 'Where could a project like this be most useful to your members?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['independent_evidence', 'Independent evidence they can trust'],
           ['demos', 'Demonstrations they can visit'],
@@ -924,7 +924,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'ind_underrepresented',
         kind: 'multi',
         prompt: 'Whose voice usually gets missed in these conversations?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['operators', 'Machinery operators'],
           ['small_farms', 'Smaller family operations'],
@@ -941,7 +941,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'ind_connections',
         kind: 'text',
-        prompt: 'Are there groups, programs or people we should be working with rather than around?',
+        prompt: 'Are there groups, programs or people we should be working with?',
         help: 'Optional. Names are more use to us than categories here.',
         rows: 4,
       },
@@ -950,14 +950,14 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
   adviser: {
     id: 'adviser',
     title: 'Evidence, evaluation and extension',
-    intro: 'A few questions about the evidence base and how findings get used.',
+    intro: 'A few questions about what we know, and how findings get used.',
     questions: [
       {
         id: 'adv_gaps',
         guide: { open: 'Where do you reckon the industry is flying blind?', probe: 'What would it take to fill that gap?' },
         kind: 'multi',
         prompt: 'Where are the biggest holes in what we actually know?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['damage_cost', 'What handling damage really costs through the chain'],
           ['roi_au', 'Return on investment under Australian conditions'],
@@ -976,7 +976,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'adv_evaluate',
         kind: 'multi',
         prompt: 'What deserves a proper independent look?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: AREAS_WITH_OTHER,
         allowOther: true,
       },
@@ -984,7 +984,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'adv_measurements',
         kind: 'multi',
         prompt: 'If we run a demonstration, what should we be measuring?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['damage', 'Bruise and damage incidence, by sampling point'],
           ['yield', 'Yield'],
@@ -1006,7 +1006,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'adv_underrepresented',
         kind: 'multi',
         prompt: 'Whose voice usually gets missed in these conversations?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['operators', 'Machinery operators'],
           ['small_farms', 'Smaller family operations'],
@@ -1023,8 +1023,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'adv_sharing',
         kind: 'multi',
-        prompt: 'How do findings actually reach potato businesses?',
-        help: 'Tick any that apply.',
+        prompt: 'How do findings reach potato businesses?',
+        help: 'Tick as many as you like.',
         options: opts(
           ['case_numbers', 'Short written case studies with the numbers in them'],
           ['field_days', 'Field days where people can see it running'],
@@ -1066,7 +1066,7 @@ const FOLLOW_UP: readonly Section[] = [
         kind: 'multi',
         tracking: true,
         prompt: 'Have you seen or used anything from the Potato Mechanisation Project?',
-        help: 'Tick any that apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['field_day', 'A field day or demonstration'],
           ['case_study', 'A case study'],
@@ -1088,7 +1088,7 @@ const FOLLOW_UP: readonly Section[] = [
         tracking: true,
         prompt: 'Has any of it changed what you do, or plan to do?',
         options: opts(
-          ['changed', 'Yes — we have changed how we do something'],
+          ['changed', 'Yes, we have changed how we do something'],
           ['planning', 'We are planning a change'],
           ['considering', 'We are looking into it'],
           ['no_change', 'No change'],
@@ -1098,7 +1098,7 @@ const FOLLOW_UP: readonly Section[] = [
       {
         id: 'fu_what',
         kind: 'text',
-        prompt: 'If something changed, what was it — and what made the difference?',
+        prompt: 'If something changed, what was it, and what made the difference?',
         help: 'Optional. A sentence is plenty.',
         rows: 3,
       },
@@ -1115,7 +1115,7 @@ const PROJECT_DESIGN: readonly Section[] = [
         id: 'pd_most_useful',
         guide: { open: 'What could we do that you\'d actually use?', probe: 'What would make it worth your time?' },
         kind: 'text',
-        prompt: 'What could we do that would be genuinely useful — to your business, or to the industry?',
+        prompt: 'What could we do that would be worth your while, for your business or for the industry?',
         rows: 4,
       },
       {
@@ -1129,7 +1129,7 @@ const PROJECT_DESIGN: readonly Section[] = [
         id: 'pd_formats',
         kind: 'multi',
         prompt: 'How do you like to get this sort of information?',
-        help: 'Choose as many as apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['case_studies', 'Short practical case studies'],
           ['videos', 'Videos from commercial operations'],
@@ -1138,7 +1138,7 @@ const PROJECT_DESIGN: readonly Section[] = [
           ['webinars', 'Webinars'],
           ['briefings', 'Short online briefings'],
           ['checklists', 'Machinery or operator checklists'],
-          ['roi_tools', 'ROI calculators and decision tools'],
+          ['roi_tools', 'Tools for working out whether it pays'],
           ['factsheets', 'Technical factsheets'],
           ['one_to_one', 'One-to-one discussions'],
           ['articles', 'PotatoLink articles or updates'],
@@ -1150,7 +1150,7 @@ const PROJECT_DESIGN: readonly Section[] = [
         id: 'pd_timing',
         kind: 'multi',
         prompt: 'If we wanted a yarn later on, when suits you best?',
-        help: 'Choose as many as apply.',
+        help: 'Tick as many as you like.',
         options: opts(
           ['early_am', 'Early morning'],
           ['late_am', 'Late morning'],
@@ -1177,14 +1177,14 @@ export const NO_INTEREST_ID = 'none';
  */
 export const INTEREST_OPTIONS = opts(
   ['reference_group', 'Joining the project reference group', 'A small group that meets a few times a year to steer the project.'],
-  ['follow_up', 'Confidential follow-up discussion'],
-  ['summary', 'Receiving a summary of findings'],
-  ['online_discussion', 'Joining a future online discussion'],
-  ['peer_group', 'Participating in a small peer group'],
-  ['case_study', 'Contributing to a case study'],
-  ['data', 'Contributing de-identified operational data'],
-  ['review_tool', 'Reviewing a draft ROI or decision-support tool'],
-  ['updates', 'Receiving PotatoLink updates about mechanisation'],
+  ['follow_up', 'A confidential chat with somebody from the project'],
+  ['summary', 'A summary of what we heard'],
+  ['online_discussion', 'A future online discussion'],
+  ['peer_group', 'A small peer group'],
+  ['case_study', 'Helping with a case study'],
+  ['data', 'Sharing operating data with your name taken off it'],
+  ['review_tool', 'Looking over a draft tool for working out whether something pays'],
+  ['updates', 'PotatoLink updates about mechanisation'],
 );
 
 /**
@@ -1209,7 +1209,7 @@ export const PATHWAY_INTERESTS: Readonly<Record<string, readonly Option[]>> = {
   processor: opts(
     ['pro_host_trial', 'Hosting a trial in your packhouse, receival or store'],
     ['pro_line_measurement', 'Allowing throughput, grading or damage measurements on your line'],
-    ['pro_benchmark', 'Taking part in an independent grading accuracy assessment'],
+    ['pro_benchmark', 'Taking part in an independent check of grading accuracy'],
   ),
   machinery: opts(
     ['mach_supply_demo', 'Supplying machinery for a demonstration'],
@@ -1220,7 +1220,7 @@ export const PATHWAY_INTERESTS: Readonly<Record<string, readonly Option[]>> = {
   technology: opts(
     ['tech_evaluation', 'Providing your technology for an independent evaluation'],
     ['tech_protocol', 'Helping design what a credible trial would measure'],
-    ['tech_integration', 'Working on data compatibility with other systems'],
+    ['tech_integration', 'Working on getting systems to talk to each other'],
   ),
   industry: opts(
     ['ind_promote', 'Helping get the consultation in front of your members'],
