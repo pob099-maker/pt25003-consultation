@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
+import { ABOUT_YOU, DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { allQuestions } from '../content/lookup';
 import { shortVersion } from './formLength';
 import { buildQuestionPaper } from './questionPaper';
@@ -15,6 +15,11 @@ describe('buildQuestionPaper', () => {
     // Role and region are asked on their own screen, not inside a section. A
     // paper without them would not be the questionnaire.
     expect(asked.map((entry) => entry.id).slice(0, 2)).toEqual(['role', 'regions']);
+    // And it prints what that screen actually asks. The paper used to invent
+    // its own wording for the only two questions everybody answers.
+    expect(asked[0]?.prompt).toBe(ABOUT_YOU.role.prompt);
+    expect(asked[0]?.help).toBe(ABOUT_YOU.role.help);
+    expect(asked[1]?.prompt).toBe(ABOUT_YOU.regions.prompt);
     expect(paper.fullCount).toBe(allQuestions(DEFAULT_QUESTIONNAIRE).length + 2);
   });
 

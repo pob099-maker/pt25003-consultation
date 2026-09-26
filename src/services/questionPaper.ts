@@ -1,4 +1,5 @@
 import { allQuestions } from '../content/lookup';
+import { ABOUT_YOU } from '../content/questionnaire';
 import type { Option, Question, Questionnaire, ScalePoint } from '../types';
 import { formEstimates } from './estimate';
 import { shortVersion } from './formLength';
@@ -134,21 +135,25 @@ const audienceFor = (questionnaire: Questionnaire, pathway: string): string => {
   return `${roles.slice(0, -1).join(', ')} and ${roles.at(-1) as string}`;
 };
 
-const EVERYBODY = 'Everybody';
+export const EVERYBODY = 'Everybody';
 
 export const buildQuestionPaper = (questionnaire: Questionnaire): QuestionPaper => {
-  const shortIds = new Set(allQuestions(shortVersion(questionnaire)).map((question) => question.id));
+  // Role and region are asked in both versions, and shortVersion() cannot say
+  // so because they are not questions in any section.
+  const shortIds = new Set([
+    ...allQuestions(shortVersion(questionnaire)).map((question) => question.id),
+    'role',
+    'regions',
+  ]);
   const sections: PaperSection[] = [];
   let number = 0;
 
-  /** `always` is for the screens outside the question sections: everybody gets them, both versions. */
   const add = (
     id: string,
     title: string,
     audience: string,
     questions: readonly Question[],
     intro?: string,
-    always = false,
   ): void => {
     if (questions.length === 0) return;
     sections.push({
@@ -158,7 +163,7 @@ export const buildQuestionPaper = (questionnaire: Questionnaire): QuestionPaper 
       ...(intro === undefined ? {} : { intro }),
       questions: questions.map((question) => {
         number += 1;
-        return toPaperQuestion(question, number, always || shortIds.has(question.id), questionnaire, {
+        return toPaperQuestion(question, number, shortIds.has(question.id), questionnaire, {
           title,
           audience,
         });
@@ -172,20 +177,21 @@ export const buildQuestionPaper = (questionnaire: Questionnaire): QuestionPaper 
     {
       id: 'role',
       kind: 'single',
-      prompt: 'Which of these best describes you?',
-      help: 'This decides which questions you are asked next.',
+      prompt: ABOUT_YOU.role.prompt,
+      help: ABOUT_YOU.role.help,
       required: true,
       options: questionnaire.roles,
     },
     {
       id: 'regions',
       kind: 'multi',
-      prompt: 'Which regions do you work in?',
+      prompt: ABOUT_YOU.regions.prompt,
+      help: ABOUT_YOU.regions.help,
       allowOther: true,
       options: questionnaire.regions,
     },
   ];
-  add('about-you', 'About you', EVERYBODY, aboutYou, undefined, true);
+  add('about-you', 'About you', EVERYBODY, aboutYou);
 
   for (const section of questionnaire.core) {
     add(section.id, section.title, EVERYBODY, section.questions, section.intro);
@@ -214,14 +220,15 @@ export const buildQuestionPaper = (questionnaire: Questionnaire): QuestionPaper 
     questionnaire.roles.find((role) => role.id === estimates.slowestRole)?.label ?? 'somebody who gave no role';
 
   const asked = sections.flatMap((section) => section.questions);
+  const shortList = asked.filter((question) => question.inShort);
   return {
     roundLabel: questionnaire.roundLabel,
     sections,
-    shortCount: asked.filter((question) => question.inShort).length,
+    shortCount: shortList.length,
     fullCount: asked.length,
     shortMinutes: estimates.short.minutes,
     fullMinutes: estimates.full.minutes,
     slowestRole,
-    shortList: asked.filter((question) => question.inShort),
+    shortList,
   };
 };

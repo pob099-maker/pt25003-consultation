@@ -125,7 +125,15 @@ function calls.
    press **Install integration** if it is not installed yet. That adds the `pg_net` extension, which
    is what lets Postgres call out.
 
-5. Create the hook in the **SQL Editor** rather than in the form. A webhook is a trigger, the form
+5. Run `supabase/migrations/0012_contact_limits.sql` in the **SQL Editor**, with
+   `REPLACE_WITH_NOTIFY_SECRET` swapped for the `NOTIFY_SECRET` from step 3. That one file caps the
+   field lengths an anonymous caller can insert, refuses more than thirty call-back requests an
+   hour, and creates the webhook itself with a `when` clause so the function is only woken for a
+   call-back. Without the caps and the ceiling, anybody with the public key can empty the day's
+   email quota in a few seconds, and real requests then reach nobody.
+
+   The webhook alone, if you are rebuilding just that, is the trigger at the bottom of that file.
+   Create it in the **SQL Editor** rather than in the dashboard form. A webhook is a trigger, the form
    spreads one header across two boxes that are easy to fill in the wrong order, and a header that
    is even slightly wrong fails silently: the function answers 403 and no email is sent. Paste this,
    with your own project ref and the `NOTIFY_SECRET` from step 3:

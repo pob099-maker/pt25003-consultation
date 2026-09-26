@@ -1167,6 +1167,27 @@ const PROJECT_DESIGN: readonly Section[] = [
   },
 ];
 
+/**
+ * The two questions asked on their own screen before the questionnaire proper:
+ * who you are, and where you work. They sit here rather than in a section
+ * because the role decides which branch follows, so the form cannot treat them
+ * as ordinary questions.
+ *
+ * The wording lives in one place all the same. The screen renders it, the
+ * printable paper prints it, and the phone script reads it, so none of the
+ * three can quietly describe a question the other two are not asking.
+ */
+export const ABOUT_YOU = {
+  role: {
+    prompt: 'Which perspective best reflects your experience?',
+    help: 'Required. Choose the one that fits best.',
+  },
+  regions: {
+    prompt: 'Which potato production region or regions are most relevant to your experience?',
+    help: 'Optional. Tick as many as you like.',
+  },
+} as const;
+
 export const NO_INTEREST_ID = 'none';
 
 /**

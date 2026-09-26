@@ -20,7 +20,7 @@ import {
   tallyMulti,
   unpromptedCounts,
 } from '../../services/analysis';
-import { CALLBACK_INTEREST_ID, isCallbackRequest } from '../../services/callback';
+import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL, isCallbackRequest } from '../../services/callback';
 import { THEME_TAGS, saveTags, tagKey } from '../../services/tags';
 import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
@@ -133,16 +133,24 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   };
 
   /**
-   * Somebody waiting for a call comes first, whenever they asked. The rest of
-   * the list is people who volunteered for something months out; a callback
-   * request goes stale in days, and a stale one is worse than never offering.
-   * The sort is stable, so newest-first survives inside each group.
+   * Somebody waiting for a call comes first, and comes through the round
+   * filter. The rest of the list is people who volunteered for something
+   * months out, and the filter is right for them; a call-back request goes
+   * stale in days, so dropping it from view because a new consultation started
+   * overnight would lose the one record the email says to work from.
+   *
+   * Partitioned rather than sorted, so the order is stated rather than resting
+   * on Array.prototype.sort happening to be stable.
    */
-  const contactList = useMemo(
-    () => [...contacts].sort((a, b) => Number(isCallbackRequest(b)) - Number(isCallbackRequest(a))),
-    [contacts],
+  const waiting = useMemo(
+    () => data.contacts.filter((contact) => isCallbackRequest(contact) && (includeTest || !contact.isTestData)),
+    [data.contacts, includeTest],
   );
-  const waitingForCall = useMemo(() => contacts.filter(isCallbackRequest).length, [contacts]);
+  const contactList = useMemo(
+    () => [...waiting, ...contacts.filter((contact) => !isCallbackRequest(contact))],
+    [waiting, contacts],
+  );
+  const waitingForCall = waiting.length;
 
   // What people volunteered for, counted. This is the list the project works
   // from when it comes to filling the reference group or finding a trial host.
@@ -676,7 +684,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
               </div>
               {isCallbackRequest(contact) && (
                 <p className="mt-1 inline-block rounded-md border border-primary bg-selected px-2 py-1 text-meta font-semibold text-ink">
-                  Asked us to ring them
+                  {CALLBACK_INTEREST_LABEL}
                 </p>
               )}
               <p className="text-meta text-ink-soft">

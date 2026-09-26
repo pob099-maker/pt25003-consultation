@@ -1,5 +1,5 @@
 import { DEFAULT_QUESTIONNAIRE, ROLES } from '../content/questionnaire';
-import { CALLBACK_INTEREST_ID } from './callback';
+import { CALLBACK_INTEREST_ID, callTimeSummary } from './callback';
 import type { Answer, AnswerMap, ConsultationResponse, ContactRecord, RoleId } from '../types';
 
 /**
@@ -483,7 +483,7 @@ export const seedContacts = (): readonly ContactRecord[] => [
     email: '',
     phone: '0400 000 111',
     preferredContactMethod: 'phone',
-    preferredContactTime: 'Early morning (before 8), Evening (after 6)',
+    preferredContactTime: callTimeSummary(['early', 'evening']),
     comments: 'On the harvester most of the day. Ring the mobile.',
     submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[2]),
     isTestData: true,

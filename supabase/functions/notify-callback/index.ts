@@ -15,7 +15,16 @@
  * Set up in docs/SETUP.md, section 8.
  */
 
+// Kept in step with src/services/callback.ts by hand, because a Deno function
+// cannot import from src/ without dragging zod and the questionnaire in with
+// it. src/services/callback.test.ts reads this file and fails if the two ever
+// disagree, which is the failure that would otherwise be silent: every insert
+// stops matching, the log says 200, and the emails just stop.
 const CALLBACK_INTEREST_ID = 'callback';
+const CONTACTS_TABLE = 'consultation_contacts';
+
+/** Longest a field may be before it is cut, per field. */
+const FIELD_LIMIT = 300;
 
 interface ContactRow {
   readonly id?: string;
@@ -38,18 +47,41 @@ interface WebhookPayload {
 
 const env = (name: string): string => Deno.env.get(name)?.trim() ?? '';
 
+/**
+ * Anything out of the row is written by whoever filled the form in, and an
+ * anonymous caller can insert one straight into the table, so none of it is
+ * trusted here. Control characters go (a newline in a name would otherwise
+ * forge the layout of this email, which the team is being asked to act on),
+ * and length is capped so a megabyte of text cannot be posted through.
+ */
+const printable = (character: string): string => {
+  const code = character.codePointAt(0) ?? 32;
+  return code < 32 || code === 127 ? ' ' : character;
+};
+
+const safe = (value: string | undefined): string =>
+  [...(value ?? '')]
+    .map(printable)
+    .join('')
+    .trim()
+    .slice(0, FIELD_LIMIT);
+
 /** 200 with a reason: a webhook that is told "not for you" should not retry. */
 const ok = (reason: string): Response => new Response(JSON.stringify({ ok: true, reason }), { status: 200 });
 
 const body = (record: ContactRow, adminUrl: string): string => {
+  // Labelled fields first, and the name inside one of them: text somebody else
+  // typed never leads this email, so it cannot be mistaken for the project
+  // speaking.
   const lines = [
-    `${record.name?.trim() || 'Somebody'} has asked us to ring them.`,
+    'Somebody has asked us to ring them.',
     '',
-    `Phone:      ${record.phone?.trim() || 'not given'}`,
-    `Best time:  ${record.preferred_contact_time?.trim() || 'not given'}`,
+    `Name:       ${safe(record.name) || 'not given'}`,
+    `Phone:      ${safe(record.phone) || 'not given'}`,
+    `Best time:  ${safe(record.preferred_contact_time) || 'not given'}`,
   ];
-  if (record.comments?.trim()) lines.push(`They said:  ${record.comments.trim()}`);
-  lines.push('', `Project:    ${record.project_id ?? 'unknown'}`, `Asked at:   ${record.submitted_at ?? 'unknown'}`);
+  if (safe(record.comments)) lines.push(`They said:  ${safe(record.comments)}`);
+  lines.push('', `Project:    ${safe(record.project_id) || 'unknown'}`, `Asked at:   ${safe(record.submitted_at) || 'unknown'}`);
   if (adminUrl.length > 0) lines.push('', `The Contacts tab: ${adminUrl}`);
   lines.push(
     '',
@@ -78,6 +110,9 @@ Deno.serve(async (request: Request): Promise<Response> => {
 
   const record = payload.record;
   if (payload.type !== 'INSERT' || record === undefined) return ok('not an insert');
+  // A second webhook pointed at this URL would otherwise have its rows emailed
+  // as call-backs.
+  if (payload.table !== CONTACTS_TABLE) return ok('not the contacts table');
   if (!(record.interests ?? []).includes(CALLBACK_INTEREST_ID)) return ok('not a callback request');
   if (record.is_test_data === true) return ok('test data');
 
@@ -86,7 +121,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
   const from = env('NOTIFY_FROM');
   if (apiKey.length === 0 || to.length === 0 || from.length === 0) return new Response('Not configured', { status: 500 });
 
-  const who = record.name?.trim() || 'Somebody';
+  const who = safe(record.name) || 'Somebody';
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
@@ -95,7 +130,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
       // Several addresses may be set, separated by commas, so the roster is a
       // setting rather than a deploy.
       to: to.split(',').map((address) => address.trim()).filter((address) => address.length > 0),
-      subject: `Call back: ${who}${record.phone?.trim() ? ` on ${record.phone.trim()}` : ''}`,
+      subject: `Call back: ${who}${safe(record.phone) ? ` on ${safe(record.phone)}` : ''}`.slice(0, 200),
       text: body(record, env('NOTIFY_ADMIN_URL')),
     }),
   });

@@ -17,6 +17,7 @@ import { WorkshopHost } from './pages/workshop/WorkshopHost';
 import { WorkshopPresent } from './pages/workshop/WorkshopPresent';
 import { WorkshopJoin } from './pages/workshop/WorkshopJoin';
 import { flushOutbox } from './services/submit';
+import { isDemoSite } from './lib/config';
 
 /**
  * Hash routing, so a link works on any static host without server rewrites —
@@ -42,7 +43,16 @@ export const App = () => {
       <HashRouter>
         <QuestionnaireProvider>
           <Routes>
-            <Route path="/" element={<Landing />} />
+            {/* The demonstration link lands on the results screen, where the
+                tour and the project picker are: somebody sent a demonstration
+                wants to see what the tool produces, not to fill in a form.
+                Routing owns it rather than a rewrite at bootstrap, so the
+                back button behaves and a query string survives. */}
+            <Route path="/" element={isDemoSite() ? <Navigate to="/admin" replace /> : <Landing />} />
+            {/* Where the demonstration's tour sends somebody who wants to see
+                what a grower opens. On the live site it is not an address at
+                all, so it bounces to the front page. */}
+            <Route path="/landing" element={isDemoSite() ? <Landing /> : <Navigate to="/" replace />} />
             <Route path="/about" element={<About />} />
             <Route path="/consultation" element={<Consultation />} />
             <Route path="/privacy" element={<Privacy />} />

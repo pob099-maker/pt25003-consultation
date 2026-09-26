@@ -5,7 +5,7 @@ import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { callbackRequestSchema, type CallbackRequestValues } from '../schemas/consultation';
 import { CALL_TIMES, callTimeSummary, nextTimes, toCallbackRecord } from '../services/callback';
 import { submitContact } from '../services/submit';
-import { config, contactNames } from '../lib/config';
+import { config, contactNames, isDemoSite } from '../lib/config';
 import { choiceRow, choiceRowSelected, primaryButton, secondaryButton, textInput } from './ui';
 
 interface Sent {
@@ -13,6 +13,8 @@ interface Sent {
   readonly phone: string;
   readonly times: readonly string[];
   readonly queued: boolean;
+  /** Nothing left the browser, because this is the demonstration build. */
+  readonly demo: boolean;
 }
 
 /**
@@ -53,23 +55,44 @@ export const CallbackRequest = () => {
 
   const save = async (values: CallbackRequestValues): Promise<void> => {
     setFailed(null);
+    // The demonstration has no database, so a real request would sit in this
+    // browser's outbox for ever while the screen said it was on its way. A
+    // grower sent the demo link deserves to be told plainly, and their mobile
+    // number has no business being stored on a laptop at a field day.
+    if (isDemoSite()) {
+      setSent({ name: values.name, phone: values.phone, times: values.times, queued: false, demo: true });
+      return;
+    }
     const result = await submitContact(toCallbackRecord(values, questionnaire.roundId));
     if (!result.success) {
       setFailed(result.error);
       return;
     }
-    setSent({ name: values.name, phone: values.phone, times: values.times, queued: result.data === 'queued' });
+    setSent({
+      name: values.name,
+      phone: values.phone,
+      times: values.times,
+      queued: result.data === 'queued',
+      demo: false,
+    });
   };
 
   if (sent !== null) {
     return (
       <div className="mt-4 rounded-lg border border-primary bg-selected p-4" role="status">
         <p className="text-body text-ink">
-          Thanks {sent.name.split(' ')[0]}. {ringer} will give you a ring on {sent.phone}.
+          {sent.demo
+            ? 'On the real site this would reach the project team within seconds.'
+            : `Thanks ${sent.name.split(' ')[0]}. ${ringer} will give you a ring on ${sent.phone}.`}
         </p>
         {/* Read back rather than worked into the sentence: the windows are
             labels, and a sentence built around two of them stops being one. */}
         <p className="mt-1 text-body text-ink">Best time to ring: {callTimeSummary(sent.times)}.</p>
+        {sent.demo && (
+          <p className="mt-2 text-meta text-ink-soft">
+            This is the demonstration, so nothing was sent and nothing was kept. Nobody will ring you.
+          </p>
+        )}
         {sent.queued && (
           <p className="mt-2 text-meta text-ink-soft">
             Your request is saved on this device and has not been sent yet, because there was no connection. Open this
@@ -102,12 +125,14 @@ export const CallbackRequest = () => {
 
       <div>
         <label htmlFor="callback-name" className="mb-1 block text-body font-medium text-ink">
-          Your name
+          Your name <span className="text-meta font-normal text-ink-soft">(needed)</span>
         </label>
         <input
           id="callback-name"
           className={textInput}
           autoComplete="name"
+          required
+          aria-required="true"
           aria-invalid={errors.name !== undefined}
           aria-describedby={errors.name === undefined ? undefined : 'callback-name-error'}
           {...register('name')}
@@ -121,13 +146,15 @@ export const CallbackRequest = () => {
 
       <div>
         <label htmlFor="callback-phone" className="mb-1 block text-body font-medium text-ink">
-          Phone number
+          Phone number <span className="text-meta font-normal text-ink-soft">(needed)</span>
         </label>
         <input
           id="callback-phone"
           type="tel"
           inputMode="tel"
           autoComplete="tel"
+          required
+          aria-required="true"
           className={textInput}
           aria-invalid={errors.phone !== undefined}
           aria-describedby={errors.phone === undefined ? undefined : 'callback-phone-error'}
@@ -151,7 +178,9 @@ export const CallbackRequest = () => {
               errors.times === undefined ? 'callback-times-hint' : 'callback-times-hint callback-times-error'
             }
           >
-            <legend className="mb-1 text-body font-medium text-ink">When is the best time to ring?</legend>
+            <legend className="mb-1 text-body font-medium text-ink">
+              When is the best time to ring? <span className="text-meta font-normal text-ink-soft">(needed)</span>
+            </legend>
             <p id="callback-times-hint" className="mb-2 text-meta text-ink-soft">
               Tick whatever suits. We will do our best to ring inside it.
             </p>
@@ -167,7 +196,12 @@ export const CallbackRequest = () => {
                         checked={checked}
                         onChange={() => field.onChange(nextTimes(field.value, time.id))}
                       />
-                      <span className="text-body text-ink">{time.label}</span>
+                      <span className="text-body text-ink">
+                        {time.label}
+                        {time.help !== undefined && (
+                          <span className="mt-0.5 block text-meta text-ink-faint">{time.help}</span>
+                        )}
+                      </span>
                     </label>
                   </li>
                 );

@@ -41,9 +41,16 @@ export const Privacy = () => (
         time, the activities you are interested in, and any comments you add.
       </p>
       <p>
-        If you ask us to ring you, that request is held in the same place and treated the same way: your name, your
-        phone number, roughly when to ring, and anything you tell us to look out for. It is used to arrange the call and
-        for nothing else, and you can ask us to delete it once we have spoken.
+        If you ask us to ring you, that request is held in the same place as the details above: your name, your phone
+        number, roughly when to ring, and anything you tell us to look out for. It is used to arrange the call and for
+        nothing else, and you can ask us to delete it once we have spoken.
+      </p>
+      <p>
+        So that nobody is left waiting, a request to be rung also sends an alert to the project team by email, carrying
+        the same four things and nothing else. That email is delivered by Resend, an email service based in the United
+        States, and a copy stays in the mailbox it was sent to. If you ask us to delete your details we remove the
+        record and the email, and Resend deletes its copy on the schedule in their own retention policy. If you would
+        rather nothing left the database, ring one of us instead and we will take it down on paper.
       </p>
     </Section>
 
@@ -70,7 +77,8 @@ export const Privacy = () => (
     <Section title="Who can see it">
       <p>
         Consultation data is held in a database that only the project team can read. Contact details are restricted to
-        project administrators. Nothing is sold, and nothing is shared for marketing.
+        project administrators, and to the email alert described above, which reaches the same people. Nothing is sold,
+        and nothing is shared for marketing.
       </p>
     </Section>
 

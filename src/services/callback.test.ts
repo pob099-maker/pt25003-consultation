@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { interestLabel } from '../content/lookup';
@@ -83,6 +84,16 @@ describe('callbackRequestSchema', () => {
 
   it('leaves the note optional', () => {
     expect(callbackRequestSchema.safeParse({ ...request, note: '' }).success).toBe(true);
+  });
+});
+
+describe('the function that emails about a callback', () => {
+  it('recognises the same interest id this module writes', () => {
+    // A Deno function cannot import from src/, so the id is declared twice.
+    // If the two ever drift, every insert stops matching, the webhook log
+    // says 200, and the emails simply stop with nothing to investigate.
+    const source = readFileSync('supabase/functions/notify-callback/index.ts', 'utf8');
+    expect(source).toContain(`const CALLBACK_INTEREST_ID = '${CALLBACK_INTEREST_ID}';`);
   });
 });
 

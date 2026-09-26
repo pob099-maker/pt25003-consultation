@@ -28,7 +28,7 @@ const TOUR: readonly { to: string; title: string; what: string }[] = [
     what: 'The whole questionnaire as a document, marked with which questions the short version asks. Saves as a PDF through your browser.',
   },
   {
-    to: '/',
+    to: '/landing',
     title: 'What a grower opens',
     what: 'The first page a respondent sees: a short version, a full one, and the offer to be rung instead. The questions change with their role.',
   },

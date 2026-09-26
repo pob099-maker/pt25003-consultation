@@ -1,4 +1,5 @@
 import { choiceRow, choiceRowSelected, textInput } from './ui';
+import { ABOUT_YOU } from '../content/questionnaire';
 import type { Questionnaire, RoleId } from '../types';
 
 /**
@@ -37,9 +38,9 @@ export const AboutYou = ({
     <div className="grid gap-8">
       <fieldset aria-describedby={showRoleError ? 'role-error' : undefined}>
         <legend className="mb-1 text-subtitle font-semibold text-ink">
-          Which perspective best reflects your experience?
+          {ABOUT_YOU.role.prompt}
         </legend>
-        <p className="mb-3 text-meta text-ink-soft">Required. Choose the one that fits best.</p>
+        <p className="mb-3 text-meta text-ink-soft">{ABOUT_YOU.role.help}</p>
         {showRoleError && (
           <p id="role-error" className="mb-3 text-meta font-medium text-danger" role="alert">
             Please choose a perspective so we only ask you relevant questions.
@@ -66,9 +67,9 @@ export const AboutYou = ({
 
       <fieldset>
         <legend className="mb-1 text-subtitle font-semibold text-ink">
-          Which potato production region or regions are most relevant to your experience?
+          {ABOUT_YOU.regions.prompt}
         </legend>
-        <p className="mb-3 text-meta text-ink-soft">Optional. Choose as many as apply.</p>
+        <p className="mb-3 text-meta text-ink-soft">{ABOUT_YOU.regions.help}</p>
         <ul className="grid gap-2">
           {questionnaire.regions.map((option) => {
             const checked = regions.includes(option.id);

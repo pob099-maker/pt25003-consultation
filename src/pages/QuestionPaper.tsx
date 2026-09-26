@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { currentProject } from '../content/projects';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
-import { buildQuestionPaper, type PaperQuestion } from '../services/questionPaper';
-import { primaryButton, quietButton, secondaryButton } from '../components/ui';
+import { EVERYBODY, buildQuestionPaper, type PaperQuestion } from '../services/questionPaper';
+import { accentPanel, primaryButton, quietButton, secondaryButton } from '../components/ui';
 
 /**
  * Every question in the consultation, laid out to be read on paper.
@@ -94,7 +94,7 @@ export const QuestionPaper = () => {
         paper. Nothing on this screen except these buttons goes onto the page.
       </p>
 
-      <section className="mt-5 rounded-xl border border-accent/60 bg-sunk p-5 prose-measure">
+      <section className={`${accentPanel} mt-5 prose-measure`}>
         <h2 className="text-subtitle font-semibold">Two versions of the same questions</h2>
         <p className="mt-2 text-ink-soft">
           The short version asks the {paper.shortCount} questions that repeat in every consultation, which is what makes
@@ -118,7 +118,7 @@ export const QuestionPaper = () => {
           {paper.shortList.map((question) => (
             <li key={question.id} className="text-body text-ink-soft">
               {question.number}. {question.prompt}
-              {question.audience !== 'Everybody' && (
+              {question.audience !== EVERYBODY && (
                 <span className="text-meta text-ink-faint"> · {question.sectionTitle}</span>
               )}
             </li>
