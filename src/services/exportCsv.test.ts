@@ -25,6 +25,18 @@ describe('responsesCsv', () => {
     expect(csv).not.toContain(',harvest_logistics,');
   });
 
+  it('gives the row somebody named two columns: where they are at, and what it was', () => {
+    const headers = responseHeaders(q);
+    expect(headers).toContain('farm_practices__other');
+    expect(headers).toContain('farm_practices__other_what');
+    const first = seedResponses()[0];
+    if (first === undefined) throw new Error('no seeded response');
+    const csv = responsesCsv(q, [
+      { ...first, answers: { farm_practices: { kind: 'rating', values: { other: 3 }, other: 'Weeding robot' } } },
+    ]);
+    expect(csv).toContain('Weeding robot');
+  });
+
   it('marks test data so it can be filtered out of a spreadsheet too', () => {
     expect(responsesCsv(q, seedResponses())).toContain('yes');
   });

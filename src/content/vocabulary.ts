@@ -21,12 +21,15 @@ export const COLLECTION = {
 export const ROLE_LABEL: Readonly<Record<RoundStage, string>> = {
   pilot: 'Practice',
   baseline: 'Starting point',
+  interim: 'Interim check',
   review: 'Follow-up',
 };
 
 export const ROLE_HELP: Readonly<Record<RoundStage, string>> = {
   pilot: 'For trying the questions out. Never counted in any comparison.',
   baseline: 'The one everything else is measured against. There is only one.',
+  interim:
+    'A short one between the others, when the project takes on something new. Asks only what you tick below, and becomes the starting point for anything first asked in it.',
   review: 'Compared back to the starting point. Also asks what people have seen from the project.',
 };
 

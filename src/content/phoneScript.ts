@@ -45,6 +45,12 @@ const questionBlock = (question: Question, index: number): string => {
         '_Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._',
         '',
         optionLines(question.rows),
+        ...(question.allowOther === true
+          ? [
+              '',
+              "_Then ask whether there is anything else they use or are trying. If there is, write down what it is and where they are at with it, in the Something else row._",
+            ]
+          : []),
       ].join('\n');
     case 'rank':
       return `${head}${help}\n\n_Read back what they ticked a moment ago, and ask for their top ${question.count} in order._`;

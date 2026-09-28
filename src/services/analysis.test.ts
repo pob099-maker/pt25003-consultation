@@ -101,3 +101,14 @@ describe('tallyMulti and freeTextEntries', () => {
     expect(entries).toHaveLength(0);
   });
 });
+
+describe('something else on a practice list', () => {
+  it('is read with the comments, along with the step they gave it', () => {
+    const entries = freeTextEntries(q, [
+      bare({ farm_practices: { kind: 'rating', values: { guidance: 4, other: 3 }, other: 'Weeding robot' } }),
+    ]);
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.text).toBe('Weeding robot (Trying it)');
+    expect(entries[0]?.questionPrompt).toContain('Something else');
+  });
+});

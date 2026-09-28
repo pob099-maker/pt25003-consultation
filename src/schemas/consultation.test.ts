@@ -48,6 +48,13 @@ describe('consultationResponseSchema', () => {
     expect(result.success).toBe(true);
   });
 
+  it('takes what somebody wrote beside a row they named, within limits', () => {
+    const named = { kind: 'rating', values: { other: 3 }, other: 'Weeding robot' };
+    expect(consultationResponseSchema.safeParse({ ...base, answers: { farm_practices: named } }).success).toBe(true);
+    const long = { ...named, other: 'x'.repeat(501) };
+    expect(consultationResponseSchema.safeParse({ ...base, answers: { farm_practices: long } }).success).toBe(false);
+  });
+
   it('refuses an item marked prompted that was never mentioned', () => {
     const result = consultationResponseSchema.safeParse({
       ...base,

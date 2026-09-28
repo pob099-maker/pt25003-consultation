@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import type { Answer, Option, Question } from '../types';
+import { OTHER_ROW, OTHER_ROW_LABEL } from '../content/lookup';
 import { choiceRow, choiceRowSelected, textInput } from './ui';
 import { LinkCodeField } from './LinkCodeField';
 
@@ -152,11 +153,24 @@ const TextField = ({ question, answer, onChange }: Props) => {
 
 const RatingField = ({ question, answer, onChange }: Props) => {
   const groupId = useId();
+  const otherId = useId();
   if (question.kind !== 'rating') return null;
   const values = answer !== undefined && answer.kind === 'rating' ? answer.values : {};
+  const other = answer !== undefined && answer.kind === 'rating' ? (answer.other ?? '') : '';
+  const named = other.trim().length > 0;
 
-  const set = (rowId: string, value: number): void =>
-    onChange({ kind: 'rating', values: { ...values, [rowId]: value } });
+  /** A step for "something else" means nothing without what it was, so the two travel together. */
+  const write = (nextValues: Readonly<Record<string, number>>, nextOther: string): void => {
+    const hasName = nextOther.trim().length > 0;
+    const kept = hasName ? nextValues : Object.fromEntries(Object.entries(nextValues).filter(([id]) => id !== OTHER_ROW));
+    if (Object.keys(kept).length === 0 && !hasName) {
+      onChange(undefined);
+      return;
+    }
+    onChange({ kind: 'rating', values: kept, ...(hasName ? { other: nextOther } : {}) });
+  };
+
+  const set = (rowId: string, value: number): void => write({ ...values, [rowId]: value }, other);
 
   return (
     <fieldset>
@@ -206,6 +220,54 @@ const RatingField = ({ question, answer, onChange }: Props) => {
             </p>
           </li>
         ))}
+        {question.allowOther === true && (
+          <li className="rounded-md border border-line bg-surface p-3">
+            <label htmlFor={otherId} className="block text-body font-medium text-ink">
+              {OTHER_ROW_LABEL}
+              <span className="mt-0.5 block text-meta text-ink-faint">
+                Anything we have missed. Say what it is, then pick the step.
+              </span>
+            </label>
+            <input
+              id={otherId}
+              className={`${textInput} mt-2`}
+              value={other}
+              maxLength={500}
+              onChange={(event) => write(values, event.target.value)}
+            />
+            <div className="mt-2 flex gap-1.5" role="group" aria-label={named ? other.trim() : OTHER_ROW_LABEL}>
+              {question.scale.map((point) => {
+                const active = values[OTHER_ROW] === point.value;
+                return (
+                  <button
+                    key={point.value}
+                    type="button"
+                    aria-pressed={active}
+                    aria-label={`${point.value}, ${point.label}`}
+                    disabled={!named}
+                    onClick={() => set(OTHER_ROW, point.value)}
+                    className={`flex-1 rounded-md border py-3 text-body font-semibold min-h-12 ${
+                      !named
+                        ? 'cursor-not-allowed border-line bg-sunk text-ink-faint'
+                        : active
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-line-strong bg-surface text-ink'
+                    }`}
+                  >
+                    {point.value}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-1 text-meta text-ink-faint">
+              {!named
+                ? 'Write what it is first'
+                : values[OTHER_ROW] === undefined
+                  ? 'Not yet rated'
+                  : (question.scale.find((point) => point.value === values[OTHER_ROW])?.label ?? '')}
+            </p>
+          </li>
+        )}
       </ol>
       {question.labelEveryStep !== true && (
         <p className="mt-2 text-meta text-ink-soft">

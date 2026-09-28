@@ -51,6 +51,10 @@ Questions marked **Tracked · locked** are asked word for word in every round. T
 because changing one — even adding an option — would make the baseline and the review measure
 different things. Everything else can be reworded freely between rounds.
 
+Questions marked **Tracked · you can add to this list** are the practice lists and the priority
+list. Their words are fixed too, but you can add a line or stop asking one. See
+[When the project's focus shifts](#when-the-projects-focus-shifts).
+
 Reading the **Change over time** tab:
 
 - Each round is a separate picture of the industry. Responses are anonymous, so this compares
@@ -59,6 +63,68 @@ Reading the **Change over time** tab:
   the numbers will move for that reason alone.
 - Greyed figures come from fewer than ten people. Report them with that caveat, or not at all.
 - Pilot rounds never appear here.
+- A line added part-way through says where its comparison starts ("First asked in Mid-term
+  review"), and a round that did not ask something shows "not asked" rather than a number.
+
+## When the project's focus shifts
+
+The project will change course as new technology turns up. The consultation is built to follow it
+without losing the comparison with the starting point.
+
+### Adding a practice to a list
+
+The three practice lists (growers, contractors, packhouses) and the priority list are watch lists.
+On the **Question wording** tab each shows its lines with a tick box, and a box to add something new.
+
+- **Add** a line for a technology the project has taken on. It is asked from that round on, and
+  compared from the round it was first asked in.
+- **Untick** a line to stop asking it. Everything already collected stays in the export and the
+  change view, up to the last round that asked it.
+- A line cannot be reworded once anybody has answered it. If the technology changes, stop the old
+  line and add a new one.
+- A line added in the round on screen, with no answers yet, can be removed outright.
+
+This is safe for these lists and nowhere else, because each line is answered on its own, so adding
+one does not move the answers to the others. In a tick list it would, which is why those stay
+locked. Add lines when a round starts, so everybody in it sees the same list.
+
+### Something else
+
+Each practice list ends with a **Something else** line, where people write in a technology the list
+missed and say where they are at with it. What they write appears on the **Comments** tab and in the
+export (the `__other_what` columns). It is never compared between rounds, because each person's is a
+different thing, but it is where the next line for a list usually comes from, and it feeds the
+annual technology update the RFP asks for.
+
+### Interim checks
+
+When the focus shifts a long way, run an **interim check** rather than waiting for the next review:
+a consultation of a few minutes that asks only about the new things.
+
+1. On the **Question wording** tab, press **Start an interim check**.
+2. Add the new lines to the lists they belong on, if they are not there already.
+3. Tick **Ask in this interim check** on each question it should ask. Within a practice list,
+   untick the old lines so the check asks only the new ones.
+4. Save. The link now opens a single quick check-in button instead of the short and full choice.
+
+Role, region and the follow-up code are always asked, so answers can be split by role and linked to
+the same people at the next full round.
+
+What an interim does, and does not do:
+
+- It is the **starting point** for anything first asked in it. A line added at an interim is
+  compared from the interim to each review after it.
+- It **never resets** a starting point. Anything the baseline asked keeps the baseline as its
+  start. If an interim asks it again, the interim shows as an extra column and nothing more.
+- It is **never the end** of a comparison. Change is always measured to a review.
+- The next full round asks everything. Starting a review after an interim carries on the lines the
+  interim added, but never what it left out.
+
+Two things to say when reporting a line that started at an interim. Fewer people, and perhaps a
+different mix, answered the interim than the baseline, so check **Who answered**. And the later the
+interim, the less time that line has to show any movement before the final review.
+
+Interim checks need `supabase/migrations/0014_interim_rounds.sql` run once in the SQL Editor.
 
 ## Piloting before the link goes out
 
@@ -218,10 +284,13 @@ interests they agreed to.
 
 The landing page offers two ways in:
 
-- **Short version, about five minutes** — only the tracked questions, the ones repeated at baseline,
-  mid-project and end. It still counts in every comparison.
-- **Full version, about ten minutes** — everything, including the free-text questions and the
-  project-design section.
+- **Short version** — only the tracked questions, the ones repeated at baseline, mid-project and
+  end. It still counts in every comparison.
+- **Full version** — everything, including the free-text questions and the project-design section.
+
+The landing page shows how long each takes, worked out from the questions for the role that takes
+longest, so the times stay right as questions change. The magazine promises "under ten minutes"
+for the short version, and a test fails if a grower's short version reaches ten.
 
 At the end of the short version, people are asked — once, politely — whether they would like to
 answer the rest. Saying yes keeps every answer already given and skips straight to the first thing
@@ -376,12 +445,16 @@ above each field. Every response already collected points at those ids. Renaming
 the same thing and keeps the data comparable; removing one would orphan the answers that chose it.
 
 To add an option, or add or remove a whole question, ask a developer to edit
-`src/content/questionnaire.ts`.
+`src/content/questionnaire.ts`. Lines on the practice lists and the priority list are the
+exception: add those yourself, as described under
+[When the project's focus shifts](#when-the-projects-focus-shifts).
 
 ## Starting a new consultation round
 
 Press **Start a new round**, adjust the name, and save. Everything already collected keeps its own
 round id and is untouched — a new round changes what happens next, never what happened before.
+A new round starts with the last full round's wording and lines, plus any line an interim check
+added.
 Exports carry a `round` column, so results can be compared across rounds.
 
 Only one round is active at a time; starting a new one closes the previous one automatically.

@@ -1,6 +1,13 @@
 import type { Question, Questionnaire, Section } from '../types';
 import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL } from '../services/callback';
 
+/**
+ * The row somebody names for themselves at the foot of a rating question that
+ * allows it. Its step is stored under this id and what they wrote beside it.
+ */
+export const OTHER_ROW = 'other';
+export const OTHER_ROW_LABEL = 'Something else';
+
 export const allSections = (questionnaire: Questionnaire): readonly Section[] => [
   ...questionnaire.core,
   ...Object.values(questionnaire.pathways),
@@ -25,6 +32,7 @@ export const optionLabel = (question: Question | undefined, optionId: string): s
     return question.options.find((option) => option.id === optionId)?.label ?? optionId;
   }
   if (question.kind === 'rating') {
+    if (optionId === OTHER_ROW && question.allowOther === true) return OTHER_ROW_LABEL;
     return question.rows.find((row) => row.id === optionId)?.label ?? optionId;
   }
   if (question.kind === 'rank') {

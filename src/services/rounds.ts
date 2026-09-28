@@ -1,107 +1,25 @@
 import { getSupabase } from '../lib/supabase';
 import { currentProject } from '../content/projects';
-import { libraryQuestion } from '../content/library';
-import { allQuestions } from '../content/lookup';
 import { DEMO_ROUNDS } from './demoData';
-import type { Option, Question, Questionnaire, RoundStage, Section } from '../types';
+import { applyRound, type QuestionOverride, type RoundConfig } from './roundRules';
+import type { Questionnaire, RoundStage } from '../types';
 
 export const ROUNDS_TABLE = 'consultation_rounds';
 
-/**
- * Wording overrides for a round. Question ids and option ids are never
- * changed here — only the words attached to them — so a response recorded in
- * an earlier round still means what it meant when it was given, and the two
- * rounds remain comparable. Adding a new option is allowed; removing one is
- * not, because historic answers point at it.
- */
-export interface QuestionOverride {
-  readonly prompt?: string;
-  readonly help?: string;
-  readonly optionLabels?: Readonly<Record<string, string>>;
-  readonly addedOptions?: readonly Option[];
-  /**
-   * Leave the question out of this round. Its id, and every answer already
-   * given to it, stay as they were — retiring is not deleting. Tracked
-   * questions cannot be retired: the change-over-time view depends on them.
-   */
-  readonly retired?: boolean;
-  /**
-   * Bring a question in from the shared library, at the end of the section
-   * with this id. Ignored for a question the questionnaire already has.
-   */
-  readonly addTo?: string;
-}
-
-export interface RoundConfig {
-  readonly roundId: string;
-  readonly label: string;
-  readonly stage: RoundStage;
-  readonly isActive: boolean;
-  readonly overrides: Readonly<Record<string, QuestionOverride>>;
-}
-
-const applyToOptions = (options: readonly Option[], override: QuestionOverride | undefined): readonly Option[] => {
-  if (override === undefined) return options;
-  const renamed = options.map((option) => {
-    const label = override.optionLabels?.[option.id];
-    return label === undefined ? option : { ...option, label };
-  });
-  return [...renamed, ...(override.addedOptions ?? [])];
-};
-
-const applyToQuestion = (question: Question, override: QuestionOverride | undefined): Question => {
-  if (override === undefined || question.tracking === true) return question;
-  const base = {
-    ...question,
-    prompt: override.prompt ?? question.prompt,
-    help: override.help ?? question.help,
-  };
-  if (base.kind === 'multi' || base.kind === 'single') {
-    return { ...base, options: applyToOptions(base.options, override) };
-  }
-  if (base.kind === 'rating') {
-    return { ...base, rows: applyToOptions(base.rows, override) };
-  }
-  if (base.kind === 'rank') {
-    return { ...base, fallbackOptions: applyToOptions(base.fallbackOptions, override) };
-  }
-  return base;
-};
-
-const isRetired = (question: Question, override: QuestionOverride | undefined): boolean =>
-  override?.retired === true && question.tracking !== true;
-
-const applyToSection = (
-  section: Section,
-  overrides: RoundConfig['overrides'],
-  existing: ReadonlySet<string>,
-): Section => {
-  const added = Object.entries(overrides)
-    .filter(([id, override]) => override.addTo === section.id && !existing.has(id))
-    .map(([id]) => libraryQuestion(id))
-    .filter((question): question is Question => question !== undefined);
-  return {
-    ...section,
-    questions: [...section.questions, ...added]
-      .filter((question) => !isRetired(question, overrides[question.id]))
-      .map((question) => applyToQuestion(question, overrides[question.id])),
-  };
-};
-
-export const applyRound = (base: Questionnaire, round: RoundConfig): Questionnaire => {
-  const existing = new Set(allQuestions(base).map((question) => question.id));
-  const apply = (section: Section): Section => applyToSection(section, round.overrides, existing);
-  return {
-    ...base,
-    roundId: round.roundId,
-    roundLabel: round.label,
-    stage: round.stage,
-    core: base.core.map(apply),
-    followUp: base.followUp.map(apply),
-    pathways: Object.fromEntries(Object.entries(base.pathways).map(([key, section]) => [key, apply(section)])),
-    projectDesign: base.projectDesign.map(apply),
-  };
-};
+export {
+  applyRound,
+  asksFollowUp,
+  everyRow,
+  isWatchList,
+  newRowId,
+  newRowSchema,
+  nextRoundOverrides,
+  reportingFrame,
+  type NewRow,
+  type QuestionOverride,
+  type RoundConfig,
+  type RoundDefinition,
+} from './roundRules';
 
 interface RoundRow {
   round_id: string;
@@ -143,7 +61,7 @@ export const loadAllRounds = async (): Promise<readonly RoundConfig[]> => {
   const supabase = getSupabase();
   // No database: the demo's own baseline and review, so change over time has something to show.
   if (supabase === null)
-    return DEMO_ROUNDS.map((round) => ({ ...round, isActive: round.stage === 'review', overrides: {} }));
+    return DEMO_ROUNDS.map((round) => ({ ...round, isActive: round.stage === 'review', overrides: round.overrides ?? {} }));
   const { data, error } = await supabase
     .from(ROUNDS_TABLE)
     .select('round_id, label, stage, is_active, overrides, created_at')

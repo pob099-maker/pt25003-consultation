@@ -45,6 +45,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Crop monitoring and agronomy decisions
 - Irrigation operation and automation
 - Crop protection operations
+- Haulm removal before harvest
 - Harvesting
 - In-field transport and harvest logistics
 - Receival
@@ -87,9 +88,11 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### How much should the project prioritise each of these?
 
-`q5_areas` · rate 1-5 × 12 · **tracked every round**
+`q5_areas` · rate 1-5 × 14, list can grow · **tracked every round**
 
 - Precision planting and crop establishment
+- Spraying and weed control
+- Haulm removal before harvest
 - Autonomous and self-steering field machinery
 - Harvest efficiency and less damage
 - Carting and harvest logistics
@@ -110,7 +113,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### What would it take to convince you to try something new?
 
-`q7_evidence` · tick any + other · **tracked every round**
+`q7_evidence` · tick any + other
 
 - A demonstration in an Australian potato crop
 - Independent analysis of whether it pays
@@ -126,7 +129,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### Before you committed to something new, how much would it matter to try it on part of your own operation first?
 
-`q_trial` · one only · **tracked every round**
+`q_trial` · one only
 
 - Essential. I would not go ahead without it
 - Helpful, but not a deal-breaker
@@ -155,18 +158,20 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### How confident do you feel about each of these?
 
-`q_confidence` · rate 1-5 × 4 · **tracked every round**
+`q_confidence` · rate 1-5 × 6 · **tracked every round**
 
 - Working out whether a new machine or technology would pay on your operation
 - Judging whether trial results or supplier claims would hold up on your place
 - Finding independent advice you trust on new machinery and technology
 - Getting new gear set up and running well in its first season
+- Keeping new gear serviced and fixing it when it plays up
+- Getting new gear to work with the machines and software you already run
 
 ## 5. One branch only — by role
 
 ### Your farming operation
 
-Potato grower or business owner; Farm manager, supervisor or machinery operator · 8 questions · about 4 min
+Potato grower or business owner; Farm manager, supervisor or machinery operator · 9 questions · about 4.5 min
 
 #### Roughly how many tonnes of potatoes do you grow in a year?
 
@@ -177,6 +182,17 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - 5,000 to 20,000 tonnes
 - 20,000 to 50,000 tonnes
 - More than 50,000 tonnes
+- Prefer not to say
+
+#### At your busiest time of year, how many seasonal or casual people work on your potatoes?
+
+`farm_labour` · one only · **tracked every round**
+
+- None
+- 1 to 5
+- 6 to 20
+- 21 to 50
+- More than 50
 - Prefer not to say
 
 #### Which parts of your own operation give you the most trouble?
@@ -198,13 +214,15 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 
 #### Where are you at with each of these on your own operation?
 
-`farm_practices` · rate 1-5 × 7 · **tracked every round**
+`farm_practices` · rate 1-5 × 9 + write-in, list can grow · **tracked every round**
 
 - GPS guidance or autosteer
 - Precision planting equipment
+- Drones, satellite images or sensors to check the crop
+- Soil moisture sensors or automated irrigation
 - Camera-guided or AI spraying
-- Harvester set-up or sensing to cut damage
-- Stone, clod and trash separation at harvest
+- Electric or mechanical haulm removal
+- Harvester upgrades to cut damage or separate stones and clods
 - Optical grading on farm
 - Driverless or autonomous machines
 
@@ -266,7 +284,7 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 
 ### Your contracting work
 
-Contractor · 9 questions · about 4.9 min
+Contractor · 10 questions · about 5.4 min
 
 #### Roughly how many tonnes of potatoes do you handle in a year, across all your clients?
 
@@ -279,12 +297,26 @@ Contractor · 9 questions · about 4.9 min
 - More than 50,000 tonnes
 - Prefer not to say
 
+#### At your busiest time of year, how many seasonal or casual people do you put on for potato work?
+
+`con_labour` · one only · **tracked every round**
+
+- None
+- 1 to 5
+- 6 to 20
+- 21 to 50
+- More than 50
+- Prefer not to say
+
 #### Where are you at with each of these across your own gear?
 
-`con_practices` · rate 1-5 × 5 · **tracked every round**
+`con_practices` · rate 1-5 × 8 + write-in, list can grow · **tracked every round**
 
 - GPS guidance or autosteer
-- Harvester set-up or sensing to cut damage
+- Precision planting equipment
+- Camera-guided or AI spraying
+- Electric or mechanical haulm removal
+- Harvester upgrades to cut damage or separate stones and clods
 - Machine telemetry or remote diagnostics
 - Load tracking and logistics coordination
 - Driverless or autonomous machines
@@ -379,7 +411,7 @@ Contractor · 9 questions · about 4.9 min
 
 ### Receival, storage, grading and packing
 
-Processor, packhouse or storage business · 7 questions · about 4 min
+Processor, packhouse or storage business · 8 questions · about 4.4 min
 
 #### Roughly how many tonnes do you handle in a year?
 
@@ -390,6 +422,17 @@ Processor, packhouse or storage business · 7 questions · about 4 min
 - 5,000 to 20,000 tonnes
 - 20,000 to 50,000 tonnes
 - More than 50,000 tonnes
+- Prefer not to say
+
+#### At your busiest time of year, how many seasonal or casual people work in your shed?
+
+`pro_labour` · one only · **tracked every round**
+
+- None
+- 1 to 5
+- 6 to 20
+- 21 to 50
+- More than 50
 - Prefer not to say
 
 #### Where are the pinch points in the shed?
@@ -426,8 +469,9 @@ Processor, packhouse or storage business · 7 questions · about 4 min
 
 #### Where are you at with each of these in your operation?
 
-`pro_practices` · rate 1-5 × 6 · **tracked every round**
+`pro_practices` · rate 1-5 × 7 + write-in, list can grow · **tracked every round**
 
+- Automated receival, tipping or box handling
 - Optical sizing and shape grading
 - Optical defect detection
 - Internal quality sensing
@@ -471,13 +515,15 @@ Processor, packhouse or storage business · 7 questions · about 4 min
 
 ### Machinery supply and service
 
-Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 min
+Machinery dealer, manufacturer or service provider · 7 questions · about 4 min
 
 #### What can Australian potato businesses buy or trial today?
 
 `mach_available` · tick any + other
 
 - Precision planting and crop establishment
+- Spraying and weed control
+- Haulm removal before harvest
 - Autonomous and self-steering field machinery
 - Harvest efficiency and less damage
 - Carting and harvest logistics
@@ -496,6 +542,8 @@ Machinery dealer, manufacturer or service provider · 7 questions · about 3.9 m
 `mach_ready` · tick any + other
 
 - Precision planting and crop establishment
+- Spraying and weed control
+- Haulm removal before harvest
 - Autonomous and self-steering field machinery
 - Harvest efficiency and less damage
 - Carting and harvest logistics
@@ -572,6 +620,8 @@ Technology provider · 7 questions · about 3.8 min
 `tech_offer` · tick any + other
 
 - Precision planting and crop establishment
+- Spraying and weed control
+- Haulm removal before harvest
 - Autonomous and self-steering field machinery
 - Harvest efficiency and less damage
 - Carting and harvest logistics
@@ -727,6 +777,8 @@ Adviser, consultant, researcher or educator · 6 questions · about 3.8 min
 `adv_evaluate` · tick any + other
 
 - Precision planting and crop establishment
+- Spraying and weed control
+- Haulm removal before harvest
 - Autonomous and self-steering field machinery
 - Harvest efficiency and less damage
 - Carting and harvest logistics
@@ -838,6 +890,17 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 - No, not without the project
 - Not sure
 - Nothing has changed yet
+
+### Since the project started, has new gear or technology changed the labour in your business?
+
+`fu_labour` · one only · **tracked every round**
+
+- We need fewer people for some jobs
+- The same people are doing different, more skilled work
+- Both of those
+- We need more people
+- No change yet
+- Does not apply to my work
 
 ### If something changed, what was it, and what made the difference?
 
@@ -988,8 +1051,13 @@ The two lists are different axes — where the trouble is, and what could be don
 
 ### Crop protection operations
 
+- Spraying and weed control
 - Autonomous and self-steering field machinery
 - Sensors and machine data for day-to-day decisions
+
+### Haulm removal before harvest
+
+- Haulm removal before harvest
 
 ### Harvesting
 
@@ -1035,15 +1103,15 @@ The two lists are different axes — where the trouble is, and what could be don
 
 ## Branch lengths
 
-- Shared by everyone: about 10.2 min
+- Shared by everyone: about 10.7 min
 
-- Your farming operation branch: about 4 min → total 14.3 min
-- Your contracting work branch: about 4.9 min → total 15.1 min
-- Receival, storage, grading and packing branch: about 4 min → total 14.3 min
-- Machinery supply and service branch: about 3.9 min → total 14.2 min
-- Your technology branch: about 3.8 min → total 14 min
-- Your members and the wider industry branch: about 2.4 min → total 12.7 min
-- Evidence, evaluation and extension branch: about 3.8 min → total 14 min
+- Your farming operation branch: about 4.5 min → total 15.2 min
+- Your contracting work branch: about 5.4 min → total 16.2 min
+- Receival, storage, grading and packing branch: about 4.4 min → total 15.1 min
+- Machinery supply and service branch: about 4 min → total 14.8 min
+- Your technology branch: about 3.8 min → total 14.6 min
+- Your members and the wider industry branch: about 2.4 min → total 13.2 min
+- Evidence, evaluation and extension branch: about 3.8 min → total 14.5 min
 
 _Estimates only: 1.5 seconds per option read, 45 for an open box, 7 per rating row. Useful for comparing branches against each other, not for promising a number to a respondent._
 

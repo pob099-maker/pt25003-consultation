@@ -26,7 +26,9 @@ const kindLabel = (question: Question): string => {
     case 'text':
       return 'open text';
     case 'rating':
-      return `rate 1-5 × ${question.rows.length}`;
+      return `rate 1-5 × ${question.rows.length}${question.allowOther === true ? ' + write-in' : ''}${
+        question.openRows === true ? ', list can grow' : ''
+      }`;
     case 'rank':
       return `pick top ${question.count}`;
   }

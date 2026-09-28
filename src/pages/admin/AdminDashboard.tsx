@@ -9,6 +9,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
+import { useReportingFrame } from './useReportingFrame';
 import { interestLabel, optionLabel, questionById, roleLabel } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
 import { contactsCsv, freeTextCsv, responsesCsv } from '../../services/exportCsv';
@@ -49,6 +50,8 @@ const Stat = ({ label, value, note }: { label: string; value: string; note?: str
 export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const questionnaire = useQuestionnaire();
   const data = useAdminData();
+  // Every question and row any round asked, so stopping one never hides its history.
+  const frame = useReportingFrame(data.responses);
   // Defaults to the round that is collecting now, so a pilot run does not
   // quietly inflate the real numbers once the consultation is live.
   // With no database the responses are the demonstration's own rounds, so start by showing all of them.
@@ -94,24 +97,24 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
     return [...seen];
   }, [data.responses, data.demoMode, questionnaire.roundId]);
 
-  const stats = useMemo(() => overview(questionnaire, filtered), [questionnaire, filtered]);
-  const ranked = useMemo(() => rankConstraints(questionnaire, filtered, 'q2_top_three'), [questionnaire, filtered]);
-  const mentioned = useMemo(() => tallyMulti(questionnaire, filtered, 'q1_constraints'), [questionnaire, filtered]);
+  const stats = useMemo(() => overview(frame, filtered), [frame, filtered]);
+  const ranked = useMemo(() => rankConstraints(frame, filtered, 'q2_top_three'), [frame, filtered]);
+  const mentioned = useMemo(() => tallyMulti(frame, filtered, 'q1_constraints'), [frame, filtered]);
   const unprompted = useMemo(() => unpromptedCounts(filtered, 'q1_constraints'), [filtered]);
-  const areas = useMemo(() => rateAreas(questionnaire, filtered, 'q5_areas'), [questionnaire, filtered]);
+  const areas = useMemo(() => rateAreas(frame, filtered, 'q5_areas'), [frame, filtered]);
   const priorityScale = useMemo((): [string, string] => {
-    const question = questionById(questionnaire, 'q5_areas');
+    const question = questionById(frame, 'q5_areas');
     return question?.kind === 'rating'
       ? [question.scale[0]?.label ?? 'Low', question.scale.at(-1)?.label ?? 'High']
       : ['Low', 'High'];
-  }, [questionnaire]);
+  }, [frame]);
   // What every downloaded chart says about where its numbers came from.
   const chartNote = `${filtered.length} responses · ${currentProject().reference} consultation · ${new Date().toLocaleDateString(
     'en-AU',
     { day: 'numeric', month: 'short', year: 'numeric' },
   )}`;
-  const evidence = useMemo(() => tallyMulti(questionnaire, filtered, 'q7_evidence'), [questionnaire, filtered]);
-  const trusted = useMemo(() => tallyMulti(questionnaire, filtered, 'q_trust'), [questionnaire, filtered]);
+  const evidence = useMemo(() => tallyMulti(frame, filtered, 'q7_evidence'), [frame, filtered]);
+  const trusted = useMemo(() => tallyMulti(frame, filtered, 'q_trust'), [frame, filtered]);
   const trial = useMemo(() => {
     const counts = new Map<string, number>();
     for (const response of filtered) {
@@ -119,12 +122,12 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       if (answer !== undefined && answer.kind === 'single')
         counts.set(answer.value, (counts.get(answer.value) ?? 0) + 1);
     }
-    const question = questionById(questionnaire, 'q_trial');
+    const question = questionById(frame, 'q_trial');
     return [...counts.entries()]
       .map(([id, count]) => ({ id, label: optionLabel(question, id), count }))
       .sort((a, b) => b.count - a.count);
-  }, [questionnaire, filtered]);
-  const comments = useMemo(() => freeTextEntries(questionnaire, filtered), [questionnaire, filtered]);
+  }, [frame, filtered]);
+  const comments = useMemo(() => freeTextEntries(frame, filtered), [frame, filtered]);
 
   const toggleTag = async (responseId: string, questionId: string, tag: string): Promise<void> => {
     const key = tagKey(responseId, questionId);
@@ -807,7 +810,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           onClick={() =>
             downloadCsv(
               `${currentProject().id.toLowerCase()}-responses-${stamp}.csv`,
-              responsesCsv(questionnaire, filtered),
+              responsesCsv(frame, filtered),
             )
           }
         >

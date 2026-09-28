@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { compareRounds, type RoundInfo } from './change';
+import { questionById } from '../content/lookup';
 import type { AnswerMap, ConsultationResponse } from '../types';
 
 const q = DEFAULT_QUESTIONNAIRE;
@@ -30,11 +31,11 @@ const rounds: readonly RoundInfo[] = [
   { roundId: 'mid', label: 'Mid-project', stage: 'review' },
 ];
 
-const evidence = (values: string[]): AnswerMap => ({ q7_evidence: { kind: 'multi', values, other: '' } });
+const trusted = (values: string[]): AnswerMap => ({ q_trust: { kind: 'multi', values, other: '' } });
 
 describe('compareRounds', () => {
   it('leaves the pilot out entirely — it was the team testing the form', () => {
-    const result = compareRounds(q, [response('pilot', evidence(['local_demo']))], rounds);
+    const result = compareRounds(q, [response('pilot', trusted(['neighbours']))], rounds);
     expect(result.columns.map((column) => column.roundId)).toEqual(['base', 'mid']);
   });
 
@@ -42,20 +43,20 @@ describe('compareRounds', () => {
     const result = compareRounds(
       q,
       [
-        response('base', evidence(['local_demo'])),
-        response('base', evidence(['roi'])),
-        response('base', evidence(['local_demo', 'case_study'])),
-        response('base', evidence(['peer'])),
-        response('mid', evidence(['case_study'])),
-        response('mid', evidence(['case_study', 'local_demo'])),
+        response('base', trusted(['neighbours'])),
+        response('base', trusted(['agronomist'])),
+        response('base', trusted(['neighbours', 'dealer'])),
+        response('base', trusted(['field_days'])),
+        response('mid', trusted(['dealer'])),
+        response('mid', trusted(['dealer', 'neighbours'])),
       ],
       rounds,
     );
-    const block = result.blocks.find((b) => b.questionId === 'q7_evidence');
-    const caseStudy = block?.rows.find((row) => row.id === 'case_study');
+    const block = result.blocks.find((b) => b.questionId === 'q_trust');
+    const dealer = block?.rows.find((row) => row.id === 'dealer');
     expect(block?.answered).toEqual([4, 2]);
-    expect(caseStudy?.values).toEqual([0.25, 1]);
-    expect(caseStudy?.change).toBe(0.75);
+    expect(dealer?.values).toEqual([0.25, 1]);
+    expect(dealer?.change).toBe(0.75);
   });
 
   it('averages ratings per area, counting only the areas people actually rated', () => {
@@ -78,7 +79,7 @@ describe('compareRounds', () => {
   });
 
   it('reports no change until there is both a baseline and a review', () => {
-    const onlyBaseline = compareRounds(q, [response('base', evidence(['local_demo']))], [rounds[1] as RoundInfo]);
+    const onlyBaseline = compareRounds(q, [response('base', trusted(['neighbours']))], [rounds[1] as RoundInfo]);
     expect(onlyBaseline.hasReview).toBe(false);
     for (const block of onlyBaseline.blocks) {
       for (const row of block.rows) expect(row.change).toBeNull();
@@ -93,5 +94,71 @@ describe('compareRounds', () => {
     );
     expect(result.composition.find((row) => row.role === 'grower')?.counts).toEqual([2, 0]);
     expect(result.composition.find((row) => row.role === 'processor')?.counts).toEqual([0, 1]);
+  });
+});
+
+describe('rows that come and go', () => {
+  const SORTING = { id: 'harvester_sorting', label: 'Camera sorting on the harvester' };
+  const practicesQuestion = questionById(q, 'farm_practices');
+  const farmRows = practicesQuestion?.kind === 'rating' ? practicesQuestion.rows.map((row) => row.id) : [];
+  const phases: readonly RoundInfo[] = [
+    { roundId: 'base', label: 'Baseline', stage: 'baseline', overrides: {} },
+    {
+      roundId: 'check',
+      label: 'Interim check',
+      stage: 'interim',
+      overrides: { farm_practices: { inInterim: true, addedOptions: [SORTING], retiredOptions: farmRows } },
+    },
+    {
+      roundId: 'mid',
+      label: 'Mid-project',
+      stage: 'review',
+      overrides: { farm_practices: { addedOptions: [SORTING], retiredOptions: ['optical_grading'] } },
+    },
+  ];
+  const practices = (values: Record<string, number>, other?: string): AnswerMap => ({
+    farm_practices: { kind: 'rating', values, ...(other === undefined ? {} : { other }) },
+  });
+
+  const result = compareRounds(
+    q,
+    [
+      response('base', practices({ guidance: 4, optical_grading: 2 })),
+      response('base', practices({ guidance: 2, optical_grading: 4 })),
+      response('check', practices({ harvester_sorting: 1 })),
+      response('check', practices({ harvester_sorting: 2 })),
+      response('mid', practices({ guidance: 5, harvester_sorting: 3, other: 3 }, 'Weeding robot')),
+    ],
+    phases,
+  );
+  const block = result.blocks.find((candidate) => candidate.questionId === 'farm_practices');
+  const row = (id: string) => block?.rows.find((candidate) => candidate.id === id);
+
+  it('compares a row first asked in an interim from the interim, and shows the baseline as not asked', () => {
+    expect(row('harvester_sorting')?.asked).toEqual([false, true, true]);
+    expect(row('harvester_sorting')?.values).toEqual([null, 1.5, 3]);
+    expect(row('harvester_sorting')?.from).toBe(1);
+    expect(row('harvester_sorting')?.change).toBe(1.5);
+  });
+
+  it('never lets an interim move a starting point that already exists', () => {
+    expect(row('guidance')?.asked).toEqual([true, false, true]);
+    expect(row('guidance')?.from).toBe(0);
+    expect(row('guidance')?.change).toBe(2);
+  });
+
+  it('keeps the history of a row that stopped being asked, and reports no change it cannot measure', () => {
+    expect(row('optical_grading')?.asked).toEqual([true, false, false]);
+    expect(row('optical_grading')?.values).toEqual([3, null, null]);
+    expect(row('optical_grading')?.change).toBeNull();
+  });
+
+  it('never compares the row somebody named themselves', () => {
+    expect(row('other')).toBeUndefined();
+  });
+
+  it('says when a round did not ask a question at all', () => {
+    const trust = result.blocks.find((candidate) => candidate.questionId === 'q_trust');
+    expect(trust?.asked).toEqual([true, false, true]);
   });
 });

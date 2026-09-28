@@ -42,6 +42,13 @@ describe('estimate', () => {
     expect(full.minutes).toBeLessThanOrEqual(18);
   });
 
+  it('keeps the short version under the ten minutes the magazine promises', () => {
+    // Issue 22 of the PotatoLink magazine says the consultation "takes under
+    // ten minutes". The landing page rounds up, so nine is the most it may say.
+    expect(estimateFor(shortVersion(q), 'grower').minutes).toBeLessThanOrEqual(9);
+    expect(formEstimates(q).short.minutes).toBeLessThanOrEqual(9);
+  });
+
   it('quotes each version for the role it takes longest for', () => {
     // A grower's short version runs longer than a contractor's even though the
     // contractor's full version is the longest; quoting the contractor's short

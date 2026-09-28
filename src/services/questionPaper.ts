@@ -1,4 +1,4 @@
-import { allQuestions } from '../content/lookup';
+import { OTHER_ROW, OTHER_ROW_LABEL, allQuestions } from '../content/lookup';
 import { ABOUT_YOU } from '../content/questionnaire';
 import type { Option, Question, Questionnaire, ScalePoint } from '../types';
 import { formEstimates } from './estimate';
@@ -72,7 +72,9 @@ const kindLabel = (question: Question): string => {
     case 'text':
       return 'Written answer';
     case 'rating':
-      return `Each line rated ${question.scale[0]?.value ?? 1} to ${question.scale.at(-1)?.value ?? 5}`;
+      return `Each line rated ${question.scale[0]?.value ?? 1} to ${question.scale.at(-1)?.value ?? 5}${
+        question.allowOther === true ? ', plus a line to write in' : ''
+      }`;
     case 'rank':
       return `${question.count} of them, in order`;
   }
@@ -84,7 +86,9 @@ const optionsOf = (question: Question): readonly Option[] => {
     case 'single':
       return question.options;
     case 'rating':
-      return question.rows;
+      return question.allowOther === true
+        ? [...question.rows, { id: OTHER_ROW, label: `${OTHER_ROW_LABEL}: they write what it is` }]
+        : question.rows;
     case 'rank':
       return question.fallbackOptions;
     case 'text':
@@ -104,6 +108,9 @@ const notesOf = (question: Question, questionnaire: Questionnaire): readonly str
     notes.push(
       'Asked as three short answers that the form puts together: two letters, a day of the month, two letters. Optional.',
     );
+  }
+  if (question.kind === 'rating' && question.openRows === true) {
+    notes.push('The project can add lines to this list in later rounds, as new technology turns up.');
   }
   if (question.kind === 'text' && question.placeholder !== undefined) {
     notes.push(`Grey prompt in the box: "${question.placeholder}"`);

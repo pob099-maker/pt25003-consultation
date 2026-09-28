@@ -8,7 +8,7 @@ This file is generated from the questions themselves — do not edit it by hand,
 
 Say, in your own words:
 
-> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about 16 minutes. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.
+> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about 17 minutes. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.
 
 Then work down this script and enter the answers into the consultation afterwards, so they sit in the same data as everybody else’s. If you enter it while you talk, tell them that is what you are doing.
 
@@ -58,6 +58,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Crop monitoring and agronomy decisions
   - Irrigation operation and automation
   - Crop protection operations
+  - Haulm removal before harvest
   - Harvesting
   - In-field transport and harvest logistics
   - Receival
@@ -122,6 +123,8 @@ _Scale: 1 = not a priority, 2 = low priority, 3 = moderate priority, 4 = high pr
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - Precision planting and crop establishment
+  - Spraying and weed control
+  - Haulm removal before harvest
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and less damage
   - Carting and harvest logistics
@@ -215,6 +218,8 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
   - Judging whether trial results or supplier claims would hold up on your place
   - Finding independent advice you trust on new machinery and technology
   - Getting new gear set up and running well in its first season
+  - Keeping new gear serviced and fixing it when it plays up
+  - Getting new gear to work with the machines and software you already run
 
 ---
 
@@ -239,7 +244,22 @@ _One answer only._
   - More than 50,000 tonnes
   - Prefer not to say
 
-**2. Which parts of your own operation give you the most trouble?**
+**2. At your busiest time of year, how many seasonal or casual people work on your potatoes?**
+
+> Open with: "At your busiest time, how many extra people do you put on for the potatoes?"
+
+_Not counting you or your permanent staff. A rough number is fine._
+
+_One answer only._
+
+  - None
+  - 1 to 5
+  - 6 to 20
+  - 21 to 50
+  - More than 50
+  - Prefer not to say
+
+**3. Which parts of your own operation give you the most trouble?**
 
 > Open with: "Where does the pressure land on your place?"
 > Then probe: "Which of those costs you most?"
@@ -261,7 +281,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Record keeping and compliance
   - Other
 
-**3. Where are you at with each of these on your own operation?**
+**4. Where are you at with each of these on your own operation?**
 
 > Open with: "I will read out some technologies. For each one, tell me where you are at with it."
 > Then probe: "Which of those has made the biggest difference so far?"
@@ -273,13 +293,17 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
 
   - GPS guidance or autosteer
   - Precision planting equipment
+  - Drones, satellite images or sensors to check the crop
+  - Soil moisture sensors or automated irrigation — Including variable rate irrigation, which puts on more water where the paddock needs it.
   - Camera-guided or AI spraying
-  - Harvester set-up or sensing to cut damage
-  - Stone, clod and trash separation at harvest
+  - Electric or mechanical haulm removal
+  - Harvester upgrades to cut damage or separate stones and clods
   - Optical grading on farm
   - Driverless or autonomous machines
 
-**4. Think of the one that mattered most. How did that go?**
+_Then ask whether there is anything else they use or are trying. If there is, write down what it is and where they are at with it, in the Something else row._
+
+**5. Think of the one that mattered most. How did that go?**
 
 _One answer only._
 
@@ -290,7 +314,7 @@ _One answer only._
   - Some of it worked, some did not
   - Nothing has really applied to us yet
 
-**5. What has held you back most?**
+**6. What has held you back most?**
 
 > Open with: "What's stopped you going further with it?"
 > Then probe: "If that was sorted tomorrow, would you go ahead?"
@@ -310,7 +334,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Safety or regulation
   - Other
 
-**6. When you are weighing up a machinery purchase, which numbers do you look at?**
+**7. When you are weighing up a machinery purchase, which numbers do you look at?**
 
 _Tick as many as you like._
 
@@ -330,7 +354,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Maintenance and downtime
   - Other
 
-**7. Is there anything running now that would make a good local case study or a demonstration?**
+**8. Is there anything running now that would make a good local case study or a demonstration?**
 
 _Something working on a real job. It does not have to be new or flash._
 
@@ -340,7 +364,7 @@ _One answer only._
   - Yes, somewhere else I know of
   - Nothing comes to mind
 
-**8. Is anything being pushed at the moment that you reckon will not work in Australian potatoes?**
+**9. Is anything being pushed at the moment that you reckon will not work in Australian potatoes?**
 
 > Open with: "Is there anything being pushed at the moment that you reckon won't work here?"
 > Then probe: "What makes you say that?"
@@ -368,7 +392,22 @@ _One answer only._
   - More than 50,000 tonnes
   - Prefer not to say
 
-**2. Where are you at with each of these across your own gear?**
+**2. At your busiest time of year, how many seasonal or casual people do you put on for potato work?**
+
+> Open with: "At your busiest time, how many extra people do you put on?"
+
+_Not counting you or your permanent staff. A rough number is fine._
+
+_One answer only._
+
+  - None
+  - 1 to 5
+  - 6 to 20
+  - 21 to 50
+  - More than 50
+  - Prefer not to say
+
+**3. Where are you at with each of these across your own gear?**
 
 > Open with: "For each of these, where are you at in your own fleet?"
 
@@ -378,12 +417,17 @@ _Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on pa
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - GPS guidance or autosteer
-  - Harvester set-up or sensing to cut damage
+  - Precision planting equipment
+  - Camera-guided or AI spraying
+  - Electric or mechanical haulm removal
+  - Harvester upgrades to cut damage or separate stones and clods
   - Machine telemetry or remote diagnostics
   - Load tracking and logistics coordination
   - Driverless or autonomous machines
 
-**3. Which jobs put you under the most pressure in the peak?**
+_Then ask whether there is anything else they use or are trying. If there is, write down what it is and where they are at with it, in the Something else row._
+
+**4. Which jobs put you under the most pressure in the peak?**
 
 > Open with: "When you're flat out, which jobs are the ones that bite?"
 > Then probe: "What happens to the next client when one of those runs over?"
@@ -404,7 +448,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Juggling client schedules
   - Other
 
-**4. What stops you getting through more work, or doing it better?**
+**5. What stops you getting through more work, or doing it better?**
 
 _Tick as many as you like._
 
@@ -421,7 +465,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Cost of upgrading gear
   - Other
 
-**5. On the machinery side, what causes you the most grief?**
+**6. On the machinery side, what causes you the most grief?**
 
 _Tick as many as you like._
 
@@ -435,7 +479,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Access to diagnostics or software
   - Other
 
-**6. Where are the biggest gaps in operator skills?**
+**7. Where are the biggest gaps in operator skills?**
 
 _Tick as many as you like._
 
@@ -451,7 +495,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Getting new operators up to speed quickly
   - Other
 
-**7. What would make the biggest difference to the job you can do for your clients?**
+**8. What would make the biggest difference to the job you can do for your clients?**
 
 _Tick as many as you like._
 
@@ -467,7 +511,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Training for your operators
   - Other
 
-**8. If we ran a demonstration, what would it take to make it worth your while?**
+**9. If we ran a demonstration, what would it take to make it worth your while?**
 
 _Tick as many as you like._
 
@@ -482,7 +526,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Insurance and safety sorted beforehand
   - Other
 
-**9. Anything else about contracting we should know?**
+**10. Anything else about contracting we should know?**
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -505,7 +549,22 @@ _One answer only._
   - More than 50,000 tonnes
   - Prefer not to say
 
-**2. Where are the pinch points in the shed?**
+**2. At your busiest time of year, how many seasonal or casual people work in your shed?**
+
+> Open with: "At your busiest time, how many extra people do you put on in the shed?"
+
+_Not counting permanent staff. A rough number is fine._
+
+_One answer only._
+
+  - None
+  - 1 to 5
+  - 6 to 20
+  - 21 to 50
+  - More than 50
+  - Prefer not to say
+
+**3. Where are the pinch points in the shed?**
 
 > Open with: "Walk me through the shed. Where does it slow down or go wrong?"
 > Then probe: "Where do you lose the most time?"
@@ -527,7 +586,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Staffing the shifts
   - Other
 
-**3. Which losses or quality problems cost you the most?**
+**4. Which losses or quality problems cost you the most?**
 
 _Tick as many as you like._
 
@@ -544,13 +603,14 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Customer complaints or rejections
   - Other
 
-**4. Where are you at with each of these in your operation?**
+**5. Where are you at with each of these in your operation?**
 
 _Pick the step that fits each one. Leave any you have not come across._
 
 _Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
+  - Automated receival, tipping or box handling
   - Optical sizing and shape grading
   - Optical defect detection
   - Internal quality sensing — X-ray, near infrared, or similar.
@@ -558,7 +618,9 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
   - Robotic palletising
   - Line performance monitoring
 
-**5. What has held that back?**
+_Then ask whether there is anything else they use or are trying. If there is, write down what it is and where they are at with it, in the Something else row._
+
+**6. What has held that back?**
 
 _Tick as many as you like._
 
@@ -575,7 +637,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Safety or regulation
   - Other
 
-**6. Which numbers matter most when you judge whether something is working?**
+**7. Which numbers matter most when you judge whether something is working?**
 
 _Tick as many as you like._
 
@@ -592,7 +654,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Food safety and compliance
   - Other
 
-**7. Anything else about your operation we should know?**
+**8. Anything else about your operation we should know?**
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -610,6 +672,8 @@ _Tick as many as you like._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
+  - Spraying and weed control
+  - Haulm removal before harvest
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and less damage
   - Carting and harvest logistics
@@ -630,6 +694,8 @@ _Tick as many as you like._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
+  - Spraying and weed control
+  - Haulm removal before harvest
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and less damage
   - Carting and harvest logistics
@@ -719,6 +785,8 @@ _Tick as many as you like. There is room to describe it properly at the end._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
+  - Spraying and weed control
+  - Haulm removal before harvest
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and less damage
   - Carting and harvest logistics
@@ -902,6 +970,8 @@ _Tick as many as you like._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Precision planting and crop establishment
+  - Spraying and weed control
+  - Haulm removal before harvest
   - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
   - Harvest efficiency and less damage
   - Carting and harvest logistics

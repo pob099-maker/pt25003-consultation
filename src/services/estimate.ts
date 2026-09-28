@@ -1,6 +1,7 @@
 import { allQuestions } from '../content/lookup';
 import type { Question, Questionnaire, RoleId } from '../types';
 import { shortVersion } from './formLength';
+import { asksFollowUp } from './roundRules';
 
 /**
  * How long a form takes to fill in, estimated from what it asks.
@@ -30,8 +31,9 @@ export const questionSeconds = (question: Question): number => {
       // Picking an order means weighing the choices against each other.
       return reading + 10 + question.count * 6;
     case 'rating':
-      // The slowest kind: a decision per row, and the scale re-read a few times.
-      return reading + 6 + question.rows.length * 6;
+      // The slowest kind: a decision per row, and the scale re-read a few
+      // times. A row to write something in is counted like any other.
+      return reading + 6 + (question.rows.length + (question.allowOther === true ? 1 : 0)) * 6;
     case 'text':
       // Three short pieces from memory, not a paragraph of typing.
       if (question.entry === 'linkCode') return reading + 20;
@@ -65,7 +67,7 @@ export const questionsFor = (questionnaire: Questionnaire, role: RoleId | null):
   return [
     ...questionnaire.core.flatMap((section) => section.questions),
     ...(branch?.questions ?? []),
-    ...(questionnaire.stage === 'review' ? questionnaire.followUp.flatMap((section) => section.questions) : []),
+    ...(asksFollowUp(questionnaire.stage) ? questionnaire.followUp.flatMap((section) => section.questions) : []),
     ...questionnaire.projectDesign.flatMap((section) => section.questions),
   ];
 };

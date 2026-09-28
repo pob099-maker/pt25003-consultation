@@ -9,11 +9,16 @@ import type {
 } from '../types';
 import type { RoundInfo } from './change';
 import { COVERED_ID, noteId } from './interviewNotes';
+import { applyRound, asksFollowUp } from './roundRules';
+import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
+import { questionById } from '../content/lookup';
 
 /**
  * Invented responses for the demonstration site, so somebody exploring it sees
  * what a real consultation looks like: a baseline and a review round, a few
- * dozen people in each, collected online, by interview and in workshops.
+ * dozen people in each, collected online, by interview and in workshops, with
+ * a short interim check between them for something the project took on
+ * part-way through.
  *
  * Nobody in here is real. It is generated, not stored, and deterministic, so
  * the demo shows the same picture every time it is opened. It lives only in
@@ -21,12 +26,42 @@ import { COVERED_ID, noteId } from './interviewNotes';
  */
 
 export const DEMO_BASELINE = 'demo-baseline';
+export const DEMO_INTERIM = 'demo-interim';
 export const DEMO_REVIEW = 'demo-review';
 
-export const DEMO_ROUNDS: readonly RoundInfo[] = [
-  { roundId: DEMO_BASELINE, label: 'Baseline (demo)', stage: 'baseline' },
-  { roundId: DEMO_REVIEW, label: 'Mid-project review (demo)', stage: 'review' },
-];
+/**
+ * What the demonstration's project takes on part-way through: camera sorting on
+ * the harvester, one of the technologies in the project's own register. The
+ * interim check asks growers about it alone, which gives it a starting point,
+ * and the review asks it along with everything else.
+ */
+export const DEMO_NEW_ROW = { id: 'harvester_sorting', label: 'Camera sorting on the harvester' } as const;
+
+const farmRowIds = (): readonly string[] => {
+  const question = questionById(DEFAULT_QUESTIONNAIRE, 'farm_practices');
+  return question?.kind === 'rating' ? question.rows.map((row) => row.id) : [];
+};
+
+const BASELINE_ROUND: RoundInfo = { roundId: DEMO_BASELINE, label: 'Baseline (demo)', stage: 'baseline', overrides: {} };
+
+const INTERIM_ROUND: RoundInfo = {
+  roundId: DEMO_INTERIM,
+  label: 'Interim check (demo)',
+  stage: 'interim',
+  overrides: {
+    // Only the new line: every other line keeps the baseline as its starting point.
+    farm_practices: { inInterim: true, addedOptions: [DEMO_NEW_ROW], retiredOptions: farmRowIds() },
+  },
+};
+
+const REVIEW_ROUND: RoundInfo = {
+  roundId: DEMO_REVIEW,
+  label: 'Mid-project review (demo)',
+  stage: 'review',
+  overrides: { farm_practices: { addedOptions: [DEMO_NEW_ROW] } },
+};
+
+export const DEMO_ROUNDS: readonly RoundInfo[] = [BASELINE_ROUND, INTERIM_ROUND, REVIEW_ROUND];
 
 /** Small, seeded, good enough: the same numbers every time. */
 const random = (seed: number) => {
@@ -74,6 +109,7 @@ const CONSTRAINT_BIAS: Readonly<Record<string, readonly [number, number]>> = {
 
 /** Rating rows that improved or slipped between the rounds, by a little. */
 const RATING_SHIFT: Readonly<Record<string, number>> = {
+  harvester_sorting: 0.7,
   harvest_efficiency: 0.4,
   sensors: 0.6,
   training: -0.5,
@@ -139,6 +175,27 @@ const ROLE_MIX: readonly (readonly [RoleId, number])[] = [
   ['industry_body', 5],
 ];
 
+/** An interim check goes to the people the new line is about. */
+const INTERIM_ROLE_MIX: readonly (readonly [RoleId, number])[] = [
+  ['grower', 70],
+  ['farm_manager', 30],
+];
+
+/** Short enough to answer online or in a quick call; nobody runs a workshop for it. */
+const INTERIM_METHOD_MIX: readonly (readonly [CollectionMethod, number])[] = [
+  ['online', 75],
+  ['interview_phone', 25],
+];
+
+/** What people name in "Something else", which is where the next line on the list comes from. */
+const NAMED_PRACTICES = [
+  'Weeding robot',
+  'Drone for spot spraying',
+  'Remote pump control on the pivots',
+  'Soil scanner for variable rate',
+  'Bin tipper with a camera',
+];
+
 const METHOD_MIX: readonly (readonly [CollectionMethod, number])[] = [
   ['online', 55],
   ['interview_phone', 18],
@@ -200,6 +257,10 @@ const answerFor = (question: Question, rng: Rng, review: boolean, answers: Answe
         const score = Math.round(mean + (rng() + rng() + rng() - 1.5) * 1.3);
         values[row] = Math.max(1, Math.min(5, score));
       }
+      if (question.allowOther === true && rng() < 0.12) {
+        values.other = rng() < 0.6 ? 2 : 3;
+        return { kind: 'rating', values, other: pick(rng, NAMED_PRACTICES) };
+      }
       return Object.keys(values).length === 0 ? undefined : { kind: 'rating', values };
     }
     case 'text': {
@@ -214,17 +275,18 @@ const answerFor = (question: Question, rng: Rng, review: boolean, answers: Answe
 
 const build = (questionnaire: Questionnaire, roundId: string, count: number, seed: number): ConsultationResponse[] => {
   const rng = random(seed);
-  const review = roundId === DEMO_REVIEW;
-  const daysBack = review ? 20 : 200;
+  const review = questionnaire.stage === 'review';
+  const interim = questionnaire.stage === 'interim';
+  const daysBack = review ? 20 : interim ? 110 : 200;
   const regionIds = questionnaire.regions.map((region) => region.id).filter((id) => id !== 'no_say' && id !== 'other');
   return Array.from({ length: count }, (_, index) => {
-    const role = weighted(rng, ROLE_MIX);
+    const role = weighted(rng, interim ? INTERIM_ROLE_MIX : ROLE_MIX);
     const pathway = questionnaire.roles.find((entry) => entry.id === role)?.pathway ?? null;
-    const method = weighted(rng, METHOD_MIX);
+    const method = weighted(rng, interim ? INTERIM_METHOD_MIX : METHOD_MIX);
     const sections = [
       ...questionnaire.core,
       ...(pathway === null || questionnaire.pathways[pathway] === undefined ? [] : [questionnaire.pathways[pathway]]),
-      ...(review ? questionnaire.followUp : []),
+      ...(asksFollowUp(questionnaire.stage) ? questionnaire.followUp : []),
       ...(method === 'workshop' ? [] : questionnaire.projectDesign),
     ];
     const answers: Record<string, Answer> = {};
@@ -241,7 +303,7 @@ const build = (questionnaire: Questionnaire, roundId: string, count: number, see
         answers.q1_constraints = { ...q1, prompted: q1.values.slice(-1) };
       if (rng() < 0.5)
         answers[noteId(questionnaire.core[0]?.id ?? 'general')] = { kind: 'text', value: pick(rng, NOTES) };
-      if (rng() < 0.3) answers[COVERED_ID] = { kind: 'multi', values: ['q4_bad_season'] };
+      if (!interim && rng() < 0.3) answers[COVERED_ID] = { kind: 'multi', values: ['q4_bad_season'] };
     }
     const minutes =
       method === 'workshop' ? 25 : method === 'online' ? 6 + Math.floor(rng() * 9) : 8 + Math.floor(rng() * 10);
@@ -249,7 +311,7 @@ const build = (questionnaire: Questionnaire, roundId: string, count: number, see
     submitted.setDate(submitted.getDate() - daysBack + Math.floor((index / count) * 18));
     submitted.setHours(8 + Math.floor(rng() * 10), Math.floor(rng() * 60), 0, 0);
     return {
-      id: `00000000-0000-4${review ? '1' : '0'}00-8000-${String(index + 1).padStart(12, '0')}`,
+      id: `00000000-0000-4${review ? '1' : interim ? '2' : '0'}00-8000-${String(index + 1).padStart(12, '0')}`,
       roundId,
       role,
       pathway,
@@ -285,8 +347,14 @@ const DEMO_ROUTES: readonly (string | null)[] = [
   'mag22', 'bulletin', 'mag22', 'shared', 'direct', 'mag22', 'bulletin', null, 'shared', 'mag22',
 ];
 
-/** A baseline of 45 and a review of 38, newest first. */
+/** What each demonstration round asked, by the same rules the live form uses. */
+const asked = (questionnaire: Questionnaire, round: RoundInfo): Questionnaire =>
+  applyRound(questionnaire, { ...round, overrides: round.overrides ?? {} });
+
+/** A baseline of 45, an interim check of 20 growers, and a review of 38, newest first. */
 export const demoResponses = (questionnaire: Questionnaire): readonly ConsultationResponse[] =>
-  [...build(questionnaire, DEMO_BASELINE, 45, 2026), ...build(questionnaire, DEMO_REVIEW, 38, 2027)].sort((a, b) =>
-    b.submittedAt.localeCompare(a.submittedAt),
-  );
+  [
+    ...build(asked(questionnaire, BASELINE_ROUND), DEMO_BASELINE, 45, 2026),
+    ...build(asked(questionnaire, INTERIM_ROUND), DEMO_INTERIM, 20, 2028),
+    ...build(asked(questionnaire, REVIEW_ROUND), DEMO_REVIEW, 38, 2027),
+  ].sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));

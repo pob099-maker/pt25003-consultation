@@ -1,4 +1,4 @@
-import { optionLabel, questionById } from '../content/lookup';
+import { OTHER_ROW, OTHER_ROW_LABEL, optionLabel, questionById } from '../content/lookup';
 import { isNoteId, noteLabel } from './interviewNotes';
 import type { ConsultationResponse, Questionnaire } from '../types';
 
@@ -184,6 +184,26 @@ export const freeTextEntries = (
   const entries: FreeTextEntry[] = [];
   for (const response of responses) {
     for (const [questionId, answer] of Object.entries(response.answers)) {
+      // A row somebody named themselves on a practice list: where new
+      // technology shows up first, so it is read with the comments.
+      if (answer.kind === 'rating' && (answer.other ?? '').trim().length > 0) {
+        const question = questionById(questionnaire, questionId);
+        const value = answer.values[OTHER_ROW];
+        const step =
+          question?.kind === 'rating' && value !== undefined
+            ? question.scale.find((point) => point.value === value)?.label
+            : undefined;
+        const named = (answer.other ?? '').trim();
+        entries.push({
+          responseId: response.id,
+          questionId,
+          questionPrompt: `${OTHER_ROW_LABEL}, for: ${question?.prompt ?? questionId}`,
+          role: response.role,
+          text: step === undefined ? named : `${named} (${step})`,
+          submittedAt: response.submittedAt,
+        });
+        continue;
+      }
       if (answer.kind !== 'text' || answer.value.trim().length === 0) continue;
       const question = questionById(questionnaire, questionId);
       if (question?.kind === 'text' && question.entry === 'linkCode') continue;

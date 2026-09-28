@@ -59,6 +59,7 @@ starting point. It is a project of its own, with its own starting point.
 | **Repeat questions** | tracked, must-ask, locked, word-for-word | The handful asked identically every time. The only reason two consultations compare |
 | **Starting point** | baseline (as a system word) | The consultation everything else is measured against. "Baseline" is a *name* a project may give it |
 | **Short version / full version** | quick form, long form, short call (online) | How much is asked. The short version is the repeat questions alone |
+| **Interim check** | mini-round, top-up, pulse | A short consultation between the full ones, asking only about what the project has newly taken on. The starting point for anything first asked in it, and never the end of a comparison |
 
 Two more, already settled and unchanged: **ways of answering** (online, interview, field day,
 group) and **practice** (a consultation never counted in any comparison — today's "pilot").

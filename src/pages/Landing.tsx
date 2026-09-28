@@ -46,23 +46,41 @@ export const Landing = () => {
         </p>
       </div>
 
-      <section className={`${card} mt-6`} aria-labelledby="how-long">
-        <h2 id="how-long" className="text-subtitle font-semibold">
-          Two ways to have your say
-        </h2>
-        <p className="mt-2 text-ink-soft">
-          Pick whichever suits the day. The short one asks what we most need to know. The full one lets you tell us more
-          about your own operation. You can start short and keep going if you have the time.
-        </p>
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-          <Link to="/about?quick=1" className={primaryButton}>
-            {hasDraft ? 'Continue' : `Short version · ${spoken(estimates.short)}`}
-          </Link>
-          <Link to="/about" className={secondaryButton}>
-            {hasDraft ? 'Continue the full version' : `Full version · ${spoken(estimates.full)}`}
-          </Link>
-        </div>
-      </section>
+      {questionnaire.stage === 'interim' ? (
+        // An interim check is short by design, so there is nothing to choose between.
+        <section className={`${card} mt-6`} aria-labelledby="how-long">
+          <h2 id="how-long" className="text-subtitle font-semibold">
+            A quick check-in
+          </h2>
+          <p className="mt-2 text-ink-soft">
+            The project has taken on some new things since we last asked, so this is a short check on where people are
+            at with them.
+          </p>
+          <div className="mt-4">
+            <Link to="/about" className={primaryButton}>
+              {hasDraft ? 'Continue' : `Start · ${spoken(estimates.full)}`}
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className={`${card} mt-6`} aria-labelledby="how-long">
+          <h2 id="how-long" className="text-subtitle font-semibold">
+            Two ways to have your say
+          </h2>
+          <p className="mt-2 text-ink-soft">
+            Pick whichever suits the day. The short one asks what we most need to know. The full one lets you tell us more
+            about your own operation. You can start short and keep going if you have the time.
+          </p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <Link to="/about?quick=1" className={primaryButton}>
+              {hasDraft ? 'Continue' : `Short version · ${spoken(estimates.short)}`}
+            </Link>
+            <Link to="/about" className={secondaryButton}>
+              {hasDraft ? 'Continue the full version' : `Full version · ${spoken(estimates.full)}`}
+            </Link>
+          </div>
+        </section>
+      )}
 
       <section className={`${card} mt-6 prose-measure`} aria-labelledby="confidentiality">
         <h2 id="confidentiality" className="text-subtitle font-semibold">

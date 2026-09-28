@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { recordProgress } from '../services/progress';
+import { asksFollowUp } from '../services/roundRules';
 import type { Answer, AnswerMap, Questionnaire, RoleId, Section } from '../types';
 
 export interface Draft {
@@ -87,7 +88,7 @@ export const useConsultation = (
     const sectionSteps = [
       ...questionnaire.core,
       ...(roleSection === null ? [] : [roleSection]),
-      ...(questionnaire.stage === 'review' ? questionnaire.followUp : []),
+      ...(asksFollowUp(questionnaire.stage) ? questionnaire.followUp : []),
       ...questionnaire.projectDesign,
     ].map((section) => ({ id: section.id, title: section.title, intro: section.intro, section }));
     return [ABOUT_YOU, ...sectionSteps, STAY_INVOLVED];

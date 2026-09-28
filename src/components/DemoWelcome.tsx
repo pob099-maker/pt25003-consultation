@@ -10,7 +10,7 @@ const TOUR: readonly { to: string; title: string; what: string }[] = [
   {
     to: '/admin?tab=change',
     title: 'Change over time',
-    what: 'Baseline against the mid-project review, question by question. Any chart downloads as a picture for a report.',
+    what: 'Baseline against the mid-project review, question by question, including a practice the project took on part-way through and checked in a short interim. Any chart downloads as a picture for a report.',
   },
   {
     to: '/interview',
@@ -49,9 +49,9 @@ export const DemoWelcome = ({ here }: { here?: string }) => (
       Welcome to the demonstration
     </h2>
     <p className="mt-2 text-body text-ink">
-      This is the full consultation tool running on invented data: a baseline and a mid-project review, with responses
-      collected online, by interview and in workshops. Nothing here is real, and nothing you enter is saved — click
-      anything.
+      This is the full consultation tool running on invented data: a baseline, a short interim check and a mid-project
+      review, with responses collected online, by interview and in workshops. Nothing here is real, and nothing you
+      enter is saved — click anything.
     </p>
     <p className="mt-3 text-body text-ink">
       It works in three levels. The tool is the software; a <strong>project</strong> is a piece of work with its own

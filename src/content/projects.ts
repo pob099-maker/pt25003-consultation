@@ -19,7 +19,7 @@ export interface PurposeTemplate {
   /** What choosing it costs or buys, said plainly. */
   readonly consequence: string;
   /** Which round stages this project can start. */
-  readonly stages: readonly ('baseline' | 'review')[];
+  readonly stages: readonly ('baseline' | 'interim' | 'review')[];
 }
 
 export const PURPOSES: readonly PurposeTemplate[] = [
@@ -29,7 +29,7 @@ export const PURPOSES: readonly PurposeTemplate[] = [
     what: 'Ask where things stand now, then ask the same questions again part-way through and at the end.',
     consequence:
       'Lets you say what changed and by how much. The repeat questions are fixed once the starting point takes its first response.',
-    stages: ['baseline', 'review'],
+    stages: ['baseline', 'interim', 'review'],
   },
   {
     id: 'one_off',

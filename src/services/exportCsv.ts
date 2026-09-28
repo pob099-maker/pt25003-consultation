@@ -1,6 +1,14 @@
 import { toCsv, type CsvRow } from '../lib/csv';
 import { sourceLabel } from './sources';
-import { allQuestions, interestLabel, optionLabel, questionById, regionLabel, roleLabel } from '../content/lookup';
+import {
+  OTHER_ROW,
+  allQuestions,
+  interestLabel,
+  optionLabel,
+  questionById,
+  regionLabel,
+  roleLabel,
+} from '../content/lookup';
 import type { ConsultationResponse, ContactRecord, Questionnaire } from '../types';
 import type { TagMap } from './tags';
 import { coveredEarlier, notesText } from './interviewNotes';
@@ -40,6 +48,7 @@ export const responseHeaders = (questionnaire: Questionnaire): readonly string[]
   for (const question of allQuestions(questionnaire)) {
     if (question.kind === 'rating') {
       for (const row of question.rows) headers.push(`${question.id}__${row.id}`);
+      if (question.allowOther === true) headers.push(`${question.id}__other`, `${question.id}__other_what`);
     } else if (question.kind === 'rank') {
       for (let index = 1; index <= question.count; index += 1) headers.push(`${question.id}__${index}`);
     } else {
@@ -85,6 +94,11 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
       for (const ratingRow of question.rows) {
         row[`${question.id}__${ratingRow.id}`] =
           answer !== undefined && answer.kind === 'rating' ? (answer.values[ratingRow.id] ?? '') : '';
+      }
+      if (question.allowOther === true) {
+        const rating = answer !== undefined && answer.kind === 'rating' ? answer : undefined;
+        row[`${question.id}__other`] = rating?.values[OTHER_ROW] ?? '';
+        row[`${question.id}__other_what`] = rating?.other ?? '';
       }
       continue;
     }

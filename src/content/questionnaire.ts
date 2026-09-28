@@ -43,6 +43,7 @@ const CONSTRAINTS = opts(
   ['monitoring', 'Crop monitoring and agronomy decisions'],
   ['irrigation', 'Irrigation operation and automation'],
   ['crop_protection', 'Crop protection operations'],
+  ['haulm', 'Haulm removal before harvest'],
   ['harvest', 'Harvesting'],
   ['harvest_logistics', 'In-field transport and harvest logistics'],
   ['receival', 'Receival'],
@@ -63,6 +64,8 @@ const CONSTRAINTS = opts(
  */
 const AREAS = opts(
   ['precision_planting', 'Precision planting and crop establishment'],
+  ['crop_protection', 'Spraying and weed control'],
+  ['haulm_removal', 'Haulm removal before harvest'],
   ['autonomy', 'Autonomous and self-steering field machinery', 'Machines that run with limited or no driver input.'],
   ['harvest_efficiency', 'Harvest efficiency and less damage'],
   ['harvest_logistics', 'Carting and harvest logistics'],
@@ -87,7 +90,8 @@ export const DOMAIN_TO_AREAS: Readonly<Record<string, readonly string[]>> = {
   planting: ['precision_planting', 'autonomy'],
   monitoring: ['sensors', 'interoperability'],
   irrigation: ['irrigation_automation', 'sensors'],
-  crop_protection: ['autonomy', 'sensors'],
+  crop_protection: ['crop_protection', 'autonomy', 'sensors'],
+  haulm: ['haulm_removal'],
   harvest: ['harvest_efficiency', 'autonomy'],
   harvest_logistics: ['harvest_logistics'],
   receival: ['packhouse_automation', 'optical_sorting'],
@@ -111,6 +115,21 @@ const TONNAGE = opts(
   ['5k_20k', '5,000 to 20,000 tonnes'],
   ['20k_50k', '20,000 to 50,000 tonnes'],
   ['over_50k', 'More than 50,000 tonnes'],
+  ['no_say', 'Prefer not to say'],
+);
+
+/**
+ * Labour use, which the Year 1 baseline is meant to record. Counted in people
+ * at the busiest time rather than in hours, because a headcount at peak is a
+ * number people actually know, and in bands because nobody knows it exactly.
+ * Read it against the tonnage band: a bigger business needs more people.
+ */
+const PEAK_LABOUR = opts(
+  ['none', 'None'],
+  ['1_5', '1 to 5'],
+  ['6_20', '6 to 20'],
+  ['21_50', '21 to 50'],
+  ['over_50', 'More than 50'],
   ['no_say', 'Prefer not to say'],
 );
 
@@ -140,6 +159,27 @@ const ADOPTION_SCALE: readonly ScalePoint[] = [
   { value: 4, label: 'Doing it on part of the operation' },
   { value: 5, label: 'Doing it across the operation' },
 ];
+
+/**
+ * Practices in the order of the potato year. Shared by the grower and the
+ * contractor lists so a technology reads the same in both, and the two can be
+ * set side by side.
+ */
+const PRACTICE = {
+  guidance: ['guidance', 'GPS guidance or autosteer'],
+  planting: ['precision_planting', 'Precision planting equipment'],
+  cropSensing: ['crop_sensing', 'Drones, satellite images or sensors to check the crop'],
+  irrigation: [
+    'irrigation_tech',
+    'Soil moisture sensors or automated irrigation',
+    'Including variable rate irrigation, which puts on more water where the paddock needs it.',
+  ],
+  spraying: ['ai_spraying', 'Camera-guided or AI spraying'],
+  haulm: ['haulm_alternative', 'Electric or mechanical haulm removal'],
+  harvest: ['harvest_tech', 'Harvester upgrades to cut damage or separate stones and clods'],
+  grading: ['optical_grading', 'Optical grading on farm'],
+  driverless: ['autonomy', 'Driverless or autonomous machines'],
+} as const;
 
 /**
  * Confidence, the middle of the chain between hearing about something and
@@ -222,6 +262,9 @@ const CORE: readonly Section[] = [
         guide: { open: 'I\'ll read out some areas the project could work on. Tell me how much each one matters to you, one to five.', probe: 'Of all of those, which would you put at the very top?' },
         tracking: true,
         kind: 'rating',
+        // A watch list: when the project takes on something new, a later round
+        // can add it as a row without moving the ratings of the others.
+        openRows: true,
         prompt: 'How much should the project prioritise each of these?',
         help: '1 is not a priority, 5 is a very high priority. Skip any you have no view on.',
         scale: PRIORITY_SCALE,
@@ -243,7 +286,9 @@ const CORE: readonly Section[] = [
       {
         id: 'q7_evidence',
         guide: { open: 'What would it take for you to actually try something new?', probe: 'Whose word would you take on it?' },
-        tracking: true,
+        // Full version only. It shapes the project at the starting point, and
+        // nobody expects the answer to move over three years, so it is not
+        // worth what it costs the short version.
         kind: 'multi',
         prompt: 'What would it take to convince you to try something new?',
         help: 'Tick as many as you like.',
@@ -265,7 +310,7 @@ const CORE: readonly Section[] = [
       {
         id: 'q_trial',
         guide: { open: 'Would you need to try it on part of the place before you committed?', probe: 'How big a trial would you need to see?' },
-        tracking: true,
+        // Full version only, for the same reason as the question above.
         kind: 'single',
         // Trialability — whether something can be tried on a small scale before
         // committing — is one of the strongest predictors of adoption in ADOPT,
@@ -318,9 +363,10 @@ const CORE: readonly Section[] = [
         },
         tracking: true,
         kind: 'rating',
-        // Draft for the team to refine. Four areas where the project's
-        // demonstrations, case studies and calculators should move people, so
-        // each row is something the project can plausibly change.
+        // Each row is something the project's demonstrations, case studies and
+        // calculators should move. The last three are the capability the RFP
+        // asks the project to build: operating, maintaining and integrating
+        // new technology.
         prompt: 'How confident do you feel about each of these?',
         help: 'Skip any that do not apply to you.',
         scale: CONFIDENCE_SCALE,
@@ -329,6 +375,8 @@ const CORE: readonly Section[] = [
           ['claims', 'Judging whether trial results or supplier claims would hold up on your place'],
           ['advice', 'Finding independent advice you trust on new machinery and technology'],
           ['setup', 'Getting new gear set up and running well in its first season'],
+          ['maintain', 'Keeping new gear serviced and fixing it when it plays up'],
+          ['integrate', 'Getting new gear to work with the machines and software you already run'],
         ),
       },
     ],
@@ -382,6 +430,18 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         options: TONNAGE,
       },
       {
+        id: 'farm_labour',
+        guide: { open: 'At your busiest time, how many extra people do you put on for the potatoes?' },
+        tracking: true,
+        kind: 'single',
+        // Labour use, which the Year 1 baseline is meant to record. The project
+        // is meant to cut labour or move it to more skilled work, and this is
+        // the number that shows whether reliance on seasonal staff falls.
+        prompt: 'At your busiest time of year, how many seasonal or casual people work on your potatoes?',
+        help: 'Not counting you or your permanent staff. A rough number is fine.',
+        options: PEAK_LABOUR,
+      },
+      {
         id: 'farm_pressure',
         guide: { open: 'Where does the pressure land on your place?', probe: 'Which of those costs you most?' },
         kind: 'multi',
@@ -412,26 +472,35 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'rating',
         labelEveryStep: true,
-        // Draft for the team to refine. The rows follow the technologies
-        // PT25003 has committed to trial (autonomous machines, precision
-        // planting, AI spraying, advanced harvesting and separation, optical
-        // grading), plus autosteer as the familiar baseline. It replaces the
-        // old tick list of what people had "put on, trialled or had a serious
-        // look at", which asked the same thing without a starting point. The
-        // items that list carried and this does not (section control, variable
-        // rate, soil moisture probes, irrigation automation, imagery, farm
-        // software) can come back as rows if the project will report on them.
+        openRows: true,
+        allowOther: true,
+        // The practice-change measure, in the order of the potato year. The
+        // rows cover the gaps the RFP names (crop monitoring, irrigation,
+        // disease control, harvest and post-harvest handling), the
+        // technologies the project set out to trial, and the kickoff
+        // workstreams: haulm removal, optical grading, the driverless tractor
+        // and variable rate irrigation. Harvest damage and separation are one
+        // row, as the project itself describes them. Autosteer stays as the
+        // familiar one, which also shows whether a later round reached the
+        // same kind of grower.
+        //
+        // A watch list, so the project can follow new technology as it turns
+        // up: a round can add a row or stop asking one without moving the
+        // other answers. What people write in "Something else" is where the
+        // next row usually comes from.
         prompt: 'Where are you at with each of these on your own operation?',
         help: 'Pick the step that fits each one. Leave any you have not come across.',
         scale: ADOPTION_SCALE,
         rows: opts(
-          ['guidance', 'GPS guidance or autosteer'],
-          ['precision_planting', 'Precision planting equipment'],
-          ['ai_spraying', 'Camera-guided or AI spraying'],
-          ['harvest_damage', 'Harvester set-up or sensing to cut damage'],
-          ['separation', 'Stone, clod and trash separation at harvest'],
-          ['optical_grading', 'Optical grading on farm'],
-          ['autonomy', 'Driverless or autonomous machines'],
+          PRACTICE.guidance,
+          PRACTICE.planting,
+          PRACTICE.cropSensing,
+          PRACTICE.irrigation,
+          PRACTICE.spraying,
+          PRACTICE.haulm,
+          PRACTICE.harvest,
+          PRACTICE.grading,
+          PRACTICE.driverless,
         ),
       },
       {
@@ -518,23 +587,38 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         options: TONNAGE,
       },
       {
+        id: 'con_labour',
+        guide: { open: 'At your busiest time, how many extra people do you put on?' },
+        tracking: true,
+        kind: 'single',
+        prompt: 'At your busiest time of year, how many seasonal or casual people do you put on for potato work?',
+        help: 'Not counting you or your permanent staff. A rough number is fine.',
+        options: PEAK_LABOUR,
+      },
+      {
         id: 'con_practices',
         guide: { open: 'For each of these, where are you at in your own fleet?' },
         tracking: true,
         kind: 'rating',
         labelEveryStep: true,
-        // Draft for the team to refine. Contractors run a good share of the
-        // machinery the project cares about, and until now nothing asked them
-        // what they run.
+        openRows: true,
+        allowOther: true,
+        // Contractors run a good share of the machinery the project cares
+        // about: planting, spraying, haulm removal and harvest are often
+        // theirs, and new gear is often on a contractor's rig before it is on
+        // anybody's farm. A watch list, like the grower one.
         prompt: 'Where are you at with each of these across your own gear?',
         help: 'Pick the step that fits each one. Leave any you have not come across.',
         scale: ADOPTION_SCALE,
         rows: opts(
-          ['guidance', 'GPS guidance or autosteer'],
-          ['harvest_damage', 'Harvester set-up or sensing to cut damage'],
+          PRACTICE.guidance,
+          PRACTICE.planting,
+          PRACTICE.spraying,
+          PRACTICE.haulm,
+          PRACTICE.harvest,
           ['telemetry', 'Machine telemetry or remote diagnostics'],
           ['logistics', 'Load tracking and logistics coordination'],
-          ['autonomy', 'Driverless or autonomous machines'],
+          PRACTICE.driverless,
         ),
       },
       {
@@ -669,6 +753,15 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         options: TONNAGE,
       },
       {
+        id: 'pro_labour',
+        guide: { open: 'At your busiest time, how many extra people do you put on in the shed?' },
+        tracking: true,
+        kind: 'single',
+        prompt: 'At your busiest time of year, how many seasonal or casual people work in your shed?',
+        help: 'Not counting permanent staff. A rough number is fine.',
+        options: PEAK_LABOUR,
+      },
+      {
         id: 'pro_constraints',
         guide: { open: 'Walk me through the shed. Where does it slow down or go wrong?', probe: 'Where do you lose the most time?' },
         kind: 'multi',
@@ -714,13 +807,16 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'rating',
         labelEveryStep: true,
-        // Draft for the team to refine: the packhouse end of the technologies
-        // PT25003 will trial. Replaces the old tick list of what the shed had
-        // "put in, trialled or had a serious look at", which had no stages.
+        openRows: true,
+        allowOther: true,
+        // The packhouse end of post-harvest handling, which the RFP names as a
+        // gap, from the weighbridge to the pallet. A watch list, like the
+        // grower one.
         prompt: 'Where are you at with each of these in your operation?',
         help: 'Pick the step that fits each one. Leave any you have not come across.',
         scale: ADOPTION_SCALE,
         rows: opts(
+          ['receival_automation', 'Automated receival, tipping or box handling'],
           ['optical_size', 'Optical sizing and shape grading'],
           ['optical_defect', 'Optical defect detection'],
           ['internal_quality', 'Internal quality sensing', 'X-ray, near infrared, or similar.'],
@@ -1136,7 +1232,7 @@ const FOLLOW_UP: readonly Section[] = [
   {
     id: 'follow_up',
     title: 'Since we last asked',
-    intro: 'Two quick questions about what has happened since the project started.',
+    intro: 'A few quick questions about what has happened since the project started.',
     questions: [
       {
         id: 'fu_seen',
@@ -1202,6 +1298,27 @@ const FOLLOW_UP: readonly Section[] = [
           ['no', 'No, not without the project'],
           ['not_sure', 'Not sure'],
           ['nothing_changed', 'Nothing has changed yet'],
+        ),
+      },
+      {
+        id: 'fu_labour',
+        guide: {
+          open: 'Has any new gear changed the labour side of things for you?',
+          probe: 'Which job did that happen in?',
+        },
+        tracking: true,
+        kind: 'single',
+        // The labour outcome the RFP asks for, in its two forms: fewer people
+        // needed, or the same people moved to more skilled work. Reviews only,
+        // since at the starting point nothing has happened yet.
+        prompt: 'Since the project started, has new gear or technology changed the labour in your business?',
+        options: opts(
+          ['fewer', 'We need fewer people for some jobs'],
+          ['redeployed', 'The same people are doing different, more skilled work'],
+          ['both', 'Both of those'],
+          ['more', 'We need more people'],
+          ['no_change', 'No change yet'],
+          ['not_applicable', 'Does not apply to my work'],
         ),
       },
       {

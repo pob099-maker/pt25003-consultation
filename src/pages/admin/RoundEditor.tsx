@@ -7,17 +7,25 @@ import { card, primaryButton, secondaryButton, textInput } from '../../component
 import { allQuestions, allSections } from '../../content/lookup';
 import { libraryIds, libraryQuestion } from '../../content/library';
 import {
+  isWatchList,
   loadActiveRound,
   loadAllRounds,
+  nextRoundOverrides,
   saveRound,
   type QuestionOverride,
   type RoundConfig,
 } from '../../services/rounds';
+import { LINK_CODE_ID } from '../../services/linkCode';
+import { WatchListRows } from './WatchListRows';
 import type { RoundStage } from '../../types';
 import { COLLECTION, ROLE_HELP, ROLE_LABEL, planSentence } from '../../content/vocabulary';
 
 /** What a consultation is, structurally. The project gives it its own name. */
-const ROLES: readonly RoundStage[] = ['pilot', 'baseline', 'review'];
+const ROLES: readonly RoundStage[] = ['pilot', 'baseline', 'interim', 'review'];
+
+/** What the team is told about a watch list, next to its lines. */
+const WATCH_LIST_NOTE =
+  'The question and every line already asked stay word for word, so the starting point still compares with each follow-up. You can add a line for something new, or stop asking one, without upsetting the rest, because each line is answered on its own. A new line is compared from the round it was first asked in, and a line you stop keeps everything already collected.';
 
 const emptyRound = (): RoundConfig => ({
   roundId: currentProject().questionnaire.roundId,
@@ -133,19 +141,33 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
   /** Presets, so nobody has to invent a name. Every one of them can be typed over. */
   const startNew = (stage: RoundStage, name: string): void => {
     const suffix = new Date().toISOString().slice(0, 10);
+    // Every round so far, this one as it stands on screen, in the order they
+    // were made. A new round carries on from the last full one, plus anything
+    // an interim added; what an interim left out is never carried on.
+    const sofar = history.some((entry) => entry.roundId === round.roundId)
+      ? history.map((entry) => (entry.roundId === round.roundId ? round : entry))
+      : [...history, round];
     setRound({
       roundId: `${suffix}-${stage}`,
       label: name,
       stage,
       isActive: true,
-      overrides: round.overrides,
+      overrides: nextRoundOverrides(sofar),
     });
     setStatus(
-      `"${name}" is ready to start. Everything already collected keeps the ${COLLECTION.one} it was given in and is untouched. Save to begin.`,
+      `"${name}" is ready to start. Everything already collected keeps the ${COLLECTION.one} it was given in and is untouched.${
+        stage === 'interim'
+          ? ' Tick below what it should ask, usually just the lines the project has taken on. Everything else is left out of this one only.'
+          : ''
+      } Save to begin.`,
     );
   };
 
   const purpose = purposeTemplate(currentProject().purpose);
+  // An interim check only makes sense for a project that measures change.
+  const stages = ROLES.filter(
+    (role) => role !== 'interim' || purpose.stages.includes('interim') || round.stage === 'interim',
+  );
 
   return (
     <div className="mt-6 grid gap-5">
@@ -214,8 +236,8 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
         </div>
         <fieldset className="mt-4">
           <legend className="mb-1 text-meta font-semibold text-ink-soft">What this one is</legend>
-          <div className="grid gap-2 sm:grid-cols-3">
-            {ROLES.map((role) => (
+          <div className={`grid gap-2 ${stages.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3'}`}>
+            {stages.map((role) => (
               <label
                 key={role}
                 className={`flex cursor-pointer gap-2 rounded-lg border p-3 ${
@@ -256,6 +278,11 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
               </button>
             </>
           )}
+          {purpose.stages.includes('interim') && (
+            <button type="button" className={secondaryButton} onClick={() => startNew('interim', 'Interim check')}>
+              Start an interim check
+            </button>
+          )}
         </div>
         <p className="mt-3 text-meta text-ink-soft">
           <strong className="text-ink">{purpose.label}:</strong> {purpose.what}
@@ -277,6 +304,9 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
           <div className="mt-3 grid gap-5">
             {section.questions.map((question) => {
               const override = round.overrides[question.id] ?? {};
+              const watchList = isWatchList(question);
+              const interim = round.stage === 'interim';
+              const alwaysAsked = question.id === LINK_CODE_ID;
               const options =
                 question.kind === 'multi' || question.kind === 'single'
                   ? question.options
@@ -291,11 +321,25 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
                     {question.id}
                     {question.tracking === true && (
                       <span className="ml-2 rounded-full border border-accent px-2 py-0.5 text-eyebrow uppercase text-ink-soft">
-                        Tracked · locked
+                        {watchList ? 'Tracked · you can add to this list' : 'Tracked · locked'}
                       </span>
                     )}
                   </p>
-                  {question.tracking !== true && (
+                  {interim && (
+                    <label className="mt-1 flex items-center gap-2 text-meta font-semibold text-ink">
+                      <input
+                        type="checkbox"
+                        className="size-4 accent-primary"
+                        checked={alwaysAsked || override.inInterim === true}
+                        disabled={alwaysAsked}
+                        onChange={(event) => setOverride(question.id, { inInterim: event.target.checked })}
+                      />
+                      {alwaysAsked
+                        ? 'Always asked in an interim check, so the answers can be linked to the same people later'
+                        : 'Ask in this interim check'}
+                    </label>
+                  )}
+                  {!interim && question.tracking !== true && (
                     <label className="mt-1 flex items-center gap-2 text-meta text-ink-soft">
                       <input
                         type="checkbox"
@@ -308,8 +352,9 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
                   )}
                   {question.tracking === true && (
                     <p className="mt-1 text-meta text-ink-soft">
-                      Asked word for word in every round so the baseline can be compared with each review. Changing it —
-                      even adding an option — would break that comparison, so it cannot be edited here.
+                      {watchList
+                        ? WATCH_LIST_NOTE
+                        : 'Asked word for word in every round so the baseline can be compared with each review. Changing it — even adding an option — would break that comparison, so it cannot be edited here.'}
                     </p>
                   )}
                   <label
@@ -339,7 +384,17 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
                     disabled={question.tracking === true}
                     onChange={(event) => setOverride(question.id, { help: event.target.value })}
                   />
-                  {options.length > 0 && (
+                  {watchList && (
+                    <WatchListRows
+                      question={question}
+                      override={override}
+                      history={history}
+                      current={round}
+                      responses={responses}
+                      onChange={(patch) => setOverride(question.id, patch)}
+                    />
+                  )}
+                  {!watchList && options.length > 0 && (
                     <details className="mt-3">
                       <summary className="cursor-pointer text-meta font-semibold text-primary-ink">
                         Answer options ({options.length})

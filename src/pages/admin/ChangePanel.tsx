@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { accentPanel, card } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { roleLabel } from '../../content/lookup';
-import { compareRounds, THIN, type RoundInfo } from '../../services/change';
-import { ROLE_LABEL } from '../../content/vocabulary';
+import { compareRounds, THIN, type ChangeRow, type RoundColumn, type RoundInfo } from '../../services/change';
+import { COLLECTION, ROLE_LABEL } from '../../content/vocabulary';
 import { loadAllRounds } from '../../services/rounds';
 import { SlopeChart } from '../../components/SlopeChart';
 import { DownloadChartButton } from '../../components/DownloadChartButton';
@@ -26,6 +26,24 @@ const formatValue = (value: number | null, measure: 'share' | 'mean'): string =>
   return measure === 'share' ? `${Math.round(value * 100)}%` : value.toFixed(1);
 };
 
+/**
+ * What a reader needs to know about a row that was not asked every time: where
+ * its comparison starts, and when it stopped being asked. Nothing for a row
+ * asked in every round.
+ */
+const rowHistory = (row: ChangeRow, columns: readonly RoundColumn[]): string | null => {
+  const notes: string[] = [];
+  const first = row.from === null ? undefined : columns[row.from];
+  if (first !== undefined && first.stage !== 'baseline') notes.push(`First asked in ${first.label}`);
+  const lastAsked = row.asked.lastIndexOf(true);
+  const lastAskedColumn = columns[lastAsked];
+  if (lastAsked >= 0 && lastAsked < columns.length - 1 && lastAskedColumn !== undefined)
+    notes.push(`not asked after ${lastAskedColumn.label}`);
+  if (notes.length === 0) return null;
+  const sentence = notes.join(', ');
+  return `${sentence.charAt(0).toUpperCase()}${sentence.slice(1)}.`;
+};
+
 const formatChange = (value: number | null, measure: 'share' | 'mean'): string => {
   if (value === null) return '';
   if (value === 0) return 'no change';
@@ -40,6 +58,9 @@ const formatChange = (value: number | null, measure: 'share' | 'mean'): string =
  */
 export const ChangePanel = ({ responses }: { responses: readonly ConsultationResponse[] }) => {
   const questionnaire = useQuestionnaire();
+  // Each round's own additions and stopped rows are applied to the questions
+  // every round starts from, so the comparison knows what each one asked.
+  const base = currentProject().questionnaire;
   const [rounds, setRounds] = useState<readonly RoundInfo[]>([]);
 
   useEffect(() => {
@@ -62,11 +83,11 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
   const comparison = useMemo(
     () =>
       compareRounds(
-        questionnaire,
+        base,
         responses.filter((response) => !response.isTestData),
         rounds,
       ),
-    [questionnaire, responses, rounds],
+    [base, responses, rounds],
   );
 
   const { columns } = comparison;
@@ -88,6 +109,10 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
           not the same people over time. Check <strong>who answered</strong> below before reading a change as a change
           of mind: a different mix of respondents moves the numbers too. Figures from fewer than {THIN} people are
           greyed.
+        </p>
+        <p className="mt-2 text-meta text-ink-soft">
+          Something added part-way through is compared from the {COLLECTION.one} that first asked it, and says so. An
+          interim check can be where something starts, but it never moves a starting point that already exists.
         </p>
       </section>
 
@@ -200,7 +225,9 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
                       {columns.map((column, index) => (
                         <th key={column.roundId} scope="col" className="py-2 pl-3 text-right">
                           {STAGE_LABEL[column.stage]}
-                          <span className="block font-normal">n = {block.answered[index] ?? 0}</span>
+                          <span className="block font-normal">
+                            {block.asked[index] === true ? `n = ${block.answered[index] ?? 0}` : 'not asked'}
+                          </span>
                         </th>
                       ))}
                       {comparison.hasBaseline && comparison.hasReview && (
@@ -211,29 +238,40 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
                     </tr>
                   </thead>
                   <tbody>
-                    {block.rows.map((row) => (
-                      <tr key={row.id} className="border-b border-line last:border-0">
-                        <th scope="row" className="py-2 pr-3 text-left font-normal">
-                          {row.label}
-                        </th>
-                        {row.values.map((value, index) => {
-                          const thin = (block.answered[index] ?? 0) < THIN;
-                          return (
-                            <td
-                              key={columns[index]?.roundId}
-                              className={`py-2 pl-3 text-right ${thin ? 'text-ink-faint' : ''}`}
-                            >
-                              {formatValue(value, block.measure)}
+                    {block.rows.map((row) => {
+                      const history = rowHistory(row, columns);
+                      return (
+                        <tr key={row.id} className="border-b border-line last:border-0">
+                          <th scope="row" className="py-2 pr-3 text-left font-normal">
+                            {row.label}
+                            {history !== null && <span className="block text-meta text-ink-soft">{history}</span>}
+                          </th>
+                          {row.values.map((value, index) => {
+                            if (row.asked[index] !== true) {
+                              return (
+                                <td key={columns[index]?.roundId} className="py-2 pl-3 text-right text-meta text-ink-faint">
+                                  not asked
+                                </td>
+                              );
+                            }
+                            const thin = (block.answered[index] ?? 0) < THIN;
+                            return (
+                              <td
+                                key={columns[index]?.roundId}
+                                className={`py-2 pl-3 text-right ${thin ? 'text-ink-faint' : ''}`}
+                              >
+                                {formatValue(value, block.measure)}
+                              </td>
+                            );
+                          })}
+                          {comparison.hasBaseline && comparison.hasReview && (
+                            <td className="py-2 pl-3 text-right font-semibold">
+                              {formatChange(row.change, block.measure)}
                             </td>
-                          );
-                        })}
-                        {comparison.hasBaseline && comparison.hasReview && (
-                          <td className="py-2 pl-3 text-right font-semibold">
-                            {formatChange(row.change, block.measure)}
-                          </td>
-                        )}
-                      </tr>
-                    ))}
+                          )}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </details>

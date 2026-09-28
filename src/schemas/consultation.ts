@@ -18,7 +18,11 @@ const answerSchema = z.discriminatedUnion('kind', [
   }),
   z.object({ kind: z.literal('single'), value: z.string().min(1).max(120) }),
   z.object({ kind: z.literal('text'), value: z.string().max(4000) }),
-  z.object({ kind: z.literal('rating'), values: z.record(z.string(), z.number().int().min(1).max(5)) }),
+  z.object({
+    kind: z.literal('rating'),
+    values: z.record(z.string(), z.number().int().min(1).max(5)),
+    other: z.string().max(500).optional(),
+  }),
   z.object({ kind: z.literal('rank'), values: z.array(z.string()).max(5) }),
 ]);
 

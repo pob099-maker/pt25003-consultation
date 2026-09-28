@@ -51,9 +51,13 @@ interface QuestionBase {
  * Where a round sits in the evaluation.
  * - pilot: internal testing; never compared with anything
  * - baseline: the starting point every later round is measured against
+ * - interim: a short check between the full rounds, after the project's focus
+ *   shifts. It asks only what the team picks, usually rows the project has just
+ *   taken on, and is the starting point for anything first asked in it. It
+ *   never resets a starting point something already has.
  * - review: a later round, which also asks what people saw and changed
  */
-export type RoundStage = 'pilot' | 'baseline' | 'review';
+export type RoundStage = 'pilot' | 'baseline' | 'interim' | 'review';
 
 export type Question =
   | (QuestionBase & { readonly kind: 'multi'; readonly options: readonly Option[]; readonly allowOther?: boolean })
@@ -80,6 +84,21 @@ export type Question =
        * where nobody can pick 3 without knowing what 3 means.
        */
       readonly labelEveryStep?: boolean;
+      /**
+       * A watch list. A later round may add a row, or stop asking one, and
+       * nothing else: the prompt, the scale and every row already asked stay
+       * word for word. That is safe here and nowhere else, because each row is
+       * rated on its own, so a new row does not move the answers to the
+       * others. In a tick list it would, which is why those stay locked. A row
+       * is compared from the round it was first asked in.
+       */
+      readonly openRows?: boolean;
+      /**
+       * A last row the respondent names for themselves, for whatever the list
+       * missed. Never compared across rounds, since each person's is a
+       * different thing, but it is where new technology shows up first.
+       */
+      readonly allowOther?: boolean;
     })
   | (QuestionBase & {
       readonly kind: 'rank';
@@ -143,7 +162,12 @@ export type Answer =
     }
   | { readonly kind: 'single'; readonly value: string }
   | { readonly kind: 'text'; readonly value: string }
-  | { readonly kind: 'rating'; readonly values: Readonly<Record<string, number>> }
+  | {
+      readonly kind: 'rating';
+      readonly values: Readonly<Record<string, number>>;
+      /** What somebody wrote for the row they named themselves. Its step is `values.other`. */
+      readonly other?: string;
+    }
   | { readonly kind: 'rank'; readonly values: readonly string[] };
 
 export type AnswerMap = Readonly<Record<string, Answer>>;

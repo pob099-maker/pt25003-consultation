@@ -60,7 +60,7 @@ const SPECS: readonly SeedSpec[] = [
     pathwayAnswers: {
       farm_scale: { kind: 'single', value: '5k_20k' },
       farm_pressure: { kind: 'multi', values: ['harvest', 'carting', 'staffing'], other: '' },
-      farm_practices: { kind: 'rating', values: { guidance: 5, harvest_damage: 4, precision_planting: 2 } },
+      farm_practices: { kind: 'rating', values: { guidance: 5, harvest_tech: 4, precision_planting: 2 } },
       farm_outcome: { kind: 'single', value: 'refine' },
       farm_barriers: { kind: 'multi', values: ['capital', 'roi', 'service'], other: '' },
       farm_measures: { kind: 'multi', values: ['labour_hours', 'packout', 'damage', 'timeliness'], other: '' },
