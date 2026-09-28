@@ -13,6 +13,7 @@ import { useConsultation } from '../hooks/useConsultation';
 import type { ContactFormValues } from '../schemas/consultation';
 import { submitContact, submitResponse } from '../services/submit';
 import { LENGTH_ID, lengthAnswer, shortVersion } from '../services/formLength';
+import { arrivalSource, forgetArrival } from '../services/sources';
 import { accentPanel } from '../components/ui';
 import type { ConsultationResponse, ContactRecord } from '../types';
 
@@ -84,6 +85,7 @@ export const Consultation = () => {
     setSubmitting(true);
     setSubmitError(null);
     const now = new Date();
+    const arrival = arrivalSource(now);
     const response: ConsultationResponse = {
       id: crypto.randomUUID(),
       roundId: questionnaire.roundId,
@@ -100,6 +102,7 @@ export const Consultation = () => {
       collectedBy: null,
       consentVerbal: null,
       sessionId: null,
+      source: arrival,
     };
 
     const saved = await submitResponse(response);
@@ -126,6 +129,7 @@ export const Consultation = () => {
         comments: contact.comments,
         submittedAt: now.toISOString(),
         isTestData: false,
+        source: arrival,
       };
       const savedContact = await submitContact(record);
       if (!savedContact.success) {
@@ -138,6 +142,9 @@ export const Consultation = () => {
 
     state.ping(steps.length - 1, true);
 
+    // The next person on the same phone starts clean. The response already
+    // carries its label, queued or sent.
+    forgetArrival();
     state.reset();
     navigate('/thank-you', {
       replace: true,

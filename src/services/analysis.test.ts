@@ -23,6 +23,7 @@ const bare = (answers: ConsultationResponse['answers']): ConsultationResponse =>
   collectedBy: null,
   consentVerbal: null,
   sessionId: null,
+  source: null,
 });
 
 describe('rankConstraints', () => {

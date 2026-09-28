@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { accentPanel, primaryButton, secondaryButton } from '../components/ui';
 import { config } from '../lib/config';
+import { SHARED_SOURCE, linkFor } from '../services/sources';
 
 interface ThankYouState {
   readonly queued?: boolean;
@@ -16,7 +17,9 @@ export const ThankYou = () => {
   const [shareNote, setShareNote] = useState<string | null>(null);
 
   const share = async (): Promise<void> => {
-    const url = `${window.location.origin}/`;
+    // Labelled, so an answer from somebody this person told is counted as
+    // passed on. It says how they heard, never who told them.
+    const url = linkFor(window.location.origin, SHARED_SOURCE);
     const shareData = { title: `${currentProject().name} Consultation`, url };
     if (typeof navigator.share === 'function') {
       try {

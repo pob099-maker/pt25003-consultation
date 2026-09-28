@@ -263,9 +263,19 @@ const build = (questionnaire: Questionnaire, roundId: string, count: number, see
       collectedBy: method.startsWith('interview_') ? DEMO_STAFF : null,
       consentVerbal: method.startsWith('interview_') ? true : null,
       sessionId: method === 'workshop' ? DEMO_WORKSHOP : null,
+      source: method === 'online' ? (DEMO_ROUTES[index % DEMO_ROUTES.length] ?? null) : null,
     };
   });
 };
+
+/**
+ * How the demonstration's online answers arrived, cycled by index. Weighted
+ * the way a real launch tends to go: the magazine and the bulletin carry most
+ * of it, a fair share is passed on, and some people type the address.
+ */
+const DEMO_ROUTES: readonly (string | null)[] = [
+  'mag22', 'bulletin', 'mag22', 'shared', 'direct', 'mag22', 'bulletin', null, 'shared', 'mag22',
+];
 
 /** A baseline of 45 and a review of 38, newest first. */
 export const demoResponses = (questionnaire: Questionnaire): readonly ConsultationResponse[] =>

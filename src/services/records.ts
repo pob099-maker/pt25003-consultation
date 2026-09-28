@@ -23,6 +23,8 @@ export interface ResponseRow {
   collected_by: string | null;
   consent_verbal: boolean | null;
   session_id: string | null;
+  /** Left out entirely when there is none, so a database a migration behind still takes the row. */
+  source?: string | null;
 }
 
 export interface ContactRow {
@@ -41,6 +43,7 @@ export interface ContactRow {
   comments: string;
   submitted_at: string;
   is_test_data: boolean;
+  source?: string | null;
 }
 
 export const toResponseRow = (response: ConsultationResponse): ResponseRow => ({
@@ -60,6 +63,7 @@ export const toResponseRow = (response: ConsultationResponse): ResponseRow => ({
   collected_by: response.collectedBy,
   consent_verbal: response.consentVerbal,
   session_id: response.sessionId,
+  ...(response.source === null ? {} : { source: response.source }),
 });
 
 export const fromResponseRow = (row: ResponseRow): ConsultationResponse => ({
@@ -80,6 +84,7 @@ export const fromResponseRow = (row: ResponseRow): ConsultationResponse => ({
   collectedBy: row.collected_by ?? null,
   consentVerbal: row.consent_verbal ?? null,
   sessionId: row.session_id ?? null,
+  source: row.source ?? null,
 });
 
 export const toContactRow = (contact: ContactRecord): ContactRow => ({
@@ -98,6 +103,7 @@ export const toContactRow = (contact: ContactRecord): ContactRow => ({
   comments: contact.comments,
   submitted_at: contact.submittedAt,
   is_test_data: contact.isTestData,
+  ...(contact.source === null ? {} : { source: contact.source }),
 });
 
 export const fromContactRow = (row: ContactRow): ContactRecord => ({
@@ -115,4 +121,5 @@ export const fromContactRow = (row: ContactRow): ContactRecord => ({
   comments: row.comments ?? '',
   submittedAt: row.submitted_at,
   isTestData: row.is_test_data ?? false,
+  source: row.source ?? null,
 });

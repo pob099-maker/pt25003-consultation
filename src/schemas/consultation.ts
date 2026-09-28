@@ -37,6 +37,7 @@ export const consultationResponseSchema = z.object({
   collectedBy: z.string().uuid().nullable(),
   consentVerbal: z.boolean().nullable(),
   sessionId: z.string().uuid().nullable(),
+  source: z.string().max(40).nullable(),
 })
   // An interview needs a spoken consent and a named interviewer. The database
   // checks this too; checking here as well gives the interviewer a readable
@@ -76,6 +77,7 @@ export const contactRecordSchema = z
     comments: z.string().max(2000),
     submittedAt: z.string().datetime(),
     isTestData: z.boolean(),
+    source: z.string().max(40).nullable(),
   })
   .refine((record) => record.email.trim().length > 0 || record.phone.trim().length > 0, {
     message: 'Please give an email address or a phone number so we can reach you.',

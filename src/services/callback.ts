@@ -69,6 +69,7 @@ export const toCallbackRecord = (
   values: CallbackRequestValues,
   roundId: string,
   now: Date = new Date(),
+  source: string | null = null,
 ): ContactRecord => ({
   id: crypto.randomUUID(),
   roundId,
@@ -84,4 +85,5 @@ export const toCallbackRecord = (
   comments: values.note,
   submittedAt: now.toISOString(),
   isTestData: false,
+  source,
 });

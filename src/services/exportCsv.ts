@@ -1,4 +1,5 @@
 import { toCsv, type CsvRow } from '../lib/csv';
+import { sourceLabel } from './sources';
 import { allQuestions, interestLabel, optionLabel, questionById, regionLabel, roleLabel } from '../content/lookup';
 import type { ConsultationResponse, ContactRecord, Questionnaire } from '../types';
 import type { TagMap } from './tags';
@@ -15,6 +16,8 @@ const RESPONSE_FIXED = [
   'regions',
   'region_other',
   'method',
+  'link',
+  'link_label',
   'test_data',
   'prompted_items',
   'short_or_full',
@@ -58,6 +61,8 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
     regions: join(response.regions.map((id) => regionLabel(questionnaire, id))),
     region_other: response.regionOther,
     method: METHOD_LABEL[response.method],
+    link: response.source ?? '',
+    link_label: response.method === 'online' ? sourceLabel(response.source) : '',
     test_data: response.isTestData ? 'yes' : 'no',
     // One column rather than one per question: an interview marks a handful of
     // items as prompted, and forty mostly-empty columns help nobody.
@@ -126,6 +131,7 @@ const CONTACT_HEADERS = [
   'preferred_contact_time',
   'interests',
   'comments',
+  'link',
   'test_data',
 ] as const;
 
@@ -146,6 +152,7 @@ export const contactsCsv = (questionnaire: Questionnaire, contacts: readonly Con
       preferred_contact_time: contact.preferredContactTime,
       interests: join(contact.interests.map((id) => interestLabel(questionnaire, id))),
       comments: contact.comments,
+      link: contact.source ?? '',
       test_data: contact.isTestData ? 'yes' : 'no',
     })),
   );

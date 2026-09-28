@@ -36,6 +36,7 @@ const interview = (answers: AnswerMap): ConsultationResponse => ({
   collectedBy: '22222222-2222-4222-8222-222222222222',
   consentVerbal: true,
   sessionId: null,
+  source: null,
 });
 
 describe('interview notes', () => {

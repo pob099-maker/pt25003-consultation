@@ -156,6 +156,12 @@ export interface ConsultationResponse {
   readonly consentVerbal: boolean | null;
   /** The live session a workshop answer came from. */
   readonly sessionId: string | null;
+  /**
+   * The labelled link it came in by, such as the magazine or a newsletter, from
+   * the fixed list in services/sources.ts. A channel, never a person, and null
+   * for anything that did not arrive by a labelled link.
+   */
+  readonly source: string | null;
 }
 
 /**
@@ -178,6 +184,8 @@ export interface ContactRecord {
   readonly comments: string;
   readonly submittedAt: string;
   readonly isTestData: boolean;
+  /** The labelled link it came in by, as for a response. */
+  readonly source: string | null;
 }
 
 export type Result<T> = { readonly success: true; readonly data: T } | { readonly success: false; readonly error: string };

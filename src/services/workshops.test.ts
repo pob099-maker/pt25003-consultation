@@ -126,6 +126,7 @@ describe('answersFromVotes', () => {
       collectedBy: null,
       consentVerbal: null,
       sessionId: '33333333-3333-4333-8333-333333333333',
+      source: null,
     };
     expect(consultationResponseSchema.safeParse(response).success).toBe(true);
     expect(consultationResponseSchema.safeParse({ ...response, sessionId: null }).success).toBe(false);

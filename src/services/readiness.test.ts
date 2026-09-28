@@ -118,6 +118,7 @@ describe('readinessChecks', () => {
     collectedBy: null,
     consentVerbal: null,
     sessionId: null,
+    source: null,
     ...over,
   });
 

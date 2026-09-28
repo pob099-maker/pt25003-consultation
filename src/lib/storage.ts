@@ -62,4 +62,6 @@ export const STORAGE_KEYS = {
   demoGroups: `${PREFIX}.demo-groups.v1`,
   demoWorkshops: `${PREFIX}.demo-workshops.v1`,
   workshopParticipant: `${PREFIX}.workshop`,
+  /** The labelled link this browser arrived by: a channel, never a person. */
+  arrival: `${PREFIX}.arrival.v1`,
 } as const;

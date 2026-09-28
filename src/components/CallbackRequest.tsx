@@ -5,6 +5,7 @@ import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { callbackRequestSchema, type CallbackRequestValues } from '../schemas/consultation';
 import { CALL_TIMES, callTimeSummary, nextTimes, toCallbackRecord } from '../services/callback';
 import { submitContact } from '../services/submit';
+import { arrivalSource } from '../services/sources';
 import { config, contactNames, isDemoSite } from '../lib/config';
 import { choiceRow, choiceRowSelected, primaryButton, secondaryButton, textInput } from './ui';
 
@@ -63,7 +64,8 @@ export const CallbackRequest = () => {
       setSent({ name: values.name, phone: values.phone, times: values.times, queued: false, demo: true });
       return;
     }
-    const result = await submitContact(toCallbackRecord(values, questionnaire.roundId));
+    const now = new Date();
+    const result = await submitContact(toCallbackRecord(values, questionnaire.roundId, now, arrivalSource(now)));
     if (!result.success) {
       setFailed(result.error);
       return;

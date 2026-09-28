@@ -308,6 +308,35 @@ deliberately pessimistic — a form that beats its estimate costs nobody anythin
 The line above the checks names the project's **purpose** (baseline/mid/final, one-off
 consultation, or feedback after each event), which decides which rounds can be started.
 
+## Where responses came from
+
+Every link we put out carries a short label, and the **How people came in** card on the Priorities
+tab counts answers by it. It follows every filter, so it can be read per round, per role or per
+region, and the responses and contacts exports carry the label in a `link` column.
+
+| Where the link goes | The link |
+| --- | --- |
+| PotatoLink magazine, issue 22 | `https://consultation.agaims.com.au/?src=mag22` |
+| PotatoLink bulletin | `https://consultation.agaims.com.au/?src=bulletin` |
+| Sent direct to a grower, by email, text or Teams | `https://consultation.agaims.com.au/?src=direct` |
+| Passed on by somebody who took part | added automatically by the thank-you page's invite button |
+
+The card also lists these under **Links to use**, ready to copy.
+
+One link per channel, never one per person. The site accepts only the labels on that list and files
+anything else as a link it does not recognise, so a link made for one grower can never attach a
+name to somebody's anonymous answers. That is the promise the privacy statement makes, and it holds
+because of the fixed list rather than because everybody remembers.
+
+A person keeps the label of the first link they arrived by for thirty days, so somebody who opens
+the magazine link, puts it down and comes back by typing the address is still counted as the
+magazine. Interviews and workshops never had a link; the card counts them by how they were
+collected, so the picture is whole.
+
+To add a channel, for the next issue or a new newsletter, add a line to `SOURCES` in
+`src/services/sources.ts` and deploy. A printed code cannot be changed after the fact, so add the
+label before the magazine goes to print, not after.
+
 ## The questions as a document
 
 **Question wording → open the printable question paper** (or `/#/questions`) lays the whole

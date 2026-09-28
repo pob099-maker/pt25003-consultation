@@ -230,6 +230,8 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
       collectedBy: staffId,
       consentVerbal: true,
       sessionId: null,
+      // An interview never came in by a link; the method says how it did.
+      source: null,
     };
     const result = await submitResponse(response);
     if (!result.success) {
@@ -254,6 +256,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
         comments: contact.comments,
         submittedAt: now.toISOString(),
         isTestData: false,
+        source: null,
       };
       const contactResult = await submitContact(record);
       if (!contactResult.success) {

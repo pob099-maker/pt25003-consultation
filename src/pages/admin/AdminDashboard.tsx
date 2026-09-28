@@ -21,6 +21,7 @@ import {
   unpromptedCounts,
 } from '../../services/analysis';
 import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL, isCallbackRequest } from '../../services/callback';
+import { SOURCES, linkFor, tallyRoutes } from '../../services/sources';
 import { THEME_TAGS, saveTags, tagKey } from '../../services/tags';
 import { summariseProgress } from '../../services/progress';
 import { useAdminData } from './useAdminData';
@@ -167,6 +168,10 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       .map(([id, count]) => ({ id, label: interestLabel(questionnaire, id), count }))
       .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
   }, [contacts, questionnaire]);
+
+  // How the answers arrived, for knowing where the next project should put
+  // its effort. Follows every filter above, so it can be read per round.
+  const routes = useMemo(() => tallyRoutes(filtered), [filtered]);
 
   // Where people stop. Built from the progress table, which holds how far a
   // session got and nothing that was said in it.
@@ -547,6 +552,65 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {filtered.length > 0 && (
+            <section className={card} aria-labelledby="routes">
+              <h2 id="routes" className="text-subtitle font-semibold">
+                How people came in
+              </h2>
+              <p className="mt-1 text-meta text-ink-soft">
+                Which link each answer arrived by, so the next project knows where to put its effort. It records a
+                channel, never a person: a link carrying anything other than the labels below is counted as one we do
+                not recognise.
+              </p>
+              <ul className="mt-3 grid gap-3 text-body">
+                {routes.map((row) => (
+                  <li key={row.key}>
+                    <div className="flex justify-between gap-3">
+                      <span>{row.label}</span>
+                      <span className="text-ink-soft tabular-nums">
+                        {row.count} · {percent(row.count / filtered.length)}
+                      </span>
+                    </div>
+                    <div className="mt-1 h-2 rounded-full bg-sunk" aria-hidden="true">
+                      <div
+                        className="h-2 rounded-full bg-accent"
+                        style={{ width: `${Math.max(2, (row.count / filtered.length) * 100)}%` }}
+                      />
+                    </div>
+                    {row.parts.length > 0 && (
+                      <ul className="mt-1 grid gap-0.5 pl-3 text-meta text-ink-soft">
+                        {row.parts.map((part) => (
+                          <li key={part.label} className="flex justify-between gap-3">
+                            <span>{part.label}</span>
+                            <span className="tabular-nums">{part.count}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <details className="mt-4">
+                <summary className="cursor-pointer text-meta font-semibold text-primary-ink">Links to use</summary>
+                <p className="mt-2 text-meta text-ink-soft">
+                  Put the matching link in the magazine, the newsletter or the email. Use one link per channel and never
+                  one per person; the site files anything it does not recognise as unrecognised, so a name can never
+                  end up attached to somebody's answers.
+                </p>
+                <ul className="mt-2 grid gap-2">
+                  {SOURCES.map((source) => (
+                    <li key={source.id}>
+                      <span className="block text-meta text-ink-soft">{source.label}</span>
+                      <code className="block select-all break-all text-body text-ink">
+                        {linkFor(window.location.origin, source.id)}
+                      </code>
+                    </li>
+                  ))}
+                </ul>
+              </details>
             </section>
           )}
 

@@ -434,6 +434,7 @@ export const WorkshopJoin = () => {
       collectedBy: null,
       consentVerbal: null,
       sessionId: live.id,
+      source: null,
     });
     submitting.current = false;
     if (result.success) update({ ...current, submitted: true });

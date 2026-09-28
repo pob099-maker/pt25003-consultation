@@ -21,6 +21,7 @@ const response = (roundId: string, answers: AnswerMap, role: ConsultationRespons
   collectedBy: null,
   consentVerbal: null,
   sessionId: null,
+  source: null,
 });
 
 const rounds: readonly RoundInfo[] = [

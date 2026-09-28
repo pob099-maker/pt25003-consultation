@@ -19,6 +19,31 @@ const queue = (item: OutboxItem): void => {
 
 export const outboxSize = (): number => readOutbox().length;
 
+const insertOnce = async (
+  supabase: NonNullable<ReturnType<typeof getSupabase>>,
+  item: OutboxItem,
+): Promise<{ error: { message: string } | null }> =>
+  item.table === RESPONSES_TABLE
+    ? supabase.from(RESPONSES_TABLE).insert(item.row)
+    : supabase.from(CONTACTS_TABLE).insert(item.row);
+
+/**
+ * One insert, with a safety net for a database that is a migration behind the
+ * code. If the table has no `source` column yet, the row is sent again without
+ * it: the answers matter and the label does not, and without this every
+ * labelled response would sit in somebody's outbox failing on each visit.
+ */
+const insert = async (
+  supabase: NonNullable<ReturnType<typeof getSupabase>>,
+  item: OutboxItem,
+): Promise<{ error: { message: string } | null }> => {
+  const first = await insertOnce(supabase, item);
+  if (first.error === null || item.row.source === undefined || !/source/i.test(first.error.message)) return first;
+  const row = { ...item.row };
+  delete row.source;
+  return insertOnce(supabase, { ...item, row } as OutboxItem);
+};
+
 const send = async (item: OutboxItem): Promise<Result<'sent' | 'queued'>> => {
   const supabase = getSupabase();
   if (supabase === null) {
@@ -27,10 +52,7 @@ const send = async (item: OutboxItem): Promise<Result<'sent' | 'queued'>> => {
     queue(item);
     return { success: true, data: 'queued' };
   }
-  const { error } =
-    item.table === RESPONSES_TABLE
-      ? await supabase.from(RESPONSES_TABLE).insert(item.row)
-      : await supabase.from(CONTACTS_TABLE).insert(item.row);
+  const { error } = await insert(supabase, item);
   if (error !== null) {
     queue(item);
     return { success: true, data: 'queued' };
@@ -66,10 +88,7 @@ export const flushOutbox = async (): Promise<number> => {
 
   const remaining: OutboxItem[] = [];
   for (const item of pending) {
-    const { error } =
-      item.table === RESPONSES_TABLE
-        ? await supabase.from(RESPONSES_TABLE).insert(item.row)
-        : await supabase.from(CONTACTS_TABLE).insert(item.row);
+    const { error } = await insert(supabase, item);
     if (error !== null) remaining.push(item);
   }
   writeJson(STORAGE_KEYS.outbox, remaining);

@@ -53,6 +53,7 @@ describe('recording the length', () => {
       collectedBy: '22222222-2222-4222-8222-222222222222',
       consentVerbal: true,
       sessionId: null,
+      source: null,
     };
     expect(consultationResponseSchema.safeParse(response).success).toBe(true);
     expect(responseRow(q, response).short_or_full).toBe('short');

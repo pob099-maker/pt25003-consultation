@@ -433,6 +433,7 @@ export const seedResponses = (): readonly ConsultationResponse[] =>
       collectedBy: null,
       consentVerbal: null,
       sessionId: null,
+      source: null,
     };
   });
 
@@ -452,6 +453,7 @@ export const seedContacts = (): readonly ContactRecord[] => [
     comments: 'Happy to host a harvester damage demonstration.',
     submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[0]),
     isTestData: true,
+    source: null,
   },
   {
     id: '00000000-0000-4000-9000-000000000002',
@@ -468,6 +470,7 @@ export const seedContacts = (): readonly ContactRecord[] => [
     comments: '',
     submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[1]),
     isTestData: true,
+    source: null,
   },
   {
     // Somebody who asked to be rung rather than filling anything in. Worth
@@ -487,5 +490,6 @@ export const seedContacts = (): readonly ContactRecord[] => [
     comments: 'On the harvester most of the day. Ring the mobile.',
     submittedAt: isoDaysAgo(SEED_DAYS_AGO.contacts[2]),
     isTestData: true,
+    source: null,
   },
 ];

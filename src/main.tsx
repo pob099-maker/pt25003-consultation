@@ -5,9 +5,14 @@ import './index.css';
 import { applyStoredTheme } from './components/ThemeToggle';
 import { getSupabase } from './lib/supabase';
 import { isDemoSite } from './lib/config';
+import { rememberArrival } from './services/sources';
 
 // Before the first render, so a reader who chose dark never sees a flash of cream.
 applyStoredTheme();
+
+// Before anything can rewrite the address: the label on the link somebody
+// arrived by, such as the magazine's, is only in the URL on the first load.
+rememberArrival();
 
 // The demonstration site is for people we send it to, not for search results.
 if (isDemoSite()) {

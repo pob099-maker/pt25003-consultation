@@ -27,6 +27,12 @@ export const Privacy = () => (
         submission. No name, business name or contact detail is required at any point.
       </p>
       <p>
+        We also record which kind of link you arrived by, such as the PotatoLink magazine, a newsletter, or a link
+        somebody passed on to you, so we can see which ways of reaching people work best. It records the channel and
+        never who sent the link, and the site only accepts a short list of channel labels, so a link can never carry a
+        name into your answers.
+      </p>
+      <p>
         <strong className="text-ink">A record of how far you got.</strong> While you work through the consultation we
         record which step you reached and which set of questions you were shown, so we can see whether a section is too
         long and fix it. That record holds no answers and nothing you typed — only the step number — and it is not
