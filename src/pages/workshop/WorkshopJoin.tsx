@@ -16,6 +16,7 @@ import {
   textInput,
 } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
+import { formEstimates, spoken } from '../../services/estimate';
 import { questionById } from '../../content/lookup';
 import { useWorkshopState } from '../../hooks/useWorkshopState';
 import { submitResponse } from '../../services/submit';
@@ -469,8 +470,8 @@ export const WorkshopJoin = () => {
       <section className={accentPanel}>
         <h2 className="text-subtitle font-semibold">Thanks — your answers are saved</h2>
         <p className="mt-2 text-body text-ink">
-          If you&rsquo;d like to say more, the full consultation takes about ten minutes and asks about your own
-          operation.
+          If you&rsquo;d like to say more, the full consultation takes {spoken(formEstimates(questionnaire).full)} and
+          asks about your own operation.
         </p>
         <p className="mt-4">
           <Link to="/" className={primaryButton}>

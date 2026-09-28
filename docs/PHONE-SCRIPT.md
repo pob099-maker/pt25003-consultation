@@ -8,7 +8,7 @@ This file is generated from the questions themselves — do not edit it by hand,
 
 Say, in your own words:
 
-> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about ten minutes. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.
+> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about 16 minutes. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.
 
 Then work down this script and enter the answers into the consultation afterwards, so they sit in the same data as everybody else’s. If you enter it while you talk, tell them that is what you are doing.
 
@@ -201,6 +201,21 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Family and business partners
   - Other
 
+**10. How confident do you feel about each of these?**
+
+> Open with: "How confident would you feel working out whether a new bit of gear would pay on your place?"
+> Then probe: "What would it take to feel more sure of that?"
+
+_Skip any that do not apply to you._
+
+_Scale: 1 = not at all confident, 2 = a little confident, 3 = somewhat confident, 4 = fairly confident, 5 = very confident._
+_Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
+
+  - Working out whether a new machine or technology would pay on your operation
+  - Judging whether trial results or supplier claims would hold up on your place
+  - Finding independent advice you trust on new machinery and technology
+  - Getting new gear set up and running well in its first season
+
 ---
 
 ## Role sections — use only the one that matches
@@ -246,30 +261,23 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Record keeping and compliance
   - Other
 
-**3. What have you put on, trialled, or had a serious look at?**
+**3. Where are you at with each of these on your own operation?**
 
-> Open with: "What have you put on, or had a good look at, in the last few years?"
-> Then probe: "What made you look at it in the first place?"
+> Open with: "I will read out some technologies. For each one, tell me where you are at with it."
+> Then probe: "Which of those has made the biggest difference so far?"
 
-_Tick as many as you like. It does not matter whether you kept it._
+_Pick the step that fits each one. Leave any you have not come across._
 
-_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
+_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation._
+_Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - GPS guidance or autosteer
-  - Section control on the boom or planter
-  - Variable rate application
   - Precision planting equipment
-  - Soil moisture probes
-  - Irrigation automation or pump telemetry
-  - Harvester changes to reduce damage — Web speed, drop heights, padding and the like.
-  - Yield or quality sensing on the harvester
+  - Camera-guided or AI spraying
+  - Harvester set-up or sensing to cut damage
+  - Stone, clod and trash separation at harvest
   - Optical grading on farm
-  - Machine telemetry or maintenance alerts
-  - Drones, satellite or aerial imagery
-  - Farm software for records and paperwork
-  - Robots or driverless machines
-  - Nothing much yet
-  - Other
+  - Driverless or autonomous machines
 
 **4. Think of the one that mattered most. How did that go?**
 
@@ -360,7 +368,22 @@ _One answer only._
   - More than 50,000 tonnes
   - Prefer not to say
 
-**2. Which jobs put you under the most pressure in the peak?**
+**2. Where are you at with each of these across your own gear?**
+
+> Open with: "For each of these, where are you at in your own fleet?"
+
+_Pick the step that fits each one. Leave any you have not come across._
+
+_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation._
+_Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
+
+  - GPS guidance or autosteer
+  - Harvester set-up or sensing to cut damage
+  - Machine telemetry or remote diagnostics
+  - Load tracking and logistics coordination
+  - Driverless or autonomous machines
+
+**3. Which jobs put you under the most pressure in the peak?**
 
 > Open with: "When you're flat out, which jobs are the ones that bite?"
 > Then probe: "What happens to the next client when one of those runs over?"
@@ -381,7 +404,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Juggling client schedules
   - Other
 
-**3. What stops you getting through more work, or doing it better?**
+**4. What stops you getting through more work, or doing it better?**
 
 _Tick as many as you like._
 
@@ -398,7 +421,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Cost of upgrading gear
   - Other
 
-**4. On the machinery side, what causes you the most grief?**
+**5. On the machinery side, what causes you the most grief?**
 
 _Tick as many as you like._
 
@@ -412,7 +435,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Access to diagnostics or software
   - Other
 
-**5. Where are the biggest gaps in operator skills?**
+**6. Where are the biggest gaps in operator skills?**
 
 _Tick as many as you like._
 
@@ -428,7 +451,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Getting new operators up to speed quickly
   - Other
 
-**6. What would make the biggest difference to the job you can do for your clients?**
+**7. What would make the biggest difference to the job you can do for your clients?**
 
 _Tick as many as you like._
 
@@ -444,7 +467,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Training for your operators
   - Other
 
-**7. If we ran a demonstration, what would it take to make it worth your while?**
+**8. If we ran a demonstration, what would it take to make it worth your while?**
 
 _Tick as many as you like._
 
@@ -459,7 +482,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Insurance and safety sorted beforehand
   - Other
 
-**8. Anything else about contracting we should know?**
+**9. Anything else about contracting we should know?**
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -521,22 +544,19 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Customer complaints or rejections
   - Other
 
-**4. What have you put in, trialled, or had a serious look at?**
+**4. Where are you at with each of these in your operation?**
 
-_Tick as many as you like._
+_Pick the step that fits each one. Leave any you have not come across._
 
-_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
+_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation._
+_Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - Optical sizing and shape grading
   - Optical defect detection
   - Internal quality sensing — X-ray, near infrared, or similar.
   - Automated packing
   - Robotic palletising
-  - Storage climate control
-  - Traceability and lot tracking
   - Line performance monitoring
-  - Nothing much yet
-  - Other
 
 **5. What has held that back?**
 
@@ -1003,6 +1023,21 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - During winter or the off-season
   - Other
   - Prefer not to say
+
+## Next time we ask
+
+**1. Would you like us to be able to compare your answers with next time?**
+
+_We'll ask these questions again later in the project. Three quick answers below give you a code that comes out the same next time, so we can see how things change for the same people. It's made from your answers, not your name, and on its own it can't tell us who you are. There's nothing to remember, and you can skip it._
+
+_Ask the three one at a time, and only if they are happy to: the first two letters of their mother's first name (or whoever raised them), the day of the month they were born, and the first two letters of the town they grew up in. Enter them in the three boxes and the form builds the code. If they would rather not, move on._
+
+**2. If we would like to quote something you have written, without your name, is that all right?**
+
+_One answer only._
+
+  - Yes
+  - No, please do not quote me
 
 ## Before you hang up
 

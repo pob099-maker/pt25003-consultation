@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { shortVersion } from './formLength';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import type { ConsultationResponse, Question, Questionnaire, Section } from '../types';
 import { FULL_TARGET_MINUTES, estimateFor, formEstimates, questionSeconds, spoken } from './estimate';
@@ -29,13 +30,24 @@ describe('estimate', () => {
   });
 
   it('puts PT25003 where the pilot found it', () => {
-    // The short version is dominated by the twelve-row rating grid, which is
-    // why it lands nearer seven minutes than five for the slowest branch.
+    // The short version is dominated by the twelve-row rating grid, and since
+    // the practices and M&E template it also carries a practice grid, the
+    // confidence grid and the follow-up code, so it sits near nine minutes for
+    // a grower against a target of five. The readiness panel says so; this only
+    // catches the estimate itself going wrong.
     const { short, full } = formEstimates(q);
     expect(short.minutes).toBeGreaterThanOrEqual(4);
-    expect(short.minutes).toBeLessThanOrEqual(8);
+    expect(short.minutes).toBeLessThanOrEqual(10);
     expect(full.minutes).toBeGreaterThanOrEqual(8);
-    expect(full.minutes).toBeLessThanOrEqual(16);
+    expect(full.minutes).toBeLessThanOrEqual(18);
+  });
+
+  it('quotes each version for the role it takes longest for', () => {
+    // A grower's short version runs longer than a contractor's even though the
+    // contractor's full version is the longest; quoting the contractor's short
+    // version would promise growers a time they will not get.
+    const { short } = formEstimates(q);
+    for (const role of q.roles) expect(estimateFor(shortVersion(q), role.id).seconds).toBeLessThanOrEqual(short.seconds);
   });
 
   it('reports the branch that takes longest, not the shortest', () => {

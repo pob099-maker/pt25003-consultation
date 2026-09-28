@@ -1,4 +1,7 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuestionnaire } from '../contexts/QuestionnaireContext';
+import { formEstimates, spoken } from '../services/estimate';
 import { currentProject } from '../content/projects';
 import { Layout } from '../components/Layout';
 import { PreferToTalk } from '../components/PreferToTalk';
@@ -8,6 +11,11 @@ import { isDemoSite } from '../lib/config';
 
 export const Landing = () => {
   const hasDraft = readJson<{ stepIndex: number }>(STORAGE_KEYS.draft) !== null;
+  // Worked out from the questions actually being asked, for the role it takes
+  // longest for. It used to be typed in by hand, and said five and ten minutes
+  // long after the questions had grown past both.
+  const questionnaire = useQuestionnaire();
+  const estimates = useMemo(() => formEstimates(questionnaire), [questionnaire]);
 
   return (
     <Layout>
@@ -48,10 +56,10 @@ export const Landing = () => {
         </p>
         <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <Link to="/about?quick=1" className={primaryButton}>
-            {hasDraft ? 'Continue' : 'Short version · about 5 minutes'}
+            {hasDraft ? 'Continue' : `Short version · ${spoken(estimates.short)}`}
           </Link>
           <Link to="/about" className={secondaryButton}>
-            {hasDraft ? 'Continue the full version' : 'Full version · about 10 minutes'}
+            {hasDraft ? 'Continue the full version' : `Full version · ${spoken(estimates.full)}`}
           </Link>
         </div>
       </section>

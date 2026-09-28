@@ -122,6 +122,38 @@ const PRIORITY_SCALE: readonly ScalePoint[] = [
   { value: 5, label: 'Very high priority' },
 ];
 
+/**
+ * Where somebody stands on a practice, as a stage rather than a yes or no.
+ *
+ * The behaviour measure the rest of the questionnaire lacks: priorities and
+ * trust are opinions, which can sit still while practice moves. Asked the same
+ * way at the baseline and every review, it gives the adoption curve a real
+ * starting point, and it is what a final report is judged on.
+ *
+ * Every step is shown on screen, because they are five distinct stages rather
+ * than a quantity, and nobody can pick "3" without knowing what 3 means.
+ */
+const ADOPTION_SCALE: readonly ScalePoint[] = [
+  { value: 1, label: 'Not for us' },
+  { value: 2, label: 'Thinking about it' },
+  { value: 3, label: 'Trying it' },
+  { value: 4, label: 'Doing it on part of the operation' },
+  { value: 5, label: 'Doing it across the operation' },
+];
+
+/**
+ * Confidence, the middle of the chain between hearing about something and
+ * changing practice. It moves first, often within the year, so it shows
+ * progress long before adoption does.
+ */
+const CONFIDENCE_SCALE: readonly ScalePoint[] = [
+  { value: 1, label: 'Not at all confident' },
+  { value: 2, label: 'A little confident' },
+  { value: 3, label: 'Somewhat confident' },
+  { value: 4, label: 'Fairly confident' },
+  { value: 5, label: 'Very confident' },
+];
+
 const CORE: readonly Section[] = [
   {
     id: 'core_constraints',
@@ -278,6 +310,27 @@ const CORE: readonly Section[] = [
         ),
         allowOther: true,
       },
+      {
+        id: 'q_confidence',
+        guide: {
+          open: 'How confident would you feel working out whether a new bit of gear would pay on your place?',
+          probe: 'What would it take to feel more sure of that?',
+        },
+        tracking: true,
+        kind: 'rating',
+        // Draft for the team to refine. Four areas where the project's
+        // demonstrations, case studies and calculators should move people, so
+        // each row is something the project can plausibly change.
+        prompt: 'How confident do you feel about each of these?',
+        help: 'Skip any that do not apply to you.',
+        scale: CONFIDENCE_SCALE,
+        rows: opts(
+          ['pays', 'Working out whether a new machine or technology would pay on your operation'],
+          ['claims', 'Judging whether trial results or supplier claims would hold up on your place'],
+          ['advice', 'Finding independent advice you trust on new machinery and technology'],
+          ['setup', 'Getting new gear set up and running well in its first season'],
+        ),
+      },
     ],
   },
 ];
@@ -351,30 +404,35 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         allowOther: true,
       },
       {
-        id: 'farm_adopted',
-        guide: { open: 'What have you put on, or had a good look at, in the last few years?', probe: 'What made you look at it in the first place?' },
+        id: 'farm_practices',
+        guide: {
+          open: 'I will read out some technologies. For each one, tell me where you are at with it.',
+          probe: 'Which of those has made the biggest difference so far?',
+        },
         tracking: true,
-        kind: 'multi',
-        prompt: 'What have you put on, trialled, or had a serious look at?',
-        help: 'Tick as many as you like. It does not matter whether you kept it.',
-        options: opts(
+        kind: 'rating',
+        labelEveryStep: true,
+        // Draft for the team to refine. The rows follow the technologies
+        // PT25003 has committed to trial (autonomous machines, precision
+        // planting, AI spraying, advanced harvesting and separation, optical
+        // grading), plus autosteer as the familiar baseline. It replaces the
+        // old tick list of what people had "put on, trialled or had a serious
+        // look at", which asked the same thing without a starting point. The
+        // items that list carried and this does not (section control, variable
+        // rate, soil moisture probes, irrigation automation, imagery, farm
+        // software) can come back as rows if the project will report on them.
+        prompt: 'Where are you at with each of these on your own operation?',
+        help: 'Pick the step that fits each one. Leave any you have not come across.',
+        scale: ADOPTION_SCALE,
+        rows: opts(
           ['guidance', 'GPS guidance or autosteer'],
-          ['section_control', 'Section control on the boom or planter'],
-          ['variable_rate', 'Variable rate application'],
-          ['precision_planter', 'Precision planting equipment'],
-          ['soil_moisture', 'Soil moisture probes'],
-          ['irrigation_auto', 'Irrigation automation or pump telemetry'],
-          ['harvester_setup', 'Harvester changes to reduce damage', 'Web speed, drop heights, padding and the like.'],
-          ['yield_sensing', 'Yield or quality sensing on the harvester'],
+          ['precision_planting', 'Precision planting equipment'],
+          ['ai_spraying', 'Camera-guided or AI spraying'],
+          ['harvest_damage', 'Harvester set-up or sensing to cut damage'],
+          ['separation', 'Stone, clod and trash separation at harvest'],
           ['optical_grading', 'Optical grading on farm'],
-          ['machine_telemetry', 'Machine telemetry or maintenance alerts'],
-          ['imagery', 'Drones, satellite or aerial imagery'],
-          ['farm_software', 'Farm software for records and paperwork'],
-          ['robotics', 'Robots or driverless machines'],
-          ['none', 'Nothing much yet'],
-          ['other', 'Other'],
+          ['autonomy', 'Driverless or autonomous machines'],
         ),
-        allowOther: true,
       },
       {
         id: 'farm_outcome',
@@ -458,6 +516,26 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         prompt: 'Roughly how many tonnes of potatoes do you handle in a year, across all your clients?',
         help: 'A broad band is plenty.',
         options: TONNAGE,
+      },
+      {
+        id: 'con_practices',
+        guide: { open: 'For each of these, where are you at in your own fleet?' },
+        tracking: true,
+        kind: 'rating',
+        labelEveryStep: true,
+        // Draft for the team to refine. Contractors run a good share of the
+        // machinery the project cares about, and until now nothing asked them
+        // what they run.
+        prompt: 'Where are you at with each of these across your own gear?',
+        help: 'Pick the step that fits each one. Leave any you have not come across.',
+        scale: ADOPTION_SCALE,
+        rows: opts(
+          ['guidance', 'GPS guidance or autosteer'],
+          ['harvest_damage', 'Harvester set-up or sensing to cut damage'],
+          ['telemetry', 'Machine telemetry or remote diagnostics'],
+          ['logistics', 'Load tracking and logistics coordination'],
+          ['autonomy', 'Driverless or autonomous machines'],
+        ),
       },
       {
         id: 'con_peak',
@@ -632,24 +710,24 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         allowOther: true,
       },
       {
-        id: 'pro_systems',
+        id: 'pro_practices',
         tracking: true,
-        kind: 'multi',
-        prompt: 'What have you put in, trialled, or had a serious look at?',
-        help: 'Tick as many as you like.',
-        options: opts(
+        kind: 'rating',
+        labelEveryStep: true,
+        // Draft for the team to refine: the packhouse end of the technologies
+        // PT25003 will trial. Replaces the old tick list of what the shed had
+        // "put in, trialled or had a serious look at", which had no stages.
+        prompt: 'Where are you at with each of these in your operation?',
+        help: 'Pick the step that fits each one. Leave any you have not come across.',
+        scale: ADOPTION_SCALE,
+        rows: opts(
           ['optical_size', 'Optical sizing and shape grading'],
           ['optical_defect', 'Optical defect detection'],
           ['internal_quality', 'Internal quality sensing', 'X-ray, near infrared, or similar.'],
           ['auto_packing', 'Automated packing'],
           ['palletising', 'Robotic palletising'],
-          ['storage_control', 'Storage climate control'],
-          ['traceability', 'Traceability and lot tracking'],
           ['line_data', 'Line performance monitoring'],
-          ['none', 'Nothing much yet'],
-          ['other', 'Other'],
         ),
-        allowOther: true,
       },
       {
         id: 'pro_barriers',
@@ -1082,6 +1160,19 @@ const FOLLOW_UP: readonly Section[] = [
         allowOther: true,
       },
       {
+        id: 'fu_activities',
+        guide: { open: 'Roughly how many things from the project have you been to or used?' },
+        tracking: true,
+        kind: 'single',
+        // How much of the project somebody has been part of. Set against the
+        // practice steps, it shows whether people who saw more of the project
+        // changed more, which is about the most believable story available
+        // without a control group.
+        prompt: 'How many project activities have you been to or used?',
+        help: 'Field days, demonstrations, webinars, case studies, calculators, or a conversation with somebody from the project.',
+        options: opts(['none', 'None yet'], ['one', 'One'], ['two_three', 'Two or three'], ['four_plus', 'Four or more']),
+      },
+      {
         id: 'fu_changed',
         guide: { open: 'Has any of it changed what you\'re doing, or planning to do?', probe: 'What was it that made the difference?' },
         kind: 'single',
@@ -1093,6 +1184,24 @@ const FOLLOW_UP: readonly Section[] = [
           ['considering', 'We are looking into it'],
           ['no_change', 'No change'],
           ['not_applicable', 'Have not seen enough to say'],
+        ),
+      },
+      {
+        id: 'fu_contribution',
+        guide: { open: 'If you have changed something, do you reckon you would have done it anyway, without the project?' },
+        tracking: true,
+        kind: 'single',
+        // The standard contribution question. Funders expect it, and it is the
+        // difference between "people changed" and "the project changed them".
+        // Nothing hides a question here, so "nothing has changed" is an answer.
+        prompt: 'If you have changed something, would you have made that change without the project?',
+        options: opts(
+          ['same', 'Yes, the same change at about the same time'],
+          ['later', 'Yes, but later or on a smaller scale'],
+          ['probably_not', 'Probably not'],
+          ['no', 'No, not without the project'],
+          ['not_sure', 'Not sure'],
+          ['nothing_changed', 'Nothing has changed yet'],
         ),
       },
       {
@@ -1162,6 +1271,32 @@ const PROJECT_DESIGN: readonly Section[] = [
           ['no_say', 'Prefer not to say'],
         ),
         allowOther: true,
+      },
+    ],
+  },
+  {
+    id: 'next_time',
+    title: 'Next time we ask',
+    intro: 'Two optional things that help us make the most of your answers.',
+    questions: [
+      {
+        id: 'link_code',
+        tracking: true,
+        kind: 'text',
+        entry: 'linkCode',
+        // Three fixed answers the form turns into a code, the way public health
+        // surveys follow people without knowing who they are. Built from facts
+        // that never change, so the same person gets the same code next time
+        // without remembering or writing anything down. On the short version
+        // too, since that is what most people will answer at the mid-term.
+        prompt: 'Would you like us to be able to compare your answers with next time?',
+        help: "We'll ask these questions again later in the project. Three quick answers below give you a code that comes out the same next time, so we can see how things change for the same people. It's made from your answers, not your name, and on its own it can't tell us who you are. There's nothing to remember, and you can skip it.",
+      },
+      {
+        id: 'quote_ok',
+        kind: 'single',
+        prompt: 'If we would like to quote something you have written, without your name, is that all right?',
+        options: opts(['yes', 'Yes'], ['no', 'No, please do not quote me']),
       },
     ],
   },

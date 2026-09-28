@@ -33,6 +33,12 @@ export const Privacy = () => (
         name into your answers.
       </p>
       <p>
+        If you choose to, you can also make a follow-up code from three short answers: the first two letters of your
+        mother's first name, the day of the month you were born, and the first two letters of the town you grew up in.
+        We keep only the code, with your answers, so we can compare them with your answers next time. It is not your
+        name, we never ask for anything that would let us work out who you are, and it is always optional.
+      </p>
+      <p>
         <strong className="text-ink">A record of how far you got.</strong> While you work through the consultation we
         record which step you reached and which set of questions you were shown, so we can see whether a section is too
         long and fix it. That record holds no answers and nothing you typed — only the step number — and it is not

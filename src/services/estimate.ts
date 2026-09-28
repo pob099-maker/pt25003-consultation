@@ -33,6 +33,8 @@ export const questionSeconds = (question: Question): number => {
       // The slowest kind: a decision per row, and the scale re-read a few times.
       return reading + 6 + question.rows.length * 6;
     case 'text':
+      // Three short pieces from memory, not a paragraph of typing.
+      if (question.entry === 'linkCode') return reading + 20;
       // Typing on a phone, for somebody who has something to say.
       return reading + 45;
   }
@@ -84,14 +86,22 @@ export const longestEstimate = (
 export interface FormEstimates {
   readonly short: Estimate;
   readonly full: Estimate;
+  /** The role the full version takes longest for. */
   readonly slowestRole: RoleId | null;
 }
 
-/** Both versions of the online form, for the branch that takes longest. */
+/**
+ * Both versions of the online form, each for the branch that takes longest in
+ * that version. They are worked out separately because the slowest branch is
+ * not always the same one: a grower's short version can run longer than a
+ * contractor's even when the contractor's full version is the longest, and
+ * quoting the contractor's short version would promise growers a time they
+ * will not get.
+ */
 export const formEstimates = (questionnaire: Questionnaire): FormEstimates => {
   const worst = longestEstimate(questionnaire);
   return {
-    short: estimateFor(shortVersion(questionnaire), worst.role),
+    short: longestEstimate(shortVersion(questionnaire)).estimate,
     full: worst.estimate,
     slowestRole: worst.role,
   };

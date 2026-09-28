@@ -186,6 +186,7 @@ export const freeTextEntries = (
     for (const [questionId, answer] of Object.entries(response.answers)) {
       if (answer.kind !== 'text' || answer.value.trim().length === 0) continue;
       const question = questionById(questionnaire, questionId);
+      if (question?.kind === 'text' && question.entry === 'linkCode') continue;
       entries.push({
         responseId: response.id,
         questionId,

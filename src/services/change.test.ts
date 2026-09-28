@@ -30,32 +30,32 @@ const rounds: readonly RoundInfo[] = [
   { roundId: 'mid', label: 'Mid-project', stage: 'review' },
 ];
 
-const adopted = (values: string[]): AnswerMap => ({ farm_adopted: { kind: 'multi', values, other: '' } });
+const evidence = (values: string[]): AnswerMap => ({ q7_evidence: { kind: 'multi', values, other: '' } });
 
 describe('compareRounds', () => {
   it('leaves the pilot out entirely — it was the team testing the form', () => {
-    const result = compareRounds(q, [response('pilot', adopted(['guidance']))], rounds);
+    const result = compareRounds(q, [response('pilot', evidence(['local_demo']))], rounds);
     expect(result.columns.map((column) => column.roundId)).toEqual(['base', 'mid']);
   });
 
-  it('measures adoption as a share of the people who answered, and reports the change', () => {
+  it('measures a tick as a share of the people who answered, and reports the change', () => {
     const result = compareRounds(
       q,
       [
-        response('base', adopted(['guidance'])),
-        response('base', adopted(['soil_moisture'])),
-        response('base', adopted(['guidance', 'optical_grading'])),
-        response('base', adopted(['none'])),
-        response('mid', adopted(['optical_grading'])),
-        response('mid', adopted(['optical_grading', 'guidance'])),
+        response('base', evidence(['local_demo'])),
+        response('base', evidence(['roi'])),
+        response('base', evidence(['local_demo', 'case_study'])),
+        response('base', evidence(['peer'])),
+        response('mid', evidence(['case_study'])),
+        response('mid', evidence(['case_study', 'local_demo'])),
       ],
       rounds,
     );
-    const block = result.blocks.find((b) => b.questionId === 'farm_adopted');
-    const optical = block?.rows.find((row) => row.id === 'optical_grading');
+    const block = result.blocks.find((b) => b.questionId === 'q7_evidence');
+    const caseStudy = block?.rows.find((row) => row.id === 'case_study');
     expect(block?.answered).toEqual([4, 2]);
-    expect(optical?.values).toEqual([0.25, 1]);
-    expect(optical?.change).toBe(0.75);
+    expect(caseStudy?.values).toEqual([0.25, 1]);
+    expect(caseStudy?.change).toBe(0.75);
   });
 
   it('averages ratings per area, counting only the areas people actually rated', () => {
@@ -78,7 +78,7 @@ describe('compareRounds', () => {
   });
 
   it('reports no change until there is both a baseline and a review', () => {
-    const onlyBaseline = compareRounds(q, [response('base', adopted(['guidance']))], [rounds[1] as RoundInfo]);
+    const onlyBaseline = compareRounds(q, [response('base', evidence(['local_demo']))], [rounds[1] as RoundInfo]);
     expect(onlyBaseline.hasReview).toBe(false);
     for (const block of onlyBaseline.blocks) {
       for (const row of block.rows) expect(row.change).toBeNull();

@@ -102,9 +102,9 @@ export const QuestionPaper = () => {
           identical in both, and somebody who starts short can keep going without losing an answer.
         </p>
         <p className="mt-2 text-meta text-ink-soft">
-          Estimated at {paper.shortMinutes} and {paper.fullMinutes} minutes for the longest path, which is{' '}
-          {paper.slowestRole.toLowerCase()}. Most people are asked fewer, because the middle of the form depends on the
-          role they pick.
+          Estimated at up to {paper.shortMinutes} minutes for the short version and {paper.fullMinutes} for the full
+          one, for whichever role takes longest. Most people are asked fewer questions, because the middle of the form
+          depends on the role they pick.
         </p>
       </section>
 

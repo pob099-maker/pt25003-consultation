@@ -60,7 +60,7 @@ const SPECS: readonly SeedSpec[] = [
     pathwayAnswers: {
       farm_scale: { kind: 'single', value: '5k_20k' },
       farm_pressure: { kind: 'multi', values: ['harvest', 'carting', 'staffing'], other: '' },
-      farm_adopted: { kind: 'multi', values: ['guidance', 'section_control', 'harvester_setup'], other: '' },
+      farm_practices: { kind: 'rating', values: { guidance: 5, harvest_damage: 4, precision_planting: 2 } },
       farm_outcome: { kind: 'single', value: 'refine' },
       farm_barriers: { kind: 'multi', values: ['capital', 'roi', 'service'], other: '' },
       farm_measures: { kind: 'multi', values: ['labour_hours', 'packout', 'damage', 'timeliness'], other: '' },
@@ -105,7 +105,7 @@ const SPECS: readonly SeedSpec[] = [
     pathwayAnswers: {
       farm_scale: { kind: 'single', value: '20k_50k' },
       farm_pressure: { kind: 'multi', values: ['irrigation', 'maintenance', 'staffing'], other: '' },
-      farm_adopted: { kind: 'multi', values: ['soil_moisture', 'irrigation_auto', 'machine_telemetry'], other: '' },
+      farm_practices: { kind: 'rating', values: { guidance: 4, optical_grading: 1, autonomy: 2 } },
       farm_outcome: { kind: 'single', value: 'expand' },
       farm_barriers: { kind: 'multi', values: ['operators', 'fit', 'data'], other: '' },
       farm_measures: { kind: 'multi', values: ['labour_hours', 'inputs', 'maintenance'], other: '' },
@@ -184,7 +184,7 @@ const SPECS: readonly SeedSpec[] = [
       pro_scale: { kind: 'single', value: 'over_50k' },
       pro_constraints: { kind: 'multi', values: ['grading', 'defects', 'palletising', 'staffing'], other: '' },
       pro_losses: { kind: 'multi', values: ['bruising', 'greening', 'misgrades'], other: '' },
-      pro_systems: { kind: 'multi', values: ['optical_size', 'optical_defect'], other: '' },
+      pro_practices: { kind: 'rating', values: { optical_size: 5, optical_defect: 4, auto_packing: 2 } },
       pro_barriers: { kind: 'multi', values: ['capital', 'evidence', 'service'], other: '' },
       pro_measures: { kind: 'multi', values: ['throughput', 'labour', 'grading_accuracy', 'damage'], other: '' },
       pro_other: {

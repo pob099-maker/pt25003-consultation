@@ -153,11 +153,20 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Family and business partners
 - Other
 
+### How confident do you feel about each of these?
+
+`q_confidence` · rate 1-5 × 4 · **tracked every round**
+
+- Working out whether a new machine or technology would pay on your operation
+- Judging whether trial results or supplier claims would hold up on your place
+- Finding independent advice you trust on new machinery and technology
+- Getting new gear set up and running well in its first season
+
 ## 5. One branch only — by role
 
 ### Your farming operation
 
-Potato grower or business owner; Farm manager, supervisor or machinery operator · 8 questions · about 3.9 min
+Potato grower or business owner; Farm manager, supervisor or machinery operator · 8 questions · about 4 min
 
 #### Roughly how many tonnes of potatoes do you grow in a year?
 
@@ -187,25 +196,17 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 - Record keeping and compliance
 - Other
 
-#### What have you put on, trialled, or had a serious look at?
+#### Where are you at with each of these on your own operation?
 
-`farm_adopted` · tick any + other · **tracked every round**
+`farm_practices` · rate 1-5 × 7 · **tracked every round**
 
 - GPS guidance or autosteer
-- Section control on the boom or planter
-- Variable rate application
 - Precision planting equipment
-- Soil moisture probes
-- Irrigation automation or pump telemetry
-- Harvester changes to reduce damage
-- Yield or quality sensing on the harvester
+- Camera-guided or AI spraying
+- Harvester set-up or sensing to cut damage
+- Stone, clod and trash separation at harvest
 - Optical grading on farm
-- Machine telemetry or maintenance alerts
-- Drones, satellite or aerial imagery
-- Farm software for records and paperwork
-- Robots or driverless machines
-- Nothing much yet
-- Other
+- Driverless or autonomous machines
 
 #### Think of the one that mattered most. How did that go?
 
@@ -265,7 +266,7 @@ Potato grower or business owner; Farm manager, supervisor or machinery operator 
 
 ### Your contracting work
 
-Contractor · 8 questions · about 4.3 min
+Contractor · 9 questions · about 4.9 min
 
 #### Roughly how many tonnes of potatoes do you handle in a year, across all your clients?
 
@@ -277,6 +278,16 @@ Contractor · 8 questions · about 4.3 min
 - 20,000 to 50,000 tonnes
 - More than 50,000 tonnes
 - Prefer not to say
+
+#### Where are you at with each of these across your own gear?
+
+`con_practices` · rate 1-5 × 5 · **tracked every round**
+
+- GPS guidance or autosteer
+- Harvester set-up or sensing to cut damage
+- Machine telemetry or remote diagnostics
+- Load tracking and logistics coordination
+- Driverless or autonomous machines
 
 #### Which jobs put you under the most pressure in the peak?
 
@@ -368,7 +379,7 @@ Contractor · 8 questions · about 4.3 min
 
 ### Receival, storage, grading and packing
 
-Processor, packhouse or storage business · 7 questions · about 3.9 min
+Processor, packhouse or storage business · 7 questions · about 4 min
 
 #### Roughly how many tonnes do you handle in a year?
 
@@ -413,20 +424,16 @@ Processor, packhouse or storage business · 7 questions · about 3.9 min
 - Customer complaints or rejections
 - Other
 
-#### What have you put in, trialled, or had a serious look at?
+#### Where are you at with each of these in your operation?
 
-`pro_systems` · tick any + other · **tracked every round**
+`pro_practices` · rate 1-5 × 6 · **tracked every round**
 
 - Optical sizing and shape grading
 - Optical defect detection
 - Internal quality sensing
 - Automated packing
 - Robotic palletising
-- Storage climate control
-- Traceability and lot tracking
 - Line performance monitoring
-- Nothing much yet
-- Other
 
 #### What has held that back?
 
@@ -802,6 +809,15 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 - Nothing yet
 - Other
 
+### How many project activities have you been to or used?
+
+`fu_activities` · one only · **tracked every round**
+
+- None yet
+- One
+- Two or three
+- Four or more
+
 ### Has any of it changed what you do, or plan to do?
 
 `fu_changed` · one only · **tracked every round**
@@ -811,6 +827,17 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 - We are looking into it
 - No change
 - Have not seen enough to say
+
+### If you have changed something, would you have made that change without the project?
+
+`fu_contribution` · one only · **tracked every round**
+
+- Yes, the same change at about the same time
+- Yes, but later or on a smaller scale
+- Probably not
+- No, not without the project
+- Not sure
+- Nothing has changed yet
 
 ### If something changed, what was it, and what made the difference?
 
@@ -855,6 +882,19 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 - During winter or the off-season
 - Other
 - Prefer not to say
+
+## 6. Everybody — Next time we ask
+
+### Would you like us to be able to compare your answers with next time?
+
+`link_code` · open text · **tracked every round**
+
+### If we would like to quote something you have written, without your name, is that all right?
+
+`quote_ok` · one only
+
+- Yes
+- No, please do not quote me
 
 ## 7. Everybody — optional: stay involved
 
@@ -995,15 +1035,15 @@ The two lists are different axes — where the trouble is, and what could be don
 
 ## Branch lengths
 
-- Shared by everyone: about 8.8 min
+- Shared by everyone: about 10.2 min
 
-- Your farming operation branch: about 3.9 min → total 12.8 min
-- Your contracting work branch: about 4.3 min → total 13.1 min
-- Receival, storage, grading and packing branch: about 3.9 min → total 12.7 min
-- Machinery supply and service branch: about 3.9 min → total 12.8 min
-- Your technology branch: about 3.8 min → total 12.6 min
-- Your members and the wider industry branch: about 2.4 min → total 11.2 min
-- Evidence, evaluation and extension branch: about 3.8 min → total 12.6 min
+- Your farming operation branch: about 4 min → total 14.3 min
+- Your contracting work branch: about 4.9 min → total 15.1 min
+- Receival, storage, grading and packing branch: about 4 min → total 14.3 min
+- Machinery supply and service branch: about 3.9 min → total 14.2 min
+- Your technology branch: about 3.8 min → total 14 min
+- Your members and the wider industry branch: about 2.4 min → total 12.7 min
+- Evidence, evaluation and extension branch: about 3.8 min → total 14 min
 
 _Estimates only: 1.5 seconds per option read, 45 for an open box, 7 per rating row. Useful for comparing branches against each other, not for promising a number to a respondent._
 

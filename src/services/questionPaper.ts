@@ -100,6 +100,11 @@ const notesOf = (question: Question, questionnaire: Questionnaire): readonly str
       `The choices are whatever was ticked in "${source?.prompt ?? question.sourceQuestionId}". Somebody who ticked nothing is offered the list below.`,
     );
   }
+  if (question.kind === 'text' && question.entry === 'linkCode') {
+    notes.push(
+      'Asked as three short answers that the form puts together: two letters, a day of the month, two letters. Optional.',
+    );
+  }
   if (question.kind === 'text' && question.placeholder !== undefined) {
     notes.push(`Grey prompt in the box: "${question.placeholder}"`);
   }

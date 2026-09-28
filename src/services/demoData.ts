@@ -204,6 +204,9 @@ const answerFor = (question: Question, rng: Rng, review: boolean, answers: Answe
     }
     case 'text': {
       if (rng() < 0.45) return undefined;
+      // A small pool, so the same invented person turns up in both rounds and
+      // the demonstration shows a link being made.
+      if (question.entry === 'linkCode') return { kind: 'text', value: pick(rng, DEMO_LINK_CODES) };
       return { kind: 'text', value: pick(rng, TEXT_POOL[question.id] ?? GENERIC_TEXT) };
     }
   }
@@ -267,6 +270,11 @@ const build = (questionnaire: Questionnaire, roundId: string, count: number, see
     };
   });
 };
+
+/** Invented follow-up codes, few enough that some recur between the two rounds. */
+const DEMO_LINK_CODES: readonly string[] = [
+  'JO14BA', 'MA05SC', 'SU22DE', 'AN09GI', 'LI30BU', 'KA17WA', 'RO03NO', 'EL26MO', 'PA11SH', 'DE08TR',
+];
 
 /**
  * How the demonstration's online answers arrived, cycled by index. Weighted

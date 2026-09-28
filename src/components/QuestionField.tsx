@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import type { Answer, Option, Question } from '../types';
 import { choiceRow, choiceRowSelected, textInput } from './ui';
+import { LinkCodeField } from './LinkCodeField';
 
 interface Props {
   readonly question: Question;
@@ -162,6 +163,16 @@ const RatingField = ({ question, answer, onChange }: Props) => {
       <legend className="contents">
         <Prompt question={question} id={groupId} />
       </legend>
+      {question.labelEveryStep === true && (
+        <ol className="mb-3 grid gap-1 rounded-md bg-sunk p-3 text-meta text-ink" aria-label="What each number means">
+          {question.scale.map((point) => (
+            <li key={point.value} className="flex gap-2">
+              <span className="w-4 shrink-0 font-semibold tabular-nums">{point.value}</span>
+              <span>{point.label}</span>
+            </li>
+          ))}
+        </ol>
+      )}
       <ol className="grid gap-3">
         {question.rows.map((row) => (
           <li key={row.id} className="rounded-md border border-line bg-surface p-3">
@@ -196,9 +207,11 @@ const RatingField = ({ question, answer, onChange }: Props) => {
           </li>
         ))}
       </ol>
-      <p className="mt-2 text-meta text-ink-soft">
-        1 = {question.scale[0]?.label}. 5 = {question.scale[question.scale.length - 1]?.label}.
-      </p>
+      {question.labelEveryStep !== true && (
+        <p className="mt-2 text-meta text-ink-soft">
+          1 = {question.scale[0]?.label}. 5 = {question.scale[question.scale.length - 1]?.label}.
+        </p>
+      )}
     </fieldset>
   );
 };
@@ -273,7 +286,7 @@ export const QuestionField = (props: Props) => {
     case 'single':
       return <SingleField {...props} />;
     case 'text':
-      return <TextField {...props} />;
+      return props.question.entry === 'linkCode' ? <LinkCodeField {...props} /> : <TextField {...props} />;
     case 'rating':
       return <RatingField {...props} />;
     case 'rank':

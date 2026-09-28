@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ROLES } from '../content/questionnaire';
+import { LINK_CODE_ID, isLinkCode } from '../services/linkCode';
 
 const roleIds = ROLES.map((role) => role.id) as [string, ...string[]];
 
@@ -52,6 +53,16 @@ export const consultationResponseSchema = z.object({
     message: 'A workshop response must name its workshop, and only a workshop response may.',
     path: ['sessionId'],
   })
+  // The follow-up code only ever arrives in its one shape, because the form
+  // builds it from three pieces. Anything else means something went wrong, and
+  // a malformed code would quietly fail to link to anybody next time.
+  .refine(
+    (response) => {
+      const code = response.answers[LINK_CODE_ID];
+      return code === undefined || (code.kind === 'text' && isLinkCode(code.value));
+    },
+    { message: 'The follow-up code should be two letters, a day of the month and two letters.', path: ['answers'] },
+  )
   // Anything marked as prompted has to have been mentioned at all.
   .refine(
     (response) =>

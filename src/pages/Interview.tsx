@@ -12,6 +12,7 @@ import { StayInvolved } from '../components/StayInvolved';
 import { accentPanel, card, choiceRow, choiceRowSelected, primaryButton, secondaryButton } from '../components/ui';
 import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
+import { formEstimates, spoken, type FormEstimates } from '../services/estimate';
 import { useConsultation } from '../hooks/useConsultation';
 import { useStaffSession } from '../hooks/useStaffSession';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
@@ -29,14 +30,23 @@ interface Setup {
   readonly length?: FormLength;
 }
 
-const LENGTHS: readonly { id: FormLength; label: string; help: string }[] = [
-  { id: 'full', label: 'Full interview', help: 'About ten minutes. Every question for their part of the industry.' },
+/** The two lengths, with times worked out from the questions actually being asked. */
+const lengthsFor = (
+  estimates: FormEstimates,
+): readonly { id: FormLength; label: string; help: string }[] => [
+  {
+    id: 'full',
+    label: 'Full interview',
+    help: `${capitalise(spoken(estimates.full))}. Every question for their part of the industry.`,
+  },
   {
     id: 'short',
     label: 'Short call',
-    help: 'About five minutes. Only the questions asked in every round, so the call still counts towards the baseline, mid-project and final comparison.',
+    help: `${capitalise(spoken(estimates.short))}. Only the questions asked in every round, so the call still counts towards the baseline, mid-project and final comparison.`,
   },
 ];
+
+const capitalise = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 
 const METHODS: readonly { id: InterviewMethod; label: string; help: string }[] = [
   { id: 'interview_in_person', label: 'Face to face', help: 'On farm, in the shed, at a field day.' },
@@ -48,12 +58,15 @@ const METHODS: readonly { id: InterviewMethod; label: string; help: string }[] =
  * Said aloud before the first question. A spoken yes leaves no other trace,
  * so the interviewer confirms it on screen and the response records it.
  */
-const CONSENT_SCRIPT =
-  "Thanks for making the time. This is for the Potato Mechanisation Project — we're working out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about ten minutes. Nothing you say is reported against your name or your business unless you tell me otherwise, and you can skip anything or stop at any time. Are you happy to go ahead?";
+const consentScript = (length: string): string =>
+  `Thanks for making the time. This is for the Potato Mechanisation Project — we're working out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes ${length}. Nothing you say is reported against your name or your business unless you tell me otherwise, and you can skip anything or stop at any time. Are you happy to go ahead?`;
 
 const CONTACT_FORM_ID = 'interview-eoi-form';
 
 const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
+  const setupQuestionnaire = useQuestionnaire();
+  const estimates = useMemo(() => formEstimates(setupQuestionnaire), [setupQuestionnaire]);
+  const lengths = lengthsFor(estimates);
   const [method, setMethod] = useState<InterviewMethod | null>(null);
   const [consent, setConsent] = useState(false);
   const [length, setLength] = useState<FormLength>('full');
@@ -88,7 +101,7 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
       <fieldset className={card}>
         <legend className="mb-2 text-subtitle font-semibold text-ink">How long have they got?</legend>
         <ul className="grid gap-2">
-          {LENGTHS.map((option) => (
+          {lengths.map((option) => (
             <li key={option.id}>
               <label className={`${choiceRow} cursor-pointer ${length === option.id ? choiceRowSelected : ''}`}>
                 <input
@@ -113,7 +126,7 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
         <h2 id="consent-heading" className="text-subtitle font-semibold">
           Read this out first
         </h2>
-        <blockquote className="mt-3 border-l-4 border-accent pl-4 text-body text-ink">{CONSENT_SCRIPT}</blockquote>
+        <blockquote className="mt-3 border-l-4 border-accent pl-4 text-body text-ink">{consentScript(spoken(length === 'short' ? estimates.short : estimates.full))}</blockquote>
         <label className="mt-4 flex cursor-pointer items-start gap-3 text-body text-ink">
           <input
             type="checkbox"

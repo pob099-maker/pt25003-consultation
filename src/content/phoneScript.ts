@@ -1,4 +1,5 @@
 import { allSections } from './lookup';
+import { formEstimates, spoken } from '../services/estimate';
 import type { Option, Question, Questionnaire } from '../types';
 
 /**
@@ -31,6 +32,9 @@ const questionBlock = (question: Question, index: number): string => {
     case 'single':
       return `${head}${help}\n\n_One answer only._\n\n${optionLines(question.options)}`;
     case 'text':
+      if (question.entry === 'linkCode') {
+        return `${head}${help}\n\n_Ask the three one at a time, and only if they are happy to: the first two letters of their mother's first name (or whoever raised them), the day of the month they were born, and the first two letters of the town they grew up in. Enter them in the three boxes and the form builds the code. If they would rather not, move on._`;
+      }
       return `${head}${help}\n\n_Let them talk. Write it down in their words, not yours._`;
     case 'rating':
       return [
@@ -65,7 +69,7 @@ export const buildPhoneScript = (questionnaire: Questionnaire): string => {
   lines.push('Say, in your own words:');
   lines.push('');
   lines.push(
-    '> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about ten minutes. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.',
+    `> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes ${spoken(formEstimates(questionnaire).full)}. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.`,
   );
   lines.push('');
   lines.push(

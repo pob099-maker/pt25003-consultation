@@ -14,6 +14,7 @@ import type { ContactFormValues } from '../schemas/consultation';
 import { submitContact, submitResponse } from '../services/submit';
 import { LENGTH_ID, lengthAnswer, shortVersion } from '../services/formLength';
 import { arrivalSource, forgetArrival } from '../services/sources';
+import { estimateFor } from '../services/estimate';
 import { accentPanel } from '../components/ui';
 import type { ConsultationResponse, ContactRecord } from '../types';
 
@@ -43,6 +44,12 @@ export const Consultation = () => {
   }, []);
 
   const isLastStep = stepIndex === steps.length - 1;
+  // What the full version would add for this person's own role, rather than
+  // a number typed in once and never updated as the questions grew.
+  const extraMinutes = useMemo(
+    () => estimateFor(full, draft.role).minutes - estimateFor(shortVersion(full), draft.role).minutes,
+    [full, draft.role],
+  );
   /** The last step with questions on it: after this comes only "stay involved". */
   const isLastContentStep = stepIndex === steps.length - 2;
   const [upgrading, setUpgrading] = useState(false);
@@ -197,8 +204,8 @@ export const Consultation = () => {
               That is the short version, thank you
             </h2>
             <p className="mt-2 text-body text-ink">
-              If you have another five minutes, the full version asks about your own operation, what you have tried
-              already, and what gets in the way. It is the part that helps us most, and the answers you have given
+              If you have {extraMinutes > 0 ? `about ${extraMinutes} more minutes` : 'a few more minutes'}, the full
+              version asks about your own operation, what you have tried already, and what gets in the way. It is the part that helps us most, and the answers you have given
               already count either way.
             </p>
             <div className="mt-4 flex flex-col gap-3 sm:flex-row">

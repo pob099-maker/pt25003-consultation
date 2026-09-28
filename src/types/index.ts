@@ -58,8 +58,29 @@ export type RoundStage = 'pilot' | 'baseline' | 'review';
 export type Question =
   | (QuestionBase & { readonly kind: 'multi'; readonly options: readonly Option[]; readonly allowOther?: boolean })
   | (QuestionBase & { readonly kind: 'single'; readonly options: readonly Option[] })
-  | (QuestionBase & { readonly kind: 'text'; readonly placeholder?: string; readonly rows?: number })
-  | (QuestionBase & { readonly kind: 'rating'; readonly rows: readonly Option[]; readonly scale: readonly ScalePoint[] })
+  | (QuestionBase & {
+      readonly kind: 'text';
+      readonly placeholder?: string;
+      readonly rows?: number;
+      /**
+       * A text answer entered some other way than typing freely. 'linkCode' is
+       * the anonymous follow-up code, built from three fixed pieces so it comes
+       * out the same every time; it is stored as text, never analysed as a
+       * comment.
+       */
+      readonly entry?: 'linkCode';
+    })
+  | (QuestionBase & {
+      readonly kind: 'rating';
+      readonly rows: readonly Option[];
+      readonly scale: readonly ScalePoint[];
+      /**
+       * Show the words for every point, not just the two ends. Right for a
+       * scale of distinct stages, such as where somebody is with a practice,
+       * where nobody can pick 3 without knowing what 3 means.
+       */
+      readonly labelEveryStep?: boolean;
+    })
   | (QuestionBase & {
       readonly kind: 'rank';
       readonly count: number;

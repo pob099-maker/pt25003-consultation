@@ -77,14 +77,30 @@ describe('tracked questions', () => {
 
   it('cover the measures the evaluation depends on', () => {
     const ids = trackingQuestions(DEFAULT_QUESTIONNAIRE).map((question) => question.id);
-    for (const required of ['q1_constraints', 'q5_areas', 'q7_evidence', 'q_trial', 'q_trust', 'farm_adopted', 'fu_changed']) {
+    for (const required of [
+      'q1_constraints',
+      'q5_areas',
+      'q7_evidence',
+      'q_trial',
+      'q_trust',
+      'q_confidence',
+      'farm_practices',
+      'pro_practices',
+      'fu_changed',
+      'fu_activities',
+      'fu_contribution',
+      'link_code',
+    ]) {
       expect(ids).toContain(required);
     }
   });
 
   it('are never open text, because a paragraph cannot be counted across rounds', () => {
     for (const question of trackingQuestions(DEFAULT_QUESTIONNAIRE)) {
-      expect(question.kind, question.id).not.toBe('text');
+      // The follow-up code is stored as text but is never typed freely: the
+      // form builds it from three fixed pieces, and it is what the repeats
+      // are linked by. It is the only exception.
+      if (question.kind === 'text') expect(question.entry, question.id).toBe('linkCode');
     }
   });
 });
