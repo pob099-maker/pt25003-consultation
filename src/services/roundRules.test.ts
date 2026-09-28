@@ -4,10 +4,12 @@ import { questionById } from '../content/lookup';
 import { LINK_CODE_ID } from './linkCode';
 import {
   applyRound,
+  everyRow,
   newRowId,
   newRowSchema,
   nextRoundOverrides,
   reportingFrame,
+  roundProblems,
   type RoundDefinition,
 } from './roundRules';
 import type { ConsultationResponse, Question } from '../types';
@@ -214,5 +216,110 @@ describe('newRowSchema', () => {
     expect(newRowSchema.parse({ label: '  Weeding robot  ', help: '' }).label).toBe('Weeding robot');
     expect(newRowSchema.safeParse({ label: 'ab', help: '' }).success).toBe(false);
     expect(newRowSchema.safeParse({ label: 'x'.repeat(121), help: '' }).success).toBe(false);
+  });
+});
+
+describe('follow-up questions', () => {
+  it('are left out of a round that is not a follow-up, so every screen agrees on what it asked', () => {
+    expect(applyRound(q, round('baseline', {})).followUp).toEqual([]);
+    expect(applyRound(q, round('pilot', {})).followUp).toEqual([]);
+    expect(applyRound(q, round('review', {})).followUp.length).toBeGreaterThan(0);
+  });
+});
+
+describe('roundProblems', () => {
+  const others = [round('baseline', {}, 'the-baseline')];
+
+  it('refuses an interim that would ask nothing but the follow-up code', () => {
+    expect(roundProblems(q, round('interim', {}, 'check'), { others })).toHaveLength(1);
+    expect(roundProblems(q, round('interim', { farm_practices: { inInterim: true } }, 'check'), { others })).toEqual([]);
+  });
+
+  it('refuses a second starting point', () => {
+    expect(roundProblems(q, round('baseline', {}, 'another'), { others })[0]).toContain('already a starting point');
+  });
+
+  it('refuses a short code another round already has', () => {
+    expect(roundProblems(q, round('review', {}, 'the-baseline'), { others })[0]).toContain('already belongs');
+  });
+
+  it('refuses to change the kind of a round that already has responses', () => {
+    const problems = roundProblems(q, round('interim', { farm_practices: { inInterim: true } }, 'live'), {
+      others,
+      savedStage: 'review',
+      responses: 3,
+    });
+    expect(problems.some((problem) => problem.includes('cannot change'))).toBe(true);
+  });
+
+  it('passes an ordinary follow-up', () => {
+    expect(roundProblems(q, round('review', {}, 'mid'), { others })).toEqual([]);
+  });
+});
+
+describe('ids read back from storage', () => {
+  it('never lets a new row take a name every object already has', () => {
+    expect(newRowId('Constructor', new Set())).toBe('constructor_2');
+  });
+
+  it('never turns an unsafe answer key into a report row', () => {
+    const question = questionById(q, 'farm_practices');
+    if (question?.kind !== 'rating') throw new Error('expected a rating question');
+    const crafted = {
+      id: crypto.randomUUID(),
+      roundId: 'review',
+      role: 'grower' as const,
+      pathway: 'farm',
+      regions: [],
+      regionOther: '',
+      answers: { farm_practices: { kind: 'rating' as const, values: { constructor: 3, ['__proto__']: 2, weeding_robot: 4 } } },
+      startedAt: '2026-09-01T00:00:00.000Z',
+      submittedAt: '2026-09-01T00:10:00.000Z',
+      durationSeconds: 600,
+      isTestData: false,
+      method: 'online' as const,
+      collectedBy: null,
+      consentVerbal: null,
+      sessionId: null,
+      source: null,
+    };
+    const rows = everyRow(question, [], [crafted]).map((row) => row.id);
+    expect(rows).toContain('weeding_robot');
+    expect(rows).not.toContain('constructor');
+    expect(rows).not.toContain('__proto__');
+  });
+});
+
+describe('reportingFrame completeness', () => {
+  it('keeps every question even while an interim that asks one list is collecting', () => {
+    const interim = round('interim', { farm_practices: { inInterim: true } }, 'check');
+    const frame = reportingFrame(q, [interim], 'check');
+    expect(questionById(frame, 'q1_constraints')).toBeDefined();
+    expect(questionById(frame, 'q5_areas')).toBeDefined();
+  });
+
+  it('keeps answers to a question no questionnaire defines any more', () => {
+    const answered = {
+      id: crypto.randomUUID(),
+      roundId: '2026-pilot',
+      role: 'grower' as const,
+      pathway: 'farm',
+      regions: [],
+      regionOther: '',
+      answers: { farm_adopted: { kind: 'multi' as const, values: ['guidance'], other: 'Drone mapping' } },
+      startedAt: '2026-09-01T00:00:00.000Z',
+      submittedAt: '2026-09-01T00:10:00.000Z',
+      durationSeconds: 600,
+      isTestData: false,
+      method: 'online' as const,
+      collectedBy: null,
+      consentVerbal: null,
+      sessionId: null,
+      source: null,
+    };
+    const frame = reportingFrame(q, [], null, [answered]);
+    const retired = questionById(frame, 'farm_adopted');
+    expect(retired?.prompt).toContain('no longer asked');
+    expect(retired?.kind === 'multi' && retired.allowOther).toBe(true);
   });
 });

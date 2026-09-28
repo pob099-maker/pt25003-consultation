@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { currentProject, purposeTemplate } from '../../content/projects';
 import { ReadinessPanel } from './ReadinessPanel';
@@ -7,15 +7,16 @@ import { card, primaryButton, secondaryButton, textInput } from '../../component
 import { allQuestions, allSections } from '../../content/lookup';
 import { libraryIds, libraryQuestion } from '../../content/library';
 import {
+  applyRound,
   isWatchList,
-  loadActiveRound,
-  loadAllRounds,
   nextRoundOverrides,
+  roundProblems,
   saveRound,
   type QuestionOverride,
   type RoundConfig,
 } from '../../services/rounds';
-import { LINK_CODE_ID } from '../../services/linkCode';
+import { isLinkCodeQuestion } from '../../content/lookup';
+import { SHORT_PROMISE_MINUTES, formEstimates, spoken } from '../../services/estimate';
 import { WatchListRows } from './WatchListRows';
 import type { RoundStage } from '../../types';
 import { COLLECTION, ROLE_HELP, ROLE_LABEL, planSentence } from '../../content/vocabulary';
@@ -109,18 +110,59 @@ const LibraryAdditions = ({
  * every stored response points at them, so renaming an option relabels the
  * same thing, while a new id would be a new thing.
  */
-export const RoundEditor = ({ responses = [] }: { responses?: readonly ConsultationResponse[] }) => {
+export const RoundEditor = ({
+  responses = [],
+  rounds: history = [],
+  roundsError = null,
+  onSaved,
+}: {
+  responses?: readonly ConsultationResponse[];
+  /** Every round so far, oldest first, loaded with the rest of the admin data. */
+  rounds?: readonly RoundConfig[];
+  /** Why the rounds could not be read. Starting a new round waits until they can be. */
+  roundsError?: string | null;
+  /** Called after a save, so every tab sees the rounds as they now are. */
+  onSaved?: () => Promise<void> | void;
+}) => {
   const [round, setRound] = useState<RoundConfig>(emptyRound);
-  const [history, setHistory] = useState<readonly RoundConfig[]>([]);
+  // The saved round the one on screen was loaded from, or null for a new one.
+  const [loadedFrom, setLoadedFrom] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const opened = useRef(false);
 
+  // Opens on the round that is collecting now, once, so a later reload of the
+  // rounds never throws away edits in progress.
   useEffect(() => {
-    void loadActiveRound().then((loaded) => {
-      if (loaded !== null) setRound(loaded);
-    });
-    void loadAllRounds().then(setHistory);
-  }, []);
+    if (opened.current || history.length === 0) return;
+    opened.current = true;
+    const active = history.find((entry) => entry.isActive);
+    if (active !== undefined) {
+      setRound(active);
+      setLoadedFrom(active.roundId);
+    }
+  }, [history]);
+
+  const base = currentProject().questionnaire;
+  // What the checks need to know beyond the round on screen.
+  const savedHere = loadedFrom !== null && round.roundId === loadedFrom;
+  const heldHere = savedHere ? responses.filter((response) => response.roundId === loadedFrom).length : 0;
+  const problems = useMemo(
+    () =>
+      roundProblems(base, round, {
+        others: history.filter((entry) => entry.roundId !== loadedFrom),
+        savedStage: savedHere ? (history.find((entry) => entry.roundId === loadedFrom)?.stage ?? null) : null,
+        responses: heldHere,
+      }),
+    [base, round, history, loadedFrom, savedHere, heldHere],
+  );
+  // How long this round's short version would take, with every line it adds.
+  const shortTime = useMemo(() => formEstimates(applyRound(base, round)).short, [base, round]);
+  const hasBaseline = history.some((entry) => entry.stage === 'baseline');
+  // A new round inherits from the rounds before it, so it waits until they
+  // have been read: starting one from an empty history would quietly drop
+  // every setting the last full round had.
+  const canStartNew = roundsError === null && (history.length > 0 || loadedFrom === null);
 
   const setOverride = (questionId: string, patch: Partial<QuestionOverride>): void =>
     setRound((current) => ({
@@ -132,10 +174,17 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
     }));
 
   const save = async (): Promise<void> => {
+    if (problems.length > 0) return;
     setBusy(true);
     const error = await saveRound(round);
     setBusy(false);
-    setStatus(error === null ? 'Saved. New responses will use this wording.' : error);
+    if (error !== null) {
+      setStatus(error);
+      return;
+    }
+    setLoadedFrom(round.roundId);
+    setStatus('Saved. New responses will use this wording.');
+    await onSaved?.();
   };
 
   /** Presets, so nobody has to invent a name. Every one of them can be typed over. */
@@ -154,6 +203,7 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
       isActive: true,
       overrides: nextRoundOverrides(sofar),
     });
+    setLoadedFrom(null);
     setStatus(
       `"${name}" is ready to start. Everything already collected keeps the ${COLLECTION.one} it was given in and is untouched.${
         stage === 'interim'
@@ -249,6 +299,10 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
                   name="round-stage"
                   className="mt-1 accent-primary"
                   checked={round.stage === role}
+                  // A round that already has answers keeps its kind: turning a
+                  // live starting point into an interim check would change
+                  // what everybody after it is asked, and what theirs meant.
+                  disabled={heldHere > 0 && round.stage !== role}
                   onChange={() => setRound({ ...round, stage: role })}
                 />
                 <span>
@@ -259,31 +313,88 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
             ))}
           </div>
         </fieldset>
+        {heldHere > 0 && (
+          <p className="mt-2 text-meta text-ink-soft">
+            This {COLLECTION.one} already has {heldHere} response{heldHere === 1 ? '' : 's'}, so what kind it is is fixed.
+          </p>
+        )}
+        {round.stage !== 'interim' && (
+          <p
+            className={`mt-3 text-meta ${
+              round.stage === 'baseline' && shortTime.minutes > SHORT_PROMISE_MINUTES
+                ? 'font-semibold text-danger'
+                : 'text-ink-soft'
+            }`}
+          >
+            The short version of this {COLLECTION.one} takes {spoken(shortTime)} for the role it takes longest.
+            {round.stage === 'baseline' && shortTime.minutes > SHORT_PROMISE_MINUTES
+              ? ' The magazine promises under ten minutes: take a line off, or move a question to the full version.'
+              : ''}
+          </p>
+        )}
+        {problems.length > 0 && (
+          <ul className="mt-3 grid gap-1 text-meta font-medium text-danger" role="alert">
+            {problems.map((problem) => (
+              <li key={problem}>{problem}</li>
+            ))}
+          </ul>
+        )}
         <div className="mt-4 flex flex-wrap gap-3">
-          <button type="button" className={primaryButton} onClick={() => void save()} disabled={busy}>
+          <button
+            type="button"
+            className={primaryButton}
+            onClick={() => void save()}
+            disabled={busy || problems.length > 0}
+          >
             {busy ? 'Saving…' : 'Save'}
           </button>
-          {purpose.stages.includes('baseline') && (
-            <button type="button" className={secondaryButton} onClick={() => startNew('baseline', 'Baseline')}>
+          {purpose.stages.includes('baseline') && !hasBaseline && (
+            <button
+              type="button"
+              className={secondaryButton}
+              disabled={!canStartNew}
+              onClick={() => startNew('baseline', 'Baseline')}
+            >
               Start the starting point
             </button>
           )}
           {purpose.stages.includes('review') && (
             <>
-              <button type="button" className={secondaryButton} onClick={() => startNew('review', 'Mid-term review')}>
+              <button
+                type="button"
+                className={secondaryButton}
+                disabled={!canStartNew}
+                onClick={() => startNew('review', 'Mid-term review')}
+              >
                 Start a follow-up
               </button>
-              <button type="button" className={secondaryButton} onClick={() => startNew('review', 'Final review')}>
+              <button
+                type="button"
+                className={secondaryButton}
+                disabled={!canStartNew}
+                onClick={() => startNew('review', 'Final review')}
+              >
                 Start the final one
               </button>
             </>
           )}
           {purpose.stages.includes('interim') && (
-            <button type="button" className={secondaryButton} onClick={() => startNew('interim', 'Interim check')}>
+            <button
+              type="button"
+              className={secondaryButton}
+              disabled={!canStartNew}
+              onClick={() => startNew('interim', 'Interim check')}
+            >
               Start an interim check
             </button>
           )}
         </div>
+        {roundsError !== null && (
+          <p className="mt-3 text-meta font-medium text-danger" role="alert">
+            The earlier {COLLECTION.many} could not be read ({roundsError}), so a new one cannot be started safely:
+            it would lose what they set. Press Refresh at the top of the page and try again.
+          </p>
+        )}
         <p className="mt-3 text-meta text-ink-soft">
           <strong className="text-ink">{purpose.label}:</strong> {purpose.what}
         </p>
@@ -306,7 +417,7 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
               const override = round.overrides[question.id] ?? {};
               const watchList = isWatchList(question);
               const interim = round.stage === 'interim';
-              const alwaysAsked = question.id === LINK_CODE_ID;
+              const alwaysAsked = isLinkCodeQuestion(question);
               const options =
                 question.kind === 'multi' || question.kind === 'single'
                   ? question.options
@@ -391,7 +502,10 @@ export const RoundEditor = ({ responses = [] }: { responses?: readonly Consultat
                       history={history}
                       current={round}
                       responses={responses}
-                      onChange={(patch) => setOverride(question.id, patch)}
+                      // In an interim, changing a question's lines means it is to be asked.
+                      onChange={(patch) =>
+                        setOverride(question.id, interim ? { ...patch, inInterim: true } : patch)
+                      }
                     />
                   )}
                   {!watchList && options.length > 0 && (

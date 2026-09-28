@@ -1,8 +1,16 @@
-import { useId } from 'react';
+import { useId, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { secondaryButton, textInput } from '../../components/ui';
-import { everyRow, newRowId, newRowSchema, type NewRow, type QuestionOverride, type RoundConfig } from '../../services/rounds';
+import {
+  everyRow,
+  newRowId,
+  newRowSchema,
+  rowsAsked,
+  type NewRow,
+  type QuestionOverride,
+  type RoundConfig,
+} from '../../services/rounds';
 import type { ConsultationResponse, Option, Question } from '../../types';
 
 type RatingQuestion = Extract<Question, { kind: 'rating' }>;
@@ -44,21 +52,26 @@ export const WatchListRows = ({ question, override, history, current, responses,
   const stopped = new Set(override.retiredOptions ?? []);
 
   const definedHere = (rowId: string): boolean => addedHere.some((row) => row.id === rowId);
-  const isAsked = (rowId: string): boolean => (own.has(rowId) || definedHere(rowId)) && !stopped.has(rowId);
-  const askedCount = rows.filter((row) => isAsked(row.id)).length;
+  // The same rule the form asks by, so what is ticked here is what people see.
+  const asked = useMemo(() => new Set(rowsAsked(question, override).map((row) => row.id)), [question, override]);
+  const isAsked = (rowId: string): boolean => asked.has(rowId);
+  const askedCount = asked.size;
   const firstRound = (rowId: string): RoundConfig | undefined =>
     earlier.find((entry) => (entry.overrides[question.id]?.addedOptions ?? []).some((row) => row.id === rowId));
 
   // Every row id an answer already uses, so a new row can never take one.
-  const answeredIds = new Set<string>();
-  for (const response of responses) {
-    const answer = response.answers[question.id];
-    if (answer?.kind === 'rating') for (const id of Object.keys(answer.values)) answeredIds.add(id);
-  }
+  const answeredIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const response of responses) {
+      const answer = response.answers[question.id];
+      if (answer?.kind === 'rating') for (const id of Object.keys(answer.values)) ids.add(id);
+    }
+    return ids;
+  }, [responses, question.id]);
 
   const toggle = (row: Option, ask: boolean): void => {
     if (!ask) {
-      onChange({ retiredOptions: [...stopped, row.id] });
+      onChange({ retiredOptions: [...new Set([...stopped, row.id])] });
       return;
     }
     const needsDefinition = !own.has(row.id) && !definedHere(row.id);
@@ -97,8 +110,13 @@ export const WatchListRows = ({ question, override, history, current, responses,
       <p className="text-meta font-semibold text-ink-soft">Tick what this round asks</p>
       <ul className="mt-2 grid gap-2">
         {rows.map((row) => {
-          const asked = isAsked(row.id);
-          const removable = definedHere(row.id) && firstRound(row.id) === undefined && !answeredIds.has(row.id);
+          const rowAsked = isAsked(row.id);
+          // Never the last line being asked: a list always keeps one to answer.
+          const removable =
+            definedHere(row.id) &&
+            firstRound(row.id) === undefined &&
+            !answeredIds.has(row.id) &&
+            !(rowAsked && askedCount <= 1);
           const detail = note(row);
           return (
             <li key={row.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-line p-2">
@@ -106,9 +124,9 @@ export const WatchListRows = ({ question, override, history, current, responses,
                 <input
                   type="checkbox"
                   className="mt-1 size-4 accent-primary"
-                  checked={asked}
+                  checked={rowAsked}
                   // A list always keeps at least one line to answer.
-                  disabled={asked && askedCount <= 1}
+                  disabled={rowAsked && askedCount <= 1}
                   onChange={(event) => toggle(row, event.target.checked)}
                 />
                 <span>

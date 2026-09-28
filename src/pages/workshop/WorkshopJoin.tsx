@@ -15,7 +15,7 @@ import {
   quietButton,
   textInput,
 } from '../../components/ui';
-import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
+import { useStableQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { formEstimates, spoken } from '../../services/estimate';
 import { questionById } from '../../content/lookup';
 import { useWorkshopState } from '../../hooks/useWorkshopState';
@@ -103,7 +103,7 @@ const OUTCOME_MESSAGE: Record<Exclude<VoteOutcome, 'ok'>, string> = {
 };
 
 const Joining = ({ live, onJoin }: { live: LiveWorkshop; onJoin: (role: RoleId | null) => void }) => {
-  const questionnaire = useQuestionnaire();
+  const questionnaire = useStableQuestionnaire();
   const [role, setRole] = useState<RoleId | null>(null);
   return (
     <div className="grid gap-5">
@@ -264,7 +264,7 @@ const Voting = ({
   onVoted: (questionId: string, choices: readonly string[]) => void;
   onLeave: () => void;
 }) => {
-  const questionnaire = useQuestionnaire();
+  const questionnaire = useStableQuestionnaire();
   const question = questionById(questionnaire, live.questionId ?? '') ?? null;
   const sent = live.questionId === null ? undefined : me.votes[live.questionId];
   const [picked, setPicked] = useState<readonly string[]>(sent ?? []);
@@ -398,7 +398,7 @@ const Voting = ({
 export const WorkshopJoin = () => {
   const { code: rawCode } = useParams();
   const code = normaliseCode(rawCode ?? '');
-  const questionnaire = useQuestionnaire();
+  const questionnaire = useStableQuestionnaire();
   const { state, offline } = useWorkshopState(code.length === 6 ? code : undefined);
   const [me, setMe] = useState<ParticipantState | null>(() => (code.length === 6 ? loadParticipant(code) : null));
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -413,6 +413,14 @@ export const WorkshopJoin = () => {
     if (submitting.current || current.submitted) return;
     const answers = answersFromVotes(questionnaire, current.votes);
     if (Object.keys(answers).length === 0) {
+      // Votes that match no question are never marked as saved when they were
+      // not. Nothing voted at all is simply nothing to save.
+      if (Object.values(current.votes).some((choices) => choices.length > 0)) {
+        setSaveError(
+          'Your answers could not be matched to the questions, so they have not been saved. Please tell the facilitator.',
+        );
+        return;
+      }
       update({ ...current, submitted: true });
       return;
     }

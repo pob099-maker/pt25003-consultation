@@ -69,11 +69,26 @@ const definitionOf = (id: string | null): SourceDefinition | undefined =>
  */
 export const sourceFromAddress = (search: string, hash: string): string | null => {
   const hashQuery = hash.includes('?') ? hash.slice(hash.indexOf('?')) : '';
-  const raw = new URLSearchParams(search).get('src') ?? new URLSearchParams(hashQuery).get('src');
-  if (raw === null) return null;
-  const code = raw.trim().toLowerCase();
+  const fromSearch = new URLSearchParams(search).get('src')?.trim() ?? '';
+  // An empty src= in the address is nothing, so a label in the hash still counts.
+  const raw = fromSearch.length > 0 ? fromSearch : (new URLSearchParams(hashQuery).get('src')?.trim() ?? '');
+  const code = raw.toLowerCase();
   if (code.length === 0) return null;
   return definitionOf(code) === undefined ? OTHER_SOURCE : code;
+};
+
+/**
+ * The address with the label taken out of its query string. The hash router
+ * never clears the query, so a label left there would be read again by every
+ * reload of the page, including one after the answers were sent, and the next
+ * person on the same phone would be credited to the magazine for a month.
+ */
+export const addressWithoutSource = (pathname: string, search: string, hash: string): string | null => {
+  const params = new URLSearchParams(search);
+  if (!params.has('src')) return null;
+  params.delete('src');
+  const rest = params.toString();
+  return `${pathname}${rest.length > 0 ? `?${rest}` : ''}${hash}`;
 };
 
 interface Remembered {
@@ -90,8 +105,16 @@ interface Remembered {
 export const rememberArrival = (now: Date = new Date()): void => {
   const found = sourceFromAddress(window.location.search, window.location.hash);
   if (found === null) return;
-  if (arrivalSource(now) !== null) return;
-  writeJson(STORAGE_KEYS.arrival, { source: found, at: now.toISOString() } satisfies Remembered);
+  if (arrivalSource(now) === null)
+    writeJson(STORAGE_KEYS.arrival, { source: found, at: now.toISOString() } satisfies Remembered);
+  const cleaned = addressWithoutSource(window.location.pathname, window.location.search, window.location.hash);
+  if (cleaned !== null) {
+    try {
+      window.history.replaceState(window.history.state, '', cleaned);
+    } catch {
+      // Some embedded browsers refuse; the label is already remembered.
+    }
+  }
 };
 
 /** The link this browser arrived by, if it is recent enough to count. */
@@ -116,8 +139,13 @@ export const channelOf = (source: string | null): ChannelId | null => {
   return definitionOf(source)?.channel ?? 'other';
 };
 
-/** The full link to paste, for a source on the list. */
-export const linkFor = (origin: string, id: string): string => `${origin}/?src=${id}`;
+/**
+ * The full link to paste, for a source on the list. The base is where this
+ * build is served from, so the demonstration's links stay in the
+ * demonstration instead of sending people to the live consultation.
+ */
+export const linkFor = (origin: string, id: string, base = '/'): string =>
+  `${origin}${base.endsWith('/') ? base : `${base}/`}?src=${id}`;
 
 const METHOD_ROUTE: Readonly<Record<Exclude<CollectionMethod, 'online'>, string>> = {
   interview_in_person: 'Interviews, in person',

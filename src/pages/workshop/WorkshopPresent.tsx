@@ -5,7 +5,7 @@ import { Layout } from '../../components/Layout';
 import { QrCode } from '../../components/QrCode';
 import { WorkshopResults } from '../../components/WorkshopResults';
 import { ThemeToggle } from '../../components/ThemeToggle';
-import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
+import { useStableQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { questionById } from '../../content/lookup';
 import { useStaffSession } from '../../hooks/useStaffSession';
 import { useWorkshopState } from '../../hooks/useWorkshopState';
@@ -82,7 +82,7 @@ const Stage = ({
   onControl: (c: WorkshopControl) => void;
   onHideWord: (word: string, hide: boolean) => void;
 }) => {
-  const questionnaire = useQuestionnaire();
+  const questionnaire = useStableQuestionnaire();
   const question = questionById(questionnaire, live.questionId ?? '') ?? null;
   const url = joinUrl(code);
   const last = live.index >= live.questionIds.length - 1;

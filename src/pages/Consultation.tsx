@@ -11,7 +11,7 @@ import { promptOverrideFor, rankChoicesFor } from '../content/dynamic';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { useConsultation } from '../hooks/useConsultation';
 import type { ContactFormValues } from '../schemas/consultation';
-import { submitContact, submitResponse } from '../services/submit';
+import { contactDay, submitConsultation } from '../services/submit';
 import { LENGTH_ID, lengthAnswer, shortVersion } from '../services/formLength';
 import { arrivalSource, forgetArrival } from '../services/sources';
 import { estimateFor } from '../services/estimate';
@@ -94,7 +94,9 @@ export const Consultation = () => {
     const now = new Date();
     const arrival = arrivalSource(now);
     const response: ConsultationResponse = {
-      id: crypto.randomUUID(),
+      // The draft's own id: pressing Submit again, or a resend from the
+      // outbox, stores these answers once however many times they are sent.
+      id: draft.responseId,
       roundId: questionnaire.roundId,
       role: draft.role,
       pathway,
@@ -112,39 +114,39 @@ export const Consultation = () => {
       source: arrival,
     };
 
-    const saved = await submitResponse(response);
+    const wantsContact = contact !== null && interests.length > 0 && !interests.includes(NO_INTEREST_ID);
+    const record: ContactRecord | null =
+      contact === null || !wantsContact
+        ? null
+        : {
+            id: crypto.randomUUID(),
+            roundId: questionnaire.roundId,
+            interests,
+            name: contact.name,
+            organisation: contact.organisation,
+            broadRole: contact.broadRole,
+            region: contact.region,
+            email: contact.email,
+            phone: contact.phone,
+            preferredContactMethod: contact.preferredContactMethod,
+            preferredContactTime: contact.preferredContactTime,
+            comments: contact.comments,
+            // To the day, and with no link label: sent together with the answers,
+            // a shared timestamp or label would let anyone holding both exports
+            // join this name to answers the privacy statement says it is never
+            // linked to.
+            submittedAt: contactDay(now),
+            isTestData: false,
+            source: null,
+          };
+
+    // The contact details are checked before anything is sent, so a problem
+    // with them never leaves the answers stored and the person resubmitting.
+    const saved = await submitConsultation(response, record);
     if (!saved.success) {
       setSubmitError(saved.error);
       setSubmitting(false);
       return;
-    }
-
-    let contactQueued = false;
-    if (contact !== null && interests.length > 0 && !interests.includes(NO_INTEREST_ID)) {
-      const record: ContactRecord = {
-        id: crypto.randomUUID(),
-        roundId: questionnaire.roundId,
-        interests,
-        name: contact.name,
-        organisation: contact.organisation,
-        broadRole: contact.broadRole,
-        region: contact.region,
-        email: contact.email,
-        phone: contact.phone,
-        preferredContactMethod: contact.preferredContactMethod,
-        preferredContactTime: contact.preferredContactTime,
-        comments: contact.comments,
-        submittedAt: now.toISOString(),
-        isTestData: false,
-        source: arrival,
-      };
-      const savedContact = await submitContact(record);
-      if (!savedContact.success) {
-        setSubmitError(savedContact.error);
-        setSubmitting(false);
-        return;
-      }
-      contactQueued = savedContact.data === 'queued';
     }
 
     state.ping(steps.length - 1, true);
@@ -155,7 +157,7 @@ export const Consultation = () => {
     state.reset();
     navigate('/thank-you', {
       replace: true,
-      state: { queued: saved.data === 'queued' || contactQueued, sharedContact: contact !== null },
+      state: { queued: saved.data.queued, sharedContact: record !== null },
     });
   };
 

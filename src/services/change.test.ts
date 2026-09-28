@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
-import { compareRounds, type RoundInfo } from './change';
+import { chartInput, compareRounds, rowHistory, type RoundInfo } from './change';
 import { questionById } from '../content/lookup';
 import type { AnswerMap, ConsultationResponse } from '../types';
 
@@ -160,5 +160,77 @@ describe('rows that come and go', () => {
   it('says when a round did not ask a question at all', () => {
     const trust = result.blocks.find((candidate) => candidate.questionId === 'q_trust');
     expect(trust?.asked).toEqual([true, false, true]);
+  });
+});
+
+describe('follow-up questions over the reviews', () => {
+  const phases: readonly RoundInfo[] = [
+    { roundId: 'base', label: 'Baseline', stage: 'baseline', overrides: {} },
+    { roundId: 'mid', label: 'Mid-term', stage: 'review', overrides: {} },
+    { roundId: 'final', label: 'Final', stage: 'review', overrides: {} },
+  ];
+  const changed = (value: string): AnswerMap => ({ fu_changed: { kind: 'single', value } });
+
+  it('are compared from the first review, not from a starting point that never asked them', () => {
+    const result = compareRounds(
+      q,
+      [
+        response('mid', changed('changed')),
+        response('mid', changed('no_change')),
+        response('final', changed('changed')),
+        response('final', changed('changed')),
+      ],
+      phases,
+    );
+    const block = result.blocks.find((candidate) => candidate.questionId === 'fu_changed');
+    const row = block?.rows.find((candidate) => candidate.id === 'changed');
+    expect(block?.asked).toEqual([false, true, true]);
+    expect(row?.from).toBe(1);
+    expect(row?.change).toBe(0.5);
+  });
+});
+
+describe('answers a round already holds', () => {
+  it('still count when the line is stopped while that round is collecting', () => {
+    const phases: readonly RoundInfo[] = [
+      { roundId: 'base', label: 'Baseline', stage: 'baseline', overrides: {} },
+      { roundId: 'mid', label: 'Mid-term', stage: 'review', overrides: { farm_practices: { retiredOptions: ['guidance'] } } },
+    ];
+    const result = compareRounds(
+      q,
+      [
+        response('base', { farm_practices: { kind: 'rating', values: { guidance: 2 } } }),
+        response('mid', { farm_practices: { kind: 'rating', values: { guidance: 4 } } }),
+      ],
+      phases,
+    );
+    const row = result.blocks.find((b) => b.questionId === 'farm_practices')?.rows.find((r) => r.id === 'guidance');
+    expect(row?.asked).toEqual([true, true]);
+    expect(row?.change).toBe(2);
+  });
+});
+
+describe('the follow-up code', () => {
+  it('is never a block in the change view: it links people, it is not a measure', () => {
+    const result = compareRounds(q, [], rounds);
+    expect(result.blocks.some((block) => block.questionId === 'link_code')).toBe(false);
+  });
+});
+
+describe('rowHistory and chartInput', () => {
+  const columns = [
+    { roundId: 'base', label: 'Baseline', stage: 'baseline' as const, respondents: 10 },
+    { roundId: 'mid', label: 'Mid-term', stage: 'review' as const, respondents: 10 },
+    { roundId: 'check', label: 'Interim check', stage: 'interim' as const, respondents: 5 },
+  ];
+
+  it('does not call a line stopped because the newest round is an interim that skipped it', () => {
+    const row = { id: 'x', label: 'X', values: [2, 3, null], asked: [true, true, false], from: 0, to: 1, change: 1 };
+    expect(rowHistory(row, columns)).toBeNull();
+  });
+
+  it('ends the chart line at the review the change is measured to', () => {
+    const row = { id: 'x', label: 'X', values: [2, 2, 5], asked: [true, true, true], from: 0, to: 1, change: 0 };
+    expect(chartInput([row])[0]?.values).toEqual([2, 2, null]);
   });
 });

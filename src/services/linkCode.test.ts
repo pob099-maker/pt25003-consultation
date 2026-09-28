@@ -57,3 +57,13 @@ describe('the pieces', () => {
     expect(isLinkCode('JO00BA')).toBe(false);
   });
 });
+
+describe('letters that do not break into a letter and an accent', () => {
+  it('are folded to what somebody typing without them would write', () => {
+    expect(twoLetters('Łucja')).toBe('LU');
+    expect(twoLetters('Øydis')).toBe('OY');
+    expect(twoLetters('Æsa')).toBe('AE');
+    expect(twoLetters('Þóra')).toBe('TH');
+    expect(twoLetters('Ｊｏ')).toBe('JO');
+  });
+});

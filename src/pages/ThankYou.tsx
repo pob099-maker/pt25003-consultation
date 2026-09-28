@@ -19,7 +19,7 @@ export const ThankYou = () => {
   const share = async (): Promise<void> => {
     // Labelled, so an answer from somebody this person told is counted as
     // passed on. It says how they heard, never who told them.
-    const url = linkFor(window.location.origin, SHARED_SOURCE);
+    const url = linkFor(window.location.origin, SHARED_SOURCE, import.meta.env.BASE_URL);
     const shareData = { title: `${currentProject().name} Consultation`, url };
     if (typeof navigator.share === 'function') {
       try {

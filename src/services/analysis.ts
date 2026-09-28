@@ -1,5 +1,14 @@
-import { OTHER_ROW, OTHER_ROW_LABEL, optionLabel, questionById } from '../content/lookup';
+import {
+  OTHER_ROW,
+  OTHER_ROW_LABEL,
+  QUOTE_OK_ID,
+  isLinkCodeQuestion,
+  isPersonalQuestion,
+  optionLabel,
+  questionById,
+} from '../content/lookup';
 import { isNoteId, noteLabel } from './interviewNotes';
+import { lengthOf } from './formLength';
 import type { ConsultationResponse, Questionnaire } from '../types';
 
 export interface Tally {
@@ -150,8 +159,17 @@ export const overview = (
     roleCounts.set(role, (roleCounts.get(role) ?? 0) + 1);
     for (const region of response.regions) regionCounts.set(region, (regionCounts.get(region) ?? 0) + 1);
   }
-  const designIds = questionnaire.projectDesign.flatMap((section) => section.questions.map((q) => q.id));
-  const completed = responses.filter((response) => designIds.some((id) => response.answers[id] !== undefined));
+  // The last section of the full version, less the follow-up code and the
+  // permission to quote: both are asked of everybody, short version included,
+  // so answering them says nothing about reaching the end of the full form.
+  const designIds = questionnaire.projectDesign
+    .flatMap((section) => section.questions)
+    .filter((question) => !isPersonalQuestion(question))
+    .map((question) => question.id);
+  // Only the full version has that section. A short-version answer set is
+  // complete by definition, and counting it either way would skew the rate.
+  const full = responses.filter((response) => lengthOf(response.answers) !== 'short');
+  const completed = full.filter((response) => designIds.some((id) => response.answers[id] !== undefined));
   const total = responses.length;
 
   const toTally = (entries: Map<string, number>, label: (id: string) => string): readonly Tally[] =>
@@ -163,12 +181,35 @@ export const overview = (
     total,
     byRole: toTally(roleCounts, (id) => questionnaire.roles.find((role) => role.id === id)?.label ?? 'Not given'),
     byRegion: toTally(regionCounts, (id) => questionnaire.regions.find((region) => region.id === id)?.label ?? id),
-    completionRate: total === 0 ? 0 : round(completed.length / total),
+    completionRate: full.length === 0 ? 0 : round(completed.length / full.length),
     medianMinutes: round(median(responses.map((response) => response.durationSeconds)) / 60, 1),
   };
 };
 
+/** Whether somebody's words may be quoted without their name. */
+export type QuotePermission = 'yes' | 'no' | 'not_asked';
+
+export const QUOTE_LABEL: Readonly<Record<QuotePermission, string>> = {
+  yes: 'OK to quote, without their name',
+  no: 'Do not quote',
+  not_asked: 'Not asked about quoting',
+};
+
+/**
+ * The answer to "is it all right to quote you". Somebody who took the short
+ * version, or an interim check, was never asked, and that is not a yes.
+ */
+export const quotePermission = (response: ConsultationResponse): QuotePermission => {
+  const answer = response.answers[QUOTE_OK_ID];
+  if (answer?.kind !== 'single') return 'not_asked';
+  if (answer.value === 'yes') return 'yes';
+  if (answer.value === 'no') return 'no';
+  return 'not_asked';
+};
+
 export interface FreeTextEntry {
+  /** Shown on every comment, so a quote is never chosen from somebody who said no. */
+  readonly quote: QuotePermission;
   readonly responseId: string;
   readonly questionId: string;
   readonly questionPrompt: string;
@@ -195,6 +236,7 @@ export const freeTextEntries = (
             : undefined;
         const named = (answer.other ?? '').trim();
         entries.push({
+          quote: quotePermission(response),
           responseId: response.id,
           questionId,
           questionPrompt: `${OTHER_ROW_LABEL}, for: ${question?.prompt ?? questionId}`,
@@ -206,8 +248,9 @@ export const freeTextEntries = (
       }
       if (answer.kind !== 'text' || answer.value.trim().length === 0) continue;
       const question = questionById(questionnaire, questionId);
-      if (question?.kind === 'text' && question.entry === 'linkCode') continue;
+      if (question !== undefined && isLinkCodeQuestion(question)) continue;
       entries.push({
+        quote: quotePermission(response),
         responseId: response.id,
         questionId,
         questionPrompt: isNoteId(questionId) ? noteLabel(questionnaire, questionId) : (question?.prompt ?? questionId),

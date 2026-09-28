@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { accentPanel, card } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { roleLabel } from '../../content/lookup';
-import { compareRounds, THIN, type ChangeRow, type RoundColumn, type RoundInfo } from '../../services/change';
+import { THIN, chartInput, compareRounds, rowHistory, type RoundInfo } from '../../services/change';
 import { COLLECTION, ROLE_LABEL } from '../../content/vocabulary';
-import { loadAllRounds } from '../../services/rounds';
 import { SlopeChart } from '../../components/SlopeChart';
 import { DownloadChartButton } from '../../components/DownloadChartButton';
 import { slopeChartSvg } from '../../lib/chartImage';
@@ -26,24 +25,6 @@ const formatValue = (value: number | null, measure: 'share' | 'mean'): string =>
   return measure === 'share' ? `${Math.round(value * 100)}%` : value.toFixed(1);
 };
 
-/**
- * What a reader needs to know about a row that was not asked every time: where
- * its comparison starts, and when it stopped being asked. Nothing for a row
- * asked in every round.
- */
-const rowHistory = (row: ChangeRow, columns: readonly RoundColumn[]): string | null => {
-  const notes: string[] = [];
-  const first = row.from === null ? undefined : columns[row.from];
-  if (first !== undefined && first.stage !== 'baseline') notes.push(`First asked in ${first.label}`);
-  const lastAsked = row.asked.lastIndexOf(true);
-  const lastAskedColumn = columns[lastAsked];
-  if (lastAsked >= 0 && lastAsked < columns.length - 1 && lastAskedColumn !== undefined)
-    notes.push(`not asked after ${lastAskedColumn.label}`);
-  if (notes.length === 0) return null;
-  const sentence = notes.join(', ');
-  return `${sentence.charAt(0).toUpperCase()}${sentence.slice(1)}.`;
-};
-
 const formatChange = (value: number | null, measure: 'share' | 'mean'): string => {
   if (value === null) return '';
   if (value === 0) return 'no change';
@@ -56,29 +37,24 @@ const formatChange = (value: number | null, measure: 'share' | 'mean'): string =
  * Baseline against every review, for the questions asked word for word each
  * time. Pilot rounds never appear: they were the team testing the form.
  */
-export const ChangePanel = ({ responses }: { responses: readonly ConsultationResponse[] }) => {
+export const ChangePanel = ({
+  responses,
+  rounds: loaded,
+}: {
+  responses: readonly ConsultationResponse[];
+  /** Every round, loaded once with the rest of the admin data and refreshed with it. */
+  rounds: readonly RoundInfo[];
+}) => {
   const questionnaire = useQuestionnaire();
   // Each round's own additions and stopped rows are applied to the questions
   // every round starts from, so the comparison knows what each one asked.
   const base = currentProject().questionnaire;
-  const [rounds, setRounds] = useState<readonly RoundInfo[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void loadAllRounds().then((loaded) => {
-      if (cancelled) return;
-      if (loaded.length > 0) {
-        setRounds(loaded);
-        return;
-      }
-      // No backend: fall back to whatever rounds the demo data carries.
-      const seen = [...new Set(responses.map((response) => response.roundId))];
-      setRounds(seen.map((roundId) => ({ roundId, label: roundId, stage: 'baseline' as const })));
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [responses]);
+  const rounds = useMemo((): readonly RoundInfo[] => {
+    if (loaded.length > 0) return loaded;
+    // No rounds recorded: fall back to whatever rounds the responses carry.
+    const seen = [...new Set(responses.map((response) => response.roundId))];
+    return seen.map((roundId) => ({ roundId, label: roundId, stage: 'baseline' as const }));
+  }, [loaded, responses]);
 
   const comparison = useMemo(
     () =>
@@ -124,8 +100,10 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
       )}
       {comparison.hasBaseline && !comparison.hasReview && (
         <p className={`${card} text-ink-soft`}>
-          The starting point is collecting. Change appears here once a follow-up has responses, usually part-way through
-          the project.
+          {columns.at(-1)?.stage === 'interim'
+            ? 'An interim check is collecting.'
+            : 'The starting point is collecting.'}{' '}
+          Change appears here once a follow-up has responses, usually part-way through the project.
         </p>
       )}
 
@@ -191,7 +169,7 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
                             currentProject().reference
                           }`,
                         },
-                        block.rows.map((row) => ({ label: row.label, values: row.values })),
+                        chartInput(block.rows),
                         chartColumns,
                         block.measure,
                         palette,
@@ -209,7 +187,7 @@ export const ChangePanel = ({ responses }: { responses: readonly ConsultationRes
               {showCharts && (
                 <div className="mt-3">
                   <SlopeChart
-                    input={block.rows.map((row) => ({ label: row.label, values: row.values }))}
+                    input={chartInput(block.rows)}
                     columns={chartColumns}
                     measure={block.measure}
                     label={`${block.prompt}: change from baseline`}

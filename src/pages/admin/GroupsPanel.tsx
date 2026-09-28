@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { currentProject } from '../../content/projects';
 import { Link } from 'react-router-dom';
 import { accentPanel, card, primaryButton, secondaryButton } from '../../components/ui';
-import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
+import type { Questionnaire } from '../../types';
 import { questionById } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
 import { deleteGroup, groupsCsv, loadGroups, summariseGroups, type GroupRecord } from '../../services/groups';
@@ -17,8 +17,17 @@ const HEADLINE = ['q1_constraints', 'q2_top_three', 'q_trial'] as const;
  * totals here say "7 of the 25 people in the rooms that were asked", never
  * "7 responses".
  */
-export const GroupsPanel = ({ roundFilter }: { roundFilter: string }) => {
-  const questionnaire = useQuestionnaire();
+export const GroupsPanel = ({
+  roundFilter,
+  frame: questionnaire,
+}: {
+  roundFilter: string;
+  /**
+   * Every question any round asked, not the round collecting now: an interim
+   * check asks a handful, and reporting from it would drop every other count.
+   */
+  frame: Questionnaire;
+}) => {
   const [records, setRecords] = useState<readonly GroupRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);

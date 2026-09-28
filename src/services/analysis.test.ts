@@ -112,3 +112,23 @@ describe('something else on a practice list', () => {
     expect(entries[0]?.questionPrompt).toContain('Something else');
   });
 });
+
+describe('quote permission', () => {
+  it('travels with every comment, and never reads a missing answer as a yes', () => {
+    const refused = freeTextEntries(q, [
+      bare({ q4_bad_season: { kind: 'text', value: 'Wet harvest' }, quote_ok: { kind: 'single', value: 'no' } }),
+    ]);
+    expect(refused[0]?.quote).toBe('no');
+    const unasked = freeTextEntries(q, [bare({ q4_bad_season: { kind: 'text', value: 'Wet harvest' } })]);
+    expect(unasked[0]?.quote).toBe('not_asked');
+  });
+});
+
+describe('completion', () => {
+  it('counts only full-version answers, and not the follow-up code alone', () => {
+    const short = bare({ interview__length: { kind: 'single', value: 'short' }, link_code: { kind: 'text', value: 'JO14BA' } });
+    const fullFinished = bare({ pd_most_useful: { kind: 'text', value: 'Field days' } });
+    const fullCodeOnly = bare({ link_code: { kind: 'text', value: 'JO14BA' } });
+    expect(overview(q, [short, fullFinished, fullCodeOnly]).completionRate).toBe(0.5);
+  });
+});

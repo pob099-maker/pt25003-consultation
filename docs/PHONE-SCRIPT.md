@@ -1045,6 +1045,91 @@ _Let them talk. Write it down in their words, not yours._
 
 ---
 
+## Since we last asked (follow-ups only)
+
+_Asked at the mid-term and final follow-ups, never at the starting point. Skip this section until then._
+
+**1. Have you seen or used anything from the Potato Mechanisation Project?**
+
+> Open with: "Since we last spoke, have you come across anything from the project?"
+> Then probe: "Where did you come across it?"
+
+_Tick as many as you like._
+
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
+
+  - A field day or demonstration
+  - A case study
+  - A video
+  - A factsheet or checklist
+  - An ROI calculator or decision tool
+  - A webinar or online briefing
+  - A one-to-one conversation
+  - A PotatoLink article or update
+  - Nothing yet
+  - Other
+
+**2. How many project activities have you been to or used?**
+
+> Open with: "Roughly how many things from the project have you been to or used?"
+
+_Field days, demonstrations, webinars, case studies, calculators, or a conversation with somebody from the project._
+
+_One answer only._
+
+  - None yet
+  - One
+  - Two or three
+  - Four or more
+
+**3. Has any of it changed what you do, or plan to do?**
+
+> Open with: "Has any of it changed what you're doing, or planning to do?"
+> Then probe: "What was it that made the difference?"
+
+_One answer only._
+
+  - Yes, we have changed how we do something
+  - We are planning a change
+  - We are looking into it
+  - No change
+  - Have not seen enough to say
+
+**4. If you have changed something, would you have made that change without the project?**
+
+> Open with: "If you have changed something, do you reckon you would have done it anyway, without the project?"
+
+_One answer only._
+
+  - Yes, the same change at about the same time
+  - Yes, but later or on a smaller scale
+  - Probably not
+  - No, not without the project
+  - Not sure
+  - Nothing has changed yet
+
+**5. Since the project started, has new gear or technology changed the labour in your business?**
+
+> Open with: "Has any new gear changed the labour side of things for you?"
+> Then probe: "Which job did that happen in?"
+
+_One answer only._
+
+  - We need fewer people for some jobs
+  - The same people are doing different, more skilled work
+  - Both of those
+  - We need more people
+  - No change yet
+  - Does not apply to my work
+
+**6. If something changed, what was it, and what made the difference?**
+
+_Optional. A sentence is plenty._
+
+_Let them talk. Write it down in their words, not yours._
+
+---
+
 ## How we should go about it
 
 **1. What could we do that would be worth your while, for your business or for the industry?**
@@ -1097,6 +1182,9 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 ## Next time we ask
 
 **1. Would you like us to be able to compare your answers with next time?**
+
+> Open with: "Would you be happy to give us three quick answers, so we can compare your answers with next time without your name?"
+> Then probe: "If you would rather not, that is fine, and we will move on."
 
 _We'll ask these questions again later in the project. Three quick answers below give you a code that comes out the same next time, so we can see how things change for the same people. It's made from your answers, not your name, and on its own it can't tell us who you are. There's nothing to remember, and you can skip it._
 

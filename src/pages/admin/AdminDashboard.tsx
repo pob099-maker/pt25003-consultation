@@ -20,6 +20,7 @@ import {
   rateAreas,
   tallyMulti,
   unpromptedCounts,
+  QUOTE_LABEL,
 } from '../../services/analysis';
 import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL, isCallbackRequest } from '../../services/callback';
 import { SOURCES, linkFor, tallyRoutes } from '../../services/sources';
@@ -51,7 +52,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const questionnaire = useQuestionnaire();
   const data = useAdminData();
   // Every question and row any round asked, so stopping one never hides its history.
-  const frame = useReportingFrame(data.responses);
+  const frame = useReportingFrame(data.responses, data.rounds);
   // Defaults to the round that is collecting now, so a pilot run does not
   // quietly inflate the real numbers once the consultation is live.
   // With no database the responses are the demonstration's own rounds, so start by showing all of them.
@@ -238,7 +239,11 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           value={String(stats.total)}
           note={includeTest ? 'Includes test data' : 'Real responses only'}
         />
-        <Stat label="Reached the final section" value={percent(stats.completionRate)} />
+        <Stat
+          label="Finished the full version"
+          value={percent(stats.completionRate)}
+          note="Answered its last section. The short version is not counted."
+        />
         <Stat label="Median time taken" value={`${stats.medianMinutes} min`} />
         <Stat label="Contact records" value={String(contacts.length)} note="Asked to be contacted" />
       </section>
@@ -608,7 +613,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
                     <li key={source.id}>
                       <span className="block text-meta text-ink-soft">{source.label}</span>
                       <code className="block select-all break-all text-body text-ink">
-                        {linkFor(window.location.origin, source.id)}
+                        {linkFor(window.location.origin, source.id, import.meta.env.BASE_URL)}
                       </code>
                     </li>
                   ))}
@@ -685,7 +690,18 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             return (
               <article key={`${entry.responseId}-${entry.questionId}`} className={card}>
                 <p className="text-meta text-ink-faint">
-                  {roleLabel(questionnaire, entry.role)} · {entry.submittedAt.slice(0, 10)}
+                  {roleLabel(questionnaire, entry.role)} · {entry.submittedAt.slice(0, 10)} ·{' '}
+                  <span
+                    className={
+                      entry.quote === 'no'
+                        ? 'font-semibold text-danger'
+                        : entry.quote === 'yes'
+                          ? 'text-ink-soft'
+                          : 'text-ink-faint'
+                    }
+                  >
+                    {QUOTE_LABEL[entry.quote]}
+                  </span>
                 </p>
                 <h3 className="mt-1 text-meta font-semibold text-ink-soft">{entry.questionPrompt}</h3>
                 <p className="mt-2 whitespace-pre-wrap text-body">{entry.text}</p>
@@ -793,15 +809,20 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         </div>
       )}
 
-      {!data.loading && tab === 'change' && <ChangePanel responses={data.responses} />}
+      {!data.loading && tab === 'change' && <ChangePanel responses={data.responses} rounds={data.rounds} />}
 
       {tab === 'phone' && <PhoneScriptPanel />}
 
       {tab === 'team' && <TeamPanel />}
 
-      {tab === 'groups' && <GroupsPanel roundFilter={roundFilter} />}
+      {tab === 'groups' && <GroupsPanel roundFilter={roundFilter} frame={frame} />}
 
-      {!data.loading && tab === 'rounds' && <RoundEditor responses={data.responses} />}
+      {!data.loading && tab === 'rounds' && <RoundEditor
+          responses={data.responses}
+          rounds={data.rounds}
+          roundsError={data.roundsError}
+          onSaved={data.reloadRounds}
+        />}
 
       <section className="mt-8 flex flex-wrap gap-3 no-print" aria-label="Exports">
         <button

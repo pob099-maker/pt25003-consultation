@@ -4,6 +4,7 @@ import { guideOverrideFor, promptOverrideFor, rankChoicesFor } from '../content/
 import { QuestionField } from './QuestionField';
 import { card, textInput } from './ui';
 import { markMention, mentionState } from '../services/mentions';
+import { isLinkCodeQuestion } from '../content/lookup';
 
 const DEFAULT_PROBE: Readonly<Record<Question['kind'], string>> = {
   multi: 'Anything else? And which of those bites hardest?',
@@ -111,7 +112,7 @@ export const InterviewQuestion = ({
             Read this one as written, so everyone hears the same scale.
           </p>
         )}
-        {question.kind === 'text' && (
+        {question.kind === 'text' && !isLinkCodeQuestion(question) && (
           <p className="mb-2 text-meta font-semibold text-ink-soft">Write it in their words, not yours.</p>
         )}
         <QuestionField

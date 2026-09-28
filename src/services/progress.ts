@@ -97,7 +97,10 @@ export const recordProgress = (ping: ProgressPing): void => {
       p_furthest_step_id: ping.stepId,
       p_step_count: ping.stepCount,
       p_completed: ping.completed,
-      p_started_at: ping.startedAt,
+      // To the hour. The answers carry the exact start time, and a progress
+      // row stamped with the same millisecond could be matched to them, which
+      // the privacy statement says it cannot be.
+      p_started_at: `${ping.startedAt.slice(0, 13)}:00:00.000Z`,
     })
     .then(
       ({ error }) => {

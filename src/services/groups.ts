@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { getSupabase } from '../lib/supabase';
 import { STORAGE_KEYS, readJson, writeJson } from '../lib/storage';
-import { allQuestions, optionLabel, questionById } from '../content/lookup';
+import { allQuestions, isPersonalQuestion, optionLabel, questionById } from '../content/lookup';
 import { toCsv } from '../lib/csv';
 import { currentProject } from '../content/projects';
 import type { Question, Questionnaire, Result } from '../types';
@@ -147,9 +147,17 @@ export const deleteGroup = async (id: string): Promise<Result<true>> => {
   return error === null ? { success: true, data: true } : { success: false, error: error.message };
 };
 
-/** Questions that make sense to put to a room. Role branches are left out: a room is mixed. */
+/**
+ * Questions that make sense to put to a room. Role branches are left out: a
+ * room is mixed. So are the questions one person answers about themselves: a
+ * room has no follow-up code and gives no permission to quote, and a code
+ * typed into a word cloud would be refused along with every other answer that
+ * phone gave, and shown on the big screen besides.
+ */
 export const groupQuestions = (questionnaire: Questionnaire): readonly Question[] =>
-  [...questionnaire.core, ...questionnaire.projectDesign].flatMap((section) => section.questions);
+  [...questionnaire.core, ...questionnaire.projectDesign]
+    .flatMap((section) => section.questions)
+    .filter((question) => !isPersonalQuestion(question));
 
 /** What a hand means for each kind of question, said the same way everywhere. */
 export const handsMeaning = (question: Question): string => {

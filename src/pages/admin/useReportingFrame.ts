@@ -1,37 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { currentProject } from '../../content/projects';
-import { loadAllRounds, reportingFrame, type RoundConfig } from '../../services/rounds';
+import { reportingFrame, type RoundConfig } from '../../services/rounds';
 import type { ConsultationResponse, Questionnaire } from '../../types';
 
 /**
  * The questionnaire the admin screens and the export report against: every
  * question and every row any round has asked, worded the way the round
- * collecting now words it.
+ * collecting now words it, plus anything the answers point at that no round
+ * defines any more.
  *
- * Reporting from the round that is collecting now, as these screens used to,
- * would drop the history of anything since stopped or retired: a practice the
- * project moved away from would vanish from the export along with its
- * baseline.
+ * Built from the questions every round starts from, never from the round that
+ * is collecting now. An interim check asks only a handful, and reporting from
+ * it, even for the moment the rounds take to load, would drop every other
+ * answer from the export.
  */
-export const useReportingFrame = (responses: readonly ConsultationResponse[]): Questionnaire => {
+export const useReportingFrame = (
+  responses: readonly ConsultationResponse[],
+  rounds: readonly RoundConfig[],
+): Questionnaire => {
   const active = useQuestionnaire();
-  const [rounds, setRounds] = useState<readonly RoundConfig[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void loadAllRounds().then((loaded) => {
-      if (!cancelled) setRounds(loaded);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Until the rounds arrive, the round collecting now is the best there is.
   return useMemo(
-    () =>
-      rounds.length === 0 ? active : reportingFrame(currentProject().questionnaire, rounds, active.roundId, responses),
-    [rounds, active, responses],
+    () => reportingFrame(currentProject().questionnaire, rounds, active.roundId, responses),
+    [rounds, active.roundId, responses],
   );
 };

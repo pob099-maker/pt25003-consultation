@@ -119,7 +119,7 @@ pass.
    | `VITE_SUPABASE_URL` | Project URL from step 1.4 |
    | `VITE_SUPABASE_ANON_KEY` | anon public key from step 1.4 |
    | `VITE_HOME_URL` | `https://potatolink.com.au` |
-   | `VITE_PROJECT_CONTACTS` | `Peter O'Brien\|0409 773 111\|` |
+   | `VITE_PROJECT_CONTACTS` | `Peter O'Brien;Steph Tabone` (names only: a number here is published) |
    | `VITE_PRIVACY_CONTACT_NAME` | whoever answers privacy questions |
    | `VITE_PRIVACY_CONTACT_EMAIL` | their address |
 
@@ -183,21 +183,21 @@ Plain `http://` now answers with a 301 to `https://`.
    ```
 
 2. Confirm the admin screen now reads zero responses.
-3. Check the contact name and number on the landing page are the ones you want people ringing.
+3. Check the names on the landing page are the people who will ring back, and start the starting
+   point on the **Question wording** tab so answers are counted in the baseline.
 
 ### Wording for the comms
 
-> **Potato Mechanisation Project — have your say**
+> **Which new tech should we trial first?**
 >
-> We are asking people across the Australian potato industry where mechanisation, automation and
-> better digital tools would make the most practical difference. It takes about 8–10 minutes, on a
-> phone or a computer, and you can answer anonymously — no sign-up, no account.
+> We can't trial every new machine coming through, so we're asking the people who'd use them where
+> to start. It takes under ten minutes on a phone or a computer, and it's anonymous, with no sign-up
+> and no account.
 >
 > https://consultation.agaims.com.au
 >
-> The questions adapt to your part of the industry, so you will only be asked about work you
-> actually do. If you would rather talk it through than fill in a form, ring Peter O'Brien on
-> 0409 773 111.
+> The questions follow your part of the industry, so you're only asked about work you actually do.
+> If you'd rather talk it through, email peter.obrien@agaims.com.au and we'll ring you.
 
 A QR code for the same link is worth putting on a field day flyer — any free QR generator will do,
 and the link is short enough to scan reliably.

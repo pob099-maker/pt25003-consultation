@@ -4,6 +4,7 @@ import { toContactRow, toResponseRow } from './records';
 import {
   OTHER_SOURCE,
   SOURCES,
+  addressWithoutSource,
   UNLABELLED,
   arrivalSource,
   channelOf,
@@ -172,5 +173,23 @@ describe('remembering how somebody arrived', () => {
     rememberArrival(new Date('2026-10-01T00:00:00.000Z'));
     expect(arrivalSource(new Date('2026-10-20T00:00:00.000Z'))).toBe('mag22');
     expect(arrivalSource(new Date('2026-11-15T00:00:00.000Z'))).toBeNull();
+  });
+});
+
+describe('the label in the address', () => {
+  it('is taken out once read, so a reload after sending does not credit the next person', () => {
+    expect(addressWithoutSource('/', '?src=mag22', '#/thank-you')).toBe('/#/thank-you');
+    expect(addressWithoutSource('/demo/', '?src=mag22&v=1', '#/')).toBe('/demo/?v=1#/');
+    expect(addressWithoutSource('/', '', '#/')).toBeNull();
+  });
+
+  it('falls back to a label in the hash when the query names an empty one', () => {
+    expect(sourceFromAddress('?src=', '#/?src=mag22')).toBe('mag22');
+  });
+
+  it('builds links for the deployment they are shown in', () => {
+    expect(linkFor('https://consultation.agaims.com.au', 'shared', '/demo/')).toBe(
+      'https://consultation.agaims.com.au/demo/?src=shared',
+    );
   });
 });

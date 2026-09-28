@@ -1,5 +1,6 @@
 import { allSections } from './lookup';
 import { formEstimates, spoken } from '../services/estimate';
+import { asksFollowUp } from '../services/roundRules';
 import type { Option, Question, Questionnaire } from '../types';
 
 /**
@@ -123,6 +124,30 @@ export const buildPhoneScript = (questionnaire: Questionnaire): string => {
       m += 1;
       lines.push(questionBlock(question, m));
       lines.push('');
+    }
+  }
+
+  // The follow-up questions are what the mid-term and final reviews exist
+  // for. The script used to leave them out, so somebody taken over the phone
+  // at a review was never asked them. At the starting point they are shown
+  // but marked, so the whole set can be read in one place.
+  if (questionnaire.followUp.length > 0) {
+    const askedNow = asksFollowUp(questionnaire.stage);
+    lines.push('---');
+    lines.push('');
+    for (const section of questionnaire.followUp) {
+      lines.push(`## ${section.title}${askedNow ? '' : ' (follow-ups only)'}`);
+      lines.push('');
+      if (!askedNow) {
+        lines.push('_Asked at the mid-term and final follow-ups, never at the starting point. Skip this section until then._');
+        lines.push('');
+      }
+      let f = 0;
+      for (const question of section.questions) {
+        f += 1;
+        lines.push(questionBlock(question, f));
+        lines.push('');
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 import type { Question, Questionnaire, Section } from '../types';
 import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL } from '../services/callback';
+import { LINK_CODE_ID } from '../services/linkCode';
 
 /**
  * The row somebody names for themselves at the foot of a rating question that
@@ -7,6 +8,36 @@ import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL } from '../services/callb
  */
 export const OTHER_ROW = 'other';
 export const OTHER_ROW_LABEL = 'Something else';
+
+/**
+ * What a question, option or row id may look like when it is read back from
+ * storage: lower-case letters, digits and underscores, starting with a letter
+ * or a digit, and never a name every object already carries. Anybody can
+ * insert a row with the public key, and a row keyed "constructor" would read
+ * back as a function in every other respondent's column.
+ */
+const SAFE_ID = /^[a-z0-9][a-z0-9_]{0,79}$/;
+const RESERVED_IDS: ReadonlySet<string> = new Set(['constructor']);
+export const isSafeId = (id: string): boolean => SAFE_ID.test(id) && !RESERVED_IDS.has(id);
+
+/** Whether somebody said a comment of theirs may be quoted, without their name. */
+export const QUOTE_OK_ID = 'quote_ok';
+
+/**
+ * The anonymous follow-up code, recognised the one way everywhere: by its id,
+ * or by being entered as a code. Two markers kept separately drift apart, and
+ * a code question that one screen misses is one that gets typed freely and
+ * then refused by the schema.
+ */
+export const isLinkCodeQuestion = (question: Question): boolean =>
+  question.id === LINK_CODE_ID || (question.kind === 'text' && question.entry === 'linkCode');
+
+/**
+ * Questions one person answers about themselves: the follow-up code and the
+ * permission to quote them. Never put to a room, and never "must ask".
+ */
+export const isPersonalQuestion = (question: Question): boolean =>
+  isLinkCodeQuestion(question) || question.id === QUOTE_OK_ID;
 
 export const allSections = (questionnaire: Questionnaire): readonly Section[] => [
   ...questionnaire.core,

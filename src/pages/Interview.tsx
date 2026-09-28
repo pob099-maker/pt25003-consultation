@@ -17,7 +17,8 @@ import { useConsultation } from '../hooks/useConsultation';
 import { useStaffSession } from '../hooks/useStaffSession';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import type { ContactFormValues } from '../schemas/consultation';
-import { submitContact, submitResponse } from '../services/submit';
+import { contactDay, submitConsultation } from '../services/submit';
+import { isPersonalQuestion } from '../content/lookup';
 import type { CollectionMethod, ConsultationResponse, ContactRecord } from '../types';
 import { AdminLogin } from './admin/AdminLogin';
 
@@ -228,7 +229,8 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
     setError(null);
     const now = new Date();
     const response: ConsultationResponse = {
-      id: crypto.randomUUID(),
+      // The draft's own id, so saving twice stores the interview once.
+      id: draft.responseId,
       roundId: questionnaire.roundId,
       role: draft.role,
       pathway,
@@ -246,42 +248,37 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
       // An interview never came in by a link; the method says how it did.
       source: null,
     };
-    const result = await submitResponse(response);
+    const wantsContact = contact !== null && interests.length > 0 && !interests.includes(NO_INTEREST_ID);
+    const record: ContactRecord | null =
+      contact === null || !wantsContact
+        ? null
+        : {
+            id: crypto.randomUUID(),
+            roundId: questionnaire.roundId,
+            interests,
+            name: contact.name,
+            organisation: contact.organisation,
+            broadRole: contact.broadRole,
+            region: contact.region,
+            email: contact.email,
+            phone: contact.phone,
+            preferredContactMethod: contact.preferredContactMethod,
+            preferredContactTime: contact.preferredContactTime,
+            comments: contact.comments,
+            // To the day: see the online form for why.
+            submittedAt: contactDay(now),
+            isTestData: false,
+            source: null,
+          };
+    const result = await submitConsultation(response, record);
     if (!result.success) {
       setError(result.error);
       setSubmitting(false);
       return;
     }
-    let queued = result.data === 'queued';
-    if (contact !== null && interests.length > 0 && !interests.includes(NO_INTEREST_ID)) {
-      const record: ContactRecord = {
-        id: crypto.randomUUID(),
-        roundId: questionnaire.roundId,
-        interests,
-        name: contact.name,
-        organisation: contact.organisation,
-        broadRole: contact.broadRole,
-        region: contact.region,
-        email: contact.email,
-        phone: contact.phone,
-        preferredContactMethod: contact.preferredContactMethod,
-        preferredContactTime: contact.preferredContactTime,
-        comments: contact.comments,
-        submittedAt: now.toISOString(),
-        isTestData: false,
-        source: null,
-      };
-      const contactResult = await submitContact(record);
-      if (!contactResult.success) {
-        setError(contactResult.error);
-        setSubmitting(false);
-        return;
-      }
-      queued = queued || contactResult.data === 'queued';
-    }
     setSubmitting(false);
     abandon();
-    setSaved(queued ? 'queued' : 'sent');
+    setSaved(result.data.queued ? 'queued' : 'sent');
   };
 
   return (
@@ -349,7 +346,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
             question={question}
             answers={draft.answers}
             onChange={(answer) => state.setAnswer(question.id, answer)}
-            mustAsk={length === 'full' && question.tracking === true}
+            mustAsk={length === 'full' && question.tracking === true && !isPersonalQuestion(question)}
             covered={covered.includes(question.id)}
             onToggleCovered={() => state.setAnswer(COVERED_ID, toggleCovered(draft.answers, question.id))}
           />

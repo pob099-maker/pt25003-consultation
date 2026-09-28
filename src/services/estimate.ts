@@ -113,6 +113,13 @@ export const formEstimates = (questionnaire: Questionnaire): FormEstimates => {
 export const spoken = (estimate: Estimate): string =>
   `about ${estimate.minutes} minute${estimate.minutes === 1 ? '' : 's'}`;
 
+/**
+ * The most minutes the landing page may show for the short version. Issue 22
+ * of the PotatoLink magazine says the consultation "takes under ten minutes",
+ * and the page rounds up, so nine is the most it can say and keep that true.
+ */
+export const SHORT_PROMISE_MINUTES = 9;
+
 /** Where a form stops being something a busy person will finish. */
 export const SHORT_TARGET_MINUTES = 5;
 export const FULL_TARGET_MINUTES = 10;

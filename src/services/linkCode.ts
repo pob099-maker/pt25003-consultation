@@ -29,13 +29,45 @@ export const EMPTY_PARTS: LinkCodeParts = { mother: '', day: '', town: '' };
 const PATTERN = /^[A-Z]{2}(0[1-9]|[12][0-9]|3[01])[A-Z]{2}$/;
 
 /**
+ * Letters that Unicode does not break into a plain letter and an accent, so
+ * the accent stripping below would drop them and shift which two letters are
+ * kept: "Łucja" would give UC while "Lucja" gives LU. Folded to what somebody
+ * typing without the letter would write.
+ */
+const FOLDS: Readonly<Record<string, string>> = {
+  Ł: 'L',
+  ł: 'L',
+  Ø: 'O',
+  ø: 'O',
+  Æ: 'AE',
+  æ: 'AE',
+  Œ: 'OE',
+  œ: 'OE',
+  Đ: 'D',
+  đ: 'D',
+  Ð: 'D',
+  ð: 'D',
+  Þ: 'TH',
+  þ: 'TH',
+  Ħ: 'H',
+  ħ: 'H',
+  ß: 'SS',
+  ẞ: 'SS',
+  ı: 'I',
+};
+
+const FOLDABLE = new RegExp(`[${Object.keys(FOLDS).join('')}]`, 'g');
+
+/**
  * Two capital letters from whatever was typed. Accents are folded (Zoë and Zoe
- * give the same letters), and spaces, digits and punctuation are dropped, so
- * "o'brien" and "O Brien" both give OB.
+ * give the same letters), as are letters like Ł and Ø and wide forms of plain
+ * letters, and spaces, digits and punctuation are dropped, so "o'brien" and
+ * "O Brien" both give OB.
  */
 export const twoLetters = (typed: string): string =>
   typed
-    .normalize('NFD')
+    .replace(FOLDABLE, (letter) => FOLDS[letter] ?? '')
+    .normalize('NFKD')
     .replace(/[̀-ͯ]/g, '')
     .toUpperCase()
     .replace(/[^A-Z]/g, '')

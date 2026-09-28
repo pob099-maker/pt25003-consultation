@@ -41,8 +41,9 @@ export class ErrorBoundary extends Component<Props, State> {
           back where you were.
         </p>
         <p style={{ lineHeight: 1.6 }}>
-          If it keeps happening, ring Peter O&rsquo;Brien on <a href="tel:0409773111">0409 773 111</a> and give your
-          answers over the phone instead. They count the same either way.
+          If it keeps happening, email{' '}
+          <a href="mailto:peter.obrien@agaims.com.au">peter.obrien@agaims.com.au</a> and we will ring you to take
+          your answers over the phone instead. They count the same either way.
         </p>
         <button
           type="button"

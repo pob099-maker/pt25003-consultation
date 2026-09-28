@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { consultationResponseSchema } from '../schemas/consultation';
+import { reportingFrame } from './roundRules';
 import {
   MIN_ANSWERS,
   answersFromVotes,
@@ -198,5 +199,27 @@ describe('word clouds', () => {
     expect(answersFromVotes(q, { q4_bad_season: ['Labour', 'wet harvest'] })).toEqual({
       q4_bad_season: { kind: 'text', value: 'labour; wet harvest' },
     });
+  });
+});
+
+describe('personal questions', () => {
+  it('are never put to a room', () => {
+    const ids = workshopQuestions(DEFAULT_QUESTIONNAIRE).map((question) => question.id);
+    expect(ids).not.toContain('link_code');
+    expect(ids).not.toContain('quote_ok');
+  });
+
+  it('are skipped even from a workshop set up before that rule, so the rest of the answers still save', () => {
+    const answers = answersFromVotes(DEFAULT_QUESTIONNAIRE, { link_code: ['jo14ba'], q_trial: ['essential'] });
+    expect(Object.keys(answers)).toEqual(['q_trial']);
+  });
+});
+
+describe('an interim check', () => {
+  it('does not stop a workshop from finding its questions', () => {
+    const interim = { roundId: 'check', label: 'Interim', stage: 'interim' as const, overrides: { farm_practices: { inInterim: true } } };
+    const stable = reportingFrame(DEFAULT_QUESTIONNAIRE, [interim], 'check');
+    const answers = answersFromVotes(stable, { q_trial: ['essential'] });
+    expect(Object.keys(answers)).toEqual(['q_trial']);
   });
 });

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from './questionnaire';
 import { buildPhoneScript } from './phoneScript';
 import { questionById } from './lookup';
+import { applyRound } from '../services/roundRules';
 
 const DOC_PATH = 'docs/PHONE-SCRIPT.md';
 
@@ -19,6 +20,7 @@ describe('phone script', () => {
     for (const section of [
       ...DEFAULT_QUESTIONNAIRE.core,
       ...Object.values(DEFAULT_QUESTIONNAIRE.pathways),
+      ...DEFAULT_QUESTIONNAIRE.followUp,
       ...DEFAULT_QUESTIONNAIRE.projectDesign,
     ]) {
       for (const question of section.questions) {
@@ -48,5 +50,15 @@ describe('phone script', () => {
       return;
     }
     expect(current, `${DOC_PATH} is out of date — run npm test locally and commit the result`).toBe(generated);
+  });
+});
+
+describe('follow-up questions in the script', () => {
+  it('are marked as follow-ups only at the starting point, and asked plainly at a review', () => {
+    expect(buildPhoneScript(DEFAULT_QUESTIONNAIRE)).toContain('(follow-ups only)');
+    const review = applyRound(DEFAULT_QUESTIONNAIRE, { roundId: 'mid', label: 'Mid-term', stage: 'review', overrides: {} });
+    const script = buildPhoneScript(review);
+    expect(script).toContain('has new gear or technology changed the labour in your business');
+    expect(script).not.toContain('(follow-ups only)');
   });
 });

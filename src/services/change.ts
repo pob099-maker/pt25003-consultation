@@ -1,6 +1,7 @@
 import { OTHER_ROW, optionLabel, questionById, trackingQuestions } from '../content/lookup';
 import { applyRound, reportingFrame, type QuestionOverride } from './roundRules';
 import type { ConsultationResponse, Question, RoundStage, Questionnaire } from '../types';
+import type { SlopeInput } from '../lib/chartImage';
 
 /**
  * Baseline against every review, for the tracked questions only.
@@ -141,9 +142,19 @@ export const compareRounds = (
     return { from, to, change };
   };
 
-  const blocks: ChangeBlock[] = trackingQuestions(frame).map((question) => {
+  // A written answer cannot be counted across rounds. The follow-up code is
+  // the one tracked text question, and it links people, it is not a measure.
+  const measured = trackingQuestions(frame).filter((question) => question.kind !== 'text');
+
+  const blocks: ChangeBlock[] = measured.map((question) => {
     const inRound = askedBy.map((asked) => questionById(asked, question.id));
-    const askedQuestion = inRound.map((found) => found !== undefined);
+    // Asked in a round if the round asks it now, or anybody in it answered it.
+    // The second half keeps answers already given when a line is stopped, or
+    // an interim question unticked, while the round is still collecting.
+    const askedQuestion = inRound.map(
+      (found, index) =>
+        found !== undefined || (byRound[index] ?? []).some((response) => response.answers[question.id] !== undefined),
+    );
 
     if (question.kind === 'rating') {
       const answered = byRound.map((group, index) =>
@@ -151,7 +162,12 @@ export const compareRounds = (
       );
       const rows = optionIds(question).map((rowId) => {
         const asked = inRound.map(
-          (found) => found?.kind === 'rating' && found.rows.some((row) => row.id === rowId),
+          (found, index) =>
+            (found?.kind === 'rating' && found.rows.some((row) => row.id === rowId)) ||
+            (byRound[index] ?? []).some((response) => {
+              const answer = response.answers[question.id];
+              return answer?.kind === 'rating' && typeof answer.values[rowId] === 'number';
+            }),
         );
         const values = byRound.map((group, index) => {
           if (asked[index] !== true) return null;
@@ -203,3 +219,41 @@ export const compareRounds = (
     hasReview: latestReviewIndex >= 0,
   };
 };
+
+/**
+ * What a reader needs to know about a row that was not asked every time: where
+ * its comparison starts, and when it stopped being asked. Nothing for a row
+ * asked in every round.
+ */
+export const rowHistory = (row: ChangeRow, columns: readonly RoundColumn[]): string | null => {
+  const notes: string[] = [];
+  const first = row.from === null ? undefined : columns[row.from];
+  if (first !== undefined && first.stage !== 'baseline') notes.push(`First asked in ${first.label}`);
+  // Stopped only if a later full round left it out. An interim asks just what
+  // the team ticked, so one that happens to be the newest round says nothing
+  // about whether a line is still being followed.
+  const lastAsked = row.asked.lastIndexOf(true);
+  const lastAskedColumn = columns[lastAsked];
+  const laterFullRound = columns.some((column, index) => index > lastAsked && column.stage !== 'interim');
+  if (lastAsked >= 0 && laterFullRound && lastAskedColumn !== undefined)
+    notes.push(`not asked after ${lastAskedColumn.label}`);
+  if (notes.length === 0) return null;
+  const sentence = notes.join(', ');
+  return `${sentence.charAt(0).toUpperCase()}${sentence.slice(1)}.`;
+};
+
+/**
+ * What the chart draws for a row: its first asked round to the review its
+ * change is measured to, and nothing either side. The chart colours a line by
+ * its first and last points, so a trailing interim left in would end the line
+ * there and disagree with the Change column beside it.
+ */
+export const chartInput = (rows: readonly ChangeRow[]): readonly SlopeInput[] =>
+  rows.map((row) => ({
+    label: row.label,
+    values: row.values.map((value, index) => {
+      if (row.from === null || index < row.from) return null;
+      if (row.to === null) return index === row.from ? value : null;
+      return index > row.to ? null : value;
+    }),
+  }));

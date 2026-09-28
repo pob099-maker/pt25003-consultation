@@ -8,6 +8,7 @@ import { seedContacts } from '../../services/seed';
 import { demoResponses } from '../../services/demoData';
 import { loadTags, type TagMap } from '../../services/tags';
 import { loadProgress, type ProgressRow } from '../../services/progress';
+import { fetchAllRounds, type RoundConfig } from '../../services/rounds';
 import type { ConsultationResponse, ContactRecord } from '../../types';
 
 export interface AdminData {
@@ -15,11 +16,17 @@ export interface AdminData {
   readonly contacts: readonly ContactRecord[];
   readonly tags: TagMap;
   readonly progress: readonly ProgressRow[];
+  /** Every round, oldest first. Loaded with everything else, so Refresh reloads them too. */
+  readonly rounds: readonly RoundConfig[];
+  /** Why the rounds could not be read, when they could not. */
+  readonly roundsError: string | null;
   readonly loading: boolean;
   readonly error: string | null;
   /** True when there is no backend, so the screen is showing seeded test data. */
   readonly demoMode: boolean;
   readonly reload: () => void;
+  /** Reads the rounds again without reloading everything else, after one is saved. */
+  readonly reloadRounds: () => Promise<void>;
   readonly setTags: (tags: TagMap) => void;
 }
 
@@ -29,11 +36,23 @@ export const useAdminData = (): AdminData => {
   const [contacts, setContacts] = useState<readonly ContactRecord[]>([]);
   const [tags, setTags] = useState<TagMap>({});
   const [progress, setProgress] = useState<readonly ProgressRow[]>([]);
+  const [rounds, setRounds] = useState<readonly RoundConfig[]>([]);
+  const [roundsError, setRoundsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nonce, setNonce] = useState(0);
 
   const reload = useCallback(() => setNonce((value) => value + 1), []);
+
+  const reloadRounds = useCallback(async () => {
+    const result = await fetchAllRounds();
+    if (result.success) {
+      setRounds(result.data);
+      setRoundsError(null);
+    } else {
+      setRoundsError(result.error);
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,9 +60,12 @@ export const useAdminData = (): AdminData => {
       setLoading(true);
       setError(null);
       if (demoMode) {
+        const demoRounds = await fetchAllRounds();
         if (!cancelled) {
           setResponses(demoResponses(currentProject().questionnaire));
           setContacts(seedContacts());
+          setRounds(demoRounds.success ? demoRounds.data : []);
+          setRoundsError(null);
           setTags(await loadTags());
           setLoading(false);
         }
@@ -51,7 +73,7 @@ export const useAdminData = (): AdminData => {
       }
       const supabase = getSupabase();
       if (supabase === null) return;
-      const [responseResult, contactResult, loadedTags, loadedProgress] = await Promise.all([
+      const [responseResult, contactResult, loadedTags, loadedProgress, loadedRounds] = await Promise.all([
         supabase
           .from(RESPONSES_TABLE)
           .select('*')
@@ -64,6 +86,7 @@ export const useAdminData = (): AdminData => {
           .order('submitted_at', { ascending: false }),
         loadTags(),
         loadProgress(),
+        fetchAllRounds(),
       ]);
       if (cancelled) return;
       if (responseResult.error !== null) {
@@ -77,6 +100,8 @@ export const useAdminData = (): AdminData => {
       setContacts(contactResult.error === null ? (contactResult.data as ContactRow[]).map(fromContactRow) : []);
       setTags(loadedTags);
       setProgress(loadedProgress);
+      setRounds(loadedRounds.success ? loadedRounds.data : []);
+      setRoundsError(loadedRounds.success ? null : loadedRounds.error);
       setLoading(false);
     };
     void run();
@@ -85,5 +110,18 @@ export const useAdminData = (): AdminData => {
     };
   }, [demoMode, nonce]);
 
-  return { responses, contacts, tags, progress, loading, error, demoMode, reload, setTags };
+  return {
+    responses,
+    contacts,
+    tags,
+    progress,
+    rounds,
+    roundsError,
+    loading,
+    error,
+    demoMode,
+    reload,
+    reloadRounds,
+    setTags,
+  };
 };

@@ -9,7 +9,7 @@ const roleIds = ROLES.map((role) => role.id) as [string, ...string[]];
  * `z.coerce.number()` anywhere: it turns an empty input into 0, which would
  * record "not a priority" for a question nobody answered.
  */
-const answerSchema = z.discriminatedUnion('kind', [
+export const answerSchema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('multi'),
     values: z.array(z.string()).max(40),
@@ -76,6 +76,17 @@ export const consultationResponseSchema = z.object({
     { message: 'A prompted item must also be one of the items mentioned.', path: ['answers'] },
   );
 
+/**
+ * A contact record is only worth keeping if it says how to reach somebody. The
+ * form and the stored record apply the same rule, so the form refuses it
+ * before anything is sent, rather than the record refusing it after the
+ * answers already have been.
+ */
+export const canBeReached = (details: { readonly email: string; readonly phone: string }): boolean =>
+  details.email.trim().length > 0 || details.phone.trim().length > 0;
+
+export const REACH_MESSAGE = 'Please give an email address or a phone number so we can reach you.';
+
 export const contactRecordSchema = z
   .object({
     id: z.string().uuid(),
@@ -94,8 +105,8 @@ export const contactRecordSchema = z
     isTestData: z.boolean(),
     source: z.string().max(40).nullable(),
   })
-  .refine((record) => record.email.trim().length > 0 || record.phone.trim().length > 0, {
-    message: 'Please give an email address or a phone number so we can reach you.',
+  .refine((record) => canBeReached(record), {
+    message: REACH_MESSAGE,
     path: ['email'],
   });
 

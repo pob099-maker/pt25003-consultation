@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
+import { allQuestions } from '../content/lookup';
+import { currentProject } from '../content/projects';
+import { useQuestionnaireState } from '../contexts/QuestionnaireContext';
 import { recordProgress } from '../services/progress';
 import { asksFollowUp } from '../services/roundRules';
 import type { Answer, AnswerMap, Questionnaire, RoleId, Section } from '../types';
@@ -9,8 +12,16 @@ export interface Draft {
   /** Identifies this session to the progress table. Never shown, never linked
    *  to the answers, and random enough that nobody can guess somebody else's. */
   readonly progressId: string;
+  /** One id for the life of the draft, so the same answers sent twice are stored once. */
+  readonly responseId: string;
   readonly startedAt: string;
   readonly roundId: string;
+  /**
+   * Whether roundId is the round the server said was live. A draft begun
+   * before the server answered carries a stand-in, and takes the live round's
+   * id when it arrives, rather than being thrown away for not matching.
+   */
+  readonly roundConfirmed: boolean;
   readonly role: RoleId | null;
   readonly regions: readonly string[];
   readonly regionOther: string;
@@ -18,16 +29,59 @@ export interface Draft {
   readonly stepIndex: number;
 }
 
-const emptyDraft = (questionnaire: Questionnaire): Draft => ({
+const emptyDraft = (questionnaire: Questionnaire, confirmed: boolean): Draft => ({
   progressId: crypto.randomUUID(),
+  responseId: crypto.randomUUID(),
   startedAt: new Date().toISOString(),
   roundId: questionnaire.roundId,
+  roundConfirmed: confirmed,
   role: null,
   regions: [],
   regionOther: '',
   answers: {},
   stepIndex: 0,
 });
+
+/** A saved draft, brought up to date if an earlier version of the app wrote it. */
+const resumeDraft = (saved: Partial<Draft>): Draft | null => {
+  if (typeof saved.roundId !== 'string') return null;
+  return {
+    progressId: typeof saved.progressId === 'string' ? saved.progressId : crypto.randomUUID(),
+    responseId: typeof saved.responseId === 'string' ? saved.responseId : crypto.randomUUID(),
+    startedAt: typeof saved.startedAt === 'string' ? saved.startedAt : new Date().toISOString(),
+    roundId: saved.roundId,
+    roundConfirmed: saved.roundConfirmed === true,
+    role: saved.role ?? null,
+    regions: Array.isArray(saved.regions) ? saved.regions : [],
+    regionOther: typeof saved.regionOther === 'string' ? saved.regionOther : '',
+    answers: saved.answers ?? {},
+    stepIndex: typeof saved.stepIndex === 'number' ? saved.stepIndex : 0,
+  };
+};
+
+/**
+ * Answers to questions the live round does not ask are dropped when a draft
+ * takes the live round's id. They were given to questions shown before the
+ * round was known, and kept, they would read as that round having asked them.
+ * Keys that are not questions at all, such as interview notes, are kept.
+ */
+export const keepAsked = (live: Questionnaire, answers: AnswerMap): AnswerMap => {
+  const asked = new Set(allQuestions(live).map((question) => question.id));
+  const questions = new Set(allQuestions(currentProject().questionnaire).map((question) => question.id));
+  return Object.fromEntries(Object.entries(answers).filter(([id]) => asked.has(id) || !questions.has(id)));
+};
+
+/**
+ * Where a draft stands once the server has said which round is live. The same
+ * round: carry on. A stand-in id: take the live one. A round that has since
+ * closed: the questions changed underneath it, so start clean rather than mix
+ * rounds. Kept apart from the hook so the rule can be tested on its own.
+ */
+export const settleDraft = (draft: Draft, live: Questionnaire): Draft => {
+  if (draft.roundId === live.roundId) return draft.roundConfirmed ? draft : { ...draft, roundConfirmed: true };
+  if (draft.roundConfirmed) return emptyDraft(live, true);
+  return { ...draft, roundId: live.roundId, roundConfirmed: true, answers: keepAsked(live, draft.answers) };
+};
 
 export interface Step {
   readonly id: string;
@@ -56,20 +110,26 @@ export const useConsultation = (
   questionnaire: Questionnaire = DEFAULT_QUESTIONNAIRE,
   { storageKey = STORAGE_KEYS.draft, trackProgress = true }: ConsultationOptions = {},
 ) => {
+  const { questionnaire: live, status } = useQuestionnaireState();
   const [draft, setDraft] = useState<Draft>(() => {
-    const saved = readJson<Draft>(storageKey);
-    // A saved draft from an earlier round is not resumable: the questions have
-    // changed underneath it, so start clean rather than mix rounds.
-    if (saved !== null && saved.roundId === questionnaire.roundId) {
-      return saved.progressId === undefined ? { ...saved, progressId: crypto.randomUUID() } : saved;
-    }
-    return emptyDraft(questionnaire);
+    const saved = readJson<Partial<Draft>>(storageKey);
+    // Always resumed at first. Which round is live may not be known yet: the
+    // questions on screen can still be a stand-in, and comparing against them
+    // here used to throw away the answers of anybody who reloaded the page.
+    // settleDraft decides once the server has answered.
+    const restored = saved === null ? null : resumeDraft(saved);
+    return restored ?? emptyDraft(questionnaire, status === 'live');
   });
   const isResumed = useRef(readJson<Draft>(storageKey) !== null);
 
   useEffect(() => {
     writeJson(storageKey, draft);
   }, [draft, storageKey]);
+
+  // Once the server has said which round is live, the draft takes it.
+  useEffect(() => {
+    if (status === 'live') setDraft((current) => settleDraft(current, live));
+  }, [status, live]);
 
   /** Kept in a ref so the progress ping reads the current draft without
    *  every callback that touches it being rebuilt on each keystroke. */
@@ -146,8 +206,8 @@ export const useConsultation = (
 
   const reset = useCallback(() => {
     removeKey(storageKey);
-    setDraft(emptyDraft(questionnaire));
-  }, [questionnaire, storageKey]);
+    setDraft(emptyDraft(questionnaire, status === 'live'));
+  }, [questionnaire, status, storageKey]);
 
   return {
     draft,

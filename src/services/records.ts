@@ -1,5 +1,29 @@
 import { currentProject } from '../content/projects';
-import type { AnswerMap, CollectionMethod, ConsultationResponse, ContactRecord, RoleId } from '../types';
+import { isSafeId } from '../content/lookup';
+import { answerSchema } from '../schemas/consultation';
+import type { Answer, AnswerMap, CollectionMethod, ConsultationResponse, ContactRecord, RoleId } from '../types';
+
+/**
+ * Answers as the admin screens may trust them. Anybody can insert a row with
+ * the public key and the database stores whatever JSON arrives, so an answer
+ * of the wrong shape is dropped here rather than taking a screen down, and a
+ * rating keeps only rows whose ids could be real.
+ */
+export const cleanAnswers = (raw: unknown): AnswerMap => {
+  if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return {};
+  const clean: Record<string, Answer> = {};
+  for (const [id, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (!isSafeId(id)) continue;
+    const parsed = answerSchema.safeParse(value);
+    if (!parsed.success) continue;
+    const answer = parsed.data as Answer;
+    clean[id] =
+      answer.kind === 'rating'
+        ? { ...answer, values: Object.fromEntries(Object.entries(answer.values).filter(([row]) => isSafeId(row))) }
+        : answer;
+  }
+  return clean;
+};
 
 /**
  * Row shapes for the two tables. They are deliberately unrelated: no column
@@ -73,7 +97,7 @@ export const fromResponseRow = (row: ResponseRow): ConsultationResponse => ({
   pathway: row.pathway,
   regions: row.regions ?? [],
   regionOther: row.region_other ?? '',
-  answers: row.answers ?? {},
+  answers: cleanAnswers(row.answers),
   startedAt: row.started_at,
   submittedAt: row.submitted_at,
   durationSeconds: row.duration_seconds ?? 0,

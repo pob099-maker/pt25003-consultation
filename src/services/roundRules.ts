@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import { libraryQuestion } from '../content/library';
-import { OTHER_ROW, allQuestions } from '../content/lookup';
-import { LINK_CODE_ID } from './linkCode';
-import type { ConsultationResponse, Option, Question, Questionnaire, RoundStage, Section } from '../types';
+import { OTHER_ROW, allQuestions, isLinkCodeQuestion, isSafeId } from '../content/lookup';
+import type { Answer, ConsultationResponse, Option, Question, Questionnaire, RoundStage, Section } from '../types';
 
 /**
  * What a round may change about the questionnaire, and what it may not.
@@ -82,14 +81,15 @@ const applyToOptions = (options: readonly Option[], override: QuestionOverride |
  * The rows a watch list asks in one round: its own, then any the round adds,
  * less any it stops. An added row can never redefine one that exists, and the
  * list is never left with nothing to answer: stop every row and the round
- * asks the originals.
+ * asks the originals. The round editor shows its ticks from this same rule,
+ * so what the team sees ticked is what respondents are asked.
  */
-const watchListRows = (question: RatingQuestion, override: QuestionOverride | undefined): readonly Option[] => {
+export const rowsAsked = (question: RatingQuestion, override: QuestionOverride | undefined): readonly Option[] => {
   if (override === undefined) return question.rows;
   const seen = new Set(question.rows.map((row) => row.id));
   const added: Option[] = [];
   for (const row of override.addedOptions ?? []) {
-    if (seen.has(row.id) || row.id === OTHER_ROW) continue;
+    if (seen.has(row.id) || row.id === OTHER_ROW || !isSafeId(row.id)) continue;
     seen.add(row.id);
     added.push(row);
   }
@@ -102,7 +102,7 @@ const applyToQuestion = (question: Question, override: QuestionOverride | undefi
   if (override === undefined) return question;
   if (question.tracking === true) {
     // A tracked question's words are fixed. A watch list may still grow.
-    return isWatchList(question) ? { ...question, rows: watchListRows(question, override) } : question;
+    return isWatchList(question) ? { ...question, rows: rowsAsked(question, override) } : question;
   }
   const base = {
     ...question,
@@ -131,7 +131,7 @@ const isRetired = (question: Question, override: QuestionOverride | undefined): 
  */
 const asksIn = (question: Question, round: RoundDefinition): boolean => {
   const override = round.overrides[question.id];
-  if (round.stage === 'interim') return question.id === LINK_CODE_ID || override?.inInterim === true;
+  if (round.stage === 'interim') return isLinkCodeQuestion(question) || override?.inInterim === true;
   return !isRetired(question, override);
 };
 
@@ -167,14 +167,24 @@ const applySections = (
   };
 };
 
-/** The questionnaire one round puts to people. */
-export const applyRound = (base: Questionnaire, round: RoundDefinition): Questionnaire => ({
-  ...base,
-  roundId: round.roundId,
-  roundLabel: round.label,
-  stage: round.stage,
-  ...applySections(base, round.overrides, (question) => asksIn(question, round)),
-});
+/**
+ * The questionnaire one round puts to people. Follow-up questions ask what
+ * people saw and changed since the project started, so a round that is not a
+ * follow-up has none. Deciding it here rather than in each screen means the
+ * form, the time estimate, the phone script and the change view all agree on
+ * what a starting point asked.
+ */
+export const applyRound = (base: Questionnaire, round: RoundDefinition): Questionnaire => {
+  const sections = applySections(base, round.overrides, (question) => asksIn(question, round));
+  return {
+    ...base,
+    roundId: round.roundId,
+    roundLabel: round.label,
+    stage: round.stage,
+    ...sections,
+    followUp: asksFollowUp(round.stage) ? sections.followUp : [],
+  };
+};
 
 /**
  * Every row a rating question has ever had: its own, then each row a round
@@ -190,7 +200,7 @@ export const everyRow = (
   const seen = new Set(rows.map((row) => row.id));
   for (const round of rounds) {
     for (const row of round.overrides[question.id]?.addedOptions ?? []) {
-      if (seen.has(row.id) || row.id === OTHER_ROW) continue;
+      if (seen.has(row.id) || row.id === OTHER_ROW || !isSafeId(row.id)) continue;
       seen.add(row.id);
       rows.push(row);
     }
@@ -198,13 +208,86 @@ export const everyRow = (
   for (const response of responses) {
     const answer = response.answers[question.id];
     if (answer?.kind !== 'rating') continue;
-    for (const id of Object.keys(answer.values)) {
-      if (seen.has(id) || id === OTHER_ROW) continue;
+    for (const [id, value] of Object.entries(answer.values)) {
+      if (seen.has(id) || id === OTHER_ROW || !isSafeId(id) || typeof value !== 'number') continue;
       seen.add(id);
       rows.push({ id, label: `${id} (no longer on the list)` });
     }
   }
   return rows;
+};
+
+/** Answer keys the tools write for themselves, which are not questions. */
+const isToolKey = (id: string): boolean => id.startsWith('interview__');
+
+const distinctIds = (ids: readonly string[]): readonly Option[] =>
+  [...new Set(ids)].filter(isSafeId).map((id) => ({ id, label: id }));
+
+/**
+ * A stand-in for a question that answers point at but no questionnaire or
+ * library defines any more, built from the answers themselves, so nothing
+ * anybody said drops out of the export because a question was later removed.
+ */
+const retiredQuestion = (id: string, answers: readonly Answer[]): Question | null => {
+  const library = libraryQuestion(id);
+  if (library !== undefined) return library;
+  const first = answers[0];
+  if (first === undefined) return null;
+  const prompt = `${id} (no longer asked)`;
+  switch (first.kind) {
+    case 'multi':
+      return {
+        id,
+        kind: 'multi',
+        prompt,
+        options: distinctIds(answers.flatMap((answer) => (answer.kind === 'multi' ? answer.values : []))),
+        allowOther: answers.some((answer) => answer.kind === 'multi' && (answer.other ?? '').trim().length > 0),
+      };
+    case 'single':
+      return {
+        id,
+        kind: 'single',
+        prompt,
+        options: distinctIds(answers.flatMap((answer) => (answer.kind === 'single' ? [answer.value] : []))),
+      };
+    case 'rank':
+      return {
+        id,
+        kind: 'rank',
+        prompt,
+        count: Math.max(1, ...answers.map((answer) => (answer.kind === 'rank' ? answer.values.length : 0))),
+        sourceQuestionId: id,
+        fallbackOptions: distinctIds(answers.flatMap((answer) => (answer.kind === 'rank' ? answer.values : []))),
+      };
+    case 'rating':
+      return {
+        id,
+        kind: 'rating',
+        prompt,
+        scale: [1, 2, 3, 4, 5].map((value) => ({ value, label: String(value) })),
+        rows: distinctIds(
+          answers.flatMap((answer) => (answer.kind === 'rating' ? Object.keys(answer.values) : [])),
+        ).filter((row) => row.id !== OTHER_ROW),
+      };
+    case 'text':
+      return { id, kind: 'text', prompt };
+  }
+};
+
+/** Questions answered in some response that nothing else in the frame defines. */
+const noLongerAsked = (frame: Questionnaire, responses: readonly ConsultationResponse[]): Section | null => {
+  const known = new Set(allQuestions(frame).map((question) => question.id));
+  const answered = new Map<string, Answer[]>();
+  for (const response of responses) {
+    for (const [id, answer] of Object.entries(response.answers)) {
+      if (known.has(id) || isToolKey(id) || !isSafeId(id)) continue;
+      answered.set(id, [...(answered.get(id) ?? []), answer]);
+    }
+  }
+  const questions = [...answered.entries()]
+    .map(([id, answers]) => retiredQuestion(id, answers))
+    .filter((question): question is Question => question !== null);
+  return questions.length === 0 ? null : { id: 'no_longer_asked', title: 'No longer asked', questions };
 };
 
 const firstById = (options: readonly Option[]): readonly Option[] => {
@@ -263,13 +346,15 @@ export const reportingFrame = (
       question.kind === 'rating' ? { ...question, rows: everyRow(question, [], responses) } : question,
     ),
   });
-  return {
+  const complete: Questionnaire = {
     ...frame,
     core: frame.core.map(withEveryRow),
     followUp: frame.followUp.map(withEveryRow),
     pathways: Object.fromEntries(Object.entries(frame.pathways).map(([key, section]) => [key, withEveryRow(section)])),
     projectDesign: frame.projectDesign.map(withEveryRow),
   };
+  const retired = noLongerAsked(complete, responses);
+  return retired === null ? complete : { ...complete, followUp: [...complete.followUp, retired] };
 };
 
 const withoutInterimChoices = (override: QuestionOverride): QuestionOverride =>
@@ -322,8 +407,59 @@ export const newRowId = (label: string, taken: ReadonlySet<string>): string => {
       .slice(0, 40)
       .replace(/_+$/g, '') || 'row';
   let id = slug;
-  for (let next = 2; taken.has(id) || id === OTHER_ROW; next += 1) id = `${slug}_${next}`;
+  for (let next = 2; taken.has(id) || id === OTHER_ROW || !isSafeId(id); next += 1) id = `${slug}_${next}`;
   return id;
+};
+
+/** What the editor knows about a round beyond the round itself. */
+export interface RoundContext {
+  /** Every other round of the project, as saved. */
+  readonly others: readonly RoundDefinition[];
+  /** The kind of round this one was when it was last saved, if it has been. */
+  readonly savedStage?: RoundStage | null;
+  /** How many responses this round already holds. */
+  readonly responses?: number;
+}
+
+/**
+ * Why a round cannot be saved as it stands, in words for the person saving
+ * it. The editor checks before it offers Save, and saveRound checks again, so
+ * a rule that lives only on a screen cannot be walked past by a stored round.
+ */
+export const roundProblems = (
+  base: Questionnaire,
+  round: RoundDefinition,
+  context: RoundContext = { others: [] },
+): readonly string[] => {
+  const problems: string[] = [];
+  if (round.roundId.trim().length === 0) problems.push('Give it a short code.');
+  if (round.label.trim().length === 0) problems.push('Give it a name.');
+  if (context.others.some((other) => other.roundId === round.roundId)) {
+    problems.push(`The short code "${round.roundId}" already belongs to another round. Choose a different one.`);
+  }
+  if (round.stage === 'baseline') {
+    const existing = context.others.find((other) => other.stage === 'baseline');
+    if (existing !== undefined) {
+      problems.push(
+        `There is already a starting point, "${existing.label}". A project has only one: start a follow-up or an interim check instead.`,
+      );
+    }
+  }
+  if (round.stage === 'interim') {
+    const asks = allQuestions(applyRound(base, round)).filter((question) => !isLinkCodeQuestion(question));
+    if (asks.length === 0) {
+      problems.push(
+        'An interim check has to ask something. Tick at least one question for it: as it stands it would ask nothing but the follow-up code.',
+      );
+    }
+  }
+  const held = context.responses ?? 0;
+  if (context.savedStage !== undefined && context.savedStage !== null && context.savedStage !== round.stage && held > 0) {
+    problems.push(
+      `This round already has ${held} response${held === 1 ? '' : 's'}, so what kind of round it is cannot change now. Start a new round instead.`,
+    );
+  }
+  return problems;
 };
 
 /** What somebody types to add a row to a watch list, checked before it is saved. */

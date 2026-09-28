@@ -1,6 +1,7 @@
 import type { ConsultationResponse, Questionnaire } from '../types';
 import { FULL_TARGET_MINUTES, SHORT_TARGET_MINUTES, formEstimates, questionsFor, spoken } from './estimate';
 import { reviewQuestionnaire } from './plainLanguage';
+import { asksFollowUp } from './roundRules';
 
 /**
  * The things that are awkward to fix once people have started answering,
@@ -34,7 +35,12 @@ export const readinessChecks = (
   // the tracked ones on their own branch. Counting all sixteen at once would
   // describe a form nobody fills in.
   const isTracked = (question: { readonly tracking?: boolean }): boolean => question.tracking === true;
-  const shared = [...questionnaire.core, ...questionnaire.followUp, ...questionnaire.projectDesign]
+  const shared = [
+    ...questionnaire.core,
+    // Follow-up questions repeat only between the follow-ups themselves.
+    ...(asksFollowUp(questionnaire.stage) ? questionnaire.followUp : []),
+    ...questionnaire.projectDesign,
+  ]
     .flatMap((section) => section.questions)
     .filter(isTracked);
   const branchMost = Math.max(

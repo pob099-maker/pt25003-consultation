@@ -24,20 +24,36 @@
         } catch (error) {
           /* Private mode. One reload is still better than a blank page. */
         }
-        window.location.replace(
-          window.location.pathname + '?v=' + Date.now() + window.location.hash,
-        );
+        // Keep the rest of the query, so a magazine link's label survives it.
+        var params = new URLSearchParams(window.location.search);
+        params.set('v', String(Date.now()));
+        window.location.replace(window.location.pathname + '?' + params.toString() + window.location.hash);
       };
+      /*
+       * The build drops an onerror attribute from the app's own script tag, so
+       * the recovery above never ran in production. A script that fails to
+       * load still reaches the window in the capture phase, whatever its tag
+       * carries, so it is listened for here instead.
+       */
+      window.addEventListener(
+        'error',
+        function (event) {
+          var target = event.target;
+          if (target && target.tagName === 'SCRIPT' && target.type === 'module') window.__bootFailed();
+        },
+        true,
+      );
     </script>
   </head>
   <body>
     <div id="root"></div>
     <noscript>
       <p style="max-width: 34rem; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; line-height: 1.6">
-        This consultation needs JavaScript turned on. If you would rather not, ring Peter O&rsquo;Brien on
-        <a href="tel:0409773111">0409 773 111</a> and give your answers over the phone — they count the same either way.
+        This consultation needs JavaScript turned on. If you would rather not, email
+        <a href="mailto:peter.obrien@agaims.com.au">peter.obrien@agaims.com.au</a> and we will ring you to take your
+        answers over the phone. They count the same either way.
       </p>
     </noscript>
-    <script type="module" src="/src/main.tsx" onerror="window.__bootFailed()"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

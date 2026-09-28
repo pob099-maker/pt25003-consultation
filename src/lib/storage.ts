@@ -64,4 +64,10 @@ export const STORAGE_KEYS = {
   workshopParticipant: `${PREFIX}.workshop`,
   /** The labelled link this browser arrived by: a channel, never a person. */
   arrival: `${PREFIX}.arrival.v1`,
+  /**
+   * The round that was live the last time the server answered, so a reload
+   * starts from the right questions, and a reload with no signal does not fall
+   * back to the ones compiled into the app.
+   */
+  activeRound: `${PREFIX}.active-round.v1`,
 } as const;

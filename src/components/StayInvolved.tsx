@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NO_INTEREST_ID } from '../content/questionnaire';
-import { contactFormSchema, type ContactFormValues } from '../schemas/consultation';
+import { REACH_MESSAGE, canBeReached, contactFormSchema, type ContactFormValues } from '../schemas/consultation';
 import type { Option } from '../types';
 import { accentPanel, choiceRow, choiceRowSelected, textInput } from './ui';
 
@@ -58,6 +58,7 @@ export const StayInvolved = ({
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -86,7 +87,24 @@ export const StayInvolved = ({
   };
 
   return (
-    <form id={formId} noValidate onSubmit={handleSubmit((values) => onSubmit(wantsContact ? values : null))}>
+    <form
+      id={formId}
+      noValidate
+      onSubmit={handleSubmit((values) => {
+        if (!wantsContact) {
+          onSubmit(null);
+          return;
+        }
+        // Caught here, before anything is sent: the same rule the stored
+        // record applies, so the answers never go ahead of a contact that
+        // would then be refused.
+        if (!canBeReached(values)) {
+          setError('email', { message: REACH_MESSAGE }, { shouldFocus: true });
+          return;
+        }
+        onSubmit(values);
+      })}
+    >
       <div className={accentPanel}>
         <p className="text-ink-soft">
           If you are willing to be contacted about future activities — the project reference group, a trial or

@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { shortVersion } from './formLength';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import type { ConsultationResponse, Question, Questionnaire, Section } from '../types';
-import { FULL_TARGET_MINUTES, estimateFor, formEstimates, questionSeconds, spoken } from './estimate';
+import {
+  FULL_TARGET_MINUTES,
+  SHORT_PROMISE_MINUTES,
+  estimateFor,
+  formEstimates,
+  questionSeconds,
+  spoken,
+} from './estimate';
 import { jargonIn, reviewQuestion, reviewQuestionnaire } from './plainLanguage';
 import { readinessChecks, warnings } from './readiness';
 
@@ -45,8 +52,8 @@ describe('estimate', () => {
   it('keeps the short version under the ten minutes the magazine promises', () => {
     // Issue 22 of the PotatoLink magazine says the consultation "takes under
     // ten minutes". The landing page rounds up, so nine is the most it may say.
-    expect(estimateFor(shortVersion(q), 'grower').minutes).toBeLessThanOrEqual(9);
-    expect(formEstimates(q).short.minutes).toBeLessThanOrEqual(9);
+    expect(estimateFor(shortVersion(q), 'grower').minutes).toBeLessThanOrEqual(SHORT_PROMISE_MINUTES);
+    expect(formEstimates(q).short.minutes).toBeLessThanOrEqual(SHORT_PROMISE_MINUTES);
   });
 
   it('quotes each version for the role it takes longest for', () => {
@@ -157,7 +164,9 @@ describe('readinessChecks', () => {
   it('passes the tracked-question check for PT25003', () => {
     // Sixteen tracked questions across every branch, but four to eight shared ones.
     const check = readinessChecks(q).find((item) => item.id === 'tracked');
-    expect(check).toBeDefined();
+    // It used to count the follow-up questions at the starting point too,
+    // which asks none of them, and warn that the short version was too long.
+    expect(check?.state).toBe('pass');
   });
 
   it('warns when test responses are still in the results', () => {

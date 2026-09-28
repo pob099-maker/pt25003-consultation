@@ -13,6 +13,7 @@ import type { ConsultationResponse, ContactRecord, Questionnaire } from '../type
 import type { TagMap } from './tags';
 import { coveredEarlier, notesText } from './interviewNotes';
 import { lengthOf } from './formLength';
+import { QUOTE_LABEL, type QuotePermission } from './analysis';
 
 const RESPONSE_FIXED = [
   'response_id',
@@ -92,12 +93,17 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
     const answer = response.answers[question.id];
     if (question.kind === 'rating') {
       for (const ratingRow of question.rows) {
+        // Own keys only: a row id like "constructor" must never read back
+        // as something every object already has.
         row[`${question.id}__${ratingRow.id}`] =
-          answer !== undefined && answer.kind === 'rating' ? (answer.values[ratingRow.id] ?? '') : '';
+          answer !== undefined && answer.kind === 'rating' && Object.hasOwn(answer.values, ratingRow.id)
+            ? (answer.values[ratingRow.id] ?? '')
+            : '';
       }
       if (question.allowOther === true) {
         const rating = answer !== undefined && answer.kind === 'rating' ? answer : undefined;
-        row[`${question.id}__other`] = rating?.values[OTHER_ROW] ?? '';
+        row[`${question.id}__other`] =
+          rating !== undefined && Object.hasOwn(rating.values, OTHER_ROW) ? (rating.values[OTHER_ROW] ?? '') : '';
         row[`${question.id}__other_what`] = rating?.other ?? '';
       }
       continue;
@@ -171,7 +177,16 @@ export const contactsCsv = (questionnaire: Questionnaire, contacts: readonly Con
     })),
   );
 
-const FREE_TEXT_HEADERS = ['response_id', 'submitted_at', 'role', 'question_id', 'question', 'themes', 'text'] as const;
+const FREE_TEXT_HEADERS = [
+  'response_id',
+  'submitted_at',
+  'role',
+  'question_id',
+  'question',
+  'themes',
+  'quote_ok',
+  'text',
+] as const;
 
 export const freeTextCsv = (
   entries: readonly {
@@ -181,6 +196,7 @@ export const freeTextCsv = (
     questionId: string;
     questionPrompt: string;
     text: string;
+    quote: QuotePermission;
   }[],
   tags: TagMap,
   roleName: (role: string | null) => string,
@@ -194,6 +210,7 @@ export const freeTextCsv = (
       question_id: entry.questionId,
       question: entry.questionPrompt,
       themes: join(tags[`${entry.responseId}:${entry.questionId}`] ?? []),
+      quote_ok: QUOTE_LABEL[entry.quote],
       text: entry.text,
     })),
   );

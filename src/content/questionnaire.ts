@@ -1398,6 +1398,10 @@ const PROJECT_DESIGN: readonly Section[] = [
     questions: [
       {
         id: 'link_code',
+        guide: {
+          open: 'Would you be happy to give us three quick answers, so we can compare your answers with next time without your name?',
+          probe: 'If you would rather not, that is fine, and we will move on.',
+        },
         tracking: true,
         kind: 'text',
         entry: 'linkCode',

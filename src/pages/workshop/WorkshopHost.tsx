@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
-import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
+import { useStableQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { useStaffSession } from '../../hooks/useStaffSession';
 import { createWorkshop, listWorkshops, screenPrompt, workshopQuestions, type WorkshopSummary } from '../../services/workshops';
 import { AdminLogin } from '../admin/AdminLogin';
@@ -18,7 +18,7 @@ const setupSchema = z.object({
 type SetupValues = z.infer<typeof setupSchema>;
 
 const NewWorkshop = ({ staffId }: { staffId: string }) => {
-  const questionnaire = useQuestionnaire();
+  const questionnaire = useStableQuestionnaire();
   const navigate = useNavigate();
   const questions = useMemo(() => workshopQuestions(questionnaire), [questionnaire]);
   const [error, setError] = useState<string | null>(null);

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { getSupabase } from '../lib/supabase';
 import { STORAGE_KEYS, readJson, writeJson } from '../lib/storage';
-import { questionById } from '../content/lookup';
+import { isPersonalQuestion, questionById } from '../content/lookup';
 import type { Answer, AnswerMap, Option, Question, Questionnaire, Result } from '../types';
 import { groupQuestions } from './groups';
 import { currentProject } from '../content/projects';
@@ -424,7 +424,9 @@ export const answersFromVotes = (
   const answers: Record<string, Answer> = {};
   for (const [questionId, choices] of Object.entries(votes)) {
     const question = questionById(questionnaire, questionId);
-    if (question === undefined || choices.length === 0) continue;
+    // A personal question is never a room's, even from a workshop set up
+    // before that was enforced.
+    if (question === undefined || choices.length === 0 || isPersonalQuestion(question)) continue;
     if (question.kind === 'single') answers[questionId] = { kind: 'single', value: choices[0] ?? '' };
     else if (question.kind === 'multi') answers[questionId] = { kind: 'multi', values: [...choices] };
     else if (question.kind === 'rank') answers[questionId] = { kind: 'rank', values: choices.slice(0, question.count) };

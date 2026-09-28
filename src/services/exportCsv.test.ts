@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { seedContacts, seedResponses } from './seed';
-import { contactsCsv, responseHeaders, responsesCsv } from './exportCsv';
+import { contactsCsv, freeTextCsv, responseHeaders, responsesCsv } from './exportCsv';
 
 const q = DEFAULT_QUESTIONNAIRE;
 
@@ -35,6 +35,48 @@ describe('responsesCsv', () => {
       { ...first, answers: { farm_practices: { kind: 'rating', values: { other: 3 }, other: 'Weeding robot' } } },
     ]);
     expect(csv).toContain('Weeding robot');
+  });
+
+  it('carries whether each comment may be quoted', () => {
+    const csv = freeTextCsv(
+      [
+        {
+          responseId: 'r1',
+          submittedAt: '2026-09-29T00:00:00.000Z',
+          role: 'grower',
+          questionId: 'q4_bad_season',
+          questionPrompt: 'Tough season?',
+          text: 'Wet harvest',
+          quote: 'no',
+        },
+      ],
+      {},
+      () => 'Grower',
+    );
+    expect(csv).toContain('quote_ok');
+    expect(csv).toContain('Do not quote');
+  });
+
+  it('never reads a row id as something every object already has', () => {
+    const first = seedResponses()[0];
+    const farm = q.pathways.farm;
+    if (first === undefined || farm === undefined) throw new Error('no seeded response or farm section');
+    const odd = {
+      ...q,
+      pathways: {
+        ...q.pathways,
+        farm: {
+          ...farm,
+          questions: farm.questions.map((question) =>
+            question.id === 'farm_practices' && question.kind === 'rating'
+              ? { ...question, rows: [...question.rows, { id: 'constructor', label: 'Odd' }] }
+              : question,
+          ),
+        },
+      },
+    };
+    const csv = responsesCsv(odd, [{ ...first, answers: { farm_practices: { kind: 'rating', values: { guidance: 4 } } } }]);
+    expect(csv).not.toContain('native code');
   });
 
   it('marks test data so it can be filtered out of a spreadsheet too', () => {

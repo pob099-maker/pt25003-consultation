@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../components/ui';
-import { useQuestionnaire } from '../contexts/QuestionnaireContext';
+import { useStableQuestionnaire } from '../contexts/QuestionnaireContext';
 import { useStaffSession } from '../hooks/useStaffSession';
 import { groupQuestions, handsMeaning, loadGroups, optionsForGroup, saveGroup, type GroupRecord } from '../services/groups';
 import { AdminLogin } from './admin/AdminLogin';
@@ -18,7 +18,7 @@ const parseCount = (raw: string | undefined): number | undefined | 'invalid' => 
 const today = (): string => new Date().toISOString().slice(0, 10);
 
 const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupRecord | null }) => {
-  const questionnaire = useQuestionnaire();
+  const questionnaire = useStableQuestionnaire();
   const navigate = useNavigate();
   const questions = useMemo(() => groupQuestions(questionnaire), [questionnaire]);
 

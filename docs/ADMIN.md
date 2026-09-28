@@ -124,7 +124,31 @@ Two things to say when reporting a line that started at an interim. Fewer people
 different mix, answered the interim than the baseline, so check **Who answered**. And the later the
 interim, the less time that line has to show any movement before the final review.
 
+Save refuses an interim that would ask nothing but the follow-up code. Changing a line on a list
+during an interim ticks that question into it for you.
+
 Interim checks need `supabase/migrations/0014_interim_rounds.sql` run once in the SQL Editor.
+
+## Rules the Question wording tab keeps
+
+These are checked before **Save** is offered, and again when the round is saved, so a rule never
+lives only on the screen:
+
+- **One starting point.** Once one exists, the button to start another disappears, and a second
+  cannot be saved.
+- **A round's kind is fixed once it has responses.** Turning a live starting point into an interim
+  would change what everybody after it is asked. Start a new round instead.
+- **No short code twice.** A code that belongs to another round is refused.
+- **New rounds wait for the old ones.** A new round inherits the last full round's wording and lines,
+  so the start buttons stay off until the earlier rounds have been read, and a message says so if
+  they cannot be.
+- **The magazine's promise.** The tab shows how long the short version of the round on screen takes,
+  lines added included, and turns red for a starting point that would pass nine minutes.
+
+Saving switches the live round over in one step, so a save the database refuses leaves the round
+that was collecting exactly as it was. That needs `supabase/migrations/0015_save_round.sql` run
+once in the SQL Editor; until then the app saves in careful steps that do the same thing, with a
+brief moment between switching the old round off and the new one on.
 
 ## Piloting before the link goes out
 
@@ -232,10 +256,11 @@ call and the form ask the same things by construction rather than by anybody rem
 The landing page and the consent page both offer a phone call or a visit instead. There are two ways
 in, because they suit different people.
 
-**A number to ring** is whoever is listed in `VITE_PROJECT_CONTACTS` — currently Peter O'Brien on
-0409 773 111. Adding a second or third name is a change to that one setting, not to the code: the
-format is `Name|Phone|Email`, several separated by a semicolon, and phone or email may be left out
-within an entry.
+**Who would ring** is whoever is listed in `VITE_PROJECT_CONTACTS`, currently Peter O'Brien and
+Steph Tabone, with no number published. Adding a name is a change to that one setting, not to the
+code: the format is `Name|Phone|Email`, several separated by a semicolon, and phone or email may be
+left out within an entry. A number listed there is shown on the site, so leave it out unless you
+want it public.
 
 **Ask us to ring you** takes a name, a number, roughly when to ring and anything we should know. It
 needs nobody's number published, and it suits somebody who is on a machine and cannot talk now. The
@@ -350,8 +375,11 @@ still counts in the live totals, but not in the responses.
 
 ## Tagging comments
 
-Open the **Comments** tab. Each free-text answer shows the role, the date and the question. Tap any
-theme to apply or remove it; it saves immediately, and appears in the comments export.
+Open the **Comments** tab. Each free-text answer shows the role, the date, the question, and
+whether the person agreed to be quoted: **OK to quote, without their name**, **Do not quote**, or
+**Not asked about quoting**. The short version and interim checks never ask, so treat "not asked" as
+a no. The same answer is in the `quote_ok` column of the comments export. Tap any theme to apply or
+remove it; it saves immediately, and appears in the comments export.
 
 The themes are fixed so that tagging stays consistent between people: Labour, Timeliness,
 Harvesting, Planting, Logistics, Grading, Packhouse, Quality, Damage, Reliability, Safety,
