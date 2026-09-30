@@ -178,9 +178,14 @@ Plain `http://` now answers with a 301 to `https://`.
 1. **Clear the test data.** SQL Editor:
 
    ```sql
-   delete from public.consultation_responses where is_test_data;
-   delete from public.consultation_contacts  where is_test_data;
+   delete from public.consultation_responses where is_test_data or round_id = '2026-pilot';
+   delete from public.consultation_contacts  where is_test_data or round_id = '2026-pilot';
+   delete from public.consultation_progress;
    ```
+
+   The pilot round is named as well as the test flag. Answers given through the real link during
+   the pilot, including walk-throughs on your own phone, are not marked as tests, so the flag
+   alone leaves them behind.
 
 2. Confirm the admin screen now reads zero responses.
 3. Check the names on the landing page are the people who will ring back, and start the starting
