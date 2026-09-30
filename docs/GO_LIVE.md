@@ -79,8 +79,12 @@ get enough to stay awake, but a quiet fortnight mid-way through would pause it, 
 then sit unsent on people's phones until it woke up.
 
 For a four-month consultation, the Pro plan (about US$25/month, roughly $150 over the period) removes
-that risk. Check their current terms before deciding — this is the one place where saving $150 could
-cost you responses.
+that risk, and adds daily backups kept for seven days. Check their current terms before deciding —
+this is the one place where saving $150 could cost you responses.
+
+PT25003 moved to Pro on 30 September 2026, so the keep-awake pings that ran while it was on the free
+plan were removed. Pro's compute credit covers one small project: any other project left running in
+the same organisation adds about US$10 a month.
 
 ---
 
