@@ -105,11 +105,11 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Getting different brands and systems to work together
 - Training, skills and getting new people in
 
-## 4. Everybody — What would convince you
-
 ### If we could only take on one or two of those, which would you pick, and why?
 
 `q6_first_opportunities` · open text
+
+## 4. Everybody — What would convince you
 
 ### What would it take to convince you to try something new?
 

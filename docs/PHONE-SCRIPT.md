@@ -137,14 +137,14 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
   - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
   - Training, skills and getting new people in
 
-## What would convince you
-
 **6. If we could only take on one or two of those, which would you pick, and why?**
 
 > Open with: "If you were running the project, what would you do first?"
 > Then probe: "Why that one?"
 
 _Let them talk. Write it down in their words, not yours._
+
+## What would convince you
 
 **7. What would it take to convince you to try something new?**
 

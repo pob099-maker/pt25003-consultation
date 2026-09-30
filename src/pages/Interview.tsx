@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { AboutYou } from '../components/AboutYou';
+import { showRoleQuestion } from '../components/roleQuestion';
 import { InterviewQuestion } from '../components/InterviewQuestion';
 import { InterviewNav } from '../components/InterviewNav';
 import { InterviewNotes } from '../components/InterviewNotes';
@@ -394,6 +395,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
             onClick={() => {
               if (stepIndex === 0 && draft.role === null) {
                 setRoleError(true);
+                showRoleQuestion();
                 return;
               }
               state.next();

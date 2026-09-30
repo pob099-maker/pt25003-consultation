@@ -6,6 +6,7 @@ import { QuestionField } from '../components/QuestionField';
 import { StayInvolved } from '../components/StayInvolved';
 import { primaryButton, secondaryButton } from '../components/ui';
 import { AboutYou } from '../components/AboutYou';
+import { showRoleQuestion } from '../components/roleQuestion';
 import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
 import { promptOverrideFor, rankChoicesFor } from '../content/dynamic';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
@@ -82,6 +83,7 @@ export const Consultation = () => {
   const handleNext = (): void => {
     if (stepIndex === 0 && draft.role === null) {
       setRoleError(true);
+      showRoleQuestion();
       return;
     }
     setRoleError(false);

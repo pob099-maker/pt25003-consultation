@@ -1,6 +1,7 @@
 import { choiceRow, choiceRowSelected, textInput } from './ui';
 import { ABOUT_YOU } from '../content/questionnaire';
 import type { Questionnaire, RoleId } from '../types';
+import { ROLE_QUESTION_ID } from './roleQuestion';
 
 /**
  * Role and region — the branch point. Shared by the online form and the
@@ -36,7 +37,7 @@ export const AboutYou = ({
 
   return (
     <div className="grid gap-8">
-      <fieldset aria-describedby={showRoleError ? 'role-error' : undefined}>
+      <fieldset id={ROLE_QUESTION_ID} className="scroll-mt-4" aria-describedby={showRoleError ? 'role-error' : undefined}>
         <legend className="mb-1 text-subtitle font-semibold text-ink">
           {ABOUT_YOU.role.prompt}
         </legend>

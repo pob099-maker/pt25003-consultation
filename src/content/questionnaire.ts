@@ -270,19 +270,21 @@ const CORE: readonly Section[] = [
         scale: PRIORITY_SCALE,
         rows: AREAS,
       },
-    ],
-  },
-  {
-    id: 'core_evidence',
-    title: 'What would convince you',
-    questions: [
       {
+        // Straight after the list it refers to. It used to open the next page,
+        // under another heading, where "those" pointed at nothing on screen.
         id: 'q6_first_opportunities',
         guide: { open: 'If you were running the project, what would you do first?', probe: 'Why that one?' },
         kind: 'text',
         prompt: 'If we could only take on one or two of those, which would you pick, and why?',
         rows: 4,
       },
+    ],
+  },
+  {
+    id: 'core_evidence',
+    title: 'What would convince you',
+    questions: [
       {
         id: 'q7_evidence',
         guide: { open: 'What would it take for you to actually try something new?', probe: 'Whose word would you take on it?' },
@@ -1394,7 +1396,8 @@ const PROJECT_DESIGN: readonly Section[] = [
   {
     id: 'next_time',
     title: 'Next time we ask',
-    intro: 'Two optional things that help us make the most of your answers.',
+    // The short version asks only the first of the two, so this must not count them.
+    intro: 'Optional. It helps us make the most of your answers.',
     questions: [
       {
         id: 'link_code',
