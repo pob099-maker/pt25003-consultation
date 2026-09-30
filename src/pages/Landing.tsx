@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { formEstimates, spoken } from '../services/estimate';
@@ -6,11 +6,49 @@ import { currentProject } from '../content/projects';
 import { Layout } from '../components/Layout';
 import { PreferToTalk } from '../components/PreferToTalk';
 import { card, primaryButton, quietButton, secondaryButton } from '../components/ui';
-import { STORAGE_KEYS, readJson } from '../lib/storage';
+import { STORAGE_KEYS, readJson, removeKey } from '../lib/storage';
 import { isDemoSite } from '../lib/config';
 
+/**
+ * Saved answers carry on where they left off, which is right for somebody who
+ * closed the tab halfway, and wrong for a second person on the same phone, or
+ * somebody who wants to start over. Said next to the buttons, where it is seen,
+ * with a way to clear them.
+ */
+const SavedAnswers = ({ onCleared }: { onCleared: () => void }) => {
+  const [confirming, setConfirming] = useState(false);
+  return (
+    <div className="mt-3 text-meta text-ink-soft">
+      <p>You have answers saved on this device, so this carries on where you left off.</p>
+      {confirming ? (
+        <p className="mt-2 flex flex-wrap items-center gap-3" role="group" aria-label="Start again">
+          <span>Clear them and start with a blank form?</span>
+          <button
+            type="button"
+            className={secondaryButton}
+            onClick={() => {
+              removeKey(STORAGE_KEYS.draft);
+              setConfirming(false);
+              onCleared();
+            }}
+          >
+            Clear and start again
+          </button>
+          <button type="button" className={quietButton} onClick={() => setConfirming(false)}>
+            Keep them
+          </button>
+        </p>
+      ) : (
+        <button type="button" className={`${quietButton} mt-2`} onClick={() => setConfirming(true)}>
+          Start again instead
+        </button>
+      )}
+    </div>
+  );
+};
+
 export const Landing = () => {
-  const hasDraft = readJson<{ stepIndex: number }>(STORAGE_KEYS.draft) !== null;
+  const [hasDraft, setHasDraft] = useState(() => readJson<{ stepIndex: number }>(STORAGE_KEYS.draft) !== null);
   // Worked out from the questions actually being asked, for the role it takes
   // longest for. It used to be typed in by hand, and said five and ten minutes
   // long after the questions had grown past both.
@@ -61,6 +99,7 @@ export const Landing = () => {
               {hasDraft ? 'Continue' : `Start · ${spoken(estimates.full)}`}
             </Link>
           </div>
+          {hasDraft && <SavedAnswers onCleared={() => setHasDraft(false)} />}
         </section>
       ) : (
         <section className={`${card} mt-6`} aria-labelledby="how-long">
@@ -79,6 +118,7 @@ export const Landing = () => {
               {hasDraft ? 'Continue the full version' : `Full version · ${spoken(estimates.full)}`}
             </Link>
           </div>
+          {hasDraft && <SavedAnswers onCleared={() => setHasDraft(false)} />}
         </section>
       )}
 
@@ -100,11 +140,6 @@ export const Landing = () => {
         </Link>
       </p>
 
-      {hasDraft && (
-        <p className="mt-4 text-meta text-ink-soft">
-          You have answers saved on this device. You can pick up where you left off.
-        </p>
-      )}
     </Layout>
   );
 };
