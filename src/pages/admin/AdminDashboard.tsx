@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { currentProject } from '../../content/projects';
 import { ProjectSwitcher } from './ProjectSwitcher';
 import { isDemoSite, telHref } from '../../lib/config';
@@ -63,10 +63,36 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const [methodFilter, setMethodFilter] = useState<'all' | 'online' | 'interview' | 'workshop'>('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [includeTest, setIncludeTest] = useState(data.demoMode);
-  // A link can open a particular tab, e.g. back from recording a group.
-  const [searchParams] = useSearchParams();
+  // The address says which tab is open, so a link can open one, e.g. back from
+  // recording a group, or the demonstration tour's "Change over time". The tab
+  // used to be read from it once, when the screen opened, so a link to another
+  // tab from this same screen changed the address and nothing else.
+  const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = searchParams.get('tab');
-  const [tab, setTab] = useState<Tab>(isTab(requestedTab) ? requestedTab : 'priorities');
+  const tab: Tab = isTab(requestedTab) ? requestedTab : 'priorities';
+  const setTab = (id: Tab): void =>
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.set('tab', id);
+        return next;
+      },
+      { replace: true },
+    );
+  // Arriving from a link further up the page, the tabs can be out of sight:
+  // bring them into view so the switch is seen, not just made.
+  const tabsRef = useRef<HTMLElement>(null);
+  const firstTab = useRef(true);
+  useEffect(() => {
+    if (firstTab.current) {
+      firstTab.current = false;
+      return;
+    }
+    const top = tabsRef.current?.getBoundingClientRect().top;
+    if (top !== undefined && (top < 0 || top > window.innerHeight * 0.6)) {
+      tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [tab]);
 
   const filtered = useMemo(
     () =>
@@ -332,7 +358,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         </div>
       </section>
 
-      <nav className="mt-6 flex flex-wrap gap-2" aria-label="Sections">
+      <nav ref={tabsRef} className="mt-6 flex scroll-mt-4 flex-wrap gap-2" aria-label="Sections">
         {(
           [
             ['priorities', 'Priorities'],
