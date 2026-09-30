@@ -8,7 +8,7 @@ import { primaryButton, secondaryButton } from '../components/ui';
 import { AboutYou } from '../components/AboutYou';
 import { showRoleQuestion } from '../components/roleQuestion';
 import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
-import { promptOverrideFor, rankChoicesFor } from '../content/dynamic';
+import { choicesFor, promptOverrideFor, rankChoicesFor } from '../content/dynamic';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { useConsultation } from '../hooks/useConsultation';
 import type { ContactFormValues } from '../schemas/consultation';
@@ -196,6 +196,7 @@ export const Consultation = () => {
                 answer={draft.answers[question.id]}
                 rankChoices={question.kind === 'rank' ? rankChoices : undefined}
                 promptOverride={promptOverrideFor(questionnaire, question, draft.answers)}
+                choices={choicesFor(question, draft.answers)}
                 onChange={(answer) => state.setAnswer(question.id, answer)}
               />
             ))}

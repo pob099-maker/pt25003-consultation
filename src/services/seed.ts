@@ -83,7 +83,7 @@ const SPECS: readonly SeedSpec[] = [
     regions: ['sa_murraylands'],
     constraints: ['irrigation', 'monitoring', 'maintenance', 'skills'],
     topThree: ['skills', 'maintenance', 'irrigation'],
-    impacts: ['labour_avail', 'downtime', 'skills'],
+    impacts: ['timeliness', 'downtime', 'training'],
     badSeason:
       'We lose days waiting on parts. In January that is irrigation missed, and you cannot get that back in a crop.',
     areas: {
@@ -204,7 +204,7 @@ const SPECS: readonly SeedSpec[] = [
     regions: ['national'],
     constraints: ['maintenance', 'skills', 'harvest'],
     topThree: ['skills', 'maintenance', 'harvest'],
-    impacts: ['skills', 'downtime', 'labour_cost'],
+    impacts: ['training', 'downtime', 'labour_cost'],
     badSeason: 'Customers cannot get technicians, so small faults become whole-season problems.',
     areas: {
       training: 5,
@@ -291,7 +291,7 @@ const SPECS: readonly SeedSpec[] = [
     regions: ['sa_southeast', 'vic_ballarat'],
     constraints: ['monitoring', 'skills', 'data', 'harvest'],
     topThree: ['skills', 'monitoring', 'data'],
-    impacts: ['skills', 'data', 'timeliness'],
+    impacts: ['training', 'data', 'timeliness'],
     badSeason: 'Growers fall back on what they did last year, because there is no local evidence to do otherwise.',
     areas: {
       training: 5,
@@ -331,7 +331,7 @@ const SPECS: readonly SeedSpec[] = [
     regions: ['national'],
     constraints: ['skills', 'data', 'maintenance'],
     topThree: ['skills', 'data', 'maintenance'],
-    impacts: ['skills', 'labour_avail', 'whs'],
+    impacts: ['training', 'labour_cost', 'whs'],
     badSeason: 'Workforce shortages hit every region at once and there is no shared response.',
     areas: {
       training: 5,

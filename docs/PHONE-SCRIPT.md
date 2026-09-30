@@ -95,9 +95,9 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Quality loss or a smaller pack-out
   - Bruising, damage or handling loss
   - Workplace health and safety
-  - Machine downtime or reliability
+  - Machines or crews standing idle
   - Energy, fuel or water use
-  - Trouble finding skilled operators or technicians
+  - Time and money spent training people
   - Not knowing what is actually happening
   - Other
 

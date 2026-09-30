@@ -16,6 +16,8 @@ interface Props {
    * back and guess; "For harvesting" does not.
    */
   readonly promptOverride?: string;
+  /** A tick list's choices for this person, when an earlier answer narrows them. */
+  readonly choices?: readonly Option[];
 }
 
 const OTHER_ID = 'other';
@@ -32,9 +34,14 @@ const Prompt = ({ question, id, override }: { question: Question; id: string; ov
 const OptionHelp = ({ option }: { option: Option }) =>
   option.help === undefined ? null : <span className="mt-0.5 block text-meta text-ink-faint">{option.help}</span>;
 
-const MultiField = ({ question, answer, onChange, promptOverride }: Props) => {
+const MultiField = ({ question, answer, onChange, promptOverride, choices }: Props) => {
   const groupId = useId();
-  const values = answer !== undefined && answer.kind === 'multi' ? answer.values : [];
+  const shown = choices ?? (question.kind === 'multi' ? question.options : []);
+  // A tick left on a choice this person is no longer shown, after they changed
+  // an earlier answer, goes with their next change rather than staying hidden.
+  const values = (answer !== undefined && answer.kind === 'multi' ? answer.values : []).filter((value) =>
+    shown.some((option) => option.id === value),
+  );
   const other = answer !== undefined && answer.kind === 'multi' ? (answer.other ?? '') : '';
   const showOther = question.kind === 'multi' && question.allowOther === true && values.includes(OTHER_ID);
 
@@ -55,7 +62,7 @@ const MultiField = ({ question, answer, onChange, promptOverride }: Props) => {
         <Prompt question={question} id={groupId} override={promptOverride} />
       </legend>
       <ul className="grid gap-2">
-        {question.options.map((option) => {
+        {shown.map((option) => {
           const checked = values.includes(option.id);
           return (
             <li key={option.id}>

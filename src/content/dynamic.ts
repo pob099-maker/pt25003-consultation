@@ -28,6 +28,26 @@ export const topConstraintLabel = (questionnaire: Questionnaire, answers: Answer
   return optionLabel(questionById(questionnaire, 'q1_constraints'), top).toLowerCase();
 };
 
+/**
+ * Answers to question 3 that would only name the top problem again, by the
+ * problem's id in question 1. The others are all costs, which every problem
+ * can have; these two are the same thing said twice, and ticked, they say
+ * nothing.
+ */
+const RESTATES: Readonly<Record<string, readonly string[]>> = {
+  skills: ['labour_avail'],
+};
+
+/** Question 3's choices for this person, when they differ from the full list. */
+export const choicesFor = (question: Question, answers: AnswerMap): readonly Option[] | undefined => {
+  if (question.id !== 'q3_impact' || question.kind !== 'multi') return undefined;
+  const ranked = answers['q2_top_three'];
+  const top = ranked !== undefined && ranked.kind === 'rank' ? ranked.values[0] : undefined;
+  const leaveOut = top === undefined ? undefined : RESTATES[top];
+  if (leaveOut === undefined) return undefined;
+  return question.options.filter((option) => !leaveOut.includes(option.id));
+};
+
 export const promptOverrideFor = (
   questionnaire: Questionnaire,
   question: Question,

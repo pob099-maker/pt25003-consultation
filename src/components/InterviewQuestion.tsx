@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import type { Answer, AnswerMap, Question, Questionnaire } from '../types';
-import { guideOverrideFor, promptOverrideFor, rankChoicesFor } from '../content/dynamic';
+import { choicesFor, guideOverrideFor, promptOverrideFor, rankChoicesFor } from '../content/dynamic';
 import { QuestionField } from './QuestionField';
 import { card, textInput } from './ui';
 import { markMention, mentionState } from '../services/mentions';
@@ -121,6 +121,7 @@ export const InterviewQuestion = ({
           onChange={onChange}
           rankChoices={question.kind === 'rank' ? rankChoicesFor(questionnaire, answers) : undefined}
           promptOverride={promptOverrideFor(questionnaire, question, answers)}
+          choices={choicesFor(question, answers)}
         />
       </section>
     );
@@ -166,7 +167,7 @@ export const InterviewQuestion = ({
           : `${values.length} mentioned · ${unpromptedCount} unprompted · ${values.length - unpromptedCount} after prompting`}
       </p>
       <ul className="mt-3 grid gap-2">
-        {question.options.map((option) => {
+        {(choicesFor(question, answers) ?? question.options).map((option) => {
           const state = mentionState({ values, prompted }, option.id);
           return (
             <li

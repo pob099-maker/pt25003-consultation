@@ -227,6 +227,11 @@ const CORE: readonly Section[] = [
         kind: 'multi',
         prompt: 'For the one at the top of your list, what does it actually cost a business?',
         help: 'Tick as many as you like.',
+        // What it costs, never the problem again. The question is asked about
+        // whichever problem is top, so an answer that names one of them reads
+        // back as circular: "trouble finding skilled operators" was offered as
+        // the cost of finding skilled operators. See content/dynamic.ts for the
+        // one answer left out for one problem.
         options: opts(
           ['labour_avail', 'Labour availability'],
           ['labour_cost', 'Labour cost'],
@@ -235,9 +240,9 @@ const CORE: readonly Section[] = [
           ['quality', 'Quality loss or a smaller pack-out'],
           ['damage', 'Bruising, damage or handling loss'],
           ['whs', 'Workplace health and safety'],
-          ['downtime', 'Machine downtime or reliability'],
+          ['downtime', 'Machines or crews standing idle'],
           ['inputs', 'Energy, fuel or water use'],
-          ['skills', 'Trouble finding skilled operators or technicians'],
+          ['training', 'Time and money spent training people'],
           ['data', 'Not knowing what is actually happening'],
           ['other', 'Other'],
         ),
