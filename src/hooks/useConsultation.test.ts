@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { applyRound } from '../services/roundRules';
-import { keepAsked, settleDraft, type Draft } from './useConsultation';
+import { shortVersion } from '../services/formLength';
+import type { Questionnaire } from '../types';
+import { keepAsked, resumableDraft, resumeStep, settleDraft, type Draft, type Step } from './useConsultation';
 
 const q = DEFAULT_QUESTIONNAIRE;
 
@@ -16,6 +18,8 @@ const draft = (over: Partial<Draft>): Draft => ({
   regionOther: '',
   answers: {},
   stepIndex: 3,
+  stepId: null,
+  length: null,
   ...over,
 });
 
@@ -67,5 +71,67 @@ describe('keepAsked', () => {
       interview__note__general: { kind: 'text', value: 'Keen to host' },
     });
     expect(Object.keys(kept).sort()).toEqual(['farm_practices', 'interview__note__general']);
+  });
+});
+
+/** The steps a grower is shown, in the order the form shows them. */
+const stepsOf = (questionnaire: Questionnaire): Step[] => [
+  { id: 'about_you', title: 'About your perspective', section: null },
+  ...[...questionnaire.core, ...Object.values(questionnaire.pathways).slice(0, 1), ...questionnaire.projectDesign].map(
+    (section) => ({ id: section.id, title: section.title, section }),
+  ),
+  { id: 'stay_involved', title: 'Stay involved', section: null },
+];
+
+describe('resumeStep', () => {
+  const full = stepsOf(q);
+  const short = stepsOf(shortVersion(q));
+
+  it('finds the same step in the other version, where the same number points somewhere else', () => {
+    // The fault this replaced: a place saved as "step 5" of the full version
+    // opened a different section, or the last page, of the short one.
+    const moved = short.find((step, index) => full.findIndex((candidate) => candidate.id === step.id) !== index);
+    expect(moved).toBeDefined();
+    const inFull = full.findIndex((step) => step.id === moved?.id);
+    expect(resumeStep(short, { stepId: moved?.id ?? null, stepIndex: inFull })).toBe(
+      short.findIndex((step) => step.id === moved?.id),
+    );
+  });
+
+  it('goes on to the step that follows when this version does not have the one it was on', () => {
+    const fullOnly = full.findIndex((step) => !short.some((candidate) => candidate.id === step.id));
+    expect(fullOnly).toBeGreaterThan(0);
+    const follows = full.slice(fullOnly).find((step) => short.some((candidate) => candidate.id === step.id));
+    const at = resumeStep(short, { stepId: full[fullOnly]?.id ?? null, stepIndex: fullOnly });
+    expect(short[at]?.id).toBe(follows?.id);
+  });
+
+  it('uses the number in a draft saved before steps had ids, never past the end', () => {
+    expect(resumeStep(short, { stepId: null, stepIndex: 2 })).toBe(2);
+    expect(resumeStep(short, { stepId: null, stepIndex: 99 })).toBe(short.length - 1);
+  });
+});
+
+describe('resumableDraft', () => {
+  const opened = draft({ role: null, stepIndex: 0, stepId: 'about_you', roundId: '2026-pilot', roundConfirmed: true });
+
+  it('does not count a form that was only opened as saved answers', () => {
+    expect(resumableDraft(opened, '2026-pilot', true)).toBeNull();
+    expect(resumableDraft(null, '2026-pilot', true)).toBeNull();
+  });
+
+  it('offers one with anything in it, and remembers which version it was in', () => {
+    const started = resumableDraft({ ...opened, role: 'grower', length: 'short' }, '2026-pilot', true);
+    expect(started?.role).toBe('grower');
+    expect(started?.length).toBe('short');
+  });
+
+  it('leaves out a draft from a round that has closed, which the form would clear anyway', () => {
+    const fromPilot = { ...opened, role: 'grower' as const };
+    expect(resumableDraft(fromPilot, '2026-10-01-baseline', true)).toBeNull();
+    // Until the server has answered, which round is live is not known.
+    expect(resumableDraft(fromPilot, '2026-10-01-baseline', false)).not.toBeNull();
+    // A draft begun on a stand-in takes the live round rather than being dropped.
+    expect(resumableDraft({ ...fromPilot, roundConfirmed: false }, '2026-10-01-baseline', true)).not.toBeNull();
   });
 });

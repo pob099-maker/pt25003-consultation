@@ -28,7 +28,7 @@ export const Consultation = () => {
   // The short version asks only the questions repeated in every round. Ids are
   // the same in both, so switching part-way keeps every answer already given.
   const questionnaire = useMemo(() => (short ? shortVersion(full) : full), [short, full]);
-  const state = useConsultation(questionnaire);
+  const state = useConsultation(questionnaire, { length: short ? 'short' : 'full' });
   const { draft, step, stepIndex, steps, pathway } = state;
   const [interests, setInterests] = useState<readonly string[]>([]);
   const [roleError, setRoleError] = useState(false);

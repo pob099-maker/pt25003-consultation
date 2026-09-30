@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuestionnaire } from '../contexts/QuestionnaireContext';
+import { useQuestionnaireState } from '../contexts/QuestionnaireContext';
+import { resumableDraft, type Draft } from '../hooks/useConsultation';
 import { formEstimates, spoken } from '../services/estimate';
 import { currentProject } from '../content/projects';
 import { Layout } from '../components/Layout';
@@ -48,11 +49,20 @@ const SavedAnswers = ({ onCleared }: { onCleared: () => void }) => {
 };
 
 export const Landing = () => {
-  const [hasDraft, setHasDraft] = useState(() => readJson<{ stepIndex: number }>(STORAGE_KEYS.draft) !== null);
+  const { questionnaire, status } = useQuestionnaireState();
+  const [cleared, setCleared] = useState(false);
+  const saved = useMemo(
+    () =>
+      cleared ? null : resumableDraft(readJson<Partial<Draft>>(STORAGE_KEYS.draft), questionnaire.roundId, status === 'live'),
+    [cleared, questionnaire.roundId, status],
+  );
+  const hasDraft = saved !== null;
+  // Carries on in the version it was started in. A draft from before the
+  // version was kept goes to the full one, which shows every answer it holds.
+  const savedShort = saved?.length === 'short';
   // Worked out from the questions actually being asked, for the role it takes
   // longest for. It used to be typed in by hand, and said five and ten minutes
   // long after the questions had grown past both.
-  const questionnaire = useQuestionnaire();
   const estimates = useMemo(() => formEstimates(questionnaire), [questionnaire]);
 
   return (
@@ -96,10 +106,10 @@ export const Landing = () => {
           </p>
           <div className="mt-4">
             <Link to="/about" className={primaryButton}>
-              {hasDraft ? 'Continue' : `Start · ${spoken(estimates.full)}`}
+              {hasDraft ? 'Continue where you left off' : `Start · ${spoken(estimates.full)}`}
             </Link>
           </div>
-          {hasDraft && <SavedAnswers onCleared={() => setHasDraft(false)} />}
+          {hasDraft && <SavedAnswers onCleared={() => setCleared(true)} />}
         </section>
       ) : (
         <section className={`${card} mt-6`} aria-labelledby="how-long">
@@ -110,15 +120,28 @@ export const Landing = () => {
             Pick whichever suits the day. The short one asks what we most need to know. The full one lets you tell us more
             about your own operation. You can start short and keep going if you have the time.
           </p>
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <Link to="/about?quick=1" className={primaryButton}>
-              {hasDraft ? 'Continue' : `Short version · ${spoken(estimates.short)}`}
-            </Link>
-            <Link to="/about" className={secondaryButton}>
-              {hasDraft ? 'Continue the full version' : `Full version · ${spoken(estimates.full)}`}
-            </Link>
-          </div>
-          {hasDraft && <SavedAnswers onCleared={() => setHasDraft(false)} />}
+          {hasDraft ? (
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <Link to={savedShort ? '/about?quick=1' : '/about'} className={primaryButton}>
+                Continue where you left off
+              </Link>
+              {savedShort && (
+                <Link to="/about" className={secondaryButton}>
+                  Carry on in the full version
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <Link to="/about?quick=1" className={primaryButton}>
+                Short version · {spoken(estimates.short)}
+              </Link>
+              <Link to="/about" className={secondaryButton}>
+                Full version · {spoken(estimates.full)}
+              </Link>
+            </div>
+          )}
+          {hasDraft && <SavedAnswers onCleared={() => setCleared(true)} />}
         </section>
       )}
 
