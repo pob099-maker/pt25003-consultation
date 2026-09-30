@@ -18,7 +18,7 @@ import type { CollectionMethod, ConsultationResponse } from '../types';
  * link for every entry, ready to paste.
  */
 
-export type ChannelId = 'magazine' | 'newsletter' | 'direct' | 'shared' | 'other';
+export type ChannelId = 'magazine' | 'newsletter' | 'whatsapp' | 'direct' | 'shared' | 'other';
 
 export interface SourceDefinition {
   /** What goes in the link: ?src=<id>. Lower case, no spaces. */
@@ -31,6 +31,17 @@ export interface SourceDefinition {
 export const SOURCES: readonly SourceDefinition[] = [
   { id: 'mag22', channel: 'magazine', label: 'PotatoLink magazine, issue 22' },
   { id: 'bulletin', channel: 'newsletter', label: 'PotatoLink bulletin' },
+  // One label per regional WhatsApp group, plus one for a national group. A label
+  // names a group, never a member, and the ids use the region ids from
+  // docs/REGIONS.md. A group tied to one area can get its own label later.
+  { id: 'chat-sa', channel: 'whatsapp', label: 'WhatsApp group, South Australia and borders' },
+  { id: 'chat-tas', channel: 'whatsapp', label: 'WhatsApp group, Tasmania' },
+  { id: 'chat-ballarat', channel: 'whatsapp', label: 'WhatsApp group, Ballarat' },
+  { id: 'chat-gippsland', channel: 'whatsapp', label: 'WhatsApp group, Gippsland' },
+  { id: 'chat-qld', channel: 'whatsapp', label: 'WhatsApp group, Queensland' },
+  { id: 'chat-wa', channel: 'whatsapp', label: 'WhatsApp group, Western Australia' },
+  { id: 'chat-nsw', channel: 'whatsapp', label: 'WhatsApp group, New South Wales' },
+  { id: 'chat-all', channel: 'whatsapp', label: 'WhatsApp group, all regions' },
   { id: 'direct', channel: 'direct', label: 'Sent direct to a grower' },
   { id: 'shared', channel: 'shared', label: 'Passed on by somebody who took part' },
 ];
@@ -44,6 +55,7 @@ export const SHARED_SOURCE = 'shared';
 export const CHANNEL_LABEL: Readonly<Record<ChannelId, string>> = {
   magazine: 'Magazines',
   newsletter: 'Newsletters and bulletins',
+  whatsapp: 'WhatsApp groups',
   direct: 'Sent direct to a grower',
   shared: 'Passed on by somebody who took part',
   other: 'A link we do not recognise',

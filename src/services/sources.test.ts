@@ -31,6 +31,14 @@ describe('sourceFromAddress', () => {
     expect(sourceFromAddress('?src=jo.smith@example.com', '')).toBe(OTHER_SOURCE);
   });
 
+  it('accepts a WhatsApp group label and credits it to the WhatsApp channel', () => {
+    expect(sourceFromAddress('?src=chat-ballarat', '')).toBe('chat-ballarat');
+    expect(channelOf('chat-ballarat')).toBe('whatsapp');
+    expect(sourceLabel('chat-ballarat')).toBe('WhatsApp group, Ballarat');
+    // A made-up label for one member is still refused.
+    expect(sourceFromAddress('?src=chat-frank', '')).toBe(OTHER_SOURCE);
+  });
+
   it('says nothing when there is no label', () => {
     expect(sourceFromAddress('', '')).toBeNull();
     expect(sourceFromAddress('?src=', '')).toBeNull();
@@ -97,6 +105,16 @@ describe('tallyRoutes', () => {
     const keys = rows.map((row) => row.key);
     expect(keys).toEqual(expect.arrayContaining(['newsletter', 'shared', 'unlabelled', 'other', 'interview_phone', 'workshop']));
     expect(rows.reduce((sum, row) => sum + row.count, 0)).toBe(8);
+  });
+
+  it('groups WhatsApp links under one channel and lists each group', () => {
+    const chat = tallyRoutes([
+      response('online', 'chat-sa'),
+      response('online', 'chat-sa'),
+      response('online', 'chat-qld'),
+    ]).find((row) => row.key === 'whatsapp');
+    expect(chat?.count).toBe(3);
+    expect(chat?.parts.map((part) => part.count)).toEqual([2, 1]);
   });
 
   it('only breaks a channel down when there is more than one link in it', () => {

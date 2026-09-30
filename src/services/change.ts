@@ -68,7 +68,7 @@ export interface Comparison {
 }
 
 /** Below this, a round's figure for a question is shown but flagged as thin. */
-export const THIN = 10;
+export const THIN = 5;
 
 const round3 = (value: number): number => Number(value.toFixed(3));
 

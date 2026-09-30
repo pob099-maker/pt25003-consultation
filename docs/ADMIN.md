@@ -61,7 +61,7 @@ Reading the **Change over time** tab:
   pictures, not the same people over time.
 - Check **Who answered** first. If the baseline was mostly growers and the review mostly packhouses,
   the numbers will move for that reason alone.
-- Greyed figures come from fewer than ten people. Report them with that caveat, or not at all.
+- Greyed figures come from fewer than five people. Report them with that caveat, or not at all.
 - Pilot rounds never appear here.
 - A line added part-way through says where its comparison starts ("First asked in Mid-term
   review"), and a round that did not ask something shows "not asked" rather than a number.
@@ -415,6 +415,8 @@ region, and the responses and contacts exports carry the label in a `link` colum
 | --- | --- |
 | PotatoLink magazine, issue 22 | `https://consultation.agaims.com.au/?src=mag22` |
 | PotatoLink bulletin | `https://consultation.agaims.com.au/?src=bulletin` |
+| A regional WhatsApp group | `https://consultation.agaims.com.au/?src=chat-sa` (also `chat-tas`, `chat-ballarat`, `chat-gippsland`, `chat-qld`, `chat-wa`, `chat-nsw`) |
+| The national WhatsApp group | `https://consultation.agaims.com.au/?src=chat-all` |
 | Sent direct to a grower, by email, text or Teams | `https://consultation.agaims.com.au/?src=direct` |
 | Passed on by somebody who took part | added automatically by the thank-you page's invite button |
 

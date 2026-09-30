@@ -162,7 +162,7 @@ different people answer each round. Two safeguards:
 
 - **Composition is reported beside every comparison**, by role, so a change in who answered is not
   read as a change of mind.
-- **Figures from fewer than ten people are flagged** as thin.
+- **Figures from fewer than five people are flagged** as thin.
 
 Attribution to the project rests on the review-round questions — what people saw from the project,
 and whether it changed what they did — together with the qualitative follow-up asked alongside
