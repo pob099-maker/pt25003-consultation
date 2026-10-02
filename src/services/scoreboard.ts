@@ -887,6 +887,11 @@ export const deleteItem = async (id: string): Promise<Result<true>> => {
 // ---------------------------------------------------------------------------
 // The demonstration's example
 
+const demoLanding = (): string =>
+  typeof window === 'undefined'
+    ? 'https://consultation.agaims.com.au/demo/#/landing'
+    : `${window.location.origin}${import.meta.env.BASE_URL}#/landing`;
+
 /**
  * What the demonstration site shows before anybody has written anything: one
  * published edition for last month, marked as invented, and the register
@@ -929,7 +934,9 @@ export const demoSeed = (now: Date): DemoStore => {
       { id: 'f1', theme: 'Reliability', said: { kind: 'summary', text: 'Growers told us equipment has to work under Australian conditions, not just look good overseas.' }, heard: 'Local fit, including soil, irrigation layout, crop handling and serviceability, is central to adoption.', howWeKnow: '', regionsRaised: 5, regionsHeardFrom: 6 },
       { id: 'f2', theme: 'ROI', said: { kind: 'summary', text: 'Growers told us they need proof of payback before another capital investment.' }, heard: 'Independent data on labour, throughput, quality loss, operating cost and risk matters as much as the technology itself.', howWeKnow: 'The most common reason given for holding back', regionsRaised: 6, regionsHeardFrom: 6 },
     ],
-    next: { headline: 'Have your say in the Potato Mechanisation consultation', buttonLabel: 'Take part', url: 'https://consultation.agaims.com.au/?src=scoreboard' },
+    // The demonstration's own front page, so trying the example never sends
+    // anybody into the live consultation counted as a scoreboard visitor.
+    next: { headline: 'Have your say in the Potato Mechanisation consultation', buttonLabel: 'Take part', url: demoLanding() },
     asked: [{ question: 'Will the evaluation results be public?', answer: 'Yes. Every result will be published, including machines that did not perform.' }],
   };
   const numbers: Participation = {
