@@ -6,6 +6,7 @@ import {
   isPersonalQuestion,
   optionLabel,
   questionById,
+  regionLabel,
 } from '../content/lookup';
 import { isNoteId, noteLabel } from './interviewNotes';
 import { lengthOf } from './formLength';
@@ -180,7 +181,7 @@ export const overview = (
   return {
     total,
     byRole: toTally(roleCounts, (id) => questionnaire.roles.find((role) => role.id === id)?.label ?? 'Not given'),
-    byRegion: toTally(regionCounts, (id) => questionnaire.regions.find((region) => region.id === id)?.label ?? id),
+    byRegion: toTally(regionCounts, (id) => regionLabel(questionnaire, id)),
     completionRate: full.length === 0 ? 0 : round(completed.length / full.length),
     medianMinutes: round(median(responses.map((response) => response.durationSeconds)) / 60, 1),
   };

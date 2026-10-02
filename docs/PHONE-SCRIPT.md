@@ -27,18 +27,22 @@ Then work down this script and enter the answers into the consultation afterward
 
 **Which growing regions are you talking about?** _Optional, more than one is fine._
 
-  - South Australia: Murraylands and Riverland
-  - South Australia: South East and Adelaide Hills
-  - Victoria: Ballarat and Central Highlands
-  - Victoria: Gippsland
-  - Victoria: other districts
-  - Tasmania: North and North West
-  - Tasmania: other districts
-  - New South Wales
-  - Queensland: Lockyer Valley, Atherton and other districts
-  - Western Australia
+  - SA and Vic: Mallee and Riverland — Loxton, Pinnaroo, Parilla, Mildura, Swan Hill
+  - SA: Murray Bridge and Adelaide Plains — Murray Bridge, Virginia, the Adelaide Hills
+  - SA and Vic: South East SA and South West Victoria — Mt Gambier, Penola, Warrnambool
+  - Vic: Ballarat and Central Highlands — Ballarat, Bungaree, Creswick
+  - Vic: Gippsland — Thorpdale, Koo Wee Rup, West Gippsland
+  - Tas: North West — Sisters Creek, Devonport, Smithton
+  - Tas: North East — Scottsdale
+  - Tas: Midlands and the south — Longford, Cressy
+  - NSW and Vic: Riverina and the Murray — Griffith, Hay, Wagga Wagga, Holbrook, Albury, and the Victorian side of the Murray from Echuca to Wodonga
+  - NSW: Tablelands — Crookwell, Guyra
+  - NSW: Coast — The coast and the ranges behind it
+  - Qld: Atherton Tablelands — Atherton, Tolga, Kairi
+  - Qld: Lockyer Valley and Bundaberg — Gatton, the Lockyer Valley, Bundaberg
+  - WA: South West — Manjimup, Pemberton, Busselton and Jindong, Myalup
   - More than one region, or all of Australia
-  - Other region
+  - Somewhere else
   - Prefer not to say
 
 ## Where the pressure is

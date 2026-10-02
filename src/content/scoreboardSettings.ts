@@ -35,19 +35,25 @@ export interface ScoreboardSettings {
 /**
  * Potato Mech reports nationally, with coverage across the seven regions of
  * the PotatoLink 2 proposal (docs/REGIONS.md), placed roughly where they sit on
- * the map. "Victoria: other districts" cannot be placed in any of them, so it
- * counts nationally only. When the regions are settled, this is the only
- * place that changes.
+ * the map. Each region is made of its areas, which are what people answer.
+ * If AHR regroups the areas, this is the only place that changes.
  */
 const POTATO_MECH: ScoreboardSettings = {
   coverage: [
-    { id: 'qld', label: 'Qld', name: 'Queensland', from: ['qld'], col: 4, row: 1 },
-    { id: 'wa', label: 'WA', name: 'Western Australia', from: ['wa'], col: 1, row: 2, span: 2 },
-    { id: 'nsw', label: 'NSW', name: 'New South Wales', from: ['nsw'], col: 4, row: 2 },
-    { id: 'sa', label: 'SA', name: 'South Australia and borders', from: ['sa_murraylands', 'sa_southeast'], col: 3, row: 3 },
-    { id: 'ballarat', label: 'Ballarat', name: 'Ballarat', from: ['vic_ballarat'], col: 4, row: 3 },
-    { id: 'gippsland', label: 'Gipps.', name: 'Gippsland', from: ['vic_gippsland'], col: 5, row: 3 },
-    { id: 'tas', label: 'Tas', name: 'Tasmania', from: ['tas_north', 'tas_other'], col: 4, row: 4 },
+    { id: 'qld', label: 'Qld', name: 'Queensland', from: ['atherton', 'lockyer-bundaberg'], col: 4, row: 1 },
+    { id: 'wa', label: 'WA', name: 'Western Australia', from: ['south-west-wa'], col: 1, row: 2, span: 2 },
+    { id: 'nsw', label: 'NSW', name: 'New South Wales and the Murray', from: ['riverina', 'nsw-tablelands', 'nsw-coast'], col: 4, row: 2 },
+    {
+      id: 'sa',
+      label: 'SA',
+      name: 'South Australia and borders',
+      from: ['mallee-loxton', 'murray-bridge-adelaide-plains', 'mt-gambier-warrnambool'],
+      col: 3,
+      row: 3,
+    },
+    { id: 'ballarat', label: 'Ballarat', name: 'Ballarat', from: ['ballarat'], col: 4, row: 3 },
+    { id: 'gippsland', label: 'Gipps.', name: 'Gippsland', from: ['gippsland-thorpdale'], col: 5, row: 3 },
+    { id: 'tas', label: 'Tas', name: 'Tasmania', from: ['nw-tas-sisters-creek', 'ne-tas-scottsdale', 'midlands-longford'], col: 4, row: 4 },
   ],
   mapColumns: 5,
   owners: ['Potato Mech', 'PotatoLink Phase 2', 'Both projects'],

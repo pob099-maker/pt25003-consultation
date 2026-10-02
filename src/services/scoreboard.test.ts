@@ -36,7 +36,7 @@ const response = (over: Partial<ConsultationResponse> = {}): ConsultationRespons
     roundId: 'baseline',
     role: 'grower',
     pathway: 'farm',
-    regions: ['sa_murraylands'],
+    regions: ['mallee-loxton'],
     regionOther: '',
     answers: {},
     startedAt: '2026-10-05T00:00:00.000Z',
@@ -114,17 +114,17 @@ describe('participation', () => {
     expect(numbers).toMatchObject({ total: 14, online: 7, interviews: 5, workshops: null });
   });
 
-  it('counts a region as heard from at 5, from any of the answers that make it up, and never as a count', () => {
+  it('counts a region as heard from at 5, from any of its areas, and never as a count', () => {
     const numbers = numbersFor([
-      ...many(3, { regions: ['sa_murraylands'] }),
-      ...many(2, { regions: ['sa_southeast'] }),
-      ...many(4, { regions: ['tas_north'] }),
-      ...many(6, { regions: ['vic_other'] }),
+      ...many(3, { regions: ['mallee-loxton'] }),
+      ...many(2, { regions: ['mt-gambier-warrnambool'] }),
+      ...many(4, { regions: ['nw-tas-sisters-creek'] }),
+      ...many(6, { regions: ['national'] }),
     ]);
     const heard = (id: string) => numbers.regions.find((region) => region.id === id)?.heardFrom;
     expect(heard('sa')).toBe(true);
     expect(heard('tas')).toBe(false);
-    // "Victoria: other districts" belongs to no region: it counts nationally only.
+    // "More than one region, or all of Australia" counts nationally only.
     expect(numbers.regions.filter((region) => region.heardFrom)).toHaveLength(1);
     expect(numbers.total).toBe(15);
     expect(JSON.stringify(numbers.regions)).not.toMatch(/\d/);
@@ -148,8 +148,8 @@ describe('participation', () => {
 
 describe('the evidence behind a finding', () => {
   it('counts tagged comments and how many regions heard from raised the theme', () => {
-    const sa = many(5, { regions: ['sa_murraylands'] });
-    const tas = many(5, { regions: ['tas_north'] });
+    const sa = many(5, { regions: ['murray-bridge-adelaide-plains'] });
+    const tas = many(5, { regions: ['ne-tas-scottsdale'] });
     const tags = { [`${sa[0]?.id}:q4_bad_season`]: ['Labour'], [`${tas[0]?.id}:q4_bad_season`]: ['Labour'], [`${tas[1]?.id}:q4_bad_season`]: ['ROI'] };
     const labour = themeEvidence([...sa, ...tas], tags, coverage).find((entry) => entry.theme === 'Labour');
     expect(labour).toEqual({ theme: 'Labour', comments: 2, regionsRaised: 2, regionsHeardFrom: 2 });

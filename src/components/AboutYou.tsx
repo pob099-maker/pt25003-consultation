@@ -83,7 +83,10 @@ export const AboutYou = ({
                     checked={checked}
                     onChange={() => toggleRegion(option.id)}
                   />
-                  <span className="text-body text-ink">{option.label}</span>
+                  <span className="text-body text-ink">
+                    {option.label}
+                    {option.help !== undefined && <span className="mt-0.5 block text-meta text-ink-faint">{option.help}</span>}
+                  </span>
                 </label>
               </li>
             );
@@ -92,7 +95,7 @@ export const AboutYou = ({
         {regions.includes('other') && (
           <div className="mt-3">
             <label htmlFor="region-other" className="mb-1 block text-meta text-ink-soft">
-              Which other region?
+              Where? A town or district is plenty.
             </label>
             <input
               id="region-other"

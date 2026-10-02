@@ -34,7 +34,7 @@ interface SeedSpec {
 const SPECS: readonly SeedSpec[] = [
   {
     role: 'grower',
-    regions: ['tas_north'],
+    regions: ['nw-tas-sisters-creek'],
     constraints: ['harvest', 'harvest_logistics', 'skills', 'storage'],
     topThree: ['harvest', 'skills', 'harvest_logistics'],
     impacts: ['labour_avail', 'timeliness', 'damage'],
@@ -80,7 +80,7 @@ const SPECS: readonly SeedSpec[] = [
   },
   {
     role: 'farm_manager',
-    regions: ['sa_murraylands'],
+    regions: ['mallee-loxton'],
     constraints: ['irrigation', 'monitoring', 'maintenance', 'skills'],
     topThree: ['skills', 'maintenance', 'irrigation'],
     impacts: ['timeliness', 'downtime', 'training'],
@@ -120,7 +120,7 @@ const SPECS: readonly SeedSpec[] = [
   },
   {
     role: 'contractor',
-    regions: ['vic_ballarat', 'vic_gippsland'],
+    regions: ['ballarat', 'gippsland-thorpdale'],
     constraints: ['harvest', 'harvest_logistics', 'maintenance'],
     topThree: ['harvest_logistics', 'maintenance', 'harvest'],
     impacts: ['timeliness', 'downtime', 'labour_cost'],
@@ -159,7 +159,7 @@ const SPECS: readonly SeedSpec[] = [
   },
   {
     role: 'processor',
-    regions: ['tas_north', 'vic_ballarat'],
+    regions: ['ne-tas-scottsdale', 'ballarat'],
     constraints: ['grading', 'receival', 'packing', 'data'],
     topThree: ['grading', 'packing', 'data'],
     impacts: ['labour_avail', 'quality', 'labour_cost'],
@@ -288,7 +288,7 @@ const SPECS: readonly SeedSpec[] = [
   },
   {
     role: 'adviser',
-    regions: ['sa_southeast', 'vic_ballarat'],
+    regions: ['mt-gambier-warrnambool', 'ballarat'],
     constraints: ['monitoring', 'skills', 'data', 'harvest'],
     topThree: ['skills', 'monitoring', 'data'],
     impacts: ['training', 'data', 'timeliness'],

@@ -21,18 +21,22 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 `regions` · tick any + other
 
-- South Australia: Murraylands and Riverland
-- South Australia: South East and Adelaide Hills
-- Victoria: Ballarat and Central Highlands
-- Victoria: Gippsland
-- Victoria: other districts
-- Tasmania: North and North West
-- Tasmania: other districts
-- New South Wales
-- Queensland: Lockyer Valley, Atherton and other districts
-- Western Australia
+- SA and Vic: Mallee and Riverland
+- SA: Murray Bridge and Adelaide Plains
+- SA and Vic: South East SA and South West Victoria
+- Vic: Ballarat and Central Highlands
+- Vic: Gippsland
+- Tas: North West
+- Tas: North East
+- Tas: Midlands and the south
+- NSW and Vic: Riverina and the Murray
+- NSW: Tablelands
+- NSW: Coast
+- Qld: Atherton Tablelands
+- Qld: Lockyer Valley and Bundaberg
+- WA: South West
 - More than one region, or all of Australia
-- Other region
+- Somewhere else
 - Prefer not to say
 
 ## 2. Everybody — Where the pressure is

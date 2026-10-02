@@ -442,10 +442,21 @@ out. Contributions are counted, not people, because answers are anonymous. The p
 published editions and nothing else; drafts, the register and the responses stay with the team.
 
 **Regions.** Potato Mech reports nationally, with coverage across the seven regions of the
-PotatoLink 2 proposal, built from the consultation's own region answers. "Victoria: other
-districts" cannot be placed in one of them, so it counts nationally only. A project organised by
-region can switch on a page for each region in `src/content/scoreboardSettings.ts`; each region's
-page then shows the national commitments and its own.
+PotatoLink 2 proposal. Respondents tick growing areas, fourteen of them, each listed with its
+towns, and each area belongs to one region. "More than one region" and "Somewhere else" count
+nationally only. Regrouping areas into regions is a change to `src/content/scoreboardSettings.ts`
+and never touches an answer. A project organised by region can switch on a page for each region
+there too; each region's page then shows the national commitments and its own.
+
+## Growing areas
+
+The consultation asks which growing areas matter to each person, from the fourteen areas of the
+PotatoLink 2 regions (switched on 3 October 2026, before any real answers came in). Each option
+starts with the state or states it covers and lists its towns, so somebody near a border goes by
+their town: a grower at Holbrook ticks "NSW and Vic: Riverina and the Murray", and so does one on
+the Victorian bank of the Murray between Echuca and Wodonga, while Mildura and Swan Hill are in
+"SA and Vic: Mallee and Riverland". Anybody unsure ticks "Somewhere else" and types their town, and
+the team places them.
 
 ## Before you share the link
 

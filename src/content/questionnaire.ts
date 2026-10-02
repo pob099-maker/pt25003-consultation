@@ -14,21 +14,42 @@ export const ROLES = [
   { id: 'industry_body', label: 'Industry body or other stakeholder', pathway: 'industry' },
 ] as const;
 
+/**
+ * The growing areas of docs/REGIONS.md, with the same ids, so the
+ * consultation, the CRM and the scoreboard name places the same way. An area
+ * is where the farm is; the region that looks after it is worked out from the
+ * area (content/scoreboardSettings.ts), so regrouping areas into regions never
+ * touches an answer. Each label starts with the state or states it covers, and
+ * the towns under it settle the border cases: a grower at Holbrook, or on the
+ * Victorian bank of the Murray at Echuca, finds their own town.
+ *
+ * Merging two areas later is easy; splitting one is not, so an area is only
+ * as wide as the districts in it are alike.
+ */
 const REGIONS = opts(
-  ['sa_murraylands', 'South Australia: Murraylands and Riverland'],
-  ['sa_southeast', 'South Australia: South East and Adelaide Hills'],
-  ['vic_ballarat', 'Victoria: Ballarat and Central Highlands'],
-  ['vic_gippsland', 'Victoria: Gippsland'],
-  ['vic_other', 'Victoria: other districts'],
-  ['tas_north', 'Tasmania: North and North West'],
-  ['tas_other', 'Tasmania: other districts'],
-  ['nsw', 'New South Wales'],
-  ['qld', 'Queensland: Lockyer Valley, Atherton and other districts'],
-  ['wa', 'Western Australia'],
+  ['mallee-loxton', 'SA and Vic: Mallee and Riverland', 'Loxton, Pinnaroo, Parilla, Mildura, Swan Hill'],
+  ['murray-bridge-adelaide-plains', 'SA: Murray Bridge and Adelaide Plains', 'Murray Bridge, Virginia, the Adelaide Hills'],
+  ['mt-gambier-warrnambool', 'SA and Vic: South East SA and South West Victoria', 'Mt Gambier, Penola, Warrnambool'],
+  ['ballarat', 'Vic: Ballarat and Central Highlands', 'Ballarat, Bungaree, Creswick'],
+  ['gippsland-thorpdale', 'Vic: Gippsland', 'Thorpdale, Koo Wee Rup, West Gippsland'],
+  ['nw-tas-sisters-creek', 'Tas: North West', 'Sisters Creek, Devonport, Smithton'],
+  ['ne-tas-scottsdale', 'Tas: North East', 'Scottsdale'],
+  ['midlands-longford', 'Tas: Midlands and the south', 'Longford, Cressy'],
+  [
+    'riverina',
+    'NSW and Vic: Riverina and the Murray',
+    'Griffith, Hay, Wagga Wagga, Holbrook, Albury, and the Victorian side of the Murray from Echuca to Wodonga',
+  ],
+  ['nsw-tablelands', 'NSW: Tablelands', 'Crookwell, Guyra'],
+  ['nsw-coast', 'NSW: Coast', 'The coast and the ranges behind it'],
+  ['atherton', 'Qld: Atherton Tablelands', 'Atherton, Tolga, Kairi'],
+  ['lockyer-bundaberg', 'Qld: Lockyer Valley and Bundaberg', 'Gatton, the Lockyer Valley, Bundaberg'],
+  ['south-west-wa', 'WA: South West', 'Manjimup, Pemberton, Busselton and Jindong, Myalup'],
   ['national', 'More than one region, or all of Australia'],
-  ['other', 'Other region'],
+  ['other', 'Somewhere else'],
   ['no_say', 'Prefer not to say'],
 );
+
 
 /**
  * The process axis: where in the chain the trouble is. Question 1 uses it.
@@ -1447,8 +1468,8 @@ export const ABOUT_YOU = {
     help: 'Required. Choose the one that fits best.',
   },
   regions: {
-    prompt: 'Which potato production region or regions are most relevant to your experience?',
-    help: 'Optional. Tick as many as you like.',
+    prompt: 'Which potato growing areas are most relevant to your experience?',
+    help: 'Optional. Tick as many as you like. Some areas cross a state border, so go by the towns listed.',
   },
 } as const;
 
