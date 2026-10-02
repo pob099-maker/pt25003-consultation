@@ -88,24 +88,25 @@ export const AboutYou = ({
                     {option.help !== undefined && <span className="mt-0.5 block text-meta text-ink-faint">{option.help}</span>}
                   </span>
                 </label>
+                {/* Right under the box it belongs to, not at the foot of the list. */}
+                {option.id === 'other' && checked && (
+                  <div className="mt-2 pl-4">
+                    <label htmlFor="region-other" className="mb-1 block text-meta text-ink-soft">
+                      Where? A town or district is plenty.
+                    </label>
+                    <input
+                      id="region-other"
+                      className={textInput}
+                      value={regionOther}
+                      maxLength={200}
+                      onChange={(event) => onRegionOther(event.target.value)}
+                    />
+                  </div>
+                )}
               </li>
             );
           })}
         </ul>
-        {regions.includes('other') && (
-          <div className="mt-3">
-            <label htmlFor="region-other" className="mb-1 block text-meta text-ink-soft">
-              Where? A town or district is plenty.
-            </label>
-            <input
-              id="region-other"
-              className={textInput}
-              value={regionOther}
-              maxLength={200}
-              onChange={(event) => onRegionOther(event.target.value)}
-            />
-          </div>
-        )}
       </fieldset>
     </div>
   );
