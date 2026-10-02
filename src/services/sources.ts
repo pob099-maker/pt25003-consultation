@@ -18,7 +18,7 @@ import type { CollectionMethod, ConsultationResponse } from '../types';
  * link for every entry, ready to paste.
  */
 
-export type ChannelId = 'magazine' | 'newsletter' | 'whatsapp' | 'direct' | 'shared' | 'other';
+export type ChannelId = 'magazine' | 'newsletter' | 'whatsapp' | 'direct' | 'shared' | 'scoreboard' | 'other';
 
 export interface SourceDefinition {
   /** What goes in the link: ?src=<id>. Lower case, no spaces. */
@@ -44,6 +44,8 @@ export const SOURCES: readonly SourceDefinition[] = [
   { id: 'chat-all', channel: 'whatsapp', label: 'WhatsApp group, all regions' },
   { id: 'direct', channel: 'direct', label: 'Sent direct to a grower' },
   { id: 'shared', channel: 'shared', label: 'Passed on by somebody who took part' },
+  // The "Your next opportunity" button on the monthly scoreboard.
+  { id: 'scoreboard', channel: 'scoreboard', label: 'The monthly scoreboard' },
 ];
 
 /** Recorded for a link carrying a code that is not on the list above. */
@@ -58,6 +60,7 @@ export const CHANNEL_LABEL: Readonly<Record<ChannelId, string>> = {
   whatsapp: 'WhatsApp groups',
   direct: 'Sent direct to a grower',
   shared: 'Passed on by somebody who took part',
+  scoreboard: 'The monthly scoreboard',
   other: 'A link we do not recognise',
 };
 

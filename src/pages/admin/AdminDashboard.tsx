@@ -32,11 +32,12 @@ import { PhoneScriptPanel } from './PhoneScriptPanel';
 import { ChangePanel } from './ChangePanel';
 import { TeamPanel } from './TeamPanel';
 import { GroupsPanel } from './GroupsPanel';
+import { ScoreboardPanel } from './ScoreboardPanel';
 import { DemoWelcome } from '../../components/DemoWelcome';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
-const TABS = ['priorities', 'change', 'groups', 'comments', 'contacts', 'phone', 'rounds', 'team'] as const;
+const TABS = ['priorities', 'change', 'groups', 'comments', 'contacts', 'scoreboard', 'phone', 'rounds', 'team'] as const;
 type Tab = (typeof TABS)[number];
 const isTab = (value: string | null): value is Tab => TABS.includes(value as Tab);
 
@@ -366,6 +367,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             ['groups', 'Groups'],
             ['comments', `Comments (${comments.length})`],
             ['contacts', `Contacts (${contacts.length})`],
+            ['scoreboard', 'Scoreboard'],
             ['phone', 'Phone script'],
             ['rounds', 'Question wording'],
             ['team', 'Team'],
@@ -838,6 +840,10 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
       )}
 
       {!data.loading && tab === 'change' && <ChangePanel responses={data.responses} rounds={data.rounds} />}
+
+      {!data.loading && tab === 'scoreboard' && (
+        <ScoreboardPanel responses={data.responses} tags={data.tags} rounds={data.rounds} />
+      )}
 
       {tab === 'phone' && <PhoneScriptPanel />}
 

@@ -385,6 +385,68 @@ The themes are fixed so that tagging stays consistent between people: Labour, Ti
 Harvesting, Planting, Logistics, Grading, Packhouse, Quality, Damage, Reliability, Safety,
 Irrigation, Data, Training, ROI, Service support.
 
+## The monthly scoreboard
+
+The **Scoreboard** tab builds a public page headed **You said. We heard. We're acting.** It shows
+what people told the consultation, what the project took from it, and what it is doing about it.
+It needs `supabase/migrations/0016_scoreboard.sql` run once in the SQL Editor; until then the tab
+says so.
+
+**The link.** The top of the tab has the address of the public page, ready to copy and send to
+whoever manages the PotatoLink website. It always shows the latest published update, with earlier
+months listed underneath. The second box is the same page without this site's header and footer,
+for pasting into another website; a plain link works just as well. Each month also has its own
+address, such as `#/scoreboard/2026-10`.
+
+**Each month.**
+
+1. **Start an edition** for the month it reports on. The switches, the next opportunity and the
+   answers to common questions carry over from last month; the statement, the findings and the
+   story are written fresh.
+2. Write the **update statement**: a sentence or two on what was heard and what is happening now.
+3. **Who has taken part** fills itself in from the responses, as at the end of the month. Add the
+   "Where we need you" line, and any activities held outside the tool, such as field visits.
+4. **What we heard**: up to five findings. Pick a theme and the tab shows the evidence behind it:
+   how many comments carry the tag, and how many of the regions heard from raised it. "You said" is
+   either a summary in your words or a quote, and the quote list only offers comments from people
+   who said yes to being quoted. Tag comments on the Comments tab first and the evidence follows.
+5. **The register** holds everything people raised and everything the project has committed to. It
+   carries from month to month. Tick up to five to lead the page as this month's commitments. Two
+   outcomes say no honestly: **Not taking forward** needs the reason, and **Passed on** needs who it
+   went to. Changing an item's stage is recorded, so the page can say it moved up this month.
+6. **Your next opportunity**: one easy next step. "Point it at the consultation" fills in a link
+   labelled `scoreboard`, so the Priorities tab counts who came from the scoreboard.
+7. **Preview** shows exactly what the public will see. **Publish** freezes the edition for good:
+   the numbers stay as they were that day, and a correction goes in the next edition. The database
+   itself refuses to change a published edition.
+
+**Optional blocks.** Four blocks make the page: Who has taken part, What we heard, What we're
+doing, and Your next opportunity. The rest are ideas from other extension programs, off until you
+switch them on, and only checked when they are on:
+
+| Block | What it adds | Where the idea came from |
+| --- | --- | --- |
+| Coming up | The next milestones, month by month | |
+| Everything you raised | The whole register, including what is not going ahead and what was passed on | MLA and GRDC regional consultation; the US land-grant rule |
+| Story of the month | One change story, with why it was chosen; needs the person's agreement ticked | Most Significant Change, first used in Australia by Target 10 |
+| You asked | Short answers to questions people raised | Interactive farm radio, Tanzania |
+| Checked before publishing | Records who checked the findings and when, and says so on the page | GRDC's Regional Cropping Solutions Networks |
+| Annual playback | How input was used over the year, every register item with its plan item and outcome, and a link for one question about the page | Dairy Australia's consultation playback |
+
+Start an **Annual playback** edition once a year in place of, or beside, that month's update.
+
+**What it never shows.** Nothing rests on fewer than 5 contributions: a smaller figure reads
+"Fewer than 5" and is not stored in the published edition at all. Regions show as heard from or
+still needed, never ranked by how many people they sent. Test answers and pilot rounds are left
+out. Contributions are counted, not people, because answers are anonymous. The public page reads
+published editions and nothing else; drafts, the register and the responses stay with the team.
+
+**Regions.** Potato Mech reports nationally, with coverage across the seven regions of the
+PotatoLink 2 proposal, built from the consultation's own region answers. "Victoria: other
+districts" cannot be placed in one of them, so it counts nationally only. A project organised by
+region can switch on a page for each region in `src/content/scoreboardSettings.ts`; each region's
+page then shows the national commitments and its own.
+
 ## Before you share the link
 
 The top of the **Question wording** tab checks the things that are awkward to fix once people

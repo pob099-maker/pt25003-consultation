@@ -13,6 +13,7 @@ import { SetPassword } from './pages/SetPassword';
 import { GroupRecordPage } from './pages/GroupRecordPage';
 import { ProjectLink } from './pages/ProjectLink';
 import { QuestionPaper } from './pages/QuestionPaper';
+import { Scoreboard } from './pages/Scoreboard';
 import { WorkshopHost } from './pages/workshop/WorkshopHost';
 import { WorkshopPresent } from './pages/workshop/WorkshopPresent';
 import { WorkshopJoin } from './pages/workshop/WorkshopJoin';
@@ -57,6 +58,10 @@ export const App = () => {
             <Route path="/consultation" element={<Consultation />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/questions" element={<QuestionPaper />} />
+            {/* The public scoreboard: published editions only, and nothing else. */}
+            <Route path="/scoreboard" element={<Scoreboard />} />
+            <Route path="/scoreboard/:period" element={<Scoreboard />} />
+            <Route path="/scoreboard/:period/:part" element={<Scoreboard />} />
             <Route path="/thank-you" element={<ThankYou />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/interview" element={<Interview />} />

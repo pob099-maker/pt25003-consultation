@@ -42,6 +42,10 @@ That created four tables and turned on row-level security. From this point:
 | A signed-in administrator | Read responses, read and delete contact records, tag comments, edit wording |
 | Anyone else, including a stranger with the public key | Nothing |
 
+Later features add their own migrations, numbered in order in `supabase/migrations/`. Run each one
+the same way, once. The monthly scoreboard needs `0016_scoreboard.sql`: it lets anyone read a
+published edition and nothing else, and makes a published edition impossible to change.
+
 ### 1.3 Load the test data (recommended while setting up)
 
 Same SQL editor, new query, `cat supabase/seed/test_data.sql | clip`, paste, **Run**. That gives you eight
