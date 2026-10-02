@@ -479,7 +479,11 @@ const FindingForm = ({
             ))}
           </select>
         )}
-        {finding.said.kind === 'quote' && finding.said.text.length > 0 && <blockquote className="border-l-4 border-accent pl-3 text-meta">{finding.said.text}</blockquote>}
+        {finding.said.kind === 'quote' && finding.said.text.length > 0 && (
+          <blockquote className="m-0 rounded-md bg-sunk p-3 text-meta">
+            <q>{finding.said.text}</q>
+          </blockquote>
+        )}
       </fieldset>
       <Field id={field('heard')} label="We heard" help="What the project takes from it: an interpretation, not a poll result.">
         <textarea id={field('heard')} className={textInput} rows={2} maxLength={600} value={finding.heard} onChange={(event) => set({ heard: event.target.value })} />
