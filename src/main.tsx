@@ -44,7 +44,10 @@ const claimAuthRedirect = async (): Promise<void> => {
     // Creating the client makes it read and store the session from the URL.
     await Promise.race([supabase.auth.getSession(), new Promise((resolve) => setTimeout(resolve, 4000))]);
   }
-  const target = type === 'invite' || type === 'recovery' ? '#/set-password' : '#/admin';
+  // An error here is nearly always a used-up or expired email link. The set-password page says so and
+  // says what to do; the sign-in page would only leave them typing a password they never set.
+  const failed = params.has('error') || params.has('error_description');
+  const target = failed || type === 'invite' || type === 'recovery' ? '#/set-password' : '#/admin';
   window.history.replaceState(null, '', `${window.location.pathname}${target}`);
 };
 
