@@ -3,7 +3,14 @@ import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { currentProject } from '../content/projects';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
-import { EVERYBODY, buildQuestionPaper, type PaperQuestion } from '../services/questionPaper';
+import {
+  EVERYBODY,
+  STATUS_HELP,
+  STATUS_LABEL,
+  buildQuestionPaper,
+  type PaperQuestion,
+  type PaperStatus,
+} from '../services/questionPaper';
 import { accentPanel, primaryButton, quietButton, secondaryButton } from '../components/ui';
 
 /**
@@ -28,13 +35,29 @@ const Marker = ({ question }: { question: PaperQuestion }) => (
   </span>
 );
 
+const STATUS_STYLE: Readonly<Record<PaperStatus, string>> = {
+  locked: 'border-primary text-ink',
+  list: 'border-accent text-ink',
+  open: 'border-line text-ink-soft',
+};
+
+/** Printed, not only shown: the paper is what the team marks up. */
+const Status = ({ status }: { status: PaperStatus }) => (
+  <span className={`shrink-0 rounded-md border px-2 py-0.5 text-meta font-semibold ${STATUS_STYLE[status]}`}>
+    {STATUS_LABEL[status]}
+  </span>
+);
+
 const QuestionBlock = ({ question }: { question: PaperQuestion }) => (
   <article className="break-inside-avoid border-t border-line pt-4">
     <div className="flex items-start justify-between gap-3">
       <h3 className="text-body font-semibold text-ink">
         {question.number}. {question.prompt}
       </h3>
-      <Marker question={question} />
+      <span className="flex shrink-0 flex-wrap justify-end gap-1.5">
+        <Status status={question.status} />
+        <Marker question={question} />
+      </span>
     </div>
     {question.help !== undefined && <p className="mt-1 text-meta text-ink-soft">{question.help}</p>}
     <p className="mt-1 text-meta text-ink-faint">
@@ -106,6 +129,25 @@ export const QuestionPaper = () => {
           one, for whichever role takes longest. Most people are asked fewer questions, because the middle of the form
           depends on the role they pick.
         </p>
+      </section>
+
+      <section className="mt-6 break-inside-avoid prose-measure">
+        <h2 className="text-subtitle font-semibold">Which questions can be changed</h2>
+        <p className="mt-1 text-meta text-ink-soft">Every question carries one of these, here and on the wording tab.</p>
+        <dl className="mt-3 grid gap-3">
+          {(['locked', 'list', 'open'] as const).map((status) => (
+            <div key={status} className="grid gap-1">
+              <dt className="flex flex-wrap items-center gap-2">
+                <Status status={status} />
+                <span className="text-meta text-ink-faint">
+                  {paper.sections.flatMap((section) => section.questions).filter((question) => question.status === status).length}{' '}
+                  questions
+                </span>
+              </dt>
+              <dd className="m-0 text-meta text-ink-soft">{STATUS_HELP[status]}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section className="mt-6 break-inside-avoid">

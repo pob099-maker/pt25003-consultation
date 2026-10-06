@@ -3,6 +3,7 @@ import { ABOUT_YOU } from '../content/questionnaire';
 import type { Option, Question, Questionnaire, ScalePoint } from '../types';
 import { formEstimates } from './estimate';
 import { shortVersion } from './formLength';
+import { isWatchList } from './roundRules';
 
 /**
  * The whole questionnaire as a document somebody can read on paper.
@@ -18,6 +19,29 @@ import { shortVersion } from './formLength';
  * deriving them rather than restating the rule.
  */
 
+/**
+ * Whether the team can change a question, in the words the wording tab uses.
+ * Tracked questions are asked word for word every round, so the starting point
+ * compares with each review; a watch list keeps its words but can gain lines.
+ */
+export type PaperStatus = 'locked' | 'list' | 'open';
+
+export const STATUS_LABEL: Readonly<Record<PaperStatus, string>> = {
+  locked: 'Tracked · locked',
+  list: 'Tracked · you can add to this list',
+  open: 'Can be reworded',
+};
+
+export const STATUS_HELP: Readonly<Record<PaperStatus, string>> = {
+  locked:
+    'Asked word for word in every round, so the starting point can be compared with each review. It cannot be changed on the wording tab. Changing one means changing the questionnaire itself, and only before anybody has answered.',
+  list: 'The question and its lines keep their words, but a line can be added or stopped between rounds as the project takes on new technology.',
+  open: 'Can be changed on the Question wording tab at any time. New responses use the new wording from then on.',
+};
+
+const statusOf = (question: Question): PaperStatus =>
+  question.tracking === true ? (isWatchList(question) ? 'list' : 'locked') : 'open';
+
 export interface PaperQuestion {
   /** Continuous through the paper, for pointing at in a meeting. Nobody answering sees a number. */
   readonly number: number;
@@ -31,6 +55,8 @@ export interface PaperQuestion {
   readonly notes: readonly string[];
   readonly inShort: boolean;
   readonly required: boolean;
+  /** Whether the team can change it, and how. */
+  readonly status: PaperStatus;
   /** The section it belongs to, so a list of questions out of context still says who is asked. */
   readonly sectionTitle: string;
   readonly audience: string;
@@ -124,6 +150,7 @@ const toPaperQuestion = (
   inShort: boolean,
   questionnaire: Questionnaire,
   section: { readonly title: string; readonly audience: string },
+  status: PaperStatus,
 ): PaperQuestion => ({
   number,
   id: question.id,
@@ -135,6 +162,7 @@ const toPaperQuestion = (
   notes: notesOf(question, questionnaire),
   inShort,
   required: question.required === true,
+  status,
   sectionTitle: section.title,
   audience: section.audience,
 });
@@ -175,10 +203,10 @@ export const buildQuestionPaper = (questionnaire: Questionnaire): QuestionPaper 
       ...(intro === undefined ? {} : { intro }),
       questions: questions.map((question) => {
         number += 1;
-        return toPaperQuestion(question, number, shortIds.has(question.id), questionnaire, {
-          title,
-          audience,
-        });
+        // Role and region are not on the wording tab at all: who answered is how
+        // one round is compared with the next, so they hold still like a tracked question.
+        const status = id === 'about-you' ? 'locked' : statusOf(question);
+        return toPaperQuestion(question, number, shortIds.has(question.id), questionnaire, { title, audience }, status);
       }),
     });
   };
@@ -244,3 +272,14 @@ export const buildQuestionPaper = (questionnaire: Questionnaire): QuestionPaper 
     shortList,
   };
 };
+
+/**
+ * Each question's number on the paper, so every other screen can point at the
+ * same question with the same number. A question the round does not ask has none.
+ */
+export const paperNumbers = (questionnaire: Questionnaire): ReadonlyMap<string, number> =>
+  new Map(
+    buildQuestionPaper(questionnaire).sections.flatMap((section) =>
+      section.questions.map((question) => [question.id, question.number] as const),
+    ),
+  );
