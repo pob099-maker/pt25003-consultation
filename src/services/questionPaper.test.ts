@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ABOUT_YOU, DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { allQuestions } from '../content/lookup';
 import { shortVersion } from './formLength';
-import { buildQuestionPaper } from './questionPaper';
+import { buildQuestionPaper, paperNumbers } from './questionPaper';
 
 const paper = buildQuestionPaper(DEFAULT_QUESTIONNAIRE);
 const asked = paper.sections.flatMap((section) => section.questions);
@@ -71,6 +71,25 @@ describe('buildQuestionPaper', () => {
     expect(topThree?.notes.join(' ')).toContain('ticked');
     // The fallback list is printed, because somebody who ticked nothing sees it.
     expect(topThree?.options.length).toBeGreaterThan(0);
+  });
+
+  it('says whether each question can be changed, in the words the wording tab uses', () => {
+    const status = (id: string) => asked.find((entry) => entry.id === id)?.status;
+    expect(status('q1_constraints')).toBe('locked');
+    expect(status('farm_practices')).toBe('list');
+    expect(status('role')).toBe('locked');
+    expect(status('regions')).toBe('locked');
+    const open = asked.filter((entry) => entry.status === 'open');
+    expect(open.length).toBeGreaterThan(0);
+    for (const entry of open) {
+      const question = allQuestions(DEFAULT_QUESTIONNAIRE).find((candidate) => candidate.id === entry.id);
+      expect(question?.tracking).not.toBe(true);
+    }
+  });
+
+  it('gives every screen the same number for the same question', () => {
+    const numbers = paperNumbers(DEFAULT_QUESTIONNAIRE);
+    for (const entry of asked) expect(numbers.get(entry.id)).toBe(entry.number);
   });
 
   it('follows the wording it is given, so an edited round prints as edited', () => {

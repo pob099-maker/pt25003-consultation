@@ -1,3 +1,4 @@
+import { paperNumbers } from '../../services/questionPaper';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { currentProject, purposeTemplate } from '../../content/projects';
@@ -104,6 +105,16 @@ const LibraryAdditions = ({
   );
 };
 
+const SAVED = 'Saved. New responses will use this wording.';
+
+/** The same value however its keys were ordered, so a reloaded round is not mistaken for an edited one. */
+const canonical = (value: unknown): string =>
+  JSON.stringify(value, (_key, inner: unknown) =>
+    inner !== null && typeof inner === 'object' && !Array.isArray(inner)
+      ? Object.fromEntries(Object.entries(inner as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)))
+      : inner,
+  );
+
 /**
  * Lets project staff change the words without changing what a historic answer
  * means. Question ids and option ids are fixed and are not editable here:
@@ -158,6 +169,13 @@ export const RoundEditor = ({
   );
   // How long this round's short version would take, with every line it adds.
   const shortTime = useMemo(() => formEstimates(applyRound(base, round)).short, [base, round]);
+  // The same numbers the printable paper uses, for the round on screen.
+  const numbers = useMemo(() => paperNumbers(applyRound(base, round)), [base, round]);
+  // Unsaved if the round on screen differs from the one it was loaded from.
+  // Keys are sorted first, because the database hands objects back reordered.
+  const savedVersion = history.find((entry) => entry.roundId === loadedFrom);
+  const dirty =
+    loadedFrom === null ? round.label.trim().length > 0 : canonical(round) !== canonical(savedVersion ?? null);
   const hasBaseline = history.some((entry) => entry.stage === 'baseline');
   // A new round inherits from the rounds before it, so it waits until they
   // have been read: starting one from an empty history would quietly drop
@@ -183,7 +201,7 @@ export const RoundEditor = ({
       return;
     }
     setLoadedFrom(round.roundId);
-    setStatus('Saved. New responses will use this wording.');
+    setStatus(SAVED);
     await onSaved?.();
   };
 
@@ -429,7 +447,10 @@ export const RoundEditor = ({
               return (
                 <div key={question.id} className="border-t border-line pt-4 first:border-0 first:pt-0">
                   <p className="text-meta text-ink-faint">
-                    {question.id}
+                    <span className="font-semibold text-ink">
+                      {numbers.has(question.id) ? `Question ${numbers.get(question.id)}` : 'Not asked in this round'}
+                    </span>
+                    <span className="ml-2">{question.id}</span>
                     {question.tracking === true && (
                       <span className="ml-2 rounded-full border border-accent px-2 py-0.5 text-eyebrow uppercase text-ink-soft">
                         {watchList ? 'Tracked · you can add to this list' : 'Tracked · locked'}
@@ -549,6 +570,29 @@ export const RoundEditor = ({
           />
         </section>
       ))}
+      {(dirty || status === SAVED) && (
+        <div className="sticky bottom-0 z-10 -mx-4 border-t border-line bg-surface px-4 py-3 no-print">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-meta text-ink" role="status">
+              {dirty
+                ? problems.length > 0
+                  ? 'Changes not saved yet. Sort out what is listed at the top of the page first.'
+                  : 'Changes not saved yet.'
+                : SAVED}
+            </p>
+            {dirty && (
+              <button
+                type="button"
+                className={primaryButton}
+                onClick={() => void save()}
+                disabled={busy || problems.length > 0}
+              >
+                {busy ? 'Saving…' : 'Save'}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
