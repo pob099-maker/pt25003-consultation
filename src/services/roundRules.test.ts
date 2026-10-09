@@ -115,7 +115,7 @@ describe('interim checks', () => {
 });
 
 describe('nextRoundOverrides', () => {
-  const baseline = round('baseline', { farm_practices: { retiredOptions: ['autonomy'] }, q4_bad_season: { prompt: 'Reworded' } });
+  const baseline = round('baseline', { farm_practices: { retiredOptions: ['autonomy'] }, q6_first_opportunities: { prompt: 'Reworded' } });
   const interim = round('interim', {
     farm_practices: { inInterim: true, addedOptions: [SORTING], retiredOptions: farmRows },
   });
@@ -131,7 +131,7 @@ describe('nextRoundOverrides', () => {
     // The baseline stopped autonomy; the interim's narrowing does not carry on.
     expect(practices?.retiredOptions).toEqual(['autonomy']);
     expect(practices?.inInterim).toBeUndefined();
-    expect(next.q4_bad_season?.prompt).toBe('Reworded');
+    expect(next.q6_first_opportunities?.prompt).toBe('Reworded');
   });
 
   it('asks everything again at the review that follows an interim', () => {
@@ -178,8 +178,8 @@ describe('reportingFrame', () => {
   });
 
   it('keeps a question the round collecting now has retired, so its answers still export', () => {
-    const frame = reportingFrame(q, [round('review', { q4_bad_season: { retired: true } })], 'review');
-    expect(questionById(frame, 'q4_bad_season')).toBeDefined();
+    const frame = reportingFrame(q, [round('review', { q6_first_opportunities: { retired: true } })], 'review');
+    expect(questionById(frame, 'q6_first_opportunities')).toBeDefined();
   });
 
   it('shows a row an answer points at, even when no round defines it any more', () => {
@@ -193,10 +193,10 @@ describe('reportingFrame', () => {
   it('words things the way the round collecting now words them', () => {
     const frame = reportingFrame(
       q,
-      [round('baseline', { q4_bad_season: { prompt: 'Old words' } }, 'a'), round('review', { q4_bad_season: { prompt: 'New words' } }, 'b')],
+      [round('baseline', { q6_first_opportunities: { prompt: 'Old words' } }, 'a'), round('review', { q6_first_opportunities: { prompt: 'New words' } }, 'b')],
       'b',
     );
-    expect(questionById(frame, 'q4_bad_season')?.prompt).toBe('New words');
+    expect(questionById(frame, 'q6_first_opportunities')?.prompt).toBe('New words');
   });
 });
 

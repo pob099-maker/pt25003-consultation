@@ -1,5 +1,5 @@
-import { OTHER_ROW, OTHER_ROW_LABEL, allQuestions } from '../content/lookup';
-import { ABOUT_YOU } from '../content/questionnaire';
+import { OTHER_ROW, OTHER_ROW_LABEL, allQuestions, onScale } from '../content/lookup';
+import { ABOUT_YOU, NEXT_TIME_ID } from '../content/questionnaire';
 import type { Option, Question, Questionnaire, ScalePoint } from '../types';
 import { formEstimates } from './estimate';
 import { shortVersion } from './formLength';
@@ -82,6 +82,11 @@ export interface QuestionPaper {
   readonly slowestRole: string;
   /** The short version in order, prompts only. */
   readonly shortList: readonly PaperQuestion[];
+  /**
+   * The section the contact step is printed before, as it is asked; null when
+   * it comes after everything.
+   */
+  readonly contactBefore: string | null;
 }
 
 /**
@@ -97,10 +102,13 @@ const kindLabel = (question: Question): string => {
       return 'One answer only';
     case 'text':
       return 'Written answer';
-    case 'rating':
-      return `Each line rated ${question.scale[0]?.value ?? 1} to ${question.scale.at(-1)?.value ?? 5}${
-        question.allowOther === true ? ', plus a line to write in' : ''
-      }`;
+    case 'rating': {
+      const steps = onScale(question.scale);
+      const beside = question.scale.filter((point) => point.offScale === true);
+      return `Each line rated ${steps[0]?.value ?? 1} to ${steps.at(-1)?.value ?? 5}${
+        beside.length === 0 ? '' : `, or ${beside.map((point) => `${point.value} "${point.label}"`).join(' or ')}`
+      }${question.allowOther === true ? ', plus a line to write in' : ''}`;
+    }
     case 'rank':
       return `${question.count} of them, in order`;
   }
@@ -133,6 +141,21 @@ const notesOf = (question: Question, questionnaire: Questionnaire): readonly str
   if (question.kind === 'text' && question.entry === 'linkCode') {
     notes.push(
       'Asked as three short answers that the form puts together: two letters, a day of the month, two letters. Optional.',
+    );
+  }
+  if ((question.kind === 'multi' || question.kind === 'single') && question.note !== undefined) {
+    notes.push(
+      question.kind === 'single'
+        ? `Once something is chosen, a box: "${question.note.label}"`
+        : `A box under the choices: "${question.note.label}"`,
+    );
+  }
+  if (question.kind === 'rating' && question.scale.some((point) => point.offScale === true)) {
+    notes.push(
+      `${question.scale
+        .filter((point) => point.offScale === true)
+        .map((point) => `"${point.label}"`)
+        .join(' and ')} sits beside the steps: it is counted, but never averaged with them.`,
     );
   }
   if (question.kind === 'rating' && question.openRows === true) {
@@ -270,6 +293,7 @@ export const buildQuestionPaper = (questionnaire: Questionnaire): QuestionPaper 
     fullMinutes: estimates.full.minutes,
     slowestRole,
     shortList,
+    contactBefore: sections.some((section) => section.id === NEXT_TIME_ID) ? NEXT_TIME_ID : null,
   };
 };
 

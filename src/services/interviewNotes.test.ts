@@ -85,8 +85,8 @@ describe('came up earlier', () => {
   });
 
   it('is exported so an analyst can tell a confirmed answer from an asked one', () => {
-    const row = responseRow(q, interview({ [COVERED_ID]: { kind: 'multi', values: ['q3_impact', 'q4_bad_season'] } }));
-    expect(row.covered_earlier).toBe('q3_impact; q4_bad_season');
+    const row = responseRow(q, interview({ [COVERED_ID]: { kind: 'multi', values: ['q3_impact', 'q6_first_opportunities'] } }));
+    expect(row.covered_earlier).toBe('q3_impact; q6_first_opportunities');
   });
 });
 

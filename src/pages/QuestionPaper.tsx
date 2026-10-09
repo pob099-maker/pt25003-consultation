@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { currentProject } from '../content/projects';
@@ -169,27 +169,22 @@ export const QuestionPaper = () => {
       </section>
 
       {paper.sections.map((section) => (
-        <section key={section.id} className="mt-8">
-          <h2 className="text-subtitle font-semibold">{section.title}</h2>
-          <p className="mt-1 text-meta text-ink-faint">Asked of: {section.audience}</p>
-          {section.intro !== undefined && <p className="mt-1 text-meta text-ink-soft">{section.intro}</p>}
-          <div className="mt-3 grid gap-4">
-            {section.questions.map((question) => (
-              <QuestionBlock key={question.id} question={question} />
-            ))}
-          </div>
-        </section>
+        <Fragment key={section.id}>
+          {paper.contactBefore === section.id && <ContactBlock />}
+          <section className="mt-8">
+            <h2 className="text-subtitle font-semibold">{section.title}</h2>
+            <p className="mt-1 text-meta text-ink-faint">Asked of: {section.audience}</p>
+            {section.intro !== undefined && <p className="mt-1 text-meta text-ink-soft">{section.intro}</p>}
+            <div className="mt-3 grid gap-4">
+              {section.questions.map((question) => (
+                <QuestionBlock key={question.id} question={question} />
+              ))}
+            </div>
+          </section>
+        </Fragment>
       ))}
 
-      <section className="mt-8 break-inside-avoid">
-        <h2 className="text-subtitle font-semibold">After the questions</h2>
-        <p className="mt-1 text-meta text-ink-faint">Asked of: Everybody, and every part of it optional</p>
-        <p className="mt-2 text-body text-ink-soft">
-          Whether they would like to be involved in anything that follows, and how to reach them if so: name,
-          organisation, broad role, region, an email address or a phone number, when suits, and anything they want to
-          add. It is stored apart from the answers and is never joined back to them.
-        </p>
-      </section>
+      {paper.contactBefore === null && <ContactBlock />}
 
       <p className="mt-8 text-meta text-ink-soft no-print">
         <Link to="/admin" className={quietButton}>
@@ -199,3 +194,16 @@ export const QuestionPaper = () => {
     </Layout>
   );
 };
+
+/** The contact step, printed where it is asked: before the code for next time. */
+const ContactBlock = () => (
+  <section className="mt-8 break-inside-avoid">
+    <h2 className="text-subtitle font-semibold">Optional: Stay involved</h2>
+    <p className="mt-1 text-meta text-ink-faint">Asked of: Everybody, and every part of it optional</p>
+    <p className="mt-2 text-body text-ink-soft">
+      Whether they would like to be involved in anything that follows, and how to reach them if so: name, organisation,
+      broad role, region, an email address or a phone number, when suits, and anything they want to add. It is stored
+      apart from the answers and is never joined back to them.
+    </p>
+  </section>
+);

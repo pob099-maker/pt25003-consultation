@@ -55,7 +55,7 @@ export const promptOverrideFor = (
 ): string | undefined => {
   if (question.id !== 'q3_impact') return undefined;
   const top = topConstraintLabel(questionnaire, answers);
-  return top === undefined ? undefined : `Thinking about ${top} — what does it actually cost a business?`;
+  return top === undefined ? undefined : `Thinking about ${top}, how does it affect businesses?`;
 };
 
 /** The interviewer's version of the same thing, said aloud. */
@@ -66,5 +66,5 @@ export const guideOverrideFor = (
 ): string | undefined => {
   if (question.id !== 'q3_impact') return undefined;
   const top = topConstraintLabel(questionnaire, answers);
-  return top === undefined ? undefined : `When ${top} goes wrong, what does it actually cost?`;
+  return top === undefined ? undefined : `When ${top} goes wrong, how does it affect businesses?`;
 };

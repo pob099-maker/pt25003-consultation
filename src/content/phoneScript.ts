@@ -1,4 +1,5 @@
 import { allSections } from './lookup';
+import { NEXT_TIME_ID } from './questionnaire';
 import { formEstimates, spoken } from '../services/estimate';
 import { asksFollowUp } from '../services/roundRules';
 import type { Option, Question, Questionnaire } from '../types';
@@ -26,12 +27,16 @@ const questionBlock = (question: Question, index: number): string => {
   if (question.guide?.probe !== undefined) guideLines.push(`> Then probe: "${question.guide.probe}"`);
   const guide = guideLines.length === 0 ? '' : `\n\n${guideLines.join('\n')}`;
   const help = `${guide}${question.help === undefined ? '' : `\n\n_${question.help}_`}`;
+  const box =
+    (question.kind === 'multi' || question.kind === 'single') && question.note !== undefined
+      ? `\n\n_Then ask: "${question.note.label.replace(/^Optional: /, '')}" Write it in their words in the box under the question._`
+      : '';
 
   switch (question.kind) {
     case 'multi':
-      return `${head}${help}\n\n_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._\n\n${optionLines(question.options)}`;
+      return `${head}${help}\n\n_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._\n\n${optionLines(question.options)}${box}`;
     case 'single':
-      return `${head}${help}\n\n_One answer only._\n\n${optionLines(question.options)}`;
+      return `${head}${help}\n\n_One answer only._\n\n${optionLines(question.options)}${box}`;
     case 'text':
       if (question.entry === 'linkCode') {
         return `${head}${help}\n\n_Ask the three one at a time, and only if they are happy to: the first two letters of their mother's first name (or whoever raised them), the day of the month they were born, and the first two letters of the town they grew up in. Enter them in the three boxes and the form builds the code. If they would rather not, move on._`;
@@ -151,9 +156,31 @@ export const buildPhoneScript = (questionnaire: Questionnaire): string => {
     }
   }
 
+  // Asked where the form asks it: before the code for next time, so the
+  // last thing is the one that keeps their answers anonymous.
+  const stayInvolved = (): void => {
+    lines.push('## Staying involved');
+    lines.push('');
+    lines.push(
+      '**Would you like to be involved in any of this?** _Read the list. Ticking something is an expression of interest, not a commitment — say so._',
+    );
+    lines.push('');
+    lines.push(optionLines(questionnaire.interestOptions));
+    lines.push('');
+    lines.push(
+      'If they say yes to anything, take their name, organisation, region, and an email or a phone number, plus when suits for a call. Tell them it is kept separately from their answers and used only for what they picked.',
+    );
+    lines.push('');
+  };
+
   lines.push('---');
   lines.push('');
+  let contactAsked = false;
   for (const section of questionnaire.projectDesign) {
+    if (section.id === NEXT_TIME_ID) {
+      stayInvolved();
+      contactAsked = true;
+    }
     lines.push(`## ${section.title}`);
     lines.push('');
     let k = 0;
@@ -163,20 +190,11 @@ export const buildPhoneScript = (questionnaire: Questionnaire): string => {
       lines.push('');
     }
   }
+  if (!contactAsked) stayInvolved();
 
   lines.push('## Before you hang up');
   lines.push('');
-  lines.push(
-    '**Would you like to be involved in any of this?** _Read the list. Ticking something is an expression of interest, not a commitment — say so._',
-  );
-  lines.push('');
-  lines.push(optionLines(questionnaire.interestOptions));
-  lines.push('');
-  lines.push(
-    'If they say yes to anything, take their name, organisation, region, and an email or a phone number, plus when suits for a call. Tell them it is kept separately from their answers and used only for what they picked.',
-  );
-  lines.push('');
-  lines.push('Then thank them, and tell them a summary of what the industry said will come back to them.');
+  lines.push('Thank them, and tell them a summary of what the industry said will come back to them.');
   lines.push('');
 
   return `${lines.join('\n').replace(/\n{3,}/g, '\n\n')}\n`;

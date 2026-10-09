@@ -3,7 +3,7 @@ import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { applyRound } from '../services/roundRules';
 import { shortVersion } from '../services/formLength';
 import type { Questionnaire } from '../types';
-import { keepAsked, resumableDraft, resumeStep, settleDraft, type Draft, type Step } from './useConsultation';
+import { keepAsked, resumableDraft, resumeStep, settleDraft, withContactStep, type Draft, type Step } from './useConsultation';
 
 const q = DEFAULT_QUESTIONNAIRE;
 
@@ -42,13 +42,13 @@ describe('settleDraft', () => {
   });
 
   it('confirms a draft already on the live round, and changes nothing else', () => {
-    const saved = draft({ roundId: '2026-pilot', answers: { q4_bad_season: { kind: 'text', value: 'Wet harvest' } } });
+    const saved = draft({ roundId: '2026-pilot', answers: { q6_first_opportunities: { kind: 'text', value: 'Wet harvest' } } });
     const settled = settleDraft(saved, pilot);
     expect(settled).toEqual({ ...saved, roundConfirmed: true });
   });
 
   it('starts clean when the round the draft belonged to has since closed', () => {
-    const fromPilot = draft({ roundId: '2026-pilot', roundConfirmed: true, answers: { q4_bad_season: { kind: 'text', value: 'x' } } });
+    const fromPilot = draft({ roundId: '2026-pilot', roundConfirmed: true, answers: { q6_first_opportunities: { kind: 'text', value: 'x' } } });
     const baseline = applyRound(q, { roundId: '2026-10-01-baseline', label: 'Baseline', stage: 'baseline', overrides: {} });
     const settled = settleDraft(fromPilot, baseline);
     expect(settled.roundId).toBe('2026-10-01-baseline');
@@ -133,5 +133,17 @@ describe('resumableDraft', () => {
     expect(resumableDraft(fromPilot, '2026-10-01-baseline', false)).not.toBeNull();
     // A draft begun on a stand-in takes the live round rather than being dropped.
     expect(resumableDraft({ ...fromPilot, roundConfirmed: false }, '2026-10-01-baseline', true)).not.toBeNull();
+  });
+});
+
+describe('withContactStep', () => {
+  const contact = { id: 'stay_involved' };
+  it('asks for contact details before the code for next time', () => {
+    const ids = withContactStep([{ id: 'project_design' }, { id: 'next_time' }], contact).map((step) => step.id);
+    expect(ids).toEqual(['project_design', 'stay_involved', 'next_time']);
+  });
+  it('ends on the contact step when a round has no code to make', () => {
+    const ids = withContactStep([{ id: 'project_design' }], contact).map((step) => step.id);
+    expect(ids).toEqual(['project_design', 'stay_involved']);
   });
 });

@@ -46,8 +46,8 @@ describe('buildQuestionPaper', () => {
     const everybody = paper.sections.filter((section) => section.audience === 'Everybody');
     expect(everybody.length).toBeGreaterThan(1);
     const farm = paper.sections.find((section) => section.id === 'farm');
-    expect(farm?.audience).toContain('Potato grower');
-    expect(farm?.audience).toContain('Farm manager');
+    expect(farm?.audience).toContain('Grower: business owner');
+    expect(farm?.audience).toContain('farm manager');
     const followUp = paper.sections.find((section) => section.id === DEFAULT_QUESTIONNAIRE.followUp[0]?.id);
     expect(followUp?.audience).toContain('review');
   });
@@ -108,5 +108,36 @@ describe('buildQuestionPaper', () => {
     expect(
       reprinted.sections.flatMap((section) => section.questions).find((entry) => entry.id === 'q1_constraints')?.prompt,
     ).toBe('Changed on the wording tab');
+  });
+});
+
+describe('the reviewed questionnaire', () => {
+  const paper = buildQuestionPaper(DEFAULT_QUESTIONNAIRE);
+  const all = paper.sections.flatMap((section) => section.questions);
+  const byId = (id: string) => all.find((entry) => entry.id === id);
+
+  it('asks which part of the industry straight after the role and the growing areas', () => {
+    expect(byId('sector')?.number).toBe(3);
+    expect(byId('sector')?.status).toBe('locked');
+    expect(byId('sector')?.inShort).toBe(true);
+  });
+
+  it('prints the contact step where it is asked, before the code for next time', () => {
+    expect(paper.contactBefore).toBe('next_time');
+  });
+
+  it('says that tried it and stopped sits beside the steps', () => {
+    expect(byId('farm_practices')?.kindLabel).toContain('1 to 5, or 6 "Tried it and stopped"');
+  });
+
+  it("prints a question's own box", () => {
+    expect(byId('q3_impact')?.notes.join(' ')).toContain('give an example from a tough season');
+    expect(byId('farm_outcome')?.notes.join(' ')).toContain('What is it?');
+  });
+
+  it('no longer asks the questions the review took out', () => {
+    for (const gone of ['q4_bad_season', 'q_trial', 'farm_scepticism', 'con_service', 'mach_ready', 'adv_sharing', 'pd_timing', 'quote_ok', 'fu_activities']) {
+      expect(byId(gone), gone).toBeUndefined();
+    }
   });
 });

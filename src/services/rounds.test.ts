@@ -40,8 +40,8 @@ describe('applyRound', () => {
 
   it('leaves questions with no override untouched', () => {
     const updated = applyRound(DEFAULT_QUESTIONNAIRE, round);
-    expect(questionById(updated, 'q4_bad_season')?.prompt).toBe(
-      questionById(DEFAULT_QUESTIONNAIRE, 'q4_bad_season')?.prompt,
+    expect(questionById(updated, 'q6_first_opportunities')?.prompt).toBe(
+      questionById(DEFAULT_QUESTIONNAIRE, 'q6_first_opportunities')?.prompt,
     );
   });
 
@@ -90,8 +90,8 @@ describe('tracked questions', () => {
       'pro_practices',
       'fu_changed',
       'fu_labour',
-      'fu_activities',
       'fu_contribution',
+      'sector',
       'link_code',
     ]) {
       expect(ids).toContain(required);
@@ -138,10 +138,9 @@ describe('retiring and adding questions', () => {
   });
 
   it('adds a library question to a project that lacks it, at the end of the named section', () => {
-    const [first, ...rest] = DEFAULT_QUESTIONNAIRE.core;
-    if (first === undefined) throw new Error('no core section');
-    const moved = first.questions.find((question) => question.id === 'q3_impact');
-    if (moved === undefined) throw new Error('q3_impact not in first section');
+    const first = DEFAULT_QUESTIONNAIRE.core.find((section) => section.questions.some((question) => question.id === 'q3_impact'));
+    if (first === undefined) throw new Error('q3_impact is in no core section');
+    const rest = DEFAULT_QUESTIONNAIRE.core.filter((section) => section !== first);
     // A project whose questionnaire does not ask q3_impact.
     const smaller = {
       ...DEFAULT_QUESTIONNAIRE,

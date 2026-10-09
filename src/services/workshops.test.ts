@@ -177,9 +177,9 @@ describe('word clouds', () => {
   it('counts a word once per person, whatever the case, and leaves hidden words out', () => {
     const workshop: DemoWorkshop = {
       ...demo({}, true),
-      questionIds: ['q4_bad_season'],
+      questionIds: ['q6_first_opportunities'],
       votes: {
-        q4_bad_season: {
+        q6_first_opportunities: {
           a: ['Labour', 'labour '],
           b: ['labour'],
           c: ['rain'],
@@ -187,7 +187,7 @@ describe('word clouds', () => {
           e: ['Rain'],
         },
       },
-      hidden: { q4_bad_season: ['rude word'] },
+      hidden: { q6_first_opportunities: ['rude word'] },
     };
     const state = stateFrom(workshop);
     expect(state.results).toEqual({ labour: 2, rain: 2 });
@@ -196,8 +196,8 @@ describe('word clouds', () => {
   });
 
   it('becomes a text answer', () => {
-    expect(answersFromVotes(q, { q4_bad_season: ['Labour', 'wet harvest'] })).toEqual({
-      q4_bad_season: { kind: 'text', value: 'labour; wet harvest' },
+    expect(answersFromVotes(q, { q6_first_opportunities: ['Labour', 'wet harvest'] })).toEqual({
+      q6_first_opportunities: { kind: 'text', value: 'labour; wet harvest' },
     });
   });
 });
@@ -206,12 +206,11 @@ describe('personal questions', () => {
   it('are never put to a room', () => {
     const ids = workshopQuestions(DEFAULT_QUESTIONNAIRE).map((question) => question.id);
     expect(ids).not.toContain('link_code');
-    expect(ids).not.toContain('quote_ok');
   });
 
   it('are skipped even from a workshop set up before that rule, so the rest of the answers still save', () => {
-    const answers = answersFromVotes(DEFAULT_QUESTIONNAIRE, { link_code: ['jo14ba'], q_trial: ['essential'] });
-    expect(Object.keys(answers)).toEqual(['q_trial']);
+    const answers = answersFromVotes(DEFAULT_QUESTIONNAIRE, { link_code: ['jo14ba'], q7_evidence: ['local_demo'] });
+    expect(Object.keys(answers)).toEqual(['q7_evidence']);
   });
 });
 
@@ -219,7 +218,7 @@ describe('an interim check', () => {
   it('does not stop a workshop from finding its questions', () => {
     const interim = { roundId: 'check', label: 'Interim', stage: 'interim' as const, overrides: { farm_practices: { inInterim: true } } };
     const stable = reportingFrame(DEFAULT_QUESTIONNAIRE, [interim], 'check');
-    const answers = answersFromVotes(stable, { q_trial: ['essential'] });
-    expect(Object.keys(answers)).toEqual(['q_trial']);
+    const answers = answersFromVotes(stable, { q7_evidence: ['local_demo'] });
+    expect(Object.keys(answers)).toEqual(['q7_evidence']);
   });
 });

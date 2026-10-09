@@ -14,7 +14,7 @@ import { accentPanel, card, choiceRow, choiceRowSelected, primaryButton, seconda
 import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
 import { formEstimates, spoken, type FormEstimates } from '../services/estimate';
-import { useConsultation } from '../hooks/useConsultation';
+import { STAY_INVOLVED_ID, useConsultation } from '../hooks/useConsultation';
 import { useStaffSession } from '../hooks/useStaffSession';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import type { ContactFormValues } from '../schemas/consultation';
@@ -175,6 +175,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
   const state = useConsultation(questionnaire, { storageKey: STORAGE_KEYS.interviewDraft, trackProgress: false });
   const { draft, step, stepIndex, steps, pathway } = state;
   const [interests, setInterests] = useState<readonly string[]>([]);
+  const [contact, setContact] = useState<ContactFormValues | null>(null);
   const [roleError, setRoleError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -190,6 +191,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
     state.reset();
     setSetup(null);
     setInterests([]);
+    setContact(null);
   };
 
   if (saved !== null) {
@@ -218,6 +220,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
   if (setup === null) return <SetupScreen onStart={startSetup} />;
 
   const isLastStep = stepIndex === steps.length - 1;
+  const isContactStep = steps[stepIndex]?.id === STAY_INVOLVED_ID;
   const totalSteps = pathway === null ? steps.length + 1 : steps.length;
   const covered = coveredEarlier(draft.answers);
   const notesKey = noteId(step.section?.id ?? GENERAL_NOTES);
@@ -359,7 +362,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
           onChange={(value) => state.setAnswer(notesKey, value.length === 0 ? undefined : { kind: 'text', value })}
         />
 
-        {isLastStep && (
+        {isContactStep && (
           <>
             <p className="rounded-lg border-l-4 border-accent bg-sunk px-4 py-3 text-body text-ink">
               Ask whether they would like to be involved. <strong>Only take their details if they say yes</strong>, and
@@ -371,7 +374,12 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
               interests={interests}
               onInterestsChange={setInterests}
               formId={CONTACT_FORM_ID}
-              onSubmit={(contact) => void finish(contact)}
+              initial={contact}
+              onSubmit={(values) => {
+                setContact(values);
+                if (isLastStep) void finish(values);
+                else state.next();
+              }}
             />
           </>
         )}
@@ -384,12 +392,19 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
       )}
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row-reverse sm:justify-start no-print">
-        {isLastStep ? (
-          <button type="submit" form={CONTACT_FORM_ID} className={primaryButton} disabled={submitting}>
+        {/* Own keys, so a Next never turns into the contact form's submit
+            button mid-press and skips that step. See Consultation.tsx. */}
+        {isContactStep ? (
+          <button key="contact" type="submit" form={CONTACT_FORM_ID} className={primaryButton} disabled={submitting}>
+            {isLastStep ? (submitting ? 'Saving…' : 'Save the interview') : 'Next'}
+          </button>
+        ) : isLastStep ? (
+          <button key="save" type="button" className={primaryButton} disabled={submitting} onClick={() => void finish(contact)}>
             {submitting ? 'Saving…' : 'Save the interview'}
           </button>
         ) : (
           <button
+            key="next"
             type="button"
             className={primaryButton}
             onClick={() => {

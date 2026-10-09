@@ -58,7 +58,7 @@ describe('follow-up questions in the script', () => {
     expect(buildPhoneScript(DEFAULT_QUESTIONNAIRE)).toContain('(follow-ups only)');
     const review = applyRound(DEFAULT_QUESTIONNAIRE, { roundId: 'mid', label: 'Mid-term', stage: 'review', overrides: {} });
     const script = buildPhoneScript(review);
-    expect(script).toContain('has new gear or technology changed the labour in your business');
+    expect(script).toContain('has new machinery or technology changed the labour in your business');
     expect(script).not.toContain('(follow-ups only)');
   });
 });

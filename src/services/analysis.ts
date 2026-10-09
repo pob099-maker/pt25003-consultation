@@ -1,9 +1,9 @@
 import {
   OTHER_ROW,
   OTHER_ROW_LABEL,
-  QUOTE_OK_ID,
   isLinkCodeQuestion,
   isPersonalQuestion,
+  onScale,
   optionLabel,
   questionById,
   regionLabel,
@@ -35,6 +35,11 @@ export interface RatedArea {
   readonly highPriorityShare: number;
   /** How many gave each score, 1 to 5. */
   readonly scores: readonly number[];
+  /**
+   * Answers beside the scale, such as "tried it and stopped": counted here,
+   * and left out of the mean and the spread above.
+   */
+  readonly outside: readonly { readonly label: string; readonly count: number }[];
 }
 
 const round = (value: number, places = 2): number => Number(value.toFixed(places));
@@ -109,15 +114,19 @@ export const rateAreas = (
 ): readonly RatedArea[] => {
   const question = questionById(questionnaire, questionId);
   const rows = question !== undefined && question.kind === 'rating' ? question.rows : [];
+  const scale = question !== undefined && question.kind === 'rating' ? question.scale : [];
+  const steps = onScale(scale).map((point) => point.value);
+  const beside = scale.filter((point) => point.offScale === true);
   return rows
     .map((row) => {
-      const values: number[] = [];
+      const given: number[] = [];
       for (const response of responses) {
         const answer = response.answers[questionId];
         if (answer === undefined || answer.kind !== 'rating') continue;
         const value = answer.values[row.id];
-        if (typeof value === 'number') values.push(value);
+        if (typeof value === 'number') given.push(value);
       }
+      const values = given.filter((value) => !beside.some((point) => point.value === value));
       const total = values.reduce((sum, value) => sum + value, 0);
       const high = values.filter((value) => value >= 4).length;
       return {
@@ -126,7 +135,8 @@ export const rateAreas = (
         mean: values.length === 0 ? 0 : round(total / values.length),
         responses: values.length,
         highPriorityShare: values.length === 0 ? 0 : round(high / values.length),
-        scores: [1, 2, 3, 4, 5].map((score) => values.filter((value) => value === score).length),
+        scores: steps.map((score) => values.filter((value) => value === score).length),
+        outside: beside.map((point) => ({ label: point.label, count: given.filter((value) => value === point.value).length })),
       };
     })
     .sort((a, b) => b.mean - a.mean);
@@ -187,30 +197,12 @@ export const overview = (
   };
 };
 
-/** Whether somebody's words may be quoted without their name. */
-export type QuotePermission = 'yes' | 'no' | 'not_asked';
-
-export const QUOTE_LABEL: Readonly<Record<QuotePermission, string>> = {
-  yes: 'OK to quote, without their name',
-  no: 'Do not quote',
-  not_asked: 'Not asked about quoting',
-};
-
 /**
- * The answer to "is it all right to quote you". Somebody who took the short
- * version, or an interim check, was never asked, and that is not a yes.
+ * A comment, from a written answer or from a question's own box. Any of them
+ * may be quoted without a name, as the privacy statement says, so long as the
+ * words themselves cannot identify a person or a business.
  */
-export const quotePermission = (response: ConsultationResponse): QuotePermission => {
-  const answer = response.answers[QUOTE_OK_ID];
-  if (answer?.kind !== 'single') return 'not_asked';
-  if (answer.value === 'yes') return 'yes';
-  if (answer.value === 'no') return 'no';
-  return 'not_asked';
-};
-
 export interface FreeTextEntry {
-  /** Shown on every comment, so a quote is never chosen from somebody who said no. */
-  readonly quote: QuotePermission;
   readonly responseId: string;
   readonly questionId: string;
   readonly questionPrompt: string;
@@ -237,7 +229,6 @@ export const freeTextEntries = (
             : undefined;
         const named = (answer.other ?? '').trim();
         entries.push({
-          quote: quotePermission(response),
           responseId: response.id,
           questionId,
           questionPrompt: `${OTHER_ROW_LABEL}, for: ${question?.prompt ?? questionId}`,
@@ -247,11 +238,27 @@ export const freeTextEntries = (
         });
         continue;
       }
+      // What somebody wrote in a question's own box, with what they chose
+      // beside it when there was one choice.
+      if ((answer.kind === 'multi' || answer.kind === 'single') && (answer.note ?? '').trim().length > 0) {
+        const question = questionById(questionnaire, questionId);
+        const box = question !== undefined && (question.kind === 'multi' || question.kind === 'single') ? question.note : undefined;
+        const note = (answer.note ?? '').trim();
+        entries.push({
+          responseId: response.id,
+          questionId,
+          questionPrompt:
+            box === undefined ? (question?.prompt ?? questionId) : `${question?.prompt ?? questionId} (${box.label.replace(/^Optional: /, '')})`,
+          role: response.role,
+          text: answer.kind === 'single' && answer.value !== '' ? `${note} (${optionLabel(question, answer.value)})` : note,
+          submittedAt: response.submittedAt,
+        });
+        continue;
+      }
       if (answer.kind !== 'text' || answer.value.trim().length === 0) continue;
       const question = questionById(questionnaire, questionId);
       if (question !== undefined && isLinkCodeQuestion(question)) continue;
       entries.push({
-        quote: quotePermission(response),
         responseId: response.id,
         questionId,
         questionPrompt: isNoteId(questionId) ? noteLabel(questionnaire, questionId) : (question?.prompt ?? questionId),

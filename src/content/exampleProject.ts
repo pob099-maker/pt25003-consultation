@@ -26,14 +26,14 @@ export const REGIONAL_EXAMPLE: Questionnaire = {
   stage: 'baseline',
   core: DEFAULT_QUESTIONNAIRE.core
     .map((section) =>
-      keep(section, ['q1_constraints', 'q2_top_three', 'q5_areas', 'q7_evidence', 'q_trust', 'q_trial']),
+      keep(section, ['sector', 'q1_constraints', 'q2_top_three', 'q5_areas', 'q7_evidence', 'q_trust']),
     )
     .filter(hasQuestions),
   pathways: Object.fromEntries(
     Object.entries(DEFAULT_QUESTIONNAIRE.pathways).filter(([key]) => ['farm', 'contractor', 'adviser'].includes(key)),
   ),
   projectDesign: DEFAULT_QUESTIONNAIRE.projectDesign
-    .map((section) => keep(section, ['pd_formats', 'pd_timing', 'pd_most_useful']))
+    .map((section) => keep(section, ['pd_formats', 'pd_most_useful']))
     .filter(hasQuestions),
   roles: DEFAULT_QUESTIONNAIRE.roles.filter((role) =>
     ['grower', 'farm_manager', 'contractor', 'adviser', 'industry_body'].includes(role.id),

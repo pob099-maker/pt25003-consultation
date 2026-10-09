@@ -1,4 +1,4 @@
-import { OTHER_ROW, optionLabel, questionById, trackingQuestions } from '../content/lookup';
+import { OTHER_ROW, isOnScaleValue, optionLabel, questionById, trackingQuestions } from '../content/lookup';
 import { applyRound, reportingFrame, type QuestionOverride } from './roundRules';
 import type { ConsultationResponse, Question, RoundStage, Questionnaire } from '../types';
 import type { SlopeInput } from '../lib/chartImage';
@@ -176,7 +176,8 @@ export const compareRounds = (
             const answer = response.answers[question.id];
             if (answer?.kind !== 'rating') continue;
             const value = answer.values[rowId];
-            if (typeof value === 'number') ratings.push(value);
+            // An answer beside the scale, such as tried it and stopped, is not a step to average.
+            if (typeof value === 'number' && isOnScaleValue(question, value)) ratings.push(value);
           }
           return ratings.length === 0 ? null : round3(ratings.reduce((sum, value) => sum + value, 0) / ratings.length);
         });

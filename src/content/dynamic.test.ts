@@ -31,7 +31,7 @@ const FINE = new Set(['storage:damage']);
 describe('what the top problem costs', () => {
   it('says which problem it is asking about', () => {
     expect(promptOverrideFor(q, costs, topIs('skills'))).toBe(
-      'Thinking about finding skilled operators and technicians — what does it actually cost a business?',
+      'Thinking about staffing, finding skilled operators and technicians, how does it affect businesses?',
     );
   });
 

@@ -3,14 +3,20 @@ import type { Option, Questionnaire, ScalePoint, Section } from '../types';
 const opts = (...pairs: readonly (readonly [string, string, string?])[]): readonly Option[] =>
   pairs.map(([id, label, help]) => (help === undefined ? { id, label } : { id, label, help }));
 
+/**
+ * Technology providers share the machinery branch: they sell into the same
+ * businesses and are asked the same supply-side questions, then what they
+ * offer. Advisers and researchers share a branch too, but are counted apart,
+ * because an agronomist in a paddock and a researcher see different things.
+ */
 export const ROLES = [
-  { id: 'grower', label: 'Potato grower or business owner', pathway: 'farm' },
-  { id: 'farm_manager', label: 'Farm manager, supervisor or machinery operator', pathway: 'farm' },
-  { id: 'contractor', label: 'Contractor', pathway: 'contractor' },
+  { id: 'grower', label: 'Grower: business owner', pathway: 'farm' },
+  { id: 'farm_manager', label: 'Grower: farm manager, supervisor or machinery operator', pathway: 'farm' },
   { id: 'processor', label: 'Processor, packhouse or storage business', pathway: 'processor' },
-  { id: 'machinery', label: 'Machinery dealer, manufacturer or service provider', pathway: 'machinery' },
-  { id: 'technology', label: 'Technology provider', pathway: 'technology' },
-  { id: 'adviser', label: 'Adviser, consultant, researcher or educator', pathway: 'adviser' },
+  { id: 'adviser', label: 'Advisor, agronomist', pathway: 'adviser' },
+  { id: 'contractor', label: 'Contractor', pathway: 'contractor' },
+  { id: 'machinery', label: 'Machinery dealer, manufacturer, technology provider or service provider', pathway: 'machinery' },
+  { id: 'researcher', label: 'Researcher, consultant or educator', pathway: 'adviser' },
   { id: 'industry_body', label: 'Industry body or other stakeholder', pathway: 'industry' },
 ] as const;
 
@@ -60,20 +66,21 @@ const REGIONS = opts(
  * technology highly?") does not need a hand-built lookup at analysis time.
  */
 const CONSTRAINTS = opts(
-  ['planting', 'Ground preparation and planting'],
+  ['land_prep', 'Ground preparation and bed forming'],
+  ['planting', 'Planting'],
   ['monitoring', 'Crop monitoring and agronomy decisions'],
-  ['irrigation', 'Irrigation operation and automation'],
-  ['crop_protection', 'Crop protection operations'],
+  ['irrigation', 'Irrigation operation, scheduling and automation'],
+  ['crop_protection', 'Spraying and crop protection operations'],
   ['haulm', 'Haulm removal before harvest'],
   ['harvest', 'Harvesting'],
   ['harvest_logistics', 'In-field transport and harvest logistics'],
   ['receival', 'Receival'],
   ['grading', 'Washing, grading and sorting'],
   ['packing', 'Packing'],
-  ['storage', 'Storage and handling'],
-  ['data', 'Records, traceability and getting systems to talk to each other'],
+  ['storage', 'Handling and storage'],
   ['maintenance', 'Machinery maintenance and reliability'],
-  ['skills', 'Finding skilled operators and technicians'],
+  ['data', 'Record keeping, traceability, compliance and getting systems to talk to each other'],
+  ['skills', 'Staffing, finding skilled operators and technicians'],
   ['other', 'Other'],
 );
 
@@ -96,7 +103,7 @@ const AREAS = opts(
   ['sensors', 'Sensors and machine data for day-to-day decisions'],
   ['irrigation_automation', 'Irrigation automation that uses crop and soil information'],
   ['predictive_maintenance', 'Predictive maintenance and machinery uptime', 'Using machine data to service a part before it fails.'],
-  ['interoperability', 'Getting different brands and systems to work together', 'Data standards, so gear and software from different suppliers share information.'],
+  ['interoperability', 'Getting different brands and systems to work together', 'Data standards, so machinery and software from different suppliers share information.'],
   ['training', 'Training, skills and getting new people in'],
 );
 
@@ -108,6 +115,7 @@ const AREAS_WITH_OTHER = [...AREAS, { id: 'other', label: 'Other' }] as const;
  * something each analyst re-invents differently.
  */
 export const DOMAIN_TO_AREAS: Readonly<Record<string, readonly string[]>> = {
+  land_prep: ['precision_planting', 'autonomy'],
   planting: ['precision_planting', 'autonomy'],
   monitoring: ['sensors', 'interoperability'],
   irrigation: ['irrigation_automation', 'sensors'],
@@ -154,12 +162,12 @@ const PEAK_LABOUR = opts(
   ['no_say', 'Prefer not to say'],
 );
 
-const PRIORITY_SCALE: readonly ScalePoint[] = [
-  { value: 1, label: 'Not a priority' },
-  { value: 2, label: 'Low priority' },
-  { value: 3, label: 'Moderate priority' },
-  { value: 4, label: 'High priority' },
-  { value: 5, label: 'Very high priority' },
+const IMPORTANCE_SCALE: readonly ScalePoint[] = [
+  { value: 1, label: 'Not important' },
+  { value: 2, label: 'Slightly important' },
+  { value: 3, label: 'Moderately important' },
+  { value: 4, label: 'Very important' },
+  { value: 5, label: 'Essential' },
 ];
 
 /**
@@ -172,6 +180,10 @@ const PRIORITY_SCALE: readonly ScalePoint[] = [
  *
  * Every step is shown on screen, because they are five distinct stages rather
  * than a quantity, and nobody can pick "3" without knowing what 3 means.
+ *
+ * "Tried it and stopped" is the sixth answer, so the five steps keep their
+ * order and their numbers. It is the one place giving something up shows, and
+ * it is kept beside the steps rather than averaged with them.
  */
 const ADOPTION_SCALE: readonly ScalePoint[] = [
   { value: 1, label: 'Not for us' },
@@ -179,7 +191,34 @@ const ADOPTION_SCALE: readonly ScalePoint[] = [
   { value: 3, label: 'Trying it' },
   { value: 4, label: 'Doing it on part of the operation' },
   { value: 5, label: 'Doing it across the operation' },
+  { value: 6, label: 'Tried it and stopped', offScale: true },
 ];
+
+/**
+ * How far along a technology is in Australia, from the supply side. The top
+ * step matches "established in Australian potato operations", the last answer
+ * a technology provider can give about their own product.
+ */
+const AVAILABILITY_SCALE: readonly ScalePoint[] = [
+  { value: 1, label: 'Not available yet' },
+  { value: 2, label: 'Available overseas, not yet in Australia' },
+  { value: 3, label: 'Available in Australia to trial' },
+  { value: 4, label: 'Commercially ready in Australia' },
+  { value: 5, label: 'Established in Australian potato operations' },
+];
+
+/**
+ * Which part of the industry somebody works in. Asked of everybody, so any
+ * answer can be read by sector: a crisping grower and a fresh grower can name
+ * the same trouble for different reasons.
+ */
+const SECTORS = opts(
+  ['fresh', 'Fresh (washed or brushed)'],
+  ['processing_fry', 'Processing: French fry'],
+  ['processing_crisp', 'Processing: crisping'],
+  ['seed', 'Seed'],
+  ['other', 'Something else'],
+);
 
 /**
  * Practices in the order of the potato year. Shared by the grower and the
@@ -217,16 +256,35 @@ const CONFIDENCE_SCALE: readonly ScalePoint[] = [
 
 const CORE: readonly Section[] = [
   {
+    // Straight after the role and the growing areas, on its own short page,
+    // so the question is answered by everybody and travels with the answers
+    // like any other.
+    id: 'core_sector',
+    title: 'Your part of the industry',
+    questions: [
+      {
+        id: 'sector',
+        guide: { open: 'Which parts of the potato industry do you work in? Fresh, processing, seed?' },
+        tracking: true,
+        kind: 'multi',
+        prompt: 'Which parts of the potato industry do you work in?',
+        help: 'Tick as many as apply.',
+        options: SECTORS,
+        allowOther: true,
+      },
+    ],
+  },
+  {
     id: 'core_constraints',
-    title: 'Where the pressure is',
+    title: 'Current challenges',
     intro: 'First, how you see the industry as a whole. Your own place comes later.',
     questions: [
       {
         id: 'q1_constraints',
-        guide: { open: 'What\'s the part of the job that gives you the most grief right now, yours or the industry\'s?', probe: 'Where does that actually bite, which part of the season?' },
+        guide: { open: 'What are the biggest challenges for the industry right now, in growing and handling potatoes?', probe: 'Where does that actually bite, which part of the season?' },
         tracking: true,
         kind: 'multi',
-        prompt: 'Which parts of the job give the most grief right now, for you or for the industry generally?',
+        prompt: 'Which parts of potato production and handling are the biggest challenges for the industry right now?',
         help: 'Tick as many as you like.',
         options: CONSTRAINTS,
         allowOther: true,
@@ -244,9 +302,9 @@ const CORE: readonly Section[] = [
       },
       {
         id: 'q3_impact',
-        guide: { open: 'When that goes wrong, what does it actually cost?', probe: 'Is that mostly money, time, or people?' },
+        guide: { open: 'For that one, how does it affect businesses?', probe: 'Can you think of an example from a tough season?' },
         kind: 'multi',
-        prompt: 'For the one at the top of your list, what does it actually cost a business?',
+        prompt: 'For the challenge at the top of your list, how does it affect businesses?',
         help: 'Tick as many as you like.',
         // What it costs, never the problem again. The question is asked about
         // whichever problem is top, so an answer that names one of them reads
@@ -268,14 +326,9 @@ const CORE: readonly Section[] = [
           ['other', 'Other'],
         ),
         allowOther: true,
-      },
-      {
-        id: 'q4_bad_season',
-        guide: { open: 'Think of a bad year. What happened?', probe: 'What would have made the difference?' },
-        kind: 'text',
-        prompt: 'In a tough season, or when everything lands at once, what happens if nothing changes?',
-        help: 'Optional. For example: harvest runs late, quality drops, less goes through the shed, extra labour cost, crop left in the ground, a safety risk, or a market missed.',
-        rows: 4,
+        // What a tough season looks like used to be a question of its own, and
+        // read as this one again in different words. One question, one box.
+        note: { label: 'Optional: give an example from a tough season', rows: 3 },
       },
     ],
   },
@@ -291,18 +344,19 @@ const CORE: readonly Section[] = [
         // A watch list: when the project takes on something new, a later round
         // can add it as a row without moving the ratings of the others.
         openRows: true,
-        prompt: 'How much should the project prioritise each of these?',
-        help: '1 is not a priority, 5 is a very high priority. Skip any you have no view on.',
-        scale: PRIORITY_SCALE,
+        prompt: 'How important is it for the project to work on each of these?',
+        help: '1 is not important, 5 is essential. Skip any you have no view on.',
+        scale: IMPORTANCE_SCALE,
         rows: AREAS,
       },
       {
         // Straight after the list it refers to. It used to open the next page,
         // under another heading, where "those" pointed at nothing on screen.
         id: 'q6_first_opportunities',
-        guide: { open: 'If you were running the project, what would you do first?', probe: 'Why that one?' },
+        guide: { open: 'Of the ones you rated highest, why do they matter most?', probe: 'What would improving them change for you?' },
         kind: 'text',
-        prompt: 'If we could only take on one or two of those, which would you pick, and why?',
+        prompt: 'Thinking about the areas you rated highest, why do they matter most?',
+        help: 'For example, what would improving them change for your business or the industry?',
         rows: 4,
       },
     ],
@@ -313,56 +367,42 @@ const CORE: readonly Section[] = [
     questions: [
       {
         id: 'q7_evidence',
-        guide: { open: 'What would it take for you to actually try something new?', probe: 'Whose word would you take on it?' },
+        guide: { open: 'What would you need before you put money into a new machine or technology?', probe: 'Whose word would you take on it?' },
         // Full version only. It shapes the project at the starting point, and
         // nobody expects the answer to move over three years, so it is not
         // worth what it costs the short version.
         kind: 'multi',
-        prompt: 'What would it take to convince you to try something new?',
+        prompt: 'What would you need before investing in a new machine or technology?',
         help: 'Tick as many as you like.',
         options: opts(
           ['local_demo', 'A demonstration in an Australian potato crop'],
-          ['roi', 'Independent analysis of whether it pays', 'Somebody with no stake in it working out whether the money comes back.'],
+          // Trialability, one of the strongest predictors of adoption in ADOPT,
+          // the CSIRO tool Australian extension leans on. It was a question of
+          // its own; as a choice here it is asked once, beside the rest.
+          ['own_trial', 'Trying it on part of my own operation first'],
+          ['case_study', "Results from a similar business, such as a case study or another grower's experience"],
+          ['roi', 'Independent analysis of whether it pays'],
           ['operating_data', 'Figures from it working in the paddock'],
-          ['case_study', 'Case study from a similar business'],
-          ['peer', 'What another grower found when they ran it'],
           ['service', 'Good local service, parts and technical support'],
           ['training', 'Training for operators and managers'],
           ['finance', 'Finance, leasing or sharing the cost'],
           ['safety', 'Clear guidance on safety and the rules'],
-          ['compatibility', 'It works with the gear and software we already run'],
+          ['compatibility', 'It works with the machinery and software we already run'],
+          ['not_my_call', 'Not my call to make'],
           ['other', 'Other'],
         ),
         allowOther: true,
       },
       {
-        id: 'q_trial',
-        guide: { open: 'Would you need to try it on part of the place before you committed?', probe: 'How big a trial would you need to see?' },
-        // Full version only, for the same reason as the question above.
-        kind: 'single',
-        // Trialability — whether something can be tried on a small scale before
-        // committing — is one of the strongest predictors of adoption in ADOPT,
-        // the CSIRO tool Australian extension leans on. It was implied by the
-        // evidence question above but never asked, and "a demonstration
-        // somewhere" is not the same thing as "on my own place, on a few rows".
-        prompt: 'Before you committed to something new, how much would it matter to try it on part of your own operation first?',
-        options: opts(
-          ['essential', 'Essential. I would not go ahead without it'],
-          ['helpful', 'Helpful, but not a deal-breaker'],
-          ['not_needed', 'Not needed. The evidence would be enough'],
-          ['not_my_call', 'Not my call to make'],
-        ),
-      },
-      {
         id: 'q_trust',
-        guide: { open: 'When you\'re weighing up a new bit of gear, who do you actually listen to?', probe: 'Who\'s the one person whose view would settle it?' },
+        guide: { open: 'When you\'re weighing up new machinery, who do you actually listen to?', probe: 'Who\'s the one person whose view would settle it?' },
         tracking: true,
         kind: 'multi',
         // Who actually shifts somebody's thinking is arguably the single most
         // useful answer for designing extension, and it was missing. A finding
         // nobody hears from a source they trust is a finding that changes
         // nothing on a farm.
-        prompt: 'When you are weighing up new gear or a new way of doing things, whose opinion actually counts?',
+        prompt: 'When you are weighing up new machinery or a new way of doing things, whose opinion counts most?',
         help: 'Tick the ones that would change your mind.',
         options: opts(
           ['neighbours', 'Other growers and neighbours'],
@@ -386,7 +426,7 @@ const CORE: readonly Section[] = [
       {
         id: 'q_confidence',
         guide: {
-          open: 'How confident would you feel working out whether a new bit of gear would pay on your place?',
+          open: 'How confident would you feel working out whether new machinery would be worth the investment?',
           probe: 'What would it take to feel more sure of that?',
         },
         tracking: true,
@@ -395,16 +435,16 @@ const CORE: readonly Section[] = [
         // calculators should move. The last three are the capability the RFP
         // asks the project to build: operating, maintaining and integrating
         // new technology.
-        prompt: 'How confident do you feel about each of these?',
+        prompt: 'When it comes to new machinery or technology, how confident are you in each of these?',
         help: 'Skip any that do not apply to you.',
         scale: CONFIDENCE_SCALE,
         rows: opts(
-          ['pays', 'Working out whether a new machine or technology would pay on your operation'],
-          ['claims', 'Judging whether trial results or supplier claims would hold up on your place'],
-          ['advice', 'Finding independent advice you trust on new machinery and technology'],
-          ['setup', 'Getting new gear set up and running well in its first season'],
-          ['maintain', 'Keeping new gear serviced and fixing it when it plays up'],
-          ['integrate', 'Getting new gear to work with the machines and software you already run'],
+          ['pays', 'Working out whether it would be worth the investment'],
+          ['claims', 'Judging whether trial results or supplier claims would apply in your conditions'],
+          ['advice', 'Finding independent advice you trust'],
+          ['setup', 'Getting it set up and working well in the first season'],
+          ['maintain', 'Keeping it serviced and fixing problems when they come up'],
+          ['integrate', 'Getting it to work with the machines and software you already use'],
         ),
       },
     ],
@@ -417,7 +457,7 @@ const ADOPTION_BARRIERS = opts(
   ['reliability', 'Breakdowns and downtime'],
   ['service', 'No service or support close by'],
   ['operators', 'Not enough trained operators'],
-  ['fit', 'Does not fit the gear we already run'],
+  ['fit', 'Does not fit the machinery we already run'],
   ['evidence', 'No proof it works in Australian conditions'],
   ['data', 'Data, or getting systems to talk to each other'],
   ['safety', 'Safety or regulation'],
@@ -454,7 +494,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         tracking: true,
         kind: 'single',
         prompt: 'Roughly how many tonnes of potatoes do you grow in a year?',
-        help: 'A rough band is plenty. It tells us whether something is a small-operation problem or everybody\'s.',
+        help: 'A rough band is plenty. It helps us see whether challenges differ by business size.',
         options: TONNAGE,
       },
       {
@@ -473,20 +513,24 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'farm_pressure',
         guide: { open: 'Where does the pressure land on your place?', probe: 'Which of those costs you most?' },
         kind: 'multi',
-        prompt: 'Which parts of your own operation give you the most trouble?',
+        prompt: 'Which parts of your own operation are the biggest challenges right now?',
         help: 'Labour, timeliness, safety, quality, reliability, whatever it is for you. Tick as many as you like.',
+        // In the same words and order as the industry-wide list in the
+        // first section, so the two can be read against each other.
         options: opts(
           ['land_prep', 'Ground preparation and bed forming'],
           ['planting', 'Planting'],
-          ['irrigation', 'Irrigation, shifting and scheduling'],
-          ['crop_protection', 'Spraying and crop protection'],
           ['monitoring', 'Crop monitoring and agronomy decisions'],
-          ['harvest', 'Harvest'],
+          ['irrigation', 'Irrigation operation and scheduling'],
+          ['crop_protection', 'Spraying and crop protection operations'],
+          ['haulm', 'Haulm removal before harvest'],
+          ['harvest', 'Harvesting'],
           ['carting', 'Carting and in-field logistics'],
-          ['on_farm_grading', 'Grading, handling and storage on farm'],
+          ['on_farm_grading', 'Washing, grading and/or sorting on farm'],
+          ['on_farm_storage', 'Handling and storage on farm'],
           ['maintenance', 'Machinery maintenance and breakdowns'],
-          ['staffing', 'Staffing, rosters and finding operators'],
-          ['records', 'Record keeping and compliance'],
+          ['records', 'Record keeping, traceability, compliance and getting systems to talk to each other'],
+          ['staffing', 'Staffing, rosters and finding skilled operators and technicians'],
           ['other', 'Other'],
         ),
         allowOther: true,
@@ -516,7 +560,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         // up: a round can add a row or stop asking one without moving the
         // other answers. What people write in "Something else" is where the
         // next row usually comes from.
-        prompt: 'Where are you at with each of these on your own operation?',
+        prompt: 'Where are you at with each of these in your own operation?',
         help: 'Pick the step that fits each one. Leave any you have not come across.',
         scale: ADOPTION_SCALE,
         rows: opts(
@@ -537,7 +581,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         // Asked about one thing on purpose. It used to ask "how did that go,
         // overall?" after somebody ticked five technologies, which forces an
         // average across five different experiences and records a blur.
-        prompt: 'Think of the one that mattered most. How did that go?',
+        prompt: "Of the technologies above that you've tried or use, think of the one that mattered most. How has it gone?",
         options: opts(
           ['expand', 'Working well, and we would do more of it'],
           ['refine', 'Working, but it needs sorting out'],
@@ -546,21 +590,22 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
           ['varies', 'Some of it worked, some did not'],
           ['not_relevant', 'Nothing has really applied to us yet'],
         ),
+        note: { label: 'What is it?', rows: 1 },
       },
       {
         id: 'farm_barriers',
         guide: { open: 'What\'s stopped you going further with it?', probe: 'If that was sorted tomorrow, would you go ahead?' },
         tracking: true,
         kind: 'multi',
-        prompt: 'What has held you back most?',
-        help: 'Tick as many as you like.',
+        prompt: 'What has held you back from taking up new machinery or technology?',
+        help: 'Tick your top 3-5 barriers.',
         options: ADOPTION_BARRIERS,
         allowOther: true,
       },
       {
         id: 'farm_measures',
         kind: 'multi',
-        prompt: 'When you are weighing up a machinery purchase, which numbers do you look at?',
+        prompt: 'When you are weighing up a machinery purchase, which numbers do you consider?',
         help: 'Tick as many as you like.',
         options: opts(
           ['labour_hours', 'Labour hours saved'],
@@ -570,8 +615,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
           ['packout', 'Pack-out', 'The share of the crop that makes saleable grade.'],
           ['quality', 'Quality'],
           ['damage', 'Bruising or damage'],
-          ['throughput', 'How much you get through in a day'],
-          ['timeliness', 'Getting the job done in the window'],
+          ['throughput', 'How much you get done in a day'],
+          ['timeliness', 'Getting the job done on time'],
           ['safety', 'Safety'],
           ['inputs', 'Water, fuel or energy use'],
           ['maintenance', 'Maintenance and downtime'],
@@ -583,20 +628,12 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'farm_case_study',
         kind: 'single',
         prompt: 'Is there anything running now that would make a good local case study or a demonstration?',
-        help: 'Something working on a real job. It does not have to be new or flash.',
+        help: 'Something working on a real job. It does not have to be new or high-tech.',
         options: opts(
           ['own_farm', 'Yes, something on our own place'],
           ['known_farm', 'Yes, somewhere else I know of'],
           ['no', 'Nothing comes to mind'],
         ),
-      },
-      {
-        id: 'farm_scepticism',
-        guide: { open: 'Is there anything being pushed at the moment that you reckon won\'t work here?', probe: 'What makes you say that?' },
-        kind: 'text',
-        prompt: 'Is anything being pushed at the moment that you reckon will not work in Australian potatoes?',
-        help: 'Optional, and worth saying. Tell us what the concern is. Nobody ticks a box to disagree with the industry, so this is the place to do it.',
-        rows: 4,
       },
     ],
   },
@@ -633,9 +670,9 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         allowOther: true,
         // Contractors run a good share of the machinery the project cares
         // about: planting, spraying, haulm removal and harvest are often
-        // theirs, and new gear is often on a contractor's rig before it is on
+        // theirs, and new machinery is often on a contractor's rig before it is on
         // anybody's farm. A watch list, like the grower one.
-        prompt: 'Where are you at with each of these across your own gear?',
+        prompt: 'Where are you at with each of these across your own equipment?',
         help: 'Pick the step that fits each one. Leave any you have not come across.',
         scale: ADOPTION_SCALE,
         rows: opts(
@@ -673,34 +710,25 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'con_limits',
         kind: 'multi',
-        prompt: 'What stops you getting through more work, or doing it better?',
+        prompt: 'What limits how much work you can get through, or how well you can do it?',
         help: 'Tick as many as you like.',
+        // Takes in what used to be a separate question on the machinery side
+        // (parts, dealer support, repairs, diagnostics), which asked much the
+        // same thing again.
         options: opts(
           ['machine_availability', 'Not enough machines'],
-          ['operators', 'Not enough skilled operators'],
-          ['parts_lead', 'Parts lead times'],
+          ['capital', 'Cost of upgrading equipment'],
           ['breakdowns', 'Breakdowns and reliability'],
-          ['weather', 'Weather windows'],
-          ['client_clash', 'Clients all wanting the same fortnight'],
-          ['conditions', 'Paddock conditions and soil type'],
-          ['travel', 'Travel time between jobs'],
-          ['capital', 'Cost of upgrading gear'],
-          ['other', 'Other'],
-        ),
-        allowOther: true,
-      },
-      {
-        id: 'con_service',
-        kind: 'multi',
-        prompt: 'On the machinery side, what causes you the most grief?',
-        help: 'Tick as many as you like.',
-        options: opts(
-          ['parts_in_season', 'Getting parts during the season'],
-          ['dealer_support', 'Local dealer support'],
+          ['parts_lead', 'Getting parts during the season and parts lead times'],
           ['parts_cost', 'Cost of parts'],
-          ['technicians', 'Getting a technician out'],
-          ['warranty', 'Warranty and repair turnaround'],
+          ['dealer_support', 'Getting dealer or technician support'],
+          ['warranty', 'Slow repair or warranty turnaround'],
           ['diagnostics', 'Access to diagnostics or software'],
+          ['operators', 'Not enough skilled operators'],
+          ['client_clash', 'Clients all wanting the same fortnight'],
+          ['travel', 'Travel time between jobs'],
+          ['weather', 'Weather windows'],
+          ['conditions', 'Paddock conditions and soil type'],
           ['other', 'Other'],
         ),
         allowOther: true,
@@ -712,7 +740,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         help: 'Tick as many as you like.',
         options: opts(
           ['harvester_setup', 'Setting a harvester up for the conditions'],
-          ['damage', 'Running gear in a way that limits damage'],
+          ['damage', 'Running machinery in a way that limits damage'],
           ['guidance', 'Guidance and GPS systems'],
           ['diagnostics', 'Reading machine diagnostics'],
           ['maintenance', 'Day-to-day maintenance'],
@@ -744,16 +772,18 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'con_demo',
         kind: 'multi',
-        prompt: 'If we ran a demonstration, what would it take to make it worth your while?',
+        prompt: 'What would you need to take part in a project demonstration?',
         help: 'Tick as many as you like.',
         options: opts(
-          ['commercial_rates', 'A full day at commercial rates'],
-          ['paid', 'Payment for your time and machine'],
-          ['no_crop_risk', 'No risk to the client crop'],
-          ['off_peak', 'Held outside the peak'],
-          ['machine_supplied', 'The machine supplied by somebody else'],
-          ['independent', 'Independent measurement of the results'],
+          ['paid', 'Payment for your time, crew and machine at commercial rates'],
+          ['off_peak', 'Held outside the peak season'],
+          ['client_ok', "Your client's agreement"],
+          ['no_crop_risk', "No risk to your client's crop"],
+          ['machine_supplied', 'Machinery supplied by the project or manufacturer'],
           ['insurance', 'Insurance and safety sorted beforehand'],
+          ['independent', 'Independent measurement of the results'],
+          ['results_access', 'Access to the results afterwards'],
+          ['not_interested', "I wouldn't be interested in taking part"],
           ['other', 'Other'],
         ),
         allowOther: true,
@@ -793,8 +823,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'pro_constraints',
         guide: { open: 'Walk me through the shed. Where does it slow down or go wrong?', probe: 'Where do you lose the most time?' },
         kind: 'multi',
-        prompt: 'Where are the pinch points in the shed?',
-        help: 'Labour, throughput, quality, handling, safety, wherever it bites. Tick as many as you like.',
+        prompt: 'Where are the pinch points in your operation?',
+        help: 'Labour, throughput, quality, handling, safety, wherever the problems are. Tick as many as you like.',
         options: opts(
           ['receival', 'Receival and tipping'],
           ['sampling', 'Sampling and testing on arrival'],
@@ -857,8 +887,8 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         id: 'pro_barriers',
         tracking: true,
         kind: 'multi',
-        prompt: 'What has held that back?',
-        help: 'Tick as many as you like.',
+        prompt: 'What has held that back most?',
+        help: 'Tick your top 3-5 barriers.',
         options: ADOPTION_BARRIERS,
         allowOther: true,
       },
@@ -891,39 +921,35 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
   },
   machinery: {
     id: 'machinery',
-    title: 'Machinery supply and service',
-    intro: 'A few questions from the supply side, where you see across the whole industry.',
+    title: 'Machinery and technology supply',
+    intro: 'A few questions from the supply side, where you see across the whole industry, then a few about what you offer. Tell us as much as you are comfortable sharing.',
     questions: [
       {
         id: 'mach_available',
-        guide: { open: 'What can growers actually buy or trial right now?', probe: 'What\'s coming in the next couple of years?' },
-        kind: 'multi',
-        prompt: 'What can Australian potato businesses buy or trial today?',
-        help: 'Tick as many as you like.',
-        options: AREAS_WITH_OTHER,
+        guide: { open: 'For each of these, how available is it to Australian growers today?', probe: 'What\'s coming in the next couple of years?' },
+        // One rating per area, from not available to established. It used to be
+        // two tick lists, available and then ready, which a rating says at once.
+        kind: 'rating',
+        labelEveryStep: true,
         allowOther: true,
-      },
-      {
-        id: 'mach_ready',
-        kind: 'multi',
-        prompt: 'And of those, which are ready to put on a commercial job today?',
-        help: 'Tick as many as you like.',
-        options: AREAS_WITH_OTHER,
-        allowOther: true,
+        prompt: 'How available is each of these to Australian potato businesses today?',
+        help: "Pick the one that fits best for each. Skip any you don't know about.",
+        scale: AVAILABILITY_SCALE,
+        rows: AREAS,
       },
       {
         id: 'mach_barriers',
         tracking: true,
         kind: 'multi',
         prompt: 'What stops your potato customers going ahead?',
-        help: 'Tick as many as you like.',
+        help: 'Tick your top 3-5 barriers.',
         options: ADOPTION_BARRIERS,
         allowOther: true,
       },
       {
         id: 'mach_capacity',
         kind: 'multi',
-        prompt: 'What would the industry need on the service side to keep more of this gear running?',
+        prompt: 'What would the industry need on the service side to keep more of this machinery running?',
         help: 'Tick as many as you like.',
         options: opts(
           ['field_techs', 'More field technicians'],
@@ -940,7 +966,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'mach_gaps',
         kind: 'multi',
-        prompt: 'Where does imported gear not quite fit Australian conditions?',
+        prompt: 'Where does imported machinery not suit Australian conditions?',
         help: 'Tick as many as you like.',
         options: opts(
           ['row_spacing', 'Row spacing and bed configuration'],
@@ -948,7 +974,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
           ['scale', 'Scale of our operations'],
           ['terrain', 'Paddock size and terrain'],
           ['season', 'Our seasonal windows'],
-          ['integration', 'Fitting in with gear people already run'],
+          ['integration', 'Fitting in with machinery people already run'],
           ['price', 'Price point for our market'],
           ['support_distance', 'Distance from service and support'],
           ['other', 'Other'],
@@ -962,19 +988,6 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         help: 'There is a spot at the end to leave your details.',
         options: opts(['yes', 'Yes'], ['maybe', 'Possibly, depending on the detail'], ['no', 'No']),
       },
-      {
-        id: 'mach_other',
-        kind: 'text',
-        prompt: 'Anything else we should know from where you sit?',
-        rows: 3,
-      },
-    ],
-  },
-  technology: {
-    id: 'technology',
-    title: 'Your technology',
-    intro: 'A few questions about what you offer. Tell us as much as you are comfortable sharing.',
-    questions: [
       {
         id: 'tech_offer',
         guide: { open: 'Tell me about what you do, in plain terms.', probe: 'Where would it sit on a potato operation?' },
@@ -1073,6 +1086,12 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         help: 'What it does, and where it would fit in a potato operation.',
         rows: 4,
       },
+      {
+        id: 'mach_other',
+        kind: 'text',
+        prompt: 'Anything else we should know from where you sit?',
+        rows: 3,
+      },
     ],
   },
   /*
@@ -1152,13 +1171,13 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
   adviser: {
     id: 'adviser',
     title: 'Evidence, evaluation and extension',
-    intro: 'A few questions about what we know, and how findings get used.',
+    intro: 'A few questions about what we know, and what we should be measuring.',
     questions: [
       {
         id: 'adv_gaps',
         guide: { open: 'Where do you reckon the industry is flying blind?', probe: 'What would it take to fill that gap?' },
         kind: 'multi',
-        prompt: 'Where are the biggest holes in what we actually know?',
+        prompt: 'Where are the biggest knowledge gaps?',
         help: 'Tick as many as you like.',
         options: opts(
           ['damage_cost', 'What handling damage really costs through the chain'],
@@ -1177,7 +1196,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
       {
         id: 'adv_evaluate',
         kind: 'multi',
-        prompt: 'What deserves a proper independent look?',
+        prompt: 'Which technologies most need independent evaluation?',
         help: 'Tick as many as you like.',
         options: AREAS_WITH_OTHER,
         allowOther: true,
@@ -1218,24 +1237,6 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
           ['new_entrants', 'New entrants'],
           ['women', 'Women in the industry'],
           ['regions', 'Particular regions'],
-          ['other', 'Other'],
-        ),
-        allowOther: true,
-      },
-      {
-        id: 'adv_sharing',
-        kind: 'multi',
-        prompt: 'How do findings reach potato businesses?',
-        help: 'Tick as many as you like.',
-        options: opts(
-          ['case_numbers', 'Short written case studies with the numbers in them'],
-          ['field_days', 'Field days where people can see it running'],
-          ['existing_groups', 'Through grower groups that already meet'],
-          ['webinars', 'Webinars'],
-          ['factsheets', 'Factsheets'],
-          ['video', 'Short videos'],
-          ['one_to_one', 'One-to-one conversations'],
-          ['publications', 'Industry publications'],
           ['other', 'Other'],
         ),
         allowOther: true,
@@ -1284,19 +1285,6 @@ const FOLLOW_UP: readonly Section[] = [
         allowOther: true,
       },
       {
-        id: 'fu_activities',
-        guide: { open: 'Roughly how many things from the project have you been to or used?' },
-        tracking: true,
-        kind: 'single',
-        // How much of the project somebody has been part of. Set against the
-        // practice steps, it shows whether people who saw more of the project
-        // changed more, which is about the most believable story available
-        // without a control group.
-        prompt: 'How many project activities have you been to or used?',
-        help: 'Field days, demonstrations, webinars, case studies, calculators, or a conversation with somebody from the project.',
-        options: opts(['none', 'None yet'], ['one', 'One'], ['two_three', 'Two or three'], ['four_plus', 'Four or more']),
-      },
-      {
         id: 'fu_changed',
         guide: { open: 'Has any of it changed what you\'re doing, or planning to do?', probe: 'What was it that made the difference?' },
         kind: 'single',
@@ -1331,7 +1319,7 @@ const FOLLOW_UP: readonly Section[] = [
       {
         id: 'fu_labour',
         guide: {
-          open: 'Has any new gear changed the labour side of things for you?',
+          open: 'Has any new machinery changed the labour side of things for you?',
           probe: 'Which job did that happen in?',
         },
         tracking: true,
@@ -1339,7 +1327,7 @@ const FOLLOW_UP: readonly Section[] = [
         // The labour outcome the RFP asks for, in its two forms: fewer people
         // needed, or the same people moved to more skilled work. Reviews only,
         // since at the starting point nothing has happened yet.
-        prompt: 'Since the project started, has new gear or technology changed the labour in your business?',
+        prompt: 'Since the project started, has new machinery or technology changed the labour in your business?',
         options: opts(
           ['fewer', 'We need fewer people for some jobs'],
           ['redeployed', 'The same people are doing different, more skilled work'],
@@ -1369,14 +1357,16 @@ const PROJECT_DESIGN: readonly Section[] = [
         id: 'pd_most_useful',
         guide: { open: 'What could we do that you\'d actually use?', probe: 'What would make it worth your time?' },
         kind: 'text',
-        prompt: 'What could we do that would be worth your while, for your business or for the industry?',
+        prompt: 'What could we do that would be most useful for your business or for the industry?',
         rows: 4,
       },
       {
         id: 'pd_avoid',
-        guide: { open: 'And what should we not bother with?' },
+        guide: { open: 'What won\'t work, and what should we not bother with?', probe: 'What makes you say that?' },
         kind: 'text',
-        prompt: 'And what should we not waste time or money on?',
+        // Takes in the grower question about what is being pushed that will
+        // not work here, and asks it of everybody.
+        prompt: "What won't work and what should we not waste time or money on?",
         rows: 3,
       },
       {
@@ -1400,29 +1390,11 @@ const PROJECT_DESIGN: readonly Section[] = [
         ),
         allowOther: true,
       },
-      {
-        id: 'pd_timing',
-        kind: 'multi',
-        prompt: 'If we wanted a yarn later on, when suits you best?',
-        help: 'Tick as many as you like.',
-        options: opts(
-          ['early_am', 'Early morning'],
-          ['late_am', 'Late morning'],
-          ['afternoon', 'Afternoon'],
-          ['evening', 'Evening'],
-          ['off_peak', 'Outside peak production periods'],
-          ['winter', 'During winter or the off-season'],
-          ['other', 'Other'],
-          ['no_say', 'Prefer not to say'],
-        ),
-        allowOther: true,
-      },
     ],
   },
   {
     id: 'next_time',
     title: 'Next time we ask',
-    // The short version asks only the first of the two, so this must not count them.
     intro: 'Optional. It helps us make the most of your answers.',
     questions: [
       {
@@ -1440,13 +1412,7 @@ const PROJECT_DESIGN: readonly Section[] = [
         // without remembering or writing anything down. On the short version
         // too, since that is what most people will answer at the mid-term.
         prompt: 'Would you like us to be able to compare your answers with next time?',
-        help: "We'll ask these questions again later in the project. Three quick answers below give you a code that comes out the same next time, so we can see how things change for the same people. It's made from your answers, not your name, and on its own it can't tell us who you are. There's nothing to remember, and you can skip it.",
-      },
-      {
-        id: 'quote_ok',
-        kind: 'single',
-        prompt: 'If we would like to quote something you have written, without your name, is that all right?',
-        options: opts(['yes', 'Yes'], ['no', 'No, please do not quote me']),
+        help: 'Optional. Three quick answers create a code so we can ask these questions again later in the project and compare your answers over time. The code will be used next time and allows you to stay anonymous.',
       },
     ],
   },
@@ -1474,6 +1440,21 @@ export const ABOUT_YOU = {
 } as const;
 
 export const NO_INTEREST_ID = 'none';
+
+/**
+ * The section the contact step comes before. Leaving details and making the
+ * code for next time are both optional, and the details are asked first, so
+ * the questionnaire ends on the one thing that keeps the answers anonymous.
+ */
+export const NEXT_TIME_ID = 'next_time';
+
+/**
+ * Stored with contact details left without ticking anything above them. The
+ * details are offered whether or not something is ticked, because plenty of
+ * people want to hear back without signing up for anything in particular.
+ */
+export const KEEP_IN_TOUCH_ID = 'keep_in_touch';
+export const KEEP_IN_TOUCH_LABEL = 'Happy to be contacted';
 
 /**
  * Ways to stay involved that anybody can offer, whatever their part of the
@@ -1519,13 +1500,11 @@ export const PATHWAY_INTERESTS: Readonly<Record<string, readonly Option[]>> = {
   ),
   machinery: opts(
     ['mach_supply_demo', 'Supplying machinery for a demonstration'],
+    ['tech_evaluation', 'Providing your technology for an independent evaluation'],
     ['mach_technical_support', 'Providing a technician or operator for a trial'],
+    ['tech_protocol', 'Helping design what a credible trial would measure'],
     ['mach_briefing', 'Briefing the project on equipment that is coming to market'],
     ['mach_training', 'Helping deliver operator or technician training'],
-  ),
-  technology: opts(
-    ['tech_evaluation', 'Providing your technology for an independent evaluation'],
-    ['tech_protocol', 'Helping design what a credible trial would measure'],
     ['tech_integration', 'Working on getting systems to talk to each other'],
   ),
   industry: opts(

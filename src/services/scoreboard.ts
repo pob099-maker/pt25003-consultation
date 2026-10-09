@@ -367,15 +367,21 @@ export interface QuoteCandidate extends FreeTextEntry {
   readonly themes: readonly string[];
 }
 
-/** Comments that may be quoted: only those from somebody who said yes to it. */
+/**
+ * Comments that may be quoted. Every one may, without a name, as the privacy
+ * statement says: the consultation is anonymous, so nobody is asked
+ * separately. Whether the words themselves could identify somebody is still
+ * the team's call, made when one is chosen.
+ */
 export const quoteCandidates = (
   questionnaire: Questionnaire,
   responses: readonly ConsultationResponse[],
   tags: TagMap,
 ): readonly QuoteCandidate[] =>
-  freeTextEntries(questionnaire, responses)
-    .filter((entry) => entry.quote === 'yes')
-    .map((entry) => ({ ...entry, themes: tags[tagKey(entry.responseId, entry.questionId)] ?? [] }));
+  freeTextEntries(questionnaire, responses).map((entry) => ({
+    ...entry,
+    themes: tags[tagKey(entry.responseId, entry.questionId)] ?? [],
+  }));
 
 // ---------------------------------------------------------------------------
 // Editions

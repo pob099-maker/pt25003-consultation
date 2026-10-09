@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
-import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
+import { DEFAULT_QUESTIONNAIRE, NEXT_TIME_ID } from '../content/questionnaire';
 import { allQuestions } from '../content/lookup';
 import { currentProject } from '../content/projects';
 import { useQuestionnaireState } from '../contexts/QuestionnaireContext';
@@ -144,7 +144,18 @@ const ABOUT_YOU: Step = {
   section: null,
 };
 
-const STAY_INVOLVED: Step = { id: 'stay_involved', title: 'Optional: Stay involved', section: null };
+export const STAY_INVOLVED_ID = 'stay_involved';
+const STAY_INVOLVED: Step = { id: STAY_INVOLVED_ID, title: 'Optional: Stay involved', section: null };
+
+/**
+ * The contact step goes just before the code for next time, so the last thing
+ * anybody is asked is the one that keeps their answers anonymous. A round
+ * without that section ends on the contact step, as it always did.
+ */
+export const withContactStep = <T extends { readonly id: string }>(sections: readonly T[], contact: T): readonly T[] => {
+  const at = sections.findIndex((section) => section.id === NEXT_TIME_ID);
+  return at === -1 ? [...sections, contact] : [...sections.slice(0, at), contact, ...sections.slice(at)];
+};
 
 export interface ConsultationOptions {
   /** Where the draft is kept. Interviews use their own key. */
@@ -204,7 +215,7 @@ export const useConsultation = (
       ...(asksFollowUp(questionnaire.stage) ? questionnaire.followUp : []),
       ...questionnaire.projectDesign,
     ].map((section) => ({ id: section.id, title: section.title, intro: section.intro, section }));
-    return [ABOUT_YOU, ...sectionSteps, STAY_INVOLVED];
+    return [ABOUT_YOU, ...withContactStep<Step>(sectionSteps, STAY_INVOLVED)];
   }, [pathway, questionnaire]);
 
   const stepIndex = resumeStep(steps, draft);

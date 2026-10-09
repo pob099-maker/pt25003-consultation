@@ -74,7 +74,7 @@ describe('overview', () => {
   it('counts a response as complete once it answered something in the final section', () => {
     const stats = overview(q, [
       bare({ pd_most_useful: { kind: 'text', value: 'Field days.' } }),
-      bare({ q4_bad_season: { kind: 'text', value: 'Late harvest.' } }),
+      bare({ q6_first_opportunities: { kind: 'text', value: 'Late harvest.' } }),
     ]);
     expect(stats.total).toBe(2);
     expect(stats.completionRate).toBe(0.5);
@@ -97,7 +97,7 @@ describe('tallyMulti and freeTextEntries', () => {
   });
 
   it('skips blank free text', () => {
-    const entries = freeTextEntries(q, [bare({ q4_bad_season: { kind: 'text', value: '   ' } })]);
+    const entries = freeTextEntries(q, [bare({ q6_first_opportunities: { kind: 'text', value: '   ' } })]);
     expect(entries).toHaveLength(0);
   });
 });
@@ -113,14 +113,39 @@ describe('something else on a practice list', () => {
   });
 });
 
-describe('quote permission', () => {
-  it('travels with every comment, and never reads a missing answer as a yes', () => {
-    const refused = freeTextEntries(q, [
-      bare({ q4_bad_season: { kind: 'text', value: 'Wet harvest' }, quote_ok: { kind: 'single', value: 'no' } }),
+describe("a question's own box", () => {
+  it('is read with the comments, with the choice it belongs to', () => {
+    const entries = freeTextEntries(q, [
+      bare({
+        q3_impact: { kind: 'multi', values: ['timeliness'], other: '', note: 'Wet harvest, two paddocks late' },
+        farm_outcome: { kind: 'single', value: 'stopped', note: 'Drone scouting' },
+      }),
     ]);
-    expect(refused[0]?.quote).toBe('no');
-    const unasked = freeTextEntries(q, [bare({ q4_bad_season: { kind: 'text', value: 'Wet harvest' } })]);
-    expect(unasked[0]?.quote).toBe('not_asked');
+    expect(entries.map((entry) => entry.text).sort()).toEqual([
+      'Drone scouting (We tried it and stopped)',
+      'Wet harvest, two paddocks late',
+    ]);
+    expect(entries.find((entry) => entry.questionId === 'q3_impact')?.questionPrompt).toContain(
+      'give an example from a tough season',
+    );
+  });
+});
+
+describe('tried it and stopped', () => {
+  it('is counted beside the steps, and never averaged with them', () => {
+    const rows = rateAreas(
+      q,
+      [
+        bare({ farm_practices: { kind: 'rating', values: { guidance: 6 } } }),
+        bare({ farm_practices: { kind: 'rating', values: { guidance: 4 } } }),
+      ],
+      'farm_practices',
+    );
+    const guidance = rows.find((row) => row.id === 'guidance');
+    expect(guidance?.mean).toBe(4);
+    expect(guidance?.responses).toBe(1);
+    expect(guidance?.scores).toHaveLength(5);
+    expect(guidance?.outside).toEqual([{ label: 'Tried it and stopped', count: 1 }]);
   });
 });
 

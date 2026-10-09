@@ -7,10 +7,10 @@ import { StayInvolved } from '../components/StayInvolved';
 import { primaryButton, secondaryButton } from '../components/ui';
 import { AboutYou } from '../components/AboutYou';
 import { showRoleQuestion } from '../components/roleQuestion';
-import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
+import { KEEP_IN_TOUCH_ID, NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
 import { choicesFor, promptOverrideFor, rankChoicesFor } from '../content/dynamic';
 import { useQuestionnaire } from '../contexts/QuestionnaireContext';
-import { useConsultation } from '../hooks/useConsultation';
+import { STAY_INVOLVED_ID, useConsultation } from '../hooks/useConsultation';
 import type { ContactFormValues } from '../schemas/consultation';
 import { contactDay, submitConsultation } from '../services/submit';
 import { LENGTH_ID, lengthAnswer, shortVersion } from '../services/formLength';
@@ -32,6 +32,9 @@ export const Consultation = () => {
   const state = useConsultation(questionnaire, { length: short ? 'short' : 'full' });
   const { draft, step, stepIndex, steps, pathway } = state;
   const [interests, setInterests] = useState<readonly string[]>([]);
+  // Held on the page between the contact step and Submit, never in the saved
+  // draft: a name and a number are not left behind on a shared phone.
+  const [contact, setContact] = useState<ContactFormValues | null>(null);
   const [roleError, setRoleError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -45,14 +48,16 @@ export const Consultation = () => {
   }, []);
 
   const isLastStep = stepIndex === steps.length - 1;
+  const contactStep = steps.findIndex((candidate) => candidate.id === STAY_INVOLVED_ID);
+  const isContactStep = stepIndex === contactStep;
   // What the full version would add for this person's own role, rather than
   // a number typed in once and never updated as the questions grew.
   const extraMinutes = useMemo(
     () => estimateFor(full, draft.role).minutes - estimateFor(shortVersion(full), draft.role).minutes,
     [full, draft.role],
   );
-  /** The last step with questions on it: after this comes only "stay involved". */
-  const isLastContentStep = stepIndex === steps.length - 2;
+  /** The last step of questions before "stay involved", where the short version offers the rest. */
+  const isLastContentStep = contactStep > 0 && stepIndex === contactStep - 1;
   const [upgrading, setUpgrading] = useState(false);
 
   /** Switch to the full version and go to the first thing not yet answered. */
@@ -116,14 +121,15 @@ export const Consultation = () => {
       source: arrival,
     };
 
-    const wantsContact = contact !== null && interests.length > 0 && !interests.includes(NO_INTEREST_ID);
+    // Details can come without anything ticked; they are kept as "happy to be contacted".
+    const wantsContact = contact !== null && !interests.includes(NO_INTEREST_ID);
     const record: ContactRecord | null =
       contact === null || !wantsContact
         ? null
         : {
             id: crypto.randomUUID(),
             roundId: questionnaire.roundId,
-            interests,
+            interests: interests.length > 0 ? interests : [KEEP_IN_TOUCH_ID],
             name: contact.name,
             organisation: contact.organisation,
             broadRole: contact.broadRole,
@@ -224,14 +230,19 @@ export const Consultation = () => {
           </section>
         )}
 
-        {isLastStep && (
+        {isContactStep && (
           <StayInvolved
             interestOptions={interestsForPathway(questionnaire, pathway)}
             contactMethods={questionnaire.contactMethods}
             interests={interests}
             onInterestsChange={setInterests}
             formId={CONTACT_FORM_ID}
-            onSubmit={(contact) => void finish(contact)}
+            initial={contact}
+            onSubmit={(values) => {
+              setContact(values);
+              if (isLastStep) void finish(values);
+              else state.next();
+            }}
           />
         )}
       </div>
@@ -243,14 +254,23 @@ export const Consultation = () => {
       )}
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row-reverse sm:justify-start no-print">
-        {isLastStep ? (
-          <button type="submit" form={CONTACT_FORM_ID} className={primaryButton} disabled={submitting}>
+        {/* Each button keeps its own key. Without one React reuses the same
+            element, and a Next pressed on the page before the contact step
+            turns into that step's submit button during the press: the browser
+            then submits the new form, and the contact step is skipped. */}
+        {isContactStep ? (
+          // The details are checked before moving on, as they were before Submit.
+          <button key="contact" type="submit" form={CONTACT_FORM_ID} className={primaryButton} disabled={submitting}>
+            {isLastStep ? (submitting ? 'Submitting…' : 'Submit consultation') : 'Next'}
+          </button>
+        ) : isLastStep ? (
+          <button key="submit" type="button" className={primaryButton} disabled={submitting} onClick={() => void finish(contact)}>
             {submitting ? 'Submitting…' : 'Submit consultation'}
           </button>
         ) : (
           // On the short version's last page the choice above is the way on.
           !(short && isLastContentStep) && (
-            <button type="button" className={primaryButton} onClick={handleNext}>
+            <button key="next" type="button" className={primaryButton} onClick={handleNext}>
               Next
             </button>
           )

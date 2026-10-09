@@ -4,7 +4,7 @@ import { cleanAnswers } from './records';
 describe('cleanAnswers', () => {
   it('drops answers of the wrong shape instead of taking a screen down', () => {
     const clean = cleanAnswers({
-      q4_bad_season: { kind: 'text', value: null },
+      q6_first_opportunities: { kind: 'text', value: null },
       farm_practices: { kind: 'rating', values: null },
       q1_constraints: { kind: 'multi', values: ['harvest'] },
     });

@@ -8,7 +8,7 @@ This file is generated from the questions themselves — do not edit it by hand,
 
 Say, in your own words:
 
-> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about 17 minutes. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.
+> Thanks for making the time. This is for the Potato Mechanisation Project — we are trying to work out where mechanisation and automation would make the most practical difference, and what the project should take on. It takes about 18 minutes. Nothing you say gets reported against your name or your business unless you tell me otherwise, and you can skip anything you would rather not answer.
 
 Then work down this script and enter the answers into the consultation afterwards, so they sit in the same data as everybody else’s. If you enter it while you talk, tell them that is what you are doing.
 
@@ -16,13 +16,13 @@ Then work down this script and enter the answers into the consultation afterward
 
 **Which of these best describes you?** _One answer. It decides which section you use below._
 
-  - Potato grower or business owner
-  - Farm manager, supervisor or machinery operator
-  - Contractor
+  - Grower: business owner
+  - Grower: farm manager, supervisor or machinery operator
   - Processor, packhouse or storage business
-  - Machinery dealer, manufacturer or service provider
-  - Technology provider
-  - Adviser, consultant, researcher or educator
+  - Advisor, agronomist
+  - Contractor
+  - Machinery dealer, manufacturer, technology provider or service provider
+  - Researcher, consultant or educator
   - Industry body or other stakeholder
 
 **Which growing regions are you talking about?** _Optional, more than one is fine._
@@ -45,36 +45,53 @@ Then work down this script and enter the answers into the consultation afterward
   - Somewhere else
   - Prefer not to say
 
-## Where the pressure is
+## Your part of the industry
+
+**1. Which parts of the potato industry do you work in?**
+
+> Open with: "Which parts of the potato industry do you work in? Fresh, processing, seed?"
+
+_Tick as many as apply._
+
+_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
+
+  - Fresh (washed or brushed)
+  - Processing: French fry
+  - Processing: crisping
+  - Seed
+  - Something else
+
+## Current challenges
 
 _First, how you see the industry as a whole. Your own place comes later._
 
-**1. Which parts of the job give the most grief right now, for you or for the industry generally?**
+**2. Which parts of potato production and handling are the biggest challenges for the industry right now?**
 
-> Open with: "What's the part of the job that gives you the most grief right now, yours or the industry's?"
+> Open with: "What are the biggest challenges for the industry right now, in growing and handling potatoes?"
 > Then probe: "Where does that actually bite, which part of the season?"
 
 _Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
-  - Ground preparation and planting
+  - Ground preparation and bed forming
+  - Planting
   - Crop monitoring and agronomy decisions
-  - Irrigation operation and automation
-  - Crop protection operations
+  - Irrigation operation, scheduling and automation
+  - Spraying and crop protection operations
   - Haulm removal before harvest
   - Harvesting
   - In-field transport and harvest logistics
   - Receival
   - Washing, grading and sorting
   - Packing
-  - Storage and handling
-  - Records, traceability and getting systems to talk to each other
+  - Handling and storage
   - Machinery maintenance and reliability
-  - Finding skilled operators and technicians
+  - Record keeping, traceability, compliance and getting systems to talk to each other
+  - Staffing, finding skilled operators and technicians
   - Other
 
-**2. Of those, which three should we be putting the most effort into?**
+**3. Of those, which three should we be putting the most effort into?**
 
 > Open with: "If the project could only work on three of those, which three would you pick?"
 > Then probe: "Why that one first?"
@@ -83,10 +100,10 @@ _Tap them in order, most important first._
 
 _Read back what they ticked a moment ago, and ask for their top 3 in order._
 
-**3. For the one at the top of your list, what does it actually cost a business?**
+**4. For the challenge at the top of your list, how does it affect businesses?**
 
-> Open with: "When that goes wrong, what does it actually cost?"
-> Then probe: "Is that mostly money, time, or people?"
+> Open with: "For that one, how does it affect businesses?"
+> Then probe: "Can you think of an example from a tough season?"
 
 _Tick as many as you like._
 
@@ -105,25 +122,18 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Not knowing what is actually happening
   - Other
 
-**4. In a tough season, or when everything lands at once, what happens if nothing changes?**
-
-> Open with: "Think of a bad year. What happened?"
-> Then probe: "What would have made the difference?"
-
-_Optional. For example: harvest runs late, quality drops, less goes through the shed, extra labour cost, crop left in the ground, a safety risk, or a market missed._
-
-_Let them talk. Write it down in their words, not yours._
+_Then ask: "give an example from a tough season" Write it in their words in the box under the question._
 
 ## Where we should put our effort
 
-**5. How much should the project prioritise each of these?**
+**5. How important is it for the project to work on each of these?**
 
 > Open with: "I'll read out some areas the project could work on. Tell me how much each one matters to you, one to five."
 > Then probe: "Of all of those, which would you put at the very top?"
 
-_1 is not a priority, 5 is a very high priority. Skip any you have no view on._
+_1 is not important, 5 is essential. Skip any you have no view on._
 
-_Scale: 1 = not a priority, 2 = low priority, 3 = moderate priority, 4 = high priority, 5 = very high priority._
+_Scale: 1 = not important, 2 = slightly important, 3 = moderately important, 4 = very important, 5 = essential._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - Precision planting and crop establishment
@@ -138,21 +148,23 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
   - Sensors and machine data for day-to-day decisions
   - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
+  - Getting different brands and systems to work together — Data standards, so machinery and software from different suppliers share information.
   - Training, skills and getting new people in
 
-**6. If we could only take on one or two of those, which would you pick, and why?**
+**6. Thinking about the areas you rated highest, why do they matter most?**
 
-> Open with: "If you were running the project, what would you do first?"
-> Then probe: "Why that one?"
+> Open with: "Of the ones you rated highest, why do they matter most?"
+> Then probe: "What would improving them change for you?"
+
+_For example, what would improving them change for your business or the industry?_
 
 _Let them talk. Write it down in their words, not yours._
 
 ## What would convince you
 
-**7. What would it take to convince you to try something new?**
+**7. What would you need before investing in a new machine or technology?**
 
-> Open with: "What would it take for you to actually try something new?"
+> Open with: "What would you need before you put money into a new machine or technology?"
 > Then probe: "Whose word would you take on it?"
 
 _Tick as many as you like._
@@ -160,32 +172,21 @@ _Tick as many as you like._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - A demonstration in an Australian potato crop
-  - Independent analysis of whether it pays — Somebody with no stake in it working out whether the money comes back.
+  - Trying it on part of my own operation first
+  - Results from a similar business, such as a case study or another grower's experience
+  - Independent analysis of whether it pays
   - Figures from it working in the paddock
-  - Case study from a similar business
-  - What another grower found when they ran it
   - Good local service, parts and technical support
   - Training for operators and managers
   - Finance, leasing or sharing the cost
   - Clear guidance on safety and the rules
-  - It works with the gear and software we already run
+  - It works with the machinery and software we already run
+  - Not my call to make
   - Other
 
-**8. Before you committed to something new, how much would it matter to try it on part of your own operation first?**
+**8. When you are weighing up new machinery or a new way of doing things, whose opinion counts most?**
 
-> Open with: "Would you need to try it on part of the place before you committed?"
-> Then probe: "How big a trial would you need to see?"
-
-_One answer only._
-
-  - Essential. I would not go ahead without it
-  - Helpful, but not a deal-breaker
-  - Not needed. The evidence would be enough
-  - Not my call to make
-
-**9. When you are weighing up new gear or a new way of doing things, whose opinion actually counts?**
-
-> Open with: "When you're weighing up a new bit of gear, who do you actually listen to?"
+> Open with: "When you're weighing up new machinery, who do you actually listen to?"
 > Then probe: "Who's the one person whose view would settle it?"
 
 _Tick the ones that would change your mind._
@@ -208,9 +209,9 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Family and business partners
   - Other
 
-**10. How confident do you feel about each of these?**
+**9. When it comes to new machinery or technology, how confident are you in each of these?**
 
-> Open with: "How confident would you feel working out whether a new bit of gear would pay on your place?"
+> Open with: "How confident would you feel working out whether new machinery would be worth the investment?"
 > Then probe: "What would it take to feel more sure of that?"
 
 _Skip any that do not apply to you._
@@ -218,12 +219,12 @@ _Skip any that do not apply to you._
 _Scale: 1 = not at all confident, 2 = a little confident, 3 = somewhat confident, 4 = fairly confident, 5 = very confident._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
-  - Working out whether a new machine or technology would pay on your operation
-  - Judging whether trial results or supplier claims would hold up on your place
-  - Finding independent advice you trust on new machinery and technology
-  - Getting new gear set up and running well in its first season
-  - Keeping new gear serviced and fixing it when it plays up
-  - Getting new gear to work with the machines and software you already run
+  - Working out whether it would be worth the investment
+  - Judging whether trial results or supplier claims would apply in your conditions
+  - Finding independent advice you trust
+  - Getting it set up and working well in the first season
+  - Keeping it serviced and fixing problems when they come up
+  - Getting it to work with the machines and software you already use
 
 ---
 
@@ -231,13 +232,13 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
 
 ### Your farming operation
 
-_For: Potato grower or business owner; Farm manager, supervisor or machinery operator._
+_For: Grower: business owner; Grower: farm manager, supervisor or machinery operator._
 
 **1. Roughly how many tonnes of potatoes do you grow in a year?**
 
 > Open with: "Roughly how many tonnes do you grow in a year? A ballpark is fine."
 
-_A rough band is plenty. It tells us whether something is a small-operation problem or everybody's._
+_A rough band is plenty. It helps us see whether challenges differ by business size._
 
 _One answer only._
 
@@ -263,7 +264,7 @@ _One answer only._
   - More than 50
   - Prefer not to say
 
-**3. Which parts of your own operation give you the most trouble?**
+**3. Which parts of your own operation are the biggest challenges right now?**
 
 > Open with: "Where does the pressure land on your place?"
 > Then probe: "Which of those costs you most?"
@@ -274,25 +275,27 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
   - Ground preparation and bed forming
   - Planting
-  - Irrigation, shifting and scheduling
-  - Spraying and crop protection
   - Crop monitoring and agronomy decisions
-  - Harvest
+  - Irrigation operation and scheduling
+  - Spraying and crop protection operations
+  - Haulm removal before harvest
+  - Harvesting
   - Carting and in-field logistics
-  - Grading, handling and storage on farm
+  - Washing, grading and/or sorting on farm
+  - Handling and storage on farm
   - Machinery maintenance and breakdowns
-  - Staffing, rosters and finding operators
-  - Record keeping and compliance
+  - Record keeping, traceability, compliance and getting systems to talk to each other
+  - Staffing, rosters and finding skilled operators and technicians
   - Other
 
-**4. Where are you at with each of these on your own operation?**
+**4. Where are you at with each of these in your own operation?**
 
 > Open with: "I will read out some technologies. For each one, tell me where you are at with it."
 > Then probe: "Which of those has made the biggest difference so far?"
 
 _Pick the step that fits each one. Leave any you have not come across._
 
-_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation._
+_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation, 6 = tried it and stopped._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - GPS guidance or autosteer
@@ -307,7 +310,7 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
 
 _Then ask whether there is anything else they use or are trying. If there is, write down what it is and where they are at with it, in the Something else row._
 
-**5. Think of the one that mattered most. How did that go?**
+**5. Of the technologies above that you've tried or use, think of the one that mattered most. How has it gone?**
 
 _One answer only._
 
@@ -318,12 +321,14 @@ _One answer only._
   - Some of it worked, some did not
   - Nothing has really applied to us yet
 
-**6. What has held you back most?**
+_Then ask: "What is it?" Write it in their words in the box under the question._
+
+**6. What has held you back from taking up new machinery or technology?**
 
 > Open with: "What's stopped you going further with it?"
 > Then probe: "If that was sorted tomorrow, would you go ahead?"
 
-_Tick as many as you like._
+_Tick your top 3-5 barriers._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -332,13 +337,13 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Breakdowns and downtime
   - No service or support close by
   - Not enough trained operators
-  - Does not fit the gear we already run
+  - Does not fit the machinery we already run
   - No proof it works in Australian conditions
   - Data, or getting systems to talk to each other
   - Safety or regulation
   - Other
 
-**7. When you are weighing up a machinery purchase, which numbers do you look at?**
+**7. When you are weighing up a machinery purchase, which numbers do you consider?**
 
 _Tick as many as you like._
 
@@ -351,8 +356,8 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Pack-out — The share of the crop that makes saleable grade.
   - Quality
   - Bruising or damage
-  - How much you get through in a day
-  - Getting the job done in the window
+  - How much you get done in a day
+  - Getting the job done on time
   - Safety
   - Water, fuel or energy use
   - Maintenance and downtime
@@ -360,22 +365,13 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 **8. Is there anything running now that would make a good local case study or a demonstration?**
 
-_Something working on a real job. It does not have to be new or flash._
+_Something working on a real job. It does not have to be new or high-tech._
 
 _One answer only._
 
   - Yes, something on our own place
   - Yes, somewhere else I know of
   - Nothing comes to mind
-
-**9. Is anything being pushed at the moment that you reckon will not work in Australian potatoes?**
-
-> Open with: "Is there anything being pushed at the moment that you reckon won't work here?"
-> Then probe: "What makes you say that?"
-
-_Optional, and worth saying. Tell us what the concern is. Nobody ticks a box to disagree with the industry, so this is the place to do it._
-
-_Let them talk. Write it down in their words, not yours._
 
 ### Your contracting work
 
@@ -411,13 +407,13 @@ _One answer only._
   - More than 50
   - Prefer not to say
 
-**3. Where are you at with each of these across your own gear?**
+**3. Where are you at with each of these across your own equipment?**
 
 > Open with: "For each of these, where are you at in your own fleet?"
 
 _Pick the step that fits each one. Leave any you have not come across._
 
-_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation._
+_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation, 6 = tried it and stopped._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - GPS guidance or autosteer
@@ -452,45 +448,35 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Juggling client schedules
   - Other
 
-**5. What stops you getting through more work, or doing it better?**
+**5. What limits how much work you can get through, or how well you can do it?**
 
 _Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Not enough machines
-  - Not enough skilled operators
-  - Parts lead times
+  - Cost of upgrading equipment
   - Breakdowns and reliability
-  - Weather windows
-  - Clients all wanting the same fortnight
-  - Paddock conditions and soil type
-  - Travel time between jobs
-  - Cost of upgrading gear
-  - Other
-
-**6. On the machinery side, what causes you the most grief?**
-
-_Tick as many as you like._
-
-_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
-
-  - Getting parts during the season
-  - Local dealer support
+  - Getting parts during the season and parts lead times
   - Cost of parts
-  - Getting a technician out
-  - Warranty and repair turnaround
+  - Getting dealer or technician support
+  - Slow repair or warranty turnaround
   - Access to diagnostics or software
+  - Not enough skilled operators
+  - Clients all wanting the same fortnight
+  - Travel time between jobs
+  - Weather windows
+  - Paddock conditions and soil type
   - Other
 
-**7. Where are the biggest gaps in operator skills?**
+**6. Where are the biggest gaps in operator skills?**
 
 _Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Setting a harvester up for the conditions
-  - Running gear in a way that limits damage
+  - Running machinery in a way that limits damage
   - Guidance and GPS systems
   - Reading machine diagnostics
   - Day-to-day maintenance
@@ -499,7 +485,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Getting new operators up to speed quickly
   - Other
 
-**8. What would make the biggest difference to the job you can do for your clients?**
+**7. What would make the biggest difference to the job you can do for your clients?**
 
 _Tick as many as you like._
 
@@ -515,22 +501,24 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Training for your operators
   - Other
 
-**9. If we ran a demonstration, what would it take to make it worth your while?**
+**8. What would you need to take part in a project demonstration?**
 
 _Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
-  - A full day at commercial rates
-  - Payment for your time and machine
-  - No risk to the client crop
-  - Held outside the peak
-  - The machine supplied by somebody else
-  - Independent measurement of the results
+  - Payment for your time, crew and machine at commercial rates
+  - Held outside the peak season
+  - Your client's agreement
+  - No risk to your client's crop
+  - Machinery supplied by the project or manufacturer
   - Insurance and safety sorted beforehand
+  - Independent measurement of the results
+  - Access to the results afterwards
+  - I wouldn't be interested in taking part
   - Other
 
-**10. Anything else about contracting we should know?**
+**9. Anything else about contracting we should know?**
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -568,12 +556,12 @@ _One answer only._
   - More than 50
   - Prefer not to say
 
-**3. Where are the pinch points in the shed?**
+**3. Where are the pinch points in your operation?**
 
 > Open with: "Walk me through the shed. Where does it slow down or go wrong?"
 > Then probe: "Where do you lose the most time?"
 
-_Labour, throughput, quality, handling, safety, wherever it bites. Tick as many as you like._
+_Labour, throughput, quality, handling, safety, wherever the problems are. Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -611,7 +599,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 _Pick the step that fits each one. Leave any you have not come across._
 
-_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation._
+_Scale: 1 = not for us, 2 = thinking about it, 3 = trying it, 4 = doing it on part of the operation, 5 = doing it across the operation, 6 = tried it and stopped._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - Automated receival, tipping or box handling
@@ -624,9 +612,9 @@ _Read each one, take a number. "No view" is a fine answer — leave it blank rat
 
 _Then ask whether there is anything else they use or are trying. If there is, write down what it is and where they are at with it, in the Something else row._
 
-**6. What has held that back?**
+**6. What has held that back most?**
 
-_Tick as many as you like._
+_Tick your top 3-5 barriers._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -635,7 +623,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Breakdowns and downtime
   - No service or support close by
   - Not enough trained operators
-  - Does not fit the gear we already run
+  - Does not fit the machinery we already run
   - No proof it works in Australian conditions
   - Data, or getting systems to talk to each other
   - Safety or regulation
@@ -662,40 +650,19 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
 
 _Let them talk. Write it down in their words, not yours._
 
-### Machinery supply and service
+### Machinery and technology supply
 
-_For: Machinery dealer, manufacturer or service provider._
+_For: Machinery dealer, manufacturer, technology provider or service provider._
 
-**1. What can Australian potato businesses buy or trial today?**
+**1. How available is each of these to Australian potato businesses today?**
 
-> Open with: "What can growers actually buy or trial right now?"
+> Open with: "For each of these, how available is it to Australian growers today?"
 > Then probe: "What's coming in the next couple of years?"
 
-_Tick as many as you like._
+_Pick the one that fits best for each. Skip any you don't know about._
 
-_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
-
-  - Precision planting and crop establishment
-  - Spraying and weed control
-  - Haulm removal before harvest
-  - Autonomous and self-steering field machinery — Machines that run with limited or no driver input.
-  - Harvest efficiency and less damage
-  - Carting and harvest logistics
-  - Optical sorting and grading — Cameras and sensors that grade tubers as they pass.
-  - Packhouse and receival automation
-  - Robots for repetitive hand work
-  - Sensors and machine data for day-to-day decisions
-  - Irrigation automation that uses crop and soil information
-  - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
-  - Training, skills and getting new people in
-  - Other
-
-**2. And of those, which are ready to put on a commercial job today?**
-
-_Tick as many as you like._
-
-_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
+_Scale: 1 = not available yet, 2 = available overseas, not yet in australia, 3 = available in australia to trial, 4 = commercially ready in australia, 5 = established in australian potato operations._
+_Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
   - Precision planting and crop establishment
   - Spraying and weed control
@@ -709,13 +676,14 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Sensors and machine data for day-to-day decisions
   - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
+  - Getting different brands and systems to work together — Data standards, so machinery and software from different suppliers share information.
   - Training, skills and getting new people in
-  - Other
 
-**3. What stops your potato customers going ahead?**
+_Then ask whether there is anything else they use or are trying. If there is, write down what it is and where they are at with it, in the Something else row._
 
-_Tick as many as you like._
+**2. What stops your potato customers going ahead?**
+
+_Tick your top 3-5 barriers._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
@@ -724,13 +692,13 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Breakdowns and downtime
   - No service or support close by
   - Not enough trained operators
-  - Does not fit the gear we already run
+  - Does not fit the machinery we already run
   - No proof it works in Australian conditions
   - Data, or getting systems to talk to each other
   - Safety or regulation
   - Other
 
-**4. What would the industry need on the service side to keep more of this gear running?**
+**3. What would the industry need on the service side to keep more of this machinery running?**
 
 _Tick as many as you like._
 
@@ -745,7 +713,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Better manuals and documentation
   - Other
 
-**5. Where does imported gear not quite fit Australian conditions?**
+**4. Where does imported machinery not suit Australian conditions?**
 
 _Tick as many as you like._
 
@@ -756,12 +724,12 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Scale of our operations
   - Paddock size and terrain
   - Our seasonal windows
-  - Fitting in with gear people already run
+  - Fitting in with machinery people already run
   - Price point for our market
   - Distance from service and support
   - Other
 
-**6. Would you be interested in being part of a demonstration, case study or technical briefing?**
+**5. Would you be interested in being part of a demonstration, case study or technical briefing?**
 
 _There is a spot at the end to leave your details._
 
@@ -771,15 +739,7 @@ _One answer only._
   - Possibly, depending on the detail
   - No
 
-**7. Anything else we should know from where you sit?**
-
-_Let them talk. Write it down in their words, not yours._
-
-### Your technology
-
-_For: Technology provider._
-
-**1. What sort of technology do you offer?**
+**6. What sort of technology do you offer?**
 
 > Open with: "Tell me about what you do, in plain terms."
 > Then probe: "Where would it sit on a potato operation?"
@@ -800,11 +760,11 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Sensors and machine data for day-to-day decisions
   - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
+  - Getting different brands and systems to work together — Data standards, so machinery and software from different suppliers share information.
   - Training, skills and getting new people in
   - Other
 
-**2. What problem does it solve for a potato business?**
+**7. What problem does it solve for a potato business?**
 
 _Tick as many as you like._
 
@@ -822,7 +782,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Water, fuel or energy
   - Other
 
-**3. How far along is it?**
+**8. How far along is it?**
 
 _One answer only._
 
@@ -832,7 +792,7 @@ _One answer only._
   - Sold commercially in Australia
   - Established in Australian potato operations
 
-**4. What does a business need to have in place before it will work properly?**
+**9. What does a business need to have in place before it will work properly?**
 
 _Tick as many as you like._
 
@@ -848,7 +808,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Ongoing calibration and support
   - Other
 
-**5. What evidence can you point to on how well it performs?**
+**10. What evidence can you point to on how well it performs?**
 
 _Tick as many as you like._
 
@@ -862,7 +822,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Nothing published yet
   - Other
 
-**6. What would you need from us for a credible Australian evaluation?**
+**11. What would you need from us for a credible Australian evaluation?**
 
 _Tick as many as you like._
 
@@ -876,9 +836,13 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Agreed success criteria up front
   - Other
 
-**7. Tell us about the technology in your own words.**
+**12. Tell us about the technology in your own words.**
 
 _What it does, and where it would fit in a potato operation._
+
+_Let them talk. Write it down in their words, not yours._
+
+**13. Anything else we should know from where you sit?**
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -945,9 +909,9 @@ _Let them talk. Write it down in their words, not yours._
 
 ### Evidence, evaluation and extension
 
-_For: Adviser, consultant, researcher or educator._
+_For: Advisor, agronomist; Researcher, consultant or educator._
 
-**1. Where are the biggest holes in what we actually know?**
+**1. Where are the biggest knowledge gaps?**
 
 > Open with: "Where do you reckon the industry is flying blind?"
 > Then probe: "What would it take to fill that gap?"
@@ -967,7 +931,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Safety outcomes
   - Other
 
-**2. What deserves a proper independent look?**
+**2. Which technologies most need independent evaluation?**
 
 _Tick as many as you like._
 
@@ -985,7 +949,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Sensors and machine data for day-to-day decisions
   - Irrigation automation that uses crop and soil information
   - Predictive maintenance and machinery uptime — Using machine data to service a part before it fails.
-  - Getting different brands and systems to work together — Data standards, so gear and software from different suppliers share information.
+  - Getting different brands and systems to work together — Data standards, so machinery and software from different suppliers share information.
   - Training, skills and getting new people in
   - Other
 
@@ -1025,23 +989,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Particular regions
   - Other
 
-**5. How do findings reach potato businesses?**
-
-_Tick as many as you like._
-
-_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
-
-  - Short written case studies with the numbers in them
-  - Field days where people can see it running
-  - Through grower groups that already meet
-  - Webinars
-  - Factsheets
-  - Short videos
-  - One-to-one conversations
-  - Industry publications
-  - Other
-
-**6. Are there projects, data sources, researchers or demonstration sites we should be talking to?**
+**5. Are there projects, data sources, researchers or demonstration sites we should be talking to?**
 
 _Optional. Names and places are more use to us than categories here._
 
@@ -1073,20 +1021,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Nothing yet
   - Other
 
-**2. How many project activities have you been to or used?**
-
-> Open with: "Roughly how many things from the project have you been to or used?"
-
-_Field days, demonstrations, webinars, case studies, calculators, or a conversation with somebody from the project._
-
-_One answer only._
-
-  - None yet
-  - One
-  - Two or three
-  - Four or more
-
-**3. Has any of it changed what you do, or plan to do?**
+**2. Has any of it changed what you do, or plan to do?**
 
 > Open with: "Has any of it changed what you're doing, or planning to do?"
 > Then probe: "What was it that made the difference?"
@@ -1099,7 +1034,7 @@ _One answer only._
   - No change
   - Have not seen enough to say
 
-**4. If you have changed something, would you have made that change without the project?**
+**3. If you have changed something, would you have made that change without the project?**
 
 > Open with: "If you have changed something, do you reckon you would have done it anyway, without the project?"
 
@@ -1112,9 +1047,9 @@ _One answer only._
   - Not sure
   - Nothing has changed yet
 
-**5. Since the project started, has new gear or technology changed the labour in your business?**
+**4. Since the project started, has new machinery or technology changed the labour in your business?**
 
-> Open with: "Has any new gear changed the labour side of things for you?"
+> Open with: "Has any new machinery changed the labour side of things for you?"
 > Then probe: "Which job did that happen in?"
 
 _One answer only._
@@ -1126,7 +1061,7 @@ _One answer only._
   - No change yet
   - Does not apply to my work
 
-**6. If something changed, what was it, and what made the difference?**
+**5. If something changed, what was it, and what made the difference?**
 
 _Optional. A sentence is plenty._
 
@@ -1136,16 +1071,17 @@ _Let them talk. Write it down in their words, not yours._
 
 ## How we should go about it
 
-**1. What could we do that would be worth your while, for your business or for the industry?**
+**1. What could we do that would be most useful for your business or for the industry?**
 
 > Open with: "What could we do that you'd actually use?"
 > Then probe: "What would make it worth your time?"
 
 _Let them talk. Write it down in their words, not yours._
 
-**2. And what should we not waste time or money on?**
+**2. What won't work and what should we not waste time or money on?**
 
-> Open with: "And what should we not bother with?"
+> Open with: "What won't work, and what should we not bother with?"
+> Then probe: "What makes you say that?"
 
 _Let them talk. Write it down in their words, not yours._
 
@@ -1168,40 +1104,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - PotatoLink articles or updates
   - Other
 
-**4. If we wanted a yarn later on, when suits you best?**
-
-_Tick as many as you like._
-
-_Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
-
-  - Early morning
-  - Late morning
-  - Afternoon
-  - Evening
-  - Outside peak production periods
-  - During winter or the off-season
-  - Other
-  - Prefer not to say
-
-## Next time we ask
-
-**1. Would you like us to be able to compare your answers with next time?**
-
-> Open with: "Would you be happy to give us three quick answers, so we can compare your answers with next time without your name?"
-> Then probe: "If you would rather not, that is fine, and we will move on."
-
-_We'll ask these questions again later in the project. Three quick answers below give you a code that comes out the same next time, so we can see how things change for the same people. It's made from your answers, not your name, and on its own it can't tell us who you are. There's nothing to remember, and you can skip it._
-
-_Ask the three one at a time, and only if they are happy to: the first two letters of their mother's first name (or whoever raised them), the day of the month they were born, and the first two letters of the town they grew up in. Enter them in the three boxes and the form builds the code. If they would rather not, move on._
-
-**2. If we would like to quote something you have written, without your name, is that all right?**
-
-_One answer only._
-
-  - Yes
-  - No, please do not quote me
-
-## Before you hang up
+## Staying involved
 
 **Would you like to be involved in any of this?** _Read the list. Ticking something is an expression of interest, not a commitment — say so._
 
@@ -1217,5 +1120,18 @@ _One answer only._
 
 If they say yes to anything, take their name, organisation, region, and an email or a phone number, plus when suits for a call. Tell them it is kept separately from their answers and used only for what they picked.
 
-Then thank them, and tell them a summary of what the industry said will come back to them.
+## Next time we ask
+
+**1. Would you like us to be able to compare your answers with next time?**
+
+> Open with: "Would you be happy to give us three quick answers, so we can compare your answers with next time without your name?"
+> Then probe: "If you would rather not, that is fine, and we will move on."
+
+_Optional. Three quick answers create a code so we can ask these questions again later in the project and compare your answers over time. The code will be used next time and allows you to stay anonymous._
+
+_Ask the three one at a time, and only if they are happy to: the first two letters of their mother's first name (or whoever raised them), the day of the month they were born, and the first two letters of the town they grew up in. Enter them in the three boxes and the form builds the code. If they would rather not, move on._
+
+## Before you hang up
+
+Thank them, and tell them a summary of what the industry said will come back to them.
 

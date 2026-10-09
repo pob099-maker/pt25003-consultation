@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NO_INTEREST_ID } from '../content/questionnaire';
-import { REACH_MESSAGE, canBeReached, contactFormSchema, type ContactFormValues } from '../schemas/consultation';
+import { REACH_MESSAGE, contactDecision, contactFormSchema, type ContactFormValues } from '../schemas/consultation';
 import type { Option } from '../types';
 import { accentPanel, choiceRow, choiceRowSelected, textInput } from './ui';
 
@@ -11,8 +11,22 @@ interface Props {
   readonly interests: readonly string[];
   readonly onInterestsChange: (interests: readonly string[]) => void;
   readonly formId: string;
+  /** What was filled in before, when somebody comes back to this step. */
+  readonly initial?: ContactFormValues | null;
   readonly onSubmit: (contact: ContactFormValues | null) => void;
 }
+
+const EMPTY: ContactFormValues = {
+  name: '',
+  organisation: '',
+  broadRole: '',
+  region: '',
+  email: '',
+  phone: '',
+  preferredContactMethod: 'email',
+  preferredContactTime: '',
+  comments: '',
+};
 
 const Field = ({
   id,
@@ -51,9 +65,12 @@ export const StayInvolved = ({
   interests,
   onInterestsChange,
   formId,
+  initial = null,
   onSubmit,
 }: Props) => {
-  const wantsContact = interests.length > 0 && !interests.includes(NO_INTEREST_ID);
+  // The boxes are there unless somebody has said no thanks. Ticking something
+  // is not the price of leaving a name and a number.
+  const declined = interests.includes(NO_INTEREST_ID);
 
   const {
     register,
@@ -62,17 +79,7 @@ export const StayInvolved = ({
     formState: { errors },
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: {
-      name: '',
-      organisation: '',
-      broadRole: '',
-      region: '',
-      email: '',
-      phone: '',
-      preferredContactMethod: 'email',
-      preferredContactTime: '',
-      comments: '',
-    },
+    defaultValues: initial ?? EMPTY,
   });
 
   const toggle = (id: string): void => {
@@ -91,14 +98,15 @@ export const StayInvolved = ({
       id={formId}
       noValidate
       onSubmit={handleSubmit((values) => {
-        if (!wantsContact) {
+        const decision = contactDecision(interests, values, NO_INTEREST_ID);
+        if (decision === 'skip') {
           onSubmit(null);
           return;
         }
         // Caught here, before anything is sent: the same rule the stored
         // record applies, so the answers never go ahead of a contact that
         // would then be refused.
-        if (!canBeReached(values)) {
+        if (decision === 'needs-reach') {
           setError('email', { message: REACH_MESSAGE }, { shouldFocus: true });
           return;
         }
@@ -144,11 +152,17 @@ export const StayInvolved = ({
         </ul>
       </fieldset>
 
-      {wantsContact && (
-        <section className="mt-6 grid gap-4" aria-label="Your contact details">
-          <p className="text-meta text-ink-soft">
-            Please give at least an email address or a phone number. Everything else is optional.
-          </p>
+      {!declined && (
+        <section className="mt-6 grid gap-4" aria-labelledby="contact-heading">
+          <div>
+            <h3 id="contact-heading" className="text-subtitle font-semibold text-ink">
+              Your contact details
+            </h3>
+            <p className="mt-1 text-meta text-ink-soft">
+              Leave these blank if you would rather not be contacted. If you fill them in, please give at least an
+              email address or a phone number. You don&rsquo;t need to tick anything above to leave your details.
+            </p>
+          </div>
           <Field id="name" label="Name">
             <input id="name" className={textInput} autoComplete="name" {...register('name')} />
           </Field>

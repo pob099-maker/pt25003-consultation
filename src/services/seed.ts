@@ -3,7 +3,8 @@ import { CALLBACK_INTEREST_ID, callTimeSummary } from './callback';
 import type { Answer, AnswerMap, ConsultationResponse, ContactRecord, RoleId } from '../types';
 
 /**
- * Realistic test data, one response per role. Every record carries
+ * Realistic test data, a response from each part of the chain: two from the
+ * machinery branch, a dealer and a technology provider. Every record carries
  * isTestData: true and the admin area filters it out by default, so a count
  * shown to the project team is never inflated by demonstration rows.
  */
@@ -19,7 +20,9 @@ interface SeedSpec {
   readonly constraints: readonly string[];
   readonly topThree: readonly string[];
   readonly impacts: readonly string[];
-  readonly badSeason: string;
+  /** Written in the box under how the top challenge affects businesses. */
+  readonly toughSeason: string;
+  readonly sectors: readonly string[];
   readonly areas: Record<string, number>;
   readonly opportunities: string;
   readonly evidence: readonly string[];
@@ -27,18 +30,18 @@ interface SeedSpec {
   readonly mostUseful: string;
   readonly avoid: string;
   readonly formats: readonly string[];
-  readonly timing: readonly string[];
   readonly minutes: number;
 }
 
 const SPECS: readonly SeedSpec[] = [
   {
     role: 'grower',
+    sectors: ['processing_fry', 'seed'],
     regions: ['nw-tas-sisters-creek'],
     constraints: ['harvest', 'harvest_logistics', 'skills', 'storage'],
     topThree: ['harvest', 'skills', 'harvest_logistics'],
     impacts: ['labour_avail', 'timeliness', 'damage'],
-    badSeason:
+    toughSeason:
       'A wet November and we simply cannot lift on time. Last season we left two paddocks a fortnight late, the skin set went off and the pack-out dropped about eight per cent. Chasing extra crew at that point costs more than the crop is worth.',
     areas: {
       harvest_efficiency: 5,
@@ -56,35 +59,31 @@ const SPECS: readonly SeedSpec[] = [
     },
     opportunities:
       'Harvester damage reduction first. Small changes to web speed and drop heights make a real difference and cost very little compared with a new machine.',
-    evidence: ['local_demo', 'roi', 'peer', 'service'],
+    evidence: ['local_demo', 'own_trial', 'roi', 'service'],
     pathwayAnswers: {
       farm_scale: { kind: 'single', value: '5k_20k' },
       farm_pressure: { kind: 'multi', values: ['harvest', 'carting', 'staffing'], other: '' },
-      farm_practices: { kind: 'rating', values: { guidance: 5, harvest_tech: 4, precision_planting: 2 } },
-      farm_outcome: { kind: 'single', value: 'refine' },
+      farm_practices: { kind: 'rating', values: { guidance: 5, harvest_tech: 4, precision_planting: 2, crop_sensing: 6 } },
+      farm_outcome: { kind: 'single', value: 'refine', note: 'Clod separation on the harvester' },
       farm_barriers: { kind: 'multi', values: ['capital', 'roi', 'service'], other: '' },
       farm_measures: { kind: 'multi', values: ['labour_hours', 'packout', 'damage', 'timeliness'], other: '' },
       farm_case_study: { kind: 'single', value: 'own_farm' },
-      farm_scepticism: {
-        kind: 'text',
-        value:
-          'Fully autonomous tractors in our country. Paddocks are small and hilly and the service support is not there yet.',
-      },
     },
     mostUseful:
       'Independent bruise and damage benchmarking across a few different harvesters, in our conditions, with the numbers published.',
-    avoid: 'Another survey of what growers think. Go and measure something on a working farm.',
+    avoid:
+      'Fully autonomous tractors in our country. Paddocks are small and hilly and the service support is not there yet. And another survey of what growers think: go and measure something on a working farm.',
     formats: ['case_studies', 'field_demos', 'peer_groups', 'articles'],
-    timing: ['early_am', 'winter'],
     minutes: 11,
   },
   {
     role: 'farm_manager',
+    sectors: ['fresh', 'processing_crisp'],
     regions: ['mallee-loxton'],
     constraints: ['irrigation', 'monitoring', 'maintenance', 'skills'],
     topThree: ['skills', 'maintenance', 'irrigation'],
     impacts: ['timeliness', 'downtime', 'training'],
-    badSeason:
+    toughSeason:
       'We lose days waiting on parts. In January that is irrigation missed, and you cannot get that back in a crop.',
     areas: {
       predictive_maintenance: 5,
@@ -106,25 +105,24 @@ const SPECS: readonly SeedSpec[] = [
       farm_scale: { kind: 'single', value: '20k_50k' },
       farm_pressure: { kind: 'multi', values: ['irrigation', 'maintenance', 'staffing'], other: '' },
       farm_practices: { kind: 'rating', values: { guidance: 4, optical_grading: 1, autonomy: 2 } },
-      farm_outcome: { kind: 'single', value: 'expand' },
+      farm_outcome: { kind: 'single', value: 'expand', note: 'Autosteer on the planter' },
       farm_barriers: { kind: 'multi', values: ['operators', 'fit', 'data'], other: '' },
       farm_measures: { kind: 'multi', values: ['labour_hours', 'inputs', 'maintenance'], other: '' },
       farm_case_study: { kind: 'single', value: 'own_farm' },
-      farm_scepticism: { kind: 'text', value: '' },
     },
     mostUseful: 'Short, practical training for operators. Most of the gear we already have is not used properly.',
     avoid: 'Big conference presentations.',
     formats: ['checklists', 'videos', 'briefings'],
-    timing: ['late_am', 'off_peak'],
     minutes: 8,
   },
   {
     role: 'contractor',
+    sectors: ['fresh', 'processing_fry'],
     regions: ['ballarat', 'gippsland-thorpdale'],
     constraints: ['harvest', 'harvest_logistics', 'maintenance'],
     topThree: ['harvest_logistics', 'maintenance', 'harvest'],
     impacts: ['timeliness', 'downtime', 'labour_cost'],
-    badSeason: 'Everyone wants us in the same fortnight. If a machine goes down we push three clients back a week.',
+    toughSeason: 'Everyone wants us in the same fortnight. If a machine goes down we push three clients back a week.',
     areas: {
       harvest_logistics: 5,
       predictive_maintenance: 5,
@@ -144,26 +142,25 @@ const SPECS: readonly SeedSpec[] = [
     pathwayAnswers: {
       con_scale: { kind: 'single', value: '1k_5k' },
       con_peak: { kind: 'multi', values: ['harvest', 'carting', 'machine_moves'], other: '' },
-      con_limits: { kind: 'multi', values: ['machine_availability', 'operators', 'parts_lead'], other: '' },
-      con_service: { kind: 'multi', values: ['parts_in_season', 'technicians'], other: '' },
+      con_limits: { kind: 'multi', values: ['machine_availability', 'operators', 'parts_lead', 'dealer_support'], other: '' },
       con_skills: { kind: 'multi', values: ['harvester_setup', 'damage', 'new_operators'], other: '' },
       con_tech: { kind: 'multi', values: ['logistics', 'telemetry', 'training'], other: '' },
-      con_demo: { kind: 'multi', values: ['commercial_rates', 'paid', 'off_peak'], other: '' },
+      con_demo: { kind: 'multi', values: ['paid', 'off_peak', 'client_ok'], other: '' },
       con_other: { kind: 'text', value: 'Parts out of Europe on a three week lead time is the killer.' },
     },
     mostUseful: 'Help the industry lift operator skills. That is worth more than new machinery.',
     avoid: 'Trials on plots that do not reflect commercial speed.',
     formats: ['field_demos', 'checklists', 'one_to_one'],
-    timing: ['evening', 'winter'],
     minutes: 9,
   },
   {
     role: 'processor',
+    sectors: ['fresh'],
     regions: ['ne-tas-scottsdale', 'ballarat'],
     constraints: ['grading', 'receival', 'packing', 'data'],
     topThree: ['grading', 'packing', 'data'],
     impacts: ['labour_avail', 'quality', 'labour_cost'],
-    badSeason: 'We run short shifts because we cannot staff the grading table, and quality complaints follow.',
+    toughSeason: 'We run short shifts because we cannot staff the grading table, and quality complaints follow.',
     areas: {
       optical_sorting: 5,
       packhouse_automation: 5,
@@ -196,16 +193,16 @@ const SPECS: readonly SeedSpec[] = [
     mostUseful: 'Independent testing of sorting accuracy under real conditions, not vendor figures.',
     avoid: 'Duplicating what equipment suppliers already publish.',
     formats: ['case_studies', 'roi_tools', 'factsheets'],
-    timing: ['afternoon', 'off_peak'],
     minutes: 10,
   },
   {
     role: 'machinery',
+    sectors: ['fresh', 'processing_fry', 'processing_crisp', 'seed'],
     regions: ['national'],
     constraints: ['maintenance', 'skills', 'harvest'],
     topThree: ['skills', 'maintenance', 'harvest'],
     impacts: ['training', 'downtime', 'labour_cost'],
-    badSeason: 'Customers cannot get technicians, so small faults become whole-season problems.',
+    toughSeason: 'Customers cannot get technicians, so small faults become whole-season problems.',
     areas: {
       training: 5,
       predictive_maintenance: 5,
@@ -223,12 +220,15 @@ const SPECS: readonly SeedSpec[] = [
     opportunities: 'Technician training pathways, and getting machine data off equipment in a usable form.',
     evidence: ['local_demo', 'training', 'compatibility'],
     pathwayAnswers: {
-      mach_available: {
-        kind: 'multi',
-        values: ['precision_planting', 'harvest_efficiency', 'optical_sorting', 'sensors', 'predictive_maintenance'],
-        other: '',
-      },
-      mach_ready: { kind: 'multi', values: ['optical_sorting', 'sensors', 'predictive_maintenance'], other: '' },
+      mach_available: rating({
+        precision_planting: 4,
+        harvest_efficiency: 4,
+        optical_sorting: 5,
+        sensors: 4,
+        predictive_maintenance: 3,
+        autonomy: 2,
+        robotics: 1,
+      }),
       mach_barriers: { kind: 'multi', values: ['capital', 'roi', 'service', 'operators'], other: '' },
       mach_capacity: { kind: 'multi', values: ['field_techs', 'parts_holding', 'tech_training'], other: '' },
       mach_gaps: { kind: 'multi', values: ['row_spacing', 'soil', 'scale', 'support_distance'], other: '' },
@@ -241,16 +241,16 @@ const SPECS: readonly SeedSpec[] = [
     mostUseful: 'A clear-eyed assessment of what is genuinely commercially ready for Australian conditions.',
     avoid: 'Promoting prototypes as though they were products.',
     formats: ['field_demos', 'factsheets', 'one_to_one'],
-    timing: ['afternoon'],
     minutes: 8,
   },
   {
-    role: 'technology',
+    role: 'machinery',
+    sectors: ['fresh', 'processing_fry'],
     regions: ['national'],
     constraints: ['data', 'monitoring', 'grading'],
     topThree: ['data', 'grading', 'monitoring'],
     impacts: ['data', 'quality', 'labour_cost'],
-    badSeason: 'Decisions get made on memory rather than measurement, and the same mistakes repeat.',
+    toughSeason: 'Decisions get made on memory rather than measurement, and the same mistakes repeat.',
     areas: {
       sensors: 5,
       interoperability: 5,
@@ -283,16 +283,16 @@ const SPECS: readonly SeedSpec[] = [
     mostUseful: 'Set data standards the industry can actually agree on.',
     avoid: 'Funding one-off software that nobody maintains after the project ends.',
     formats: ['briefings', 'factsheets', 'one_to_one'],
-    timing: ['late_am'],
     minutes: 9,
   },
   {
     role: 'adviser',
+    sectors: ['processing_fry', 'seed'],
     regions: ['mt-gambier-warrnambool', 'ballarat'],
     constraints: ['monitoring', 'skills', 'data', 'harvest'],
     topThree: ['skills', 'monitoring', 'data'],
     impacts: ['training', 'data', 'timeliness'],
-    badSeason: 'Growers fall back on what they did last year, because there is no local evidence to do otherwise.',
+    toughSeason: 'Growers fall back on what they did last year, because there is no local evidence to do otherwise.',
     areas: {
       training: 5,
       sensors: 4,
@@ -314,7 +314,6 @@ const SPECS: readonly SeedSpec[] = [
       adv_evaluate: { kind: 'multi', values: ['optical_sorting', 'harvest_efficiency'], other: '' },
       adv_measurements: { kind: 'multi', values: ['damage', 'throughput', 'labour_hours', 'cost'], other: '' },
       adv_underrepresented: { kind: 'multi', values: ['operators', 'small_farms'], other: '' },
-      adv_sharing: { kind: 'multi', values: ['case_numbers', 'field_days', 'existing_groups'], other: '' },
       adv_connections: {
         kind: 'text',
         value: 'The existing PotatoLink demonstration sites, and the soil health work in Tasmania.',
@@ -323,16 +322,16 @@ const SPECS: readonly SeedSpec[] = [
     mostUseful: 'Generate Australian numbers. Everything else follows from that.',
     avoid: 'Repeating overseas literature reviews.',
     formats: ['case_studies', 'field_demos', 'webinars', 'factsheets'],
-    timing: ['late_am', 'off_peak'],
     minutes: 12,
   },
   {
     role: 'industry_body',
+    sectors: ['fresh', 'processing_fry', 'processing_crisp', 'seed'],
     regions: ['national'],
     constraints: ['skills', 'data', 'maintenance'],
     topThree: ['skills', 'data', 'maintenance'],
     impacts: ['training', 'labour_cost', 'whs'],
-    badSeason: 'Workforce shortages hit every region at once and there is no shared response.',
+    toughSeason: 'Workforce shortages hit every region at once and there is no shared response.',
     areas: {
       training: 5,
       interoperability: 4,
@@ -348,7 +347,7 @@ const SPECS: readonly SeedSpec[] = [
       irrigation_automation: 3,
     },
     opportunities: 'Workforce and skills pathways, linked to the machinery that is actually being bought.',
-    evidence: ['case_study', 'peer', 'safety'],
+    evidence: ['case_study', 'not_my_call', 'safety'],
     pathwayAnswers: {
       ind_priorities: { kind: 'multi', values: ['labour', 'skills', 'capital'], other: '' },
       ind_role: { kind: 'multi', values: ['independent_evidence', 'training', 'advocacy'], other: '' },
@@ -361,12 +360,9 @@ const SPECS: readonly SeedSpec[] = [
     mostUseful: 'Connect the mechanisation work to workforce planning rather than treating them separately.',
     avoid: 'Creating a new grower network. Use the ones that exist.',
     formats: ['briefings', 'articles', 'peer_groups'],
-    timing: ['afternoon', 'no_say'],
     minutes: 7,
   },
 ];
-
-const TRIAL_ANSWERS = ['essential', 'essential', 'helpful', 'essential', 'not_my_call', 'helpful', 'helpful', 'not_my_call'];
 
 const TRUST_ANSWERS: readonly (readonly string[])[] = [
   ['neighbours', 'grower_groups', 'agronomist'],
@@ -402,20 +398,18 @@ export const seedResponses = (): readonly ConsultationResponse[] =>
     const submittedAt = isoDaysAgo(SEED_DAYS_AGO.response(index, SPECS.length));
     const durationSeconds = spec.minutes * 60;
     const answers: AnswerMap = {
+      sector: { kind: 'multi', values: spec.sectors, other: '' },
       q1_constraints: { kind: 'multi', values: spec.constraints, other: '' },
       q2_top_three: { kind: 'rank', values: spec.topThree },
-      q3_impact: { kind: 'multi', values: spec.impacts, other: '' },
-      q4_bad_season: { kind: 'text', value: spec.badSeason },
+      q3_impact: { kind: 'multi', values: spec.impacts, other: '', note: spec.toughSeason },
       q5_areas: rating(spec.areas),
       q6_first_opportunities: { kind: 'text', value: spec.opportunities },
       q7_evidence: { kind: 'multi', values: spec.evidence, other: '' },
-      q_trial: { kind: 'single', value: TRIAL_ANSWERS[index % TRIAL_ANSWERS.length] ?? 'helpful' },
       q_trust: { kind: 'multi', values: TRUST_ANSWERS[index % TRUST_ANSWERS.length] ?? [], other: '' },
       ...spec.pathwayAnswers,
       pd_most_useful: { kind: 'text', value: spec.mostUseful },
       pd_avoid: { kind: 'text', value: spec.avoid },
       pd_formats: { kind: 'multi', values: spec.formats, other: '' },
-      pd_timing: { kind: 'multi', values: spec.timing, other: '' },
     };
     return {
       id: `00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`,

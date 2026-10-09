@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { seedContacts, seedResponses } from './seed';
-import { contactsCsv, freeTextCsv, responseHeaders, responsesCsv } from './exportCsv';
+import { contactsCsv, responseHeaders, responsesCsv } from './exportCsv';
 
 const q = DEFAULT_QUESTIONNAIRE;
 
@@ -21,7 +21,7 @@ describe('responsesCsv', () => {
     const csv = responsesCsv(q, seedResponses());
     const lines = csv.trimEnd().split('\r\n');
     expect(lines).toHaveLength(seedResponses().length + 1);
-    expect(csv).toContain('Potato grower or business owner');
+    expect(csv).toContain('Grower: business owner');
     expect(csv).not.toContain(',harvest_logistics,');
   });
 
@@ -37,24 +37,15 @@ describe('responsesCsv', () => {
     expect(csv).toContain('Weeding robot');
   });
 
-  it('carries whether each comment may be quoted', () => {
-    const csv = freeTextCsv(
-      [
-        {
-          responseId: 'r1',
-          submittedAt: '2026-09-29T00:00:00.000Z',
-          role: 'grower',
-          questionId: 'q4_bad_season',
-          questionPrompt: 'Tough season?',
-          text: 'Wet harvest',
-          quote: 'no',
-        },
-      ],
-      {},
-      () => 'Grower',
-    );
-    expect(csv).toContain('quote_ok');
-    expect(csv).toContain('Do not quote');
+  it("puts a question's own box in a column of its own, beside the answer", () => {
+    const [first] = seedResponses();
+    if (first === undefined) throw new Error('no seeded response');
+    const csv = responsesCsv(DEFAULT_QUESTIONNAIRE, [
+      { ...first, answers: { farm_outcome: { kind: 'single', value: 'stopped', note: 'Drone scouting' } } },
+    ]);
+    expect(csv).toContain('farm_outcome__note');
+    expect(csv).toContain('Drone scouting');
+    expect(csv).not.toContain('quote_ok');
   });
 
   it('never reads a row id as something every object already has', () => {

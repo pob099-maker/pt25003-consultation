@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
-import { QUOTE_OK_ID } from '../content/lookup';
 import { PROJECTS } from '../content/projects';
 import { scoreboardSettingsFor } from '../content/scoreboardSettings';
 import {
@@ -150,17 +149,17 @@ describe('the evidence behind a finding', () => {
   it('counts tagged comments and how many regions heard from raised the theme', () => {
     const sa = many(5, { regions: ['murray-bridge-adelaide-plains'] });
     const tas = many(5, { regions: ['ne-tas-scottsdale'] });
-    const tags = { [`${sa[0]?.id}:q4_bad_season`]: ['Labour'], [`${tas[0]?.id}:q4_bad_season`]: ['Labour'], [`${tas[1]?.id}:q4_bad_season`]: ['ROI'] };
+    const tags = { [`${sa[0]?.id}:q6_first_opportunities`]: ['Labour'], [`${tas[0]?.id}:q6_first_opportunities`]: ['Labour'], [`${tas[1]?.id}:q6_first_opportunities`]: ['ROI'] };
     const labour = themeEvidence([...sa, ...tas], tags, coverage).find((entry) => entry.theme === 'Labour');
     expect(labour).toEqual({ theme: 'Labour', comments: 2, regionsRaised: 2, regionsHeardFrom: 2 });
   });
 
-  it('only offers comments from somebody who said yes to being quoted', () => {
-    const yes = response({ answers: { q4_bad_season: { kind: 'text', value: 'Harvest ran a month late.' }, [QUOTE_OK_ID]: { kind: 'single', value: 'yes' } } });
-    const no = response({ answers: { q4_bad_season: { kind: 'text', value: 'Do not use this.' }, [QUOTE_OK_ID]: { kind: 'single', value: 'no' } } });
-    const unasked = response({ answers: { q4_bad_season: { kind: 'text', value: 'Never asked.' } } });
-    const offered = quoteCandidates(q, [yes, no, unasked], {}).map((quote) => quote.text);
-    expect(offered).toEqual(['Harvest ran a month late.']);
+  it('offers every comment, since none carries a name, and leaves the follow-up code out', () => {
+    const written = response({ answers: { q6_first_opportunities: { kind: 'text', value: 'Harvest ran a month late.' } } });
+    const boxed = response({ answers: { q3_impact: { kind: 'multi', values: [], other: '', note: 'Wet spring.' } } });
+    const coded = response({ answers: { link_code: { kind: 'text', value: 'JO14BA' } } });
+    const offered = quoteCandidates(q, [written, boxed, coded], {}).map((quote) => quote.text);
+    expect(offered.sort()).toEqual(['Harvest ran a month late.', 'Wet spring.']);
   });
 });
 

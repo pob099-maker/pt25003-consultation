@@ -23,11 +23,11 @@ const find = (id: string): Question => {
 
 describe('estimate', () => {
   it('costs a rating grid more than a single choice', () => {
-    expect(questionSeconds(find('q5_areas'))).toBeGreaterThan(questionSeconds(find('q_trial')));
+    expect(questionSeconds(find('q5_areas'))).toBeGreaterThan(questionSeconds(find('farm_case_study')));
   });
 
   it('charges for typing on a phone', () => {
-    expect(questionSeconds(find('q4_bad_season'))).toBeGreaterThan(40);
+    expect(questionSeconds(find('q6_first_opportunities'))).toBeGreaterThan(40);
   });
 
   it('makes the short version shorter than the full one', () => {

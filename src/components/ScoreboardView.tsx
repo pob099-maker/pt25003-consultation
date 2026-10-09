@@ -511,7 +511,7 @@ export const ScoreboardView = ({ edition, numbers, items, settings, projectName,
             <li>A contribution is one set of answers: online, by phone or in person, or at a workshop. Answers are anonymous, so they cannot be matched to people.</li>
             <li>Nothing here rests on fewer than {THRESHOLD} contributions. A smaller figure shows as "Fewer than {THRESHOLD}", and a region counts as heard from once it reaches {THRESHOLD}.</li>
             <li>Regions are shown as heard from or still needed, never ranked against each other.</li>
-            <li>Quotes are used only where the person said yes to being quoted, without their name. Everything else is a summary.</li>
+            <li>Quotes never carry a name, and are used only where the words cannot identify a person or a business. Everything else is a summary.</li>
             <li>Each update is fixed once published. A correction goes in the next one.</li>
           </ul>
         </details>

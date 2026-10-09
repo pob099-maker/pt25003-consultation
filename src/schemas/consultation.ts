@@ -15,12 +15,17 @@ export const answerSchema = z.discriminatedUnion('kind', [
     values: z.array(z.string()).max(40),
     other: z.string().max(500).optional(),
     prompted: z.array(z.string()).max(40).optional(),
+    // A question's own box. Listed here because an unlisted key is dropped
+    // without a word, and the words would never reach the results.
+    note: z.string().max(2000).optional(),
   }),
-  z.object({ kind: z.literal('single'), value: z.string().min(1).max(120) }),
+  z.object({ kind: z.literal('single'), value: z.string().min(1).max(120), note: z.string().max(300).optional() }),
   z.object({ kind: z.literal('text'), value: z.string().max(4000) }),
   z.object({
     kind: z.literal('rating'),
-    values: z.record(z.string(), z.number().int().min(1).max(5)),
+    // A scale's own steps, plus an answer beside them such as 6, tried it
+    // and stopped. Which values a question offers is the question's business.
+    values: z.record(z.string(), z.number().int().min(1).max(10)),
     other: z.string().max(500).optional(),
   }),
   z.object({ kind: z.literal('rank'), values: z.array(z.string()).max(5) }),
@@ -86,6 +91,31 @@ export const canBeReached = (details: { readonly email: string; readonly phone: 
   details.email.trim().length > 0 || details.phone.trim().length > 0;
 
 export const REACH_MESSAGE = 'Please give an email address or a phone number so we can reach you.';
+
+/**
+ * What to do with the last step, whether or not anything is ticked above the
+ * contact boxes. Nothing ticked and nothing filled in is a plain "no thanks".
+ * Anything ticked, or any box filled in, needs a way to reach them.
+ */
+export const contactDecision = (
+  interests: readonly string[],
+  values: ContactFormValues,
+  noneId: string,
+): 'skip' | 'needs-reach' | 'send' => {
+  if (interests.includes(noneId)) return 'skip';
+  const filledIn = [
+    values.name,
+    values.organisation,
+    values.broadRole,
+    values.region,
+    values.email,
+    values.phone,
+    values.preferredContactTime,
+    values.comments,
+  ].some((value) => value.trim().length > 0);
+  if (interests.length === 0 && !filledIn) return 'skip';
+  return canBeReached(values) ? 'send' : 'needs-reach';
+};
 
 export const contactRecordSchema = z
   .object({

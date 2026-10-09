@@ -237,6 +237,10 @@ whatever their role, was offered the project reference group, so that list is co
 Treat every tick as an expression of interest rather than a commitment — the wording on the form
 says somebody will talk it through first, so make sure that call happens before anyone is counted on.
 
+The contact boxes are there whether or not anything is ticked, so somebody can leave a name and a
+way to reach them without signing up for anything in particular. They show on the Contacts tab as
+**Happy to be contacted**. Only ticking **None of these** takes the boxes away.
+
 ## Somebody who would rather not use the form
 
 The **Phone script** tab is the whole consultation laid out to be read down the phone: an opening to
@@ -375,11 +379,14 @@ still counts in the live totals, but not in the responses.
 
 ## Tagging comments
 
-Open the **Comments** tab. Each free-text answer shows the role, the date, the question, and
-whether the person agreed to be quoted: **OK to quote, without their name**, **Do not quote**, or
-**Not asked about quoting**. The short version and interim checks never ask, so treat "not asked" as
-a no. The same answer is in the `quote_ok` column of the comments export. Tap any theme to apply or
-remove it; it saves immediately, and appears in the comments export.
+Open the **Comments** tab. Each free-text answer shows the role, the date and the question. It
+includes what people wrote in a question's own box: the tough-season example under question 6 and
+the "What is it?" box under question 16. Tap any theme to apply or remove it; it saves immediately,
+and appears in the comments export.
+
+Nobody is asked separately whether they may be quoted. The consultation is anonymous, and the privacy
+statement says comments may be quoted without a name where they cannot identify a person or a
+business. Whether a particular comment could identify somebody is still your call when you use it.
 
 The themes are fixed so that tagging stays consistent between people: Labour, Timeliness,
 Harvesting, Planting, Logistics, Grading, Packhouse, Quality, Damage, Reliability, Safety,
@@ -408,8 +415,8 @@ address, such as `#/scoreboard/2026-10`.
    "Where we need you" line, and any activities held outside the tool, such as field visits.
 4. **What we heard**: up to five findings. Pick a theme and the tab shows the evidence behind it:
    how many comments carry the tag, and how many of the regions heard from raised it. "You said" is
-   either a summary in your words or a quote, and the quote list only offers comments from people
-   who said yes to being quoted. Tag comments on the Comments tab first and the evidence follows.
+   either a summary in your words or a quote, without a name. Check a quote cannot identify anybody
+   before you use it. Tag comments on the Comments tab first and the evidence follows.
 5. **The register** holds everything people raised and everything the project has committed to. It
    carries from month to month. Tick up to five to lead the page as this month's commitments. Two
    outcomes say no honestly: **Not taking forward** needs the reason, and **Passed on** needs who it

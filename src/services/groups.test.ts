@@ -83,7 +83,7 @@ describe('groupQuestions', () => {
 describe('groupsCsv', () => {
   it('writes one row per group, question and option', () => {
     const csv = groupsCsv(q, [
-      group({ counts: { q1_constraints: { harvest: 7, skills: 2 } }, notes: { q4_bad_season: 'Late harvest' } }),
+      group({ counts: { q1_constraints: { harvest: 7, skills: 2 } }, notes: { q6_first_opportunities: 'Late harvest' } }),
     ]);
     const lines = csv.trim().split('\r\n');
     expect(lines).toHaveLength(4); // header + two options + one note

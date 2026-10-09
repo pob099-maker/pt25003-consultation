@@ -10,7 +10,7 @@ import { Layout } from '../../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { useReportingFrame } from './useReportingFrame';
-import { interestLabel, optionLabel, questionById, roleLabel } from '../../content/lookup';
+import { interestLabel, onScale, questionById, roleLabel } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
 import { contactsCsv, freeTextCsv, responsesCsv } from '../../services/exportCsv';
 import {
@@ -20,7 +20,6 @@ import {
   rateAreas,
   tallyMulti,
   unpromptedCounts,
-  QUOTE_LABEL,
 } from '../../services/analysis';
 import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL, isCallbackRequest } from '../../services/callback';
 import { SOURCES, linkFor, tallyRoutes } from '../../services/sources';
@@ -133,7 +132,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   const priorityScale = useMemo((): [string, string] => {
     const question = questionById(frame, 'q5_areas');
     return question?.kind === 'rating'
-      ? [question.scale[0]?.label ?? 'Low', question.scale.at(-1)?.label ?? 'High']
+      ? [onScale(question.scale)[0]?.label ?? 'Low', onScale(question.scale).at(-1)?.label ?? 'High']
       : ['Low', 'High'];
   }, [frame]);
   // What every downloaded chart says about where its numbers came from.
@@ -143,18 +142,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
   )}`;
   const evidence = useMemo(() => tallyMulti(frame, filtered, 'q7_evidence'), [frame, filtered]);
   const trusted = useMemo(() => tallyMulti(frame, filtered, 'q_trust'), [frame, filtered]);
-  const trial = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const response of filtered) {
-      const answer = response.answers['q_trial'];
-      if (answer !== undefined && answer.kind === 'single')
-        counts.set(answer.value, (counts.get(answer.value) ?? 0) + 1);
-    }
-    const question = questionById(frame, 'q_trial');
-    return [...counts.entries()]
-      .map(([id, count]) => ({ id, label: optionLabel(question, id), count }))
-      .sort((a, b) => b.count - a.count);
-  }, [frame, filtered]);
+  const sectors = useMemo(() => tallyMulti(frame, filtered, 'sector'), [frame, filtered]);
   const comments = useMemo(() => freeTextEntries(frame, filtered), [frame, filtered]);
 
   const toggleTag = async (responseId: string, questionId: string, tag: string): Promise<void> => {
@@ -669,16 +657,18 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
               </ul>
             </section>
             <section className={card}>
-              <h2 className="text-subtitle font-semibold">Trying it small first</h2>
-              <p className="mt-1 text-meta text-ink-soft">How much a small-scale trial matters before committing.</p>
+              <h2 className="text-subtitle font-semibold">Part of the industry</h2>
+              <p className="mt-1 text-meta text-ink-soft">Where the people answering work. Many work in more than one.</p>
               <ul className="mt-3 grid gap-2 text-body">
-                {trial.map((row) => (
+                {sectors.map((row) => (
                   <li key={row.id} className="flex justify-between gap-3">
                     <span>{row.label}</span>
-                    <span className="text-ink-soft">{row.count}</span>
+                    <span className="text-ink-soft">
+                      {row.count} · {percent(row.share)}
+                    </span>
                   </li>
                 ))}
-                {trial.length === 0 && <li className="text-ink-faint">No answers yet.</li>}
+                {sectors.length === 0 && <li className="text-ink-faint">No answers yet.</li>}
               </ul>
             </section>
           </div>
@@ -720,18 +710,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
             return (
               <article key={`${entry.responseId}-${entry.questionId}`} className={card}>
                 <p className="text-meta text-ink-faint">
-                  {roleLabel(questionnaire, entry.role)} · {entry.submittedAt.slice(0, 10)} ·{' '}
-                  <span
-                    className={
-                      entry.quote === 'no'
-                        ? 'font-semibold text-danger'
-                        : entry.quote === 'yes'
-                          ? 'text-ink-soft'
-                          : 'text-ink-faint'
-                    }
-                  >
-                    {QUOTE_LABEL[entry.quote]}
-                  </span>
+                  {roleLabel(questionnaire, entry.role)} · {entry.submittedAt.slice(0, 10)}
                 </p>
                 <h3 className="mt-1 text-meta font-semibold text-ink-soft">{entry.questionPrompt}</h3>
                 <p className="mt-2 whitespace-pre-wrap text-body">{entry.text}</p>

@@ -1,6 +1,7 @@
-import type { Question, Questionnaire, Section } from '../types';
+import type { Question, Questionnaire, ScalePoint, Section } from '../types';
 import { CALLBACK_INTEREST_ID, CALLBACK_INTEREST_LABEL } from '../services/callback';
 import { LINK_CODE_ID } from '../services/linkCode';
+import { KEEP_IN_TOUCH_ID, KEEP_IN_TOUCH_LABEL } from './questionnaire';
 
 /**
  * The row somebody names for themselves at the foot of a rating question that
@@ -20,8 +21,16 @@ const SAFE_ID = /^[a-z0-9][a-z0-9_]{0,79}$/;
 const RESERVED_IDS: ReadonlySet<string> = new Set(['constructor']);
 export const isSafeId = (id: string): boolean => SAFE_ID.test(id) && !RESERVED_IDS.has(id);
 
-/** Whether somebody said a comment of theirs may be quoted, without their name. */
-export const QUOTE_OK_ID = 'quote_ok';
+/**
+ * The ordered steps of a scale, without an answer that sits beside it such as
+ * "tried it and stopped". Only these are averaged or charted as a spread.
+ */
+export const onScale = (scale: readonly ScalePoint[]): readonly ScalePoint[] =>
+  scale.filter((point) => point.offScale !== true);
+
+/** Whether a stored rating is one of the ordered steps of its question's scale. */
+export const isOnScaleValue = (question: Question | undefined, value: number): boolean =>
+  question?.kind !== 'rating' || !question.scale.some((point) => point.offScale === true && point.value === value);
 
 /**
  * The anonymous follow-up code, recognised the one way everywhere: by its id,
@@ -33,11 +42,10 @@ export const isLinkCodeQuestion = (question: Question): boolean =>
   question.id === LINK_CODE_ID || (question.kind === 'text' && question.entry === 'linkCode');
 
 /**
- * Questions one person answers about themselves: the follow-up code and the
- * permission to quote them. Never put to a room, and never "must ask".
+ * Questions one person answers about themselves: the follow-up code. Never put
+ * to a room, and never "must ask".
  */
-export const isPersonalQuestion = (question: Question): boolean =>
-  isLinkCodeQuestion(question) || question.id === QUOTE_OK_ID;
+export const isPersonalQuestion = (question: Question): boolean => isLinkCodeQuestion(question);
 
 export const allSections = (questionnaire: Questionnaire): readonly Section[] => [
   ...questionnaire.core,
@@ -85,6 +93,7 @@ export const interestLabel = (questionnaire: Questionnaire, id: string): string 
   // Not one of the questionnaire's options: it is how somebody asked to be
   // rung rather than something they volunteered for.
   if (id === CALLBACK_INTEREST_ID) return CALLBACK_INTEREST_LABEL;
+  if (id === KEEP_IN_TOUCH_ID) return KEEP_IN_TOUCH_LABEL;
   const common = questionnaire.interestOptions.find((option) => option.id === id);
   if (common !== undefined) return common.label;
   for (const options of Object.values(questionnaire.pathwayInterests)) {

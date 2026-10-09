@@ -13,7 +13,6 @@ import type { ConsultationResponse, ContactRecord, Questionnaire } from '../type
 import type { TagMap } from './tags';
 import { coveredEarlier, notesText } from './interviewNotes';
 import { lengthOf } from './formLength';
-import { QUOTE_LABEL, type QuotePermission } from './analysis';
 
 const RESPONSE_FIXED = [
   'response_id',
@@ -55,6 +54,8 @@ export const responseHeaders = (questionnaire: Questionnaire): readonly string[]
     } else {
       headers.push(question.id);
       if (question.kind === 'multi' && question.allowOther === true) headers.push(`${question.id}__other`);
+      if ((question.kind === 'multi' || question.kind === 'single') && question.note !== undefined)
+        headers.push(`${question.id}__note`);
     }
   }
   return headers;
@@ -115,6 +116,11 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
       }
       continue;
     }
+    // The question's own box, beside the answer it belongs to.
+    if ((question.kind === 'multi' || question.kind === 'single') && question.note !== undefined) {
+      row[`${question.id}__note`] =
+        answer !== undefined && (answer.kind === 'multi' || answer.kind === 'single') ? (answer.note ?? '') : '';
+    }
     if (answer === undefined) {
       row[question.id] = '';
       if (question.kind === 'multi' && question.allowOther === true) row[`${question.id}__other`] = '';
@@ -124,7 +130,7 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
       row[question.id] = join(answer.values.map((id) => optionLabel(question, id)));
       if (question.kind === 'multi' && question.allowOther === true) row[`${question.id}__other`] = answer.other ?? '';
     } else if (answer.kind === 'single') {
-      row[question.id] = optionLabel(question, answer.value);
+      row[question.id] = answer.value === '' ? '' : optionLabel(question, answer.value);
     } else if (answer.kind === 'text') {
       row[question.id] = answer.value;
     }
@@ -184,7 +190,6 @@ const FREE_TEXT_HEADERS = [
   'question_id',
   'question',
   'themes',
-  'quote_ok',
   'text',
 ] as const;
 
@@ -196,7 +201,6 @@ export const freeTextCsv = (
     questionId: string;
     questionPrompt: string;
     text: string;
-    quote: QuotePermission;
   }[],
   tags: TagMap,
   roleName: (role: string | null) => string,
@@ -210,7 +214,6 @@ export const freeTextCsv = (
       question_id: entry.questionId,
       question: entry.questionPrompt,
       themes: join(tags[`${entry.responseId}:${entry.questionId}`] ?? []),
-      quote_ok: QUOTE_LABEL[entry.quote],
       text: entry.text,
     })),
   );

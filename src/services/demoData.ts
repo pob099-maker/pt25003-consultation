@@ -105,6 +105,7 @@ const CONSTRAINT_BIAS: Readonly<Record<string, readonly [number, number]>> = {
   data: [0.2, 0.36],
   harvest_logistics: [0.25, 0.22],
   planting: [0.22, 0.2],
+  land_prep: [0.16, 0.14],
 };
 
 /** Rating rows that improved or slipped between the rounds, by a little. */
@@ -117,7 +118,8 @@ const RATING_SHIFT: Readonly<Record<string, number>> = {
 };
 
 const TEXT_POOL: Readonly<Record<string, readonly string[]>> = {
-  q4_bad_season: [
+  // Written in the box under how the top challenge affects businesses.
+  q3_impact: [
     'Harvest runs late into winter and we lose quality in the ground.',
     'Wet harvest, the machines bog and the bruising goes through the roof.',
     'We can’t get operators, so the harvester sits idle while the crop waits.',
@@ -169,9 +171,9 @@ const ROLE_MIX: readonly (readonly [RoleId, number])[] = [
   ['farm_manager', 14],
   ['contractor', 10],
   ['processor', 12],
-  ['machinery', 8],
-  ['technology', 5],
-  ['adviser', 8],
+  ['machinery', 13],
+  ['adviser', 5],
+  ['researcher', 3],
   ['industry_body', 5],
 ];
 
@@ -218,6 +220,7 @@ const answerFor = (question: Question, rng: Rng, review: boolean, answers: Answe
   switch (question.kind) {
     case 'multi': {
       if (rng() < 0.08) return undefined;
+      const note = question.note !== undefined && rng() < 0.35 ? pick(rng, TEXT_POOL[question.id] ?? GENERIC_TEXT) : undefined;
       const values = choices.filter((id) => {
         const bias = CONSTRAINT_BIAS[id];
         const chance =
@@ -227,17 +230,22 @@ const answerFor = (question: Question, rng: Rng, review: boolean, answers: Answe
         return rng() < chance;
       });
       const chosen = values.length > 0 ? values : [pick(rng, choices)];
-      return { kind: 'multi', values: chosen.slice(0, 6), other: '' };
+      return { kind: 'multi', values: chosen.slice(0, 6), other: '', ...(note === undefined ? {} : { note }) };
     }
-    case 'single':
+    case 'single': {
       if (rng() < 0.06 || choices.length === 0) return undefined;
+      // The box under a single choice names the thing chosen, and the
+      // technologies people write in elsewhere are the same kind of name.
+      const note = question.note !== undefined && rng() < 0.5 ? pick(rng, NAMED_PRACTICES) : undefined;
       return {
         kind: 'single',
         value: weighted(
           rng,
           choices.map((id, index) => [id, choices.length - index * 0.6] as const),
         ),
+        ...(note === undefined ? {} : { note }),
       };
+    }
     case 'rank': {
       const named = answers[question.sourceQuestionId];
       const pool = named?.kind === 'multi' && named.values.length > 0 ? [...named.values] : [...choices];
@@ -256,6 +264,9 @@ const answerFor = (question: Question, rng: Rng, review: boolean, answers: Answe
         const mean = 2.4 + hash(row) * 1.9 + (review ? (RATING_SHIFT[row] ?? 0) : 0);
         const score = Math.round(mean + (rng() + rng() + rng() - 1.5) * 1.3);
         values[row] = Math.max(1, Math.min(5, score));
+        // Now and then somebody gave it up, where the scale allows for it.
+        const stopped = question.scale.find((point) => point.offScale === true);
+        if (stopped !== undefined && rng() < 0.05) values[row] = stopped.value;
       }
       if (question.allowOther === true && rng() < 0.12) {
         values.other = rng() < 0.6 ? 2 : 3;
@@ -303,7 +314,7 @@ const build = (questionnaire: Questionnaire, roundId: string, count: number, see
         answers.q1_constraints = { ...q1, prompted: q1.values.slice(-1) };
       if (rng() < 0.5)
         answers[noteId(questionnaire.core[0]?.id ?? 'general')] = { kind: 'text', value: pick(rng, NOTES) };
-      if (!interim && rng() < 0.3) answers[COVERED_ID] = { kind: 'multi', values: ['q4_bad_season'] };
+      if (!interim && rng() < 0.3) answers[COVERED_ID] = { kind: 'multi', values: ['q6_first_opportunities'] };
     }
     const minutes =
       method === 'workshop' ? 25 : method === 'online' ? 6 + Math.floor(rng() * 9) : 8 + Math.floor(rng() * 10);

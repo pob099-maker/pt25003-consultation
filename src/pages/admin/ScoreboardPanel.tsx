@@ -445,7 +445,7 @@ const FindingForm = ({
           </label>
           <label className="flex min-h-11 items-center gap-2">
             <input type="radio" className="size-4 accent-primary" name={field('kind')} checked={finding.said.kind === 'quote'} onChange={() => set({ said: { kind: 'quote', text: '' } })} />
-            A quote, from somebody who said yes to it
+            A quote, without a name
           </label>
         </div>
         {finding.said.kind === 'summary' ? (
@@ -461,7 +461,7 @@ const FindingForm = ({
           />
         ) : offered.length === 0 ? (
           <p className="text-meta text-ink-faint">
-            No comment {finding.theme === '' ? '' : `tagged ${finding.theme} `}is from somebody who said yes to being quoted. Use a summary instead.
+            No comment {finding.theme === '' ? '' : `tagged ${finding.theme} `}yet. Use a summary instead.
           </p>
         ) : (
           <select

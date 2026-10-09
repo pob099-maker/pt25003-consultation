@@ -42,6 +42,7 @@ describe('interestLabel', () => {
     expect(interestLabel(q, 'reference_group')).toBe('Joining the project reference group');
     expect(interestLabel(q, 'pro_host_trial')).toBe('Hosting a trial in your packhouse, receival or store');
     expect(interestLabel(q, NO_INTEREST_ID)).toBe('None of these');
+    expect(interestLabel(q, 'keep_in_touch')).toBe('Happy to be contacted');
     expect(interestLabel(q, 'unknown_id')).toBe('unknown_id');
   });
 });

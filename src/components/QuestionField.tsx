@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import type { Answer, Option, Question } from '../types';
-import { OTHER_ROW, OTHER_ROW_LABEL } from '../content/lookup';
+import { OTHER_ROW, OTHER_ROW_LABEL, onScale } from '../content/lookup';
 import { choiceRow, choiceRowSelected, textInput } from './ui';
 import { LinkCodeField } from './LinkCodeField';
 
@@ -34,6 +34,32 @@ const Prompt = ({ question, id, override }: { question: Question; id: string; ov
 const OptionHelp = ({ option }: { option: Option }) =>
   option.help === undefined ? null : <span className="mt-0.5 block text-meta text-ink-faint">{option.help}</span>;
 
+/** The question's own box, under its choices. */
+const NoteBox = ({
+  id,
+  label,
+  rows,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  rows: number;
+  value: string;
+  onChange: (value: string) => void;
+}) => (
+  <div className="mt-3">
+    <label className="mb-1 block text-meta text-ink-soft" htmlFor={id}>
+      {label}
+    </label>
+    {rows > 1 ? (
+      <textarea id={id} className={textInput} rows={rows} maxLength={2000} value={value} onChange={(event) => onChange(event.target.value)} />
+    ) : (
+      <input id={id} className={textInput} type="text" maxLength={300} value={value} onChange={(event) => onChange(event.target.value)} />
+    )}
+  </div>
+);
+
 const MultiField = ({ question, answer, onChange, promptOverride, choices }: Props) => {
   const groupId = useId();
   const shown = choices ?? (question.kind === 'multi' ? question.options : []);
@@ -43,15 +69,21 @@ const MultiField = ({ question, answer, onChange, promptOverride, choices }: Pro
     shown.some((option) => option.id === value),
   );
   const other = answer !== undefined && answer.kind === 'multi' ? (answer.other ?? '') : '';
+  const note = answer !== undefined && answer.kind === 'multi' ? (answer.note ?? '') : '';
   const showOther = question.kind === 'multi' && question.allowOther === true && values.includes(OTHER_ID);
 
-  const toggle = (optionId: string): void => {
-    const next = values.includes(optionId) ? values.filter((value) => value !== optionId) : [...values, optionId];
-    if (next.length === 0 && other.trim().length === 0) {
+  /** An example written with nothing ticked is still an answer, so the box keeps it. */
+  const write = (nextValues: readonly string[], nextOther: string, nextNote: string): void => {
+    if (nextValues.length === 0 && nextOther.trim().length === 0 && nextNote.trim().length === 0) {
       onChange(undefined);
       return;
     }
-    onChange({ kind: 'multi', values: next, other: next.includes(OTHER_ID) ? other : '' });
+    onChange({ kind: 'multi', values: nextValues, other: nextOther, ...(nextNote.length > 0 ? { note: nextNote } : {}) });
+  };
+
+  const toggle = (optionId: string): void => {
+    const next = values.includes(optionId) ? values.filter((value) => value !== optionId) : [...values, optionId];
+    write(next, next.includes(OTHER_ID) ? other : '', note);
   };
 
   if (question.kind !== 'multi') return null;
@@ -93,9 +125,18 @@ const MultiField = ({ question, answer, onChange, promptOverride, choices }: Pro
             type="text"
             value={other}
             maxLength={500}
-            onChange={(event) => onChange({ kind: 'multi', values, other: event.target.value })}
+            onChange={(event) => write(values, event.target.value, note)}
           />
         </div>
+      )}
+      {question.note !== undefined && (
+        <NoteBox
+          id={`${groupId}-note`}
+          label={question.note.label}
+          rows={question.note.rows ?? 3}
+          value={note}
+          onChange={(value) => write(values, other, value)}
+        />
       )}
     </fieldset>
   );
@@ -105,6 +146,9 @@ const SingleField = ({ question, answer, onChange }: Props) => {
   const groupId = useId();
   if (question.kind !== 'single') return null;
   const selected = answer !== undefined && answer.kind === 'single' ? answer.value : '';
+  const note = answer !== undefined && answer.kind === 'single' ? (answer.note ?? '') : '';
+  const choose = (value: string, nextNote: string): void =>
+    onChange({ kind: 'single', value, ...(nextNote.length > 0 ? { note: nextNote } : {}) });
   return (
     <fieldset>
       <legend className="contents">
@@ -119,7 +163,7 @@ const SingleField = ({ question, answer, onChange }: Props) => {
                 name={groupId}
                 className="mt-1 size-5 shrink-0 accent-primary"
                 checked={selected === option.id}
-                onChange={() => onChange({ kind: 'single', value: option.id })}
+                onChange={() => choose(option.id, note)}
               />
               <span className="text-body text-ink">
                 {option.label}
@@ -129,6 +173,16 @@ const SingleField = ({ question, answer, onChange }: Props) => {
           </li>
         ))}
       </ul>
+      {/* Once something is chosen, so the words always belong to an answer. */}
+      {question.note !== undefined && selected !== '' && (
+        <NoteBox
+          id={`${groupId}-note`}
+          label={question.note.label}
+          rows={question.note.rows ?? 1}
+          value={note}
+          onChange={(value) => choose(selected, value)}
+        />
+      )}
     </fieldset>
   );
 };
@@ -278,7 +332,8 @@ const RatingField = ({ question, answer, onChange }: Props) => {
       </ol>
       {question.labelEveryStep !== true && (
         <p className="mt-2 text-meta text-ink-soft">
-          1 = {question.scale[0]?.label}. 5 = {question.scale[question.scale.length - 1]?.label}.
+          {question.scale[0]?.value} = {question.scale[0]?.label}. {onScale(question.scale).at(-1)?.value} ={' '}
+          {onScale(question.scale).at(-1)?.label}.
         </p>
       )}
     </fieldset>

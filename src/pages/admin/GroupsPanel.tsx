@@ -10,7 +10,7 @@ import { deleteGroup, groupsCsv, loadGroups, summariseGroups, type GroupRecord }
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
 /** The questions most worth seeing at a glance across rooms. */
-const HEADLINE = ['q1_constraints', 'q2_top_three', 'q_trial'] as const;
+const HEADLINE = ['q1_constraints', 'q2_top_three', 'q7_evidence'] as const;
 
 /**
  * Group discussions, kept apart from individual responses on purpose. The

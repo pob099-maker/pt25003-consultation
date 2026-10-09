@@ -5,8 +5,8 @@ export type RoleId =
   | 'contractor'
   | 'processor'
   | 'machinery'
-  | 'technology'
   | 'adviser'
+  | 'researcher'
   | 'industry_body';
 
 export interface Option {
@@ -19,6 +19,23 @@ export interface Option {
 export interface ScalePoint {
   readonly value: number;
   readonly label: string;
+  /**
+   * An answer that sits beside the scale rather than on it, such as "tried it
+   * and stopped" next to the steps of taking something up. It is counted and
+   * shown, but never averaged or charted with the steps: as a 6 it would read
+   * as further along than doing it across the whole operation.
+   */
+  readonly offScale?: boolean;
+}
+
+/**
+ * A box under a tick list or a single choice, for a few words of the
+ * respondent's own: an example, or the name of the thing they picked. It is
+ * part of the same question, so it is numbered, exported and read with it.
+ */
+export interface QuestionNote {
+  readonly label: string;
+  readonly rows?: number;
 }
 
 interface QuestionBase {
@@ -60,8 +77,18 @@ interface QuestionBase {
 export type RoundStage = 'pilot' | 'baseline' | 'interim' | 'review';
 
 export type Question =
-  | (QuestionBase & { readonly kind: 'multi'; readonly options: readonly Option[]; readonly allowOther?: boolean })
-  | (QuestionBase & { readonly kind: 'single'; readonly options: readonly Option[] })
+  | (QuestionBase & {
+      readonly kind: 'multi';
+      readonly options: readonly Option[];
+      readonly allowOther?: boolean;
+      readonly note?: QuestionNote;
+    })
+  | (QuestionBase & {
+      readonly kind: 'single';
+      readonly options: readonly Option[];
+      /** Offered once a choice is made, so the words always go with an answer. */
+      readonly note?: QuestionNote;
+    })
   | (QuestionBase & {
       readonly kind: 'text';
       readonly placeholder?: string;
@@ -159,8 +186,10 @@ export type Answer =
        * finding, and the one a form cannot measure.
        */
       readonly prompted?: readonly string[];
+      /** What was written in the question's own box, if it has one. */
+      readonly note?: string;
     }
-  | { readonly kind: 'single'; readonly value: string }
+  | { readonly kind: 'single'; readonly value: string; readonly note?: string }
   | { readonly kind: 'text'; readonly value: string }
   | {
       readonly kind: 'rating';
