@@ -5,7 +5,15 @@ import { accentPanel, card, primaryButton, secondaryButton } from '../../compone
 import type { Questionnaire } from '../../types';
 import { questionById } from '../../content/lookup';
 import { downloadCsv } from '../../lib/csv';
-import { deleteGroup, groupsCsv, loadGroups, summariseGroups, type GroupRecord } from '../../services/groups';
+import {
+  GROUP_FORMATS,
+  deleteGroup,
+  formatOf,
+  groupsCsv,
+  loadGroups,
+  summariseGroups,
+  type GroupRecord,
+} from '../../services/groups';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
@@ -126,7 +134,9 @@ export const GroupsPanel = ({
                     <span className="block text-body text-ink">{record.title}</span>
                     <span className="block text-meta text-ink-faint">
                       {record.heldOn}
-                      {record.region.length > 0 ? ` · ${record.region}` : ''} · {record.present} present ·{' '}
+                      {record.region.length > 0 ? ` · ${record.region}` : ''} ·{' '}
+                      {GROUP_FORMATS.find((option) => option.id === formatOf(record))?.label.toLowerCase()} ·{' '}
+                      {record.present} {formatOf(record) === 'chat_poll' ? 'answered' : 'present'} ·{' '}
                       {Object.keys(record.counts).length} questions counted
                     </span>
                   </span>

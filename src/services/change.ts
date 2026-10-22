@@ -99,20 +99,30 @@ const ratedAnything = (response: ConsultationResponse, questionId: string): bool
  * @param base the questionnaire every round starts from. Each round's own
  *   changes are applied here, by the same rules the form applied, so the
  *   comparison knows exactly what each round asked.
+ * @param bites answers sent a bite at a time, when they are to count. They
+ *   join each question's figures, being the same questions asked the same
+ *   way, and never the count of who answered: a row is an answer, not a person.
  */
 export const compareRounds = (
   base: Questionnaire,
   responses: readonly ConsultationResponse[],
   rounds: readonly RoundInfo[],
+  bites: readonly ConsultationResponse[] = [],
 ): Comparison => {
   // Pilots are never part of a comparison: they were the team testing the form.
   const comparable = rounds
     .filter((round) => round.stage !== 'pilot')
     .map((round) => ({ ...round, overrides: round.overrides ?? {} }));
   const byRound = comparable.map((round) => responses.filter((response) => response.roundId === round.roundId));
+  // What each question's figures are worked out from: the whole answer sets,
+  // and the bites when they count.
+  const answering = comparable.map((round, index) => [
+    ...(byRound[index] ?? []),
+    ...bites.filter((response) => response.roundId === round.roundId),
+  ]);
   const askedBy = comparable.map((round) => applyRound(base, round));
   // Every row any of these rounds asked, and any row an answer points at.
-  const frame = reportingFrame(base, comparable, null, byRound.flat());
+  const frame = reportingFrame(base, comparable, null, answering.flat());
 
   const columns: RoundColumn[] = comparable.map((round, index) => ({
     ...round,
@@ -153,23 +163,23 @@ export const compareRounds = (
     // an interim question unticked, while the round is still collecting.
     const askedQuestion = inRound.map(
       (found, index) =>
-        found !== undefined || (byRound[index] ?? []).some((response) => response.answers[question.id] !== undefined),
+        found !== undefined || (answering[index] ?? []).some((response) => response.answers[question.id] !== undefined),
     );
 
     if (question.kind === 'rating') {
-      const answered = byRound.map((group, index) =>
+      const answered = answering.map((group, index) =>
         askedQuestion[index] ? group.filter((response) => ratedAnything(response, question.id)).length : 0,
       );
       const rows = optionIds(question).map((rowId) => {
         const asked = inRound.map(
           (found, index) =>
             (found?.kind === 'rating' && found.rows.some((row) => row.id === rowId)) ||
-            (byRound[index] ?? []).some((response) => {
+            (answering[index] ?? []).some((response) => {
               const answer = response.answers[question.id];
               return answer?.kind === 'rating' && typeof answer.values[rowId] === 'number';
             }),
         );
-        const values = byRound.map((group, index) => {
+        const values = answering.map((group, index) => {
           if (asked[index] !== true) return null;
           const ratings: number[] = [];
           for (const response of group) {
@@ -186,7 +196,7 @@ export const compareRounds = (
       return { questionId: question.id, prompt: question.prompt, measure: 'mean', answered, asked: askedQuestion, rows };
     }
 
-    const answeredSets = byRound.map((group, index) =>
+    const answeredSets = answering.map((group, index) =>
       askedQuestion[index]
         ? group
             .map((response) => chosen(question, response))

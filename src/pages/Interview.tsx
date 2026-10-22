@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { AboutYou } from '../components/AboutYou';
@@ -10,9 +10,9 @@ import { LENGTH_ID, lengthAnswer, shortVersion, type FormLength } from '../servi
 import { COVERED_ID, GENERAL_NOTES, coveredEarlier, noteId, toggleCovered } from '../services/interviewNotes';
 import { ProgressIndicator } from '../components/ProgressIndicator';
 import { StayInvolved } from '../components/StayInvolved';
-import { accentPanel, card, choiceRow, choiceRowSelected, primaryButton, secondaryButton } from '../components/ui';
+import { accentPanel, card, choiceRow, choiceRowSelected, primaryButton, secondaryButton, textInput } from '../components/ui';
 import { NO_INTEREST_ID, interestsForPathway } from '../content/questionnaire';
-import { useQuestionnaire } from '../contexts/QuestionnaireContext';
+import { useQuestionnaire, useQuestionnaireState } from '../contexts/QuestionnaireContext';
 import { formEstimates, spoken, type FormEstimates } from '../services/estimate';
 import { STAY_INVOLVED_ID, useConsultation } from '../hooks/useConsultation';
 import { useStaffSession } from '../hooks/useStaffSession';
@@ -20,17 +20,26 @@ import { STORAGE_KEYS, readJson, removeKey, writeJson } from '../lib/storage';
 import type { ContactFormValues } from '../schemas/consultation';
 import { contactDay, submitConsultation } from '../services/submit';
 import { isPersonalQuestion } from '../content/lookup';
-import type { CollectionMethod, ConsultationResponse, ContactRecord } from '../types';
+import type { ConsultationResponse, ContactRecord } from '../types';
+import {
+  NOTE_LENGTH,
+  RING_BACK,
+  minutesText,
+  pauseCall,
+  pausedFor,
+  removePaused,
+  resumedDraft,
+  stillOpen,
+  talkingSeconds,
+  waitingText,
+  type InterviewMethod,
+  type InterviewSetup,
+  type PausedCall,
+  type RingBack,
+} from '../services/pausedCalls';
 import { AdminLogin } from './admin/AdminLogin';
 
-type InterviewMethod = Extract<CollectionMethod, `interview_${string}`>;
-
-interface Setup {
-  readonly method: InterviewMethod;
-  readonly consent: true;
-  /** Absent on a setup saved before short calls existed: that was a full interview. */
-  readonly length?: FormLength;
-}
+type Setup = InterviewSetup;
 
 /** The two lengths, with times worked out from the questions actually being asked. */
 const lengthsFor = (
@@ -65,7 +74,165 @@ const consentScript = (length: string): string =>
 
 const CONTACT_FORM_ID = 'interview-eoi-form';
 
-const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
+/**
+ * Paused calls, waiting on this phone for the interviewer who took them. The
+ * note is theirs, to find the person again; it never leaves the phone.
+ */
+const CallsToFinish = ({
+  calls,
+  onResume,
+  onDiscard,
+}: {
+  calls: readonly PausedCall[];
+  onResume: (call: PausedCall) => void;
+  onDiscard: (call: PausedCall) => void;
+}) => {
+  const { questionnaire, status } = useQuestionnaireState();
+  return (
+    <section className={card} aria-labelledby="calls-to-finish">
+      <h2 id="calls-to-finish" className="text-subtitle font-semibold text-ink">
+        Calls to finish
+      </h2>
+      <p className="mt-1 text-meta text-ink-soft">
+        Paused calls wait here, on this phone, until you finish them. Nothing from them has been sent.
+      </p>
+      <ul className="mt-3 grid gap-3">
+        {calls.map((call) => {
+          const open = stillOpen(call, questionnaire.roundId, status === 'live');
+          const method = METHODS.find((option) => option.id === call.setup.method)?.label ?? call.setup.method;
+          return (
+            <li key={call.id} className="rounded-lg border border-line-strong bg-surface p-4">
+              <p className="text-body font-semibold text-ink">{call.note.length > 0 ? call.note : 'No note left'}</p>
+              <p className="mt-1 text-meta text-ink-soft">
+                {call.setup.length === 'short' ? 'Short call' : 'Full interview'} · {method} · step {call.stepNumber} of{' '}
+                {call.stepCount} · {minutesText(call.activeSeconds)}
+              </p>
+              <p className="mt-1 text-meta text-ink-soft">
+                {waitingText(call)}. Picks up at: {call.stepTitle}.
+              </p>
+              {!open && (
+                <p className="mt-1 text-meta font-medium text-danger">
+                  Taken in a round that has since closed, so it cannot be finished now.
+                </p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {open && (
+                  <button type="button" className={primaryButton} onClick={() => onResume(call)}>
+                    Pick up where you left off
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={secondaryButton}
+                  onClick={() => {
+                    if (window.confirm('Throw this paused call away? Nothing from it has been sent, and it cannot be got back.'))
+                      onDiscard(call);
+                  }}
+                >
+                  Throw it away
+                </button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+};
+
+/** Pausing a call: when to ring back, and a note to find them again. */
+const PausePanel = ({
+  stepTitle,
+  contactTaken,
+  onPause,
+  onCancel,
+}: {
+  stepTitle: string;
+  contactTaken: boolean;
+  onPause: (note: string, ringBack: RingBack) => void;
+  onCancel: () => void;
+}) => {
+  const [ringBack, setRingBack] = useState<RingBack>('days');
+  const [note, setNote] = useState('');
+  // The button that opened this has gone, so take focus to the panel.
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => headingRef.current?.focus(), []);
+
+  return (
+    <section className={`${accentPanel} mt-8 no-print`} aria-labelledby="pause-heading">
+      <h2 id="pause-heading" ref={headingRef} tabIndex={-1} className="text-subtitle font-semibold">
+        Pause, and ring back later
+      </h2>
+      <p className="mt-2 text-ink-soft">
+        Stopped at: {stepTitle}. Everything so far is kept on this phone, and nothing is sent until the call is finished.
+      </p>
+      {contactTaken && (
+        <p className="mt-2 text-body text-ink">
+          The contact details you took are not kept with a paused call. Take them again when you ring back.
+        </p>
+      )}
+      <fieldset className="mt-4">
+        <legend className="mb-2 text-body font-semibold text-ink">When to ring back</legend>
+        <ul className="grid gap-2 sm:grid-cols-2">
+          {RING_BACK.map((option) => (
+            <li key={option.id}>
+              <label className={`${choiceRow} cursor-pointer ${ringBack === option.id ? choiceRowSelected : ''}`}>
+                <input
+                  type="radio"
+                  name="ring-back"
+                  className="mt-1 size-5 shrink-0 accent-primary"
+                  checked={ringBack === option.id}
+                  onChange={() => setRingBack(option.id)}
+                />
+                <span className="text-body text-ink">{option.label}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </fieldset>
+      <div className="mt-4">
+        <label htmlFor="pause-note" className="mb-1 block text-body font-semibold text-ink">
+          A note to find them again
+        </label>
+        <input
+          id="pause-note"
+          className={textInput}
+          maxLength={NOTE_LENGTH}
+          value={note}
+          placeholder="Such as the district, a good time, who to ask for"
+          aria-describedby="pause-note-help"
+          onChange={(event) => setNote(event.target.value)}
+        />
+        <p id="pause-note-help" className="mt-1 text-meta text-ink-soft">
+          Kept on this phone only. Never sent with the answers, and wiped when the call is finished.
+        </p>
+      </div>
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+        <button type="button" className={primaryButton} onClick={() => onPause(note.trim(), ringBack)}>
+          Pause the call
+        </button>
+        <button type="button" className={secondaryButton} onClick={onCancel}>
+          Keep going
+        </button>
+      </div>
+    </section>
+  );
+};
+
+const SetupScreen = ({
+  onStart,
+  paused,
+  notice,
+  onResume,
+  onDiscard,
+}: {
+  onStart: (setup: Setup) => void;
+  paused: readonly PausedCall[];
+  /** Said once, after a call was paused. */
+  notice: string | null;
+  onResume: (call: PausedCall) => void;
+  onDiscard: (call: PausedCall) => void;
+}) => {
   const setupQuestionnaire = useQuestionnaire();
   const estimates = useMemo(() => formEstimates(setupQuestionnaire), [setupQuestionnaire]);
   const lengths = lengthsFor(estimates);
@@ -77,6 +244,13 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
 
   return (
     <div className="grid gap-5">
+      {notice !== null && (
+        <p className={accentPanel} role="status">
+          {notice}
+        </p>
+      )}
+      {paused.length > 0 && <CallsToFinish calls={paused} onResume={onResume} onDiscard={onDiscard} />}
+
       <fieldset className={card}>
         <legend className="mb-2 text-subtitle font-semibold text-ink">How are you talking to them?</legend>
         <ul className="grid gap-2">
@@ -164,7 +338,19 @@ const SetupScreen = ({ onStart }: { onStart: (setup: Setup) => void }) => {
   );
 };
 
-const InterviewSession = ({ staffId, email }: { staffId: string; email: string | null }) => {
+const InterviewSession = ({
+  staffId,
+  email,
+  resumed,
+  onResume,
+}: {
+  staffId: string;
+  email: string | null;
+  /** Just picked up from a pause, so say so on the first screen. */
+  resumed: boolean;
+  /** Called once a paused call is back in place, to start again from it. */
+  onResume: () => void;
+}) => {
   const fullQuestionnaire = useQuestionnaire();
   const [setup, setSetup] = useState<Setup | null>(() => readJson<Setup>(STORAGE_KEYS.interviewSetup));
   const length: FormLength = setup?.length ?? 'full';
@@ -180,6 +366,10 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<'sent' | 'queued' | null>(null);
+  const [paused, setPaused] = useState<readonly PausedCall[]>(() => pausedFor(staffId));
+  const [pausing, setPausing] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [showResumed, setShowResumed] = useState(resumed);
 
   const startSetup = (next: Setup): void => {
     writeJson(STORAGE_KEYS.interviewSetup, next);
@@ -192,6 +382,21 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
     setSetup(null);
     setInterests([]);
     setContact(null);
+    setPausing(false);
+    setShowResumed(false);
+  };
+
+  /** Back into the draft's own place, then a fresh start from it, the way a reload resumes. */
+  const resume = (call: PausedCall): void => {
+    removePaused(call.id);
+    writeJson(STORAGE_KEYS.interviewDraft, resumedDraft(call));
+    writeJson(STORAGE_KEYS.interviewSetup, call.setup);
+    onResume();
+  };
+
+  const discard = (call: PausedCall): void => {
+    removePaused(call.id);
+    setPaused(pausedFor(staffId));
   };
 
   if (saved !== null) {
@@ -217,7 +422,20 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
     );
   }
 
-  if (setup === null) return <SetupScreen onStart={startSetup} />;
+  if (setup === null) {
+    return (
+      <SetupScreen
+        onStart={(next) => {
+          setNotice(null);
+          startSetup(next);
+        }}
+        paused={paused}
+        notice={notice}
+        onResume={resume}
+        onDiscard={discard}
+      />
+    );
+  }
 
   const isLastStep = stepIndex === steps.length - 1;
   const isContactStep = steps[stepIndex]?.id === STAY_INVOLVED_ID;
@@ -227,6 +445,27 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
   const currentNote = draft.answers[notesKey];
   const notes = currentNote?.kind === 'text' ? currentNote.value : '';
   const methodLabel = METHODS.find((option) => option.id === setup.method)?.label ?? setup.method;
+
+  const pause = (note: string, ringBack: RingBack): void => {
+    const now = new Date();
+    pauseCall({
+      id: draft.responseId,
+      staffId,
+      setup,
+      draft,
+      note,
+      ringBack,
+      pausedAt: now.toISOString(),
+      activeSeconds: talkingSeconds(draft, now),
+      stepTitle: step.title,
+      stepNumber: stepIndex + 1,
+      stepCount: totalSteps,
+    });
+    abandon();
+    setPaused(pausedFor(staffId));
+    setNotice('Paused. It is waiting under Calls to finish, on this phone. Nothing has been sent.');
+    window.scrollTo({ top: 0 });
+  };
 
   const finish = async (contact: ContactFormValues | null): Promise<void> => {
     setSubmitting(true);
@@ -307,12 +546,22 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
         </button>
       </p>
 
+      {showResumed && (
+        <p className={`${accentPanel} mb-4`} role="status">
+          Picking up where you left off, at {step.title}. Remind them who you are, and that they can still skip anything
+          or stop.
+        </p>
+      )}
+
       <InterviewNav
         steps={steps}
         current={stepIndex}
         answers={draft.answers}
         roleChosen={draft.role !== null}
-        onJump={state.goTo}
+        onJump={(index) => {
+          setShowResumed(false);
+          state.goTo(index);
+        }}
       />
 
       <ProgressIndicator current={stepIndex} total={totalSteps} label={step.title} />
@@ -391,6 +640,14 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
         </p>
       )}
 
+      {pausing ? (
+        <PausePanel
+          stepTitle={step.title}
+          contactTaken={contact !== null}
+          onPause={pause}
+          onCancel={() => setPausing(false)}
+        />
+      ) : (
       <div className="mt-8 flex flex-col gap-3 sm:flex-row-reverse sm:justify-start no-print">
         {/* Own keys, so a Next never turns into the contact form's submit
             button mid-press and skips that step. See Consultation.tsx. */}
@@ -413,6 +670,7 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
                 showRoleQuestion();
                 return;
               }
+              setShowResumed(false);
               state.next();
             }}
           >
@@ -434,7 +692,11 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
         >
           Stop without saving
         </button>
+        <button type="button" className={secondaryButton} disabled={submitting} onClick={() => setPausing(true)}>
+          Pause, ring back later
+        </button>
       </div>
+      )}
     </div>
   );
 };
@@ -445,6 +707,10 @@ const InterviewSession = ({ staffId, email }: { staffId: string; email: string |
  */
 export const Interview = () => {
   const staff = useStaffSession();
+  // A picked-up call starts the session again from the draft put back in its
+  // place, exactly as a reload would, so nothing of the call before it lingers.
+  const [session, setSession] = useState(0);
+  const [resumed, setResumed] = useState(false);
 
   if (staff.checking) {
     return (
@@ -464,7 +730,16 @@ export const Interview = () => {
           Admin area
         </Link>
       </div>
-      <InterviewSession staffId={staff.userId} email={staff.email} />
+      <InterviewSession
+        key={session}
+        staffId={staff.userId}
+        email={staff.email}
+        resumed={resumed}
+        onResume={() => {
+          setResumed(true);
+          setSession((value) => value + 1);
+        }}
+      />
     </Layout>
   );
 };

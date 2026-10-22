@@ -5,6 +5,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { Landing } from './pages/Landing';
 import { About } from './pages/About';
 import { Consultation } from './pages/Consultation';
+import { BitePage } from './pages/Bite';
 import { Privacy } from './pages/Privacy';
 import { ThankYou } from './pages/ThankYou';
 import { Admin } from './pages/admin/Admin';
@@ -56,6 +57,9 @@ export const App = () => {
             <Route path="/landing" element={isDemoSite() ? <Landing /> : <Navigate to="/" replace />} />
             <Route path="/about" element={<About />} />
             <Route path="/consultation" element={<Consultation />} />
+            {/* One short part of the consultation, from a text, a chat group or
+                a QR code. Closed until the project turns bites on. */}
+            <Route path="/b/:biteId" element={<BitePage />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/questions" element={<QuestionPaper />} />
             {/* The public scoreboard: published editions only, and nothing else. */}

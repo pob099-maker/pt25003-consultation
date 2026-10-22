@@ -18,7 +18,16 @@ import type { CollectionMethod, ConsultationResponse } from '../types';
  * link for every entry, ready to paste.
  */
 
-export type ChannelId = 'magazine' | 'newsletter' | 'whatsapp' | 'direct' | 'shared' | 'scoreboard' | 'other';
+export type ChannelId =
+  | 'magazine'
+  | 'newsletter'
+  | 'whatsapp'
+  | 'text'
+  | 'qr'
+  | 'direct'
+  | 'shared'
+  | 'scoreboard'
+  | 'other';
 
 export interface SourceDefinition {
   /** What goes in the link: ?src=<id>. Lower case, no spaces. */
@@ -42,6 +51,11 @@ export const SOURCES: readonly SourceDefinition[] = [
   { id: 'chat-wa', channel: 'whatsapp', label: 'WhatsApp group, Western Australia' },
   { id: 'chat-nsw', channel: 'whatsapp', label: 'WhatsApp group, New South Wales' },
   { id: 'chat-all', channel: 'whatsapp', label: 'WhatsApp group, all regions' },
+  // A text to everybody who has agreed to texts, never to one grower: one
+  // label for the whole send, so it names the channel and nobody in it.
+  { id: 'text', channel: 'text', label: 'Text message' },
+  // Printed on a card for the counter at a reseller, a shed or a field day.
+  { id: 'qr', channel: 'qr', label: 'QR code on a card or poster' },
   { id: 'direct', channel: 'direct', label: 'Sent direct to a grower' },
   { id: 'shared', channel: 'shared', label: 'Passed on by somebody who took part' },
   // The "Your next opportunity" button on the monthly scoreboard.
@@ -58,6 +72,8 @@ export const CHANNEL_LABEL: Readonly<Record<ChannelId, string>> = {
   magazine: 'Magazines',
   newsletter: 'Newsletters and bulletins',
   whatsapp: 'WhatsApp groups',
+  text: 'Text messages',
+  qr: 'QR codes',
   direct: 'Sent direct to a grower',
   shared: 'Passed on by somebody who took part',
   scoreboard: 'The monthly scoreboard',

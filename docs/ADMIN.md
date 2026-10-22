@@ -309,6 +309,23 @@ interests they agreed to.
 - Skip anything that did not come up — an empty answer is recorded as not asked, never as a zero.
   Ratings are still read as written.
 
+### Pausing a call and ringing back
+
+A grower on a tractor may give you three minutes now and three on Thursday. **Pause, ring back
+later** at the foot of the interview screen keeps the call on your phone: choose when to ring back
+and leave yourself a note to find them again, such as the district and a good time. The note stays
+on the phone, is never sent with the answers, and goes when the call is finished or thrown away.
+
+Paused calls wait under **Calls to finish** at the top of the interview screen, for the person who
+took them. **Pick up where you left off** opens the call at the step it stopped on, with every
+answer, every "came up earlier" mark and every section note still there, and a reminder to tell
+them who you are and that they can still skip anything. Nothing is sent until the call is
+finished, so a paused call never counts as half an answer set. The time recorded is the talking
+time, not the days in between.
+
+Contact details taken before a pause are not kept with it, so take them again when you ring back.
+A call paused in a round that has since closed cannot be finished, because the questions changed.
+
 ## Short and full versions
 
 The landing page offers two ways in:
@@ -328,6 +345,36 @@ not yet answered. Saying no goes to the optional contact step and submits.
 Which one somebody used is in the `short_or_full` column of the export, for both online responses
 and interviews, so a thin answer set is never mistaken for somebody dropping out.
 
+## Bites: the short version a minute at a time
+
+The **Bites** tab splits the short version into parts of a minute or so, each with its own link,
+for a weekly text, a post in a regional chat group, or a QR card on a counter. A grower can do one
+part and stop, and still count.
+
+**Same questions, same place.** A bite never words anything itself. Each one is part of the short
+version for the person's own part of the industry: the same repeat questions, word for word, in
+the same order. Put one person's bites together and they are their short version, and a test
+checks that for every role in every kind of round. A long rating list is split by its rows, which
+is safe for the same reason a watch list can add a row: each row is rated on its own.
+
+**Who they are, once.** Role and growing area are asked the first time on each phone. After that a
+bite is only its own questions. A link for "their own part of the industry" opens the growers'
+questions for a grower and the contractors' for a contractor, so one link can go to a whole chat
+group; somebody with nothing in that part is told so and offered their next one.
+
+**Kept apart from the other tabs.** One person's bites are several rows, so nothing that counts
+people (responses, roles, regions, time taken, how people came in) ever includes them. The Bites
+tab reads them question by question, with how many answered each part. **Change over time** has a
+switch to count them in each question's figures, off unless you turn it on; who answered still
+counts whole answer sets only. **Export bite answers** gives the same columns as the responses
+export, with the bite named in `short_or_full`.
+
+**Turning them on.** Bite links are closed until the project turns them on (`bites: true` in
+`src/content/projects.ts`, then deploy). Until then a bite link shows a short "not open yet" page
+that points to the consultation. The demonstration has them on, to try.
+
+Bites need no database change: they are stored as ordinary online responses, with a marker.
+
 ## Group discussions and live workshops
 
 There are two ways to capture a room, and they are counted differently.
@@ -338,6 +385,17 @@ many hands went up for each option. Leave a box empty for anything the group
 wasn't asked — empty means "not asked", 0 means "asked, and nobody". A group is
 one record of a room. It is reported beside individual responses and never
 added to them.
+
+**A poll in a chat group** is recorded the same way: choose *As a poll in a
+chat group*, enter how many people answered, and the votes for each choice.
+Put each question as its own poll, using the wording the form gives you to
+copy, so the votes answer the same question. A tick list or a single choice
+can go out as a poll; a rating list or a ranking cannot be asked word for word
+that way, and a question with more choices than a WhatsApp poll takes (12 at
+the time of writing) is flagged rather than cut down. Recording a video call or
+a chat poll needs `supabase/migrations/0018_group_held_as.sql` run once; until
+then the form saves rooms as before and refuses the others rather than file
+them as rooms.
 
 **A live workshop** (admin area → *Run a workshop*) is for a room with phones.
 
@@ -498,6 +556,8 @@ region, and the responses and contacts exports carry the label in a `link` colum
 | A regional WhatsApp group | `https://consultation.agaims.com.au/?src=chat-sa` (also `chat-tas`, `chat-ballarat`, `chat-gippsland`, `chat-qld`, `chat-wa`, `chat-nsw`) |
 | The national WhatsApp group | `https://consultation.agaims.com.au/?src=chat-all` |
 | Sent direct to a grower, by email, text or Teams | `https://consultation.agaims.com.au/?src=direct` |
+| A text to everybody who agreed to texts | `https://consultation.agaims.com.au/?src=text` |
+| A QR code on a card or poster | `https://consultation.agaims.com.au/?src=qr` |
 | Passed on by somebody who took part | added automatically by the thank-you page's invite button |
 
 The card also lists these under **Links to use**, ready to copy.

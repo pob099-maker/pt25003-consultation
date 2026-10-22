@@ -78,6 +78,12 @@ export interface ProjectDefinition {
    * demonstration site, so nobody can collect real answers into it.
    */
   readonly example?: boolean;
+  /**
+   * Whether bite links open: the short version a minute at a time, see
+   * services/bites.ts. Off until the team decides to send them, and on in the
+   * demonstration, so they can be tried there first.
+   */
+  readonly bites?: boolean;
 }
 
 export const PROJECTS: Readonly<Record<string, ProjectDefinition>> = {
@@ -112,6 +118,9 @@ export const projectFor = (id: string): ProjectDefinition =>
  */
 export const availableProjects = (): readonly ProjectDefinition[] =>
   Object.values(PROJECTS).filter((project) => project.example !== true || isDemoSite());
+
+/** Whether this project's bite links open. */
+export const offersBites = (project: ProjectDefinition): boolean => project.bites === true || isDemoSite();
 
 /**
  * What this browser is looking at: the project chosen by project staff, or the

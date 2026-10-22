@@ -33,6 +33,28 @@ const rounds: readonly RoundInfo[] = [
 
 const trusted = (values: string[]): AnswerMap => ({ q_trust: { kind: 'multi', values, other: '' } });
 
+describe('compareRounds with bites', () => {
+  const whole = [
+    response('base', trusted(['neighbours'])),
+    response('base', trusted(['agronomist'])),
+    response('mid', trusted(['dealer'])),
+  ];
+  const bites = [response('mid', trusted(['neighbours'])), response('mid', trusted(['neighbours']))];
+
+  it('changes nothing unless bites are passed in', () => {
+    expect(compareRounds(q, whole, rounds)).toEqual(compareRounds(q, whole, rounds, []));
+  });
+
+  it('counts bite answers in each question, and never in who answered', () => {
+    const result = compareRounds(q, whole, rounds, bites);
+    const block = result.blocks.find((b) => b.questionId === 'q_trust');
+    expect(block?.answered).toEqual([2, 3]);
+    expect(block?.rows.find((row) => row.id === 'neighbours')?.values).toEqual([0.5, 0.667]);
+    expect(result.columns.map((column) => column.respondents)).toEqual([2, 1]);
+    expect(result.composition).toEqual(compareRounds(q, whole, rounds).composition);
+  });
+});
+
 describe('compareRounds', () => {
   it('leaves the pilot out entirely — it was the team testing the form', () => {
     const result = compareRounds(q, [response('pilot', trusted(['neighbours']))], rounds);

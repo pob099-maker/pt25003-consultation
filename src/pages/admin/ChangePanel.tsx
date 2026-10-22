@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { accentPanel, card } from '../../components/ui';
 import { useQuestionnaire } from '../../contexts/QuestionnaireContext';
 import { roleLabel } from '../../content/lookup';
@@ -39,13 +39,20 @@ const formatChange = (value: number | null, measure: 'share' | 'mean'): string =
  */
 export const ChangePanel = ({
   responses,
+  bites = [],
   rounds: loaded,
 }: {
   responses: readonly ConsultationResponse[];
+  /** Answers sent a bite at a time. Counted in each question's figures only when asked to. */
+  bites?: readonly ConsultationResponse[];
   /** Every round, loaded once with the rest of the admin data and refreshed with it. */
   rounds: readonly RoundInfo[];
 }) => {
   const questionnaire = useQuestionnaire();
+  // Off unless somebody chooses it, so this screen reads exactly as it always
+  // has until the team decides bites belong in it.
+  const [withBites, setWithBites] = useState(false);
+  const realBites = useMemo(() => bites.filter((response) => !response.isTestData), [bites]);
   // Each round's own additions and stopped rows are applied to the questions
   // every round starts from, so the comparison knows what each one asked.
   const base = currentProject().questionnaire;
@@ -62,8 +69,9 @@ export const ChangePanel = ({
         base,
         responses.filter((response) => !response.isTestData),
         rounds,
+        withBites ? realBites : [],
       ),
-    [base, responses, rounds],
+    [base, responses, rounds, withBites, realBites],
   );
 
   const { columns } = comparison;
@@ -91,6 +99,29 @@ export const ChangePanel = ({
           interim check can be where something starts, but it never moves a starting point that already exists.
         </p>
       </section>
+
+      {realBites.length > 0 && (
+        <section className={card} aria-labelledby="bites-in-change">
+          <h3 id="bites-in-change" className="text-subtitle font-semibold">
+            Answers sent in bites
+          </h3>
+          <label className="mt-3 flex cursor-pointer items-start gap-3 text-body text-ink">
+            <input
+              type="checkbox"
+              className="mt-1 size-5 shrink-0 accent-primary"
+              checked={withBites}
+              onChange={(event) => setWithBites(event.target.checked)}
+            />
+            <span>Count the {realBites.length} bite answers in each question below</span>
+          </label>
+          <p className="mt-2 text-meta text-ink-soft">
+            A bite asks the repeat questions word for word, so its answers are the same measurement. They join each
+            question&rsquo;s figures, and its n then counts answers rather than people: a list asked in two bites counts
+            each part. <strong>Who answered</strong> never includes them, because one person&rsquo;s bites are several
+            rows.
+          </p>
+        </section>
+      )}
 
       {!comparison.hasBaseline && (
         <p className={`${card} text-ink-soft`}>

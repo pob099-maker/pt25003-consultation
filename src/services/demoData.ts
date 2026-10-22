@@ -10,6 +10,7 @@ import type {
 import type { RoundInfo } from './change';
 import { COVERED_ID, noteId } from './interviewNotes';
 import { applyRound, asksFollowUp } from './roundRules';
+import { BITE_ID, biteAnswer, bitesFor } from './bites';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
 import { questionById } from '../content/lookup';
 
@@ -369,3 +370,60 @@ export const demoResponses = (questionnaire: Questionnaire): readonly Consultati
     ...build(asked(questionnaire, INTERIM_ROUND), DEMO_INTERIM, 20, 2028),
     ...build(asked(questionnaire, REVIEW_ROUND), DEMO_REVIEW, 38, 2027),
   ].sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
+
+/**
+ * How the demonstration's bites arrived: mostly the regional chat groups and
+ * the text that goes to everybody who agreed to texts, and a few from the QR
+ * card on a reseller's counter.
+ */
+const DEMO_BITE_ROUTES: readonly string[] = ['chat-sa', 'text', 'chat-tas', 'chat-ballarat', 'text', 'qr', 'chat-gippsland'];
+
+/**
+ * Bites taken during the review, for the demonstration's Bites tab. Fewer
+ * people get to each later bite than the one before it, the way a series of
+ * weekly links goes, so the screen shows the drop-off it is there to show.
+ */
+export const demoBites = (questionnaire: Questionnaire): readonly ConsultationResponse[] => {
+  const rng = random(2029);
+  const round = asked(questionnaire, REVIEW_ROUND);
+  const regionIds = round.regions.map((region) => region.id).filter((id) => id !== 'no_say' && id !== 'other');
+  const rows: ConsultationResponse[] = [];
+  for (let person = 0; person < 30; person += 1) {
+    const role = weighted(rng, ROLE_MIX);
+    const pathway = round.roles.find((entry) => entry.id === role)?.pathway ?? null;
+    const region = pick(rng, regionIds);
+    const route = DEMO_BITE_ROUTES[person % DEMO_BITE_ROUTES.length] ?? null;
+    for (const bite of bitesFor(round, role)) {
+      // Each week some stop, and nobody comes back to one they skipped.
+      if (rng() < 0.22) break;
+      const answers: Record<string, Answer> = { [BITE_ID]: biteAnswer(bite.id) };
+      for (const question of bite.questions) {
+        const answer = answerFor(question, rng, true, answers);
+        if (answer !== undefined) answers[question.id] = answer;
+      }
+      const submitted = new Date();
+      submitted.setDate(submitted.getDate() - 18 + Math.floor(rng() * 16));
+      submitted.setHours(6 + Math.floor(rng() * 14), Math.floor(rng() * 60), 0, 0);
+      const seconds = Math.round(bite.seconds * (0.5 + rng() * 0.6));
+      rows.push({
+        id: `00000000-0000-4300-8000-${String(rows.length + 1).padStart(12, '0')}`,
+        roundId: DEMO_REVIEW,
+        role,
+        pathway,
+        regions: [region],
+        regionOther: '',
+        answers,
+        startedAt: new Date(submitted.getTime() - seconds * 1000).toISOString(),
+        submittedAt: submitted.toISOString(),
+        durationSeconds: seconds,
+        isTestData: false,
+        method: 'online',
+        collectedBy: null,
+        consentVerbal: null,
+        sessionId: null,
+        source: route,
+      });
+    }
+  }
+  return rows.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
+};

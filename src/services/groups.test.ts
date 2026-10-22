@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUESTIONNAIRE } from '../content/questionnaire';
-import { groupQuestions, groupRecordSchema, groupsCsv, summariseGroups, type GroupRecord } from './groups';
+import {
+  POLL_CHOICES,
+  formatOf,
+  groupQuestions,
+  groupRecordSchema,
+  groupsCsv,
+  handsMeaning,
+  pollProblem,
+  pollText,
+  summariseGroups,
+  type GroupRecord,
+} from './groups';
 
 const q = DEFAULT_QUESTIONNAIRE;
 
@@ -89,5 +100,41 @@ describe('groupsCsv', () => {
     expect(lines).toHaveLength(4); // header + two options + one note
     expect(csv).toContain('Harvesting');
     expect(csv).toContain('Late harvest');
+  });
+});
+
+describe('a poll in a chat group', () => {
+  it('is a group like any other, and an older record reads as a room', () => {
+    const poll = group({ heldAs: 'chat_poll', present: 14, counts: { sector: { grow: 11 } } });
+    expect(groupRecordSchema.safeParse(poll).success).toBe(true);
+    expect(formatOf(poll)).toBe('chat_poll');
+    expect(formatOf(group({}))).toBe('room');
+  });
+
+  it('still never has more votes than people who answered', () => {
+    expect(groupRecordSchema.safeParse(group({ heldAs: 'chat_poll', present: 5, counts: { sector: { grow: 6 } } })).success).toBe(false);
+  });
+
+  it('is put word for word, with the question’s own choices', () => {
+    const question = q.core.flatMap((section) => section.questions).find((candidate) => candidate.id === 'sector');
+    if (question === undefined || question.kind !== 'multi') throw new Error('no sector question');
+    expect(pollText(question)).toBe([question.prompt, ...question.options.map((option) => option.label)].join('\n'));
+    expect(pollProblem(question)).toBeNull();
+  });
+
+  it('says when a question has too many choices for one poll, and offers nothing for a rating list', () => {
+    const all = q.core.flatMap((section) => section.questions);
+    const constraints = all.find((candidate) => candidate.id === 'q1_constraints');
+    const areas = all.find((candidate) => candidate.id === 'q5_areas');
+    if (constraints === undefined || areas === undefined) throw new Error('missing questions');
+    expect(pollProblem(constraints)).toContain(`a WhatsApp poll takes ${POLL_CHOICES}`);
+    expect(pollText(areas)).toBeNull();
+    expect(handsMeaning(areas, 'chat_poll')).toContain('cannot ask this one word for word');
+  });
+
+  it('is named in the export', () => {
+    const csv = groupsCsv(q, [group({ heldAs: 'chat_poll', present: 14, counts: { sector: { grow: 11 } } })]);
+    expect(csv.split('\n')[0]).toContain('held_as');
+    expect(csv).toContain('chat_poll');
   });
 });

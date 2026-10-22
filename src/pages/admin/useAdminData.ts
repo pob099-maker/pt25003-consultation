@@ -5,14 +5,18 @@ import { isBackendConfigured } from '../../lib/config';
 import { CONTACTS_TABLE, RESPONSES_TABLE } from '../../services/submit';
 import { fromContactRow, fromResponseRow, type ContactRow, type ResponseRow } from '../../services/records';
 import { seedContacts } from '../../services/seed';
-import { demoResponses } from '../../services/demoData';
+import { demoBites, demoResponses } from '../../services/demoData';
+import { splitBites } from '../../services/bites';
 import { loadTags, type TagMap } from '../../services/tags';
 import { loadProgress, type ProgressRow } from '../../services/progress';
 import { fetchAllRounds, type RoundConfig } from '../../services/rounds';
 import type { ConsultationResponse, ContactRecord } from '../../types';
 
 export interface AdminData {
+  /** Whole answer sets: everything that counts people reads these, and only these. */
   readonly responses: readonly ConsultationResponse[];
+  /** Answers sent a bite at a time, read question by question on their own tab. */
+  readonly bites: readonly ConsultationResponse[];
   readonly contacts: readonly ContactRecord[];
   readonly tags: TagMap;
   readonly progress: readonly ProgressRow[];
@@ -33,6 +37,7 @@ export interface AdminData {
 export const useAdminData = (): AdminData => {
   const demoMode = !isBackendConfigured();
   const [responses, setResponses] = useState<readonly ConsultationResponse[]>([]);
+  const [bites, setBites] = useState<readonly ConsultationResponse[]>([]);
   const [contacts, setContacts] = useState<readonly ContactRecord[]>([]);
   const [tags, setTags] = useState<TagMap>({});
   const [progress, setProgress] = useState<readonly ProgressRow[]>([]);
@@ -63,6 +68,7 @@ export const useAdminData = (): AdminData => {
         const demoRounds = await fetchAllRounds();
         if (!cancelled) {
           setResponses(demoResponses(currentProject().questionnaire));
+          setBites(demoBites(currentProject().questionnaire));
           setContacts(seedContacts());
           setRounds(demoRounds.success ? demoRounds.data : []);
           setRoundsError(null);
@@ -94,7 +100,11 @@ export const useAdminData = (): AdminData => {
         setLoading(false);
         return;
       }
-      setResponses((responseResult.data as ResponseRow[]).map(fromResponseRow));
+      // Bites come back from the same table, and are set apart before any
+      // screen sees them, so no count of people ever includes one.
+      const split = splitBites((responseResult.data as ResponseRow[]).map(fromResponseRow));
+      setResponses(split.whole);
+      setBites(split.bites);
       // A reader without the contacts policy gets an error here, not a crash:
       // the priorities still render, the contact list simply stays empty.
       setContacts(contactResult.error === null ? (contactResult.data as ContactRow[]).map(fromContactRow) : []);
@@ -112,6 +122,7 @@ export const useAdminData = (): AdminData => {
 
   return {
     responses,
+    bites,
     contacts,
     tags,
     progress,

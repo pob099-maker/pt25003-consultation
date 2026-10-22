@@ -4,7 +4,19 @@ import { Layout } from '../components/Layout';
 import { accentPanel, card, primaryButton, secondaryButton, textInput } from '../components/ui';
 import { useStableQuestionnaire } from '../contexts/QuestionnaireContext';
 import { useStaffSession } from '../hooks/useStaffSession';
-import { groupQuestions, handsMeaning, loadGroups, optionsForGroup, saveGroup, type GroupRecord } from '../services/groups';
+import {
+  GROUP_FORMATS,
+  formatOf,
+  groupQuestions,
+  handsMeaning,
+  loadGroups,
+  optionsForGroup,
+  pollProblem,
+  pollText,
+  saveGroup,
+  type GroupFormat,
+  type GroupRecord,
+} from '../services/groups';
 import { AdminLogin } from './admin/AdminLogin';
 
 /** Keeps what was typed, so "" stays "not asked" and never turns into 0. */
@@ -17,6 +29,29 @@ const parseCount = (raw: string | undefined): number | undefined | 'invalid' => 
 
 const today = (): string => new Date().toISOString().slice(0, 10);
 
+/** The poll's words, ready to paste, with a button to copy them. */
+const PollCopy = ({ text }: { text: string }) => {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="mt-3 rounded-lg border border-line bg-sunk p-3">
+      <p className="text-meta font-semibold text-ink">The poll, word for word</p>
+      <pre className="mt-1 whitespace-pre-wrap font-sans text-meta text-ink">{text}</pre>
+      <button
+        type="button"
+        className={`${secondaryButton} mt-2`}
+        onClick={() => {
+          void navigator.clipboard.writeText(text).then(
+            () => setCopied(true),
+            () => setCopied(false),
+          );
+        }}
+      >
+        {copied ? 'Copied' : 'Copy the poll'}
+      </button>
+    </div>
+  );
+};
+
 const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupRecord | null }) => {
   const questionnaire = useStableQuestionnaire();
   const navigate = useNavigate();
@@ -25,6 +60,8 @@ const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupReco
   const [title, setTitle] = useState(existing?.title ?? '');
   const [region, setRegion] = useState(existing?.region ?? '');
   const [heldOn, setHeldOn] = useState(existing?.heldOn ?? today());
+  const [heldAs, setHeldAs] = useState<GroupFormat>(existing === null ? 'room' : formatOf(existing));
+  const format = GROUP_FORMATS.find((option) => option.id === heldAs) ?? GROUP_FORMATS[0];
   const [present, setPresent] = useState(existing === null ? '' : String(existing.present));
   const [roles, setRoles] = useState<Draft>(() =>
     Object.fromEntries(Object.entries(existing?.roles ?? {}).map(([k, v]) => [k, String(v)])),
@@ -45,7 +82,7 @@ const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupReco
   const save = async (): Promise<void> => {
     setError(null);
     if (typeof presentNumber !== 'number') {
-      setError('Enter how many people were in the room.');
+      setError(heldAs === 'chat_poll' ? 'Enter how many people answered the poll.' : 'Enter how many people were in the room.');
       return;
     }
     const structured: Record<string, Record<string, number>> = {};
@@ -80,6 +117,7 @@ const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupReco
       notes: Object.fromEntries(Object.entries(notes).filter(([, text]) => text.trim().length > 0)),
       collectedBy: existing?.collectedBy ?? staffId,
       updatedAt: new Date().toISOString(),
+      heldAs,
     };
     setSaving(true);
     const result = await saveGroup(record);
@@ -103,7 +141,37 @@ const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupReco
           These totals are reported beside the individual responses and never added to them. Twelve hands are not
           twelve responses.
         </p>
+        {heldAs === 'chat_poll' && (
+          <p className="mt-2 text-meta text-ink-soft">
+            A poll in a chat group is recorded the same way: the people who answered it, and the votes for each choice.
+            Put each question as its own poll, using the words below, so the votes answer the same question.
+          </p>
+        )}
       </section>
+
+      <fieldset className={card}>
+        <legend className="mb-2 text-body font-semibold text-ink">How was it held?</legend>
+        <ul className="grid gap-2 sm:grid-cols-3">
+          {GROUP_FORMATS.map((option) => (
+            <li key={option.id}>
+              <label
+                className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-3 ${
+                  heldAs === option.id ? 'border-primary bg-selected' : 'border-line bg-surface'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="held-as"
+                  className="size-5 shrink-0 accent-primary"
+                  checked={heldAs === option.id}
+                  onChange={() => setHeldAs(option.id)}
+                />
+                <span className="text-body text-ink">{option.label}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </fieldset>
 
       <section className={`${card} grid gap-4 sm:grid-cols-2`} aria-label="The meeting">
         <div className="sm:col-span-2">
@@ -138,7 +206,7 @@ const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupReco
         </div>
         <div>
           <label htmlFor="group-present" className="mb-1 block text-body font-medium">
-            People in the room
+            {format?.present ?? 'People in the room'}
           </label>
           <input
             id="group-present"
@@ -180,7 +248,14 @@ const GroupForm = ({ staffId, existing }: { staffId: string; existing: GroupReco
             <h2 id={`gq-${question.id}`} className="text-subtitle font-semibold text-ink">
               {question.guide?.open ?? question.prompt}
             </h2>
-            <p className="mt-1 text-meta text-ink-soft">{handsMeaning(question)}</p>
+            <p className="mt-1 text-meta text-ink-soft">{handsMeaning(question, heldAs)}</p>
+            {heldAs === 'chat_poll' &&
+              (() => {
+                const problem = pollProblem(question);
+                const text = pollText(question);
+                if (problem !== null) return <p className="mt-2 text-meta text-ink">{problem}</p>;
+                return text === null ? null : <PollCopy text={text} />;
+              })()}
             {options.length > 0 && (
               <ul className="mt-3 grid gap-2">
                 {options.map((option) => {

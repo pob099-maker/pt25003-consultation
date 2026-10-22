@@ -13,6 +13,7 @@ import type { ConsultationResponse, ContactRecord, Questionnaire } from '../type
 import type { TagMap } from './tags';
 import { coveredEarlier, notesText } from './interviewNotes';
 import { lengthOf } from './formLength';
+import { biteOf } from './bites';
 
 const RESPONSE_FIXED = [
   'response_id',
@@ -34,6 +35,11 @@ const RESPONSE_FIXED = [
 ] as const;
 
 const join = (values: readonly string[]): string => values.join('; ');
+
+const bitePart = (response: ConsultationResponse): string => {
+  const bite = biteOf(response.answers);
+  return bite === null ? '' : `bite: ${bite}`;
+};
 
 export const METHOD_LABEL: Readonly<Record<ConsultationResponse['method'], string>> = {
   online: 'Online',
@@ -85,7 +91,8 @@ export const responseRow = (questionnaire: Questionnaire, response: Consultation
       ),
     ),
     // Answered from something said earlier in the conversation, not asked outright.
-    short_or_full: lengthOf(response.answers) ?? '',
+    // A bite is a slice of the short version, named so it can be told apart.
+    short_or_full: lengthOf(response.answers) ?? bitePart(response),
     covered_earlier: join(coveredEarlier(response.answers)),
     interview_notes: notesText(questionnaire, response.answers),
   };

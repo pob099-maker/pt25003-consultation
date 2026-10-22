@@ -71,4 +71,8 @@ export const STORAGE_KEYS = {
    * back to the ones compiled into the app.
    */
   activeRound: `${PREFIX}.active-round.v1`,
+  /** Who this phone answered bites as, which bites it has sent, and the one under way. */
+  bites: `${PREFIX}.bites.v1`,
+  /** Interviews paused part-way, to ring back and finish. Never sent until they are. */
+  pausedCalls: `${PREFIX}.paused-calls.v1`,
 } as const;

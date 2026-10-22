@@ -31,12 +31,13 @@ import { PhoneScriptPanel } from './PhoneScriptPanel';
 import { ChangePanel } from './ChangePanel';
 import { TeamPanel } from './TeamPanel';
 import { GroupsPanel } from './GroupsPanel';
+import { BitesPanel } from './BitesPanel';
 import { ScoreboardPanel } from './ScoreboardPanel';
 import { DemoWelcome } from '../../components/DemoWelcome';
 
 const percent = (share: number): string => `${Math.round(share * 100)}%`;
 
-const TABS = ['priorities', 'change', 'groups', 'comments', 'contacts', 'scoreboard', 'phone', 'rounds', 'team'] as const;
+const TABS = ['priorities', 'change', 'bites', 'groups', 'comments', 'contacts', 'scoreboard', 'phone', 'rounds', 'team'] as const;
 type Tab = (typeof TABS)[number];
 const isTab = (value: string | null): value is Tab => TABS.includes(value as Tab);
 
@@ -107,6 +108,20 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         return true;
       }),
     [data.responses, includeTest, roleFilter, regionFilter, roundFilter, methodFilter],
+  );
+
+  // Bites under the same filters, less how they were collected: a bite is
+  // always online. Kept apart from `filtered`, which counts people.
+  const bites = useMemo(
+    () =>
+      data.bites.filter((response) => {
+        if (roundFilter !== 'all' && response.roundId !== roundFilter) return false;
+        if (!includeTest && response.isTestData) return false;
+        if (roleFilter !== 'all' && response.role !== roleFilter) return false;
+        if (regionFilter !== 'all' && !response.regions.includes(regionFilter)) return false;
+        return true;
+      }),
+    [data.bites, includeTest, roleFilter, regionFilter, roundFilter],
   );
 
   const contacts = useMemo(
@@ -352,6 +367,7 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
           [
             ['priorities', 'Priorities'],
             ['change', 'Change over time'],
+            ['bites', `Bites (${bites.length})`],
             ['groups', 'Groups'],
             ['comments', `Comments (${comments.length})`],
             ['contacts', `Contacts (${contacts.length})`],
@@ -818,7 +834,11 @@ export const AdminDashboard = ({ onSignOut }: { onSignOut: () => void }) => {
         </div>
       )}
 
-      {!data.loading && tab === 'change' && <ChangePanel responses={data.responses} rounds={data.rounds} />}
+      {!data.loading && tab === 'change' && (
+        <ChangePanel responses={data.responses} bites={data.bites} rounds={data.rounds} />
+      )}
+
+      {!data.loading && tab === 'bites' && <BitesPanel bites={bites} frame={frame} />}
 
       {!data.loading && tab === 'scoreboard' && (
         <ScoreboardPanel responses={data.responses} tags={data.tags} rounds={data.rounds} />
