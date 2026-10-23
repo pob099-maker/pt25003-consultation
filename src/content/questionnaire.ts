@@ -67,6 +67,7 @@ const REGIONS = opts(
  */
 const CONSTRAINTS = opts(
   ['land_prep', 'Ground preparation and bed forming'],
+  ['seed', 'Seed management, cutting, procurement'],
   ['planting', 'Planting'],
   ['monitoring', 'Crop monitoring and agronomy decisions'],
   ['irrigation', 'Irrigation operation, scheduling and automation'],
@@ -91,6 +92,7 @@ const CONSTRAINTS = opts(
  * so those four questions can be read against each other.
  */
 const AREAS = opts(
+  ['seed_handling', 'Seed handling, storage and cutting'],
   ['precision_planting', 'Precision planting and crop establishment'],
   ['crop_protection', 'Spraying and weed control'],
   ['haulm_removal', 'Haulm removal before harvest'],
@@ -116,6 +118,7 @@ const AREAS_WITH_OTHER = [...AREAS, { id: 'other', label: 'Other' }] as const;
  */
 export const DOMAIN_TO_AREAS: Readonly<Record<string, readonly string[]>> = {
   land_prep: ['precision_planting', 'autonomy'],
+  seed: ['seed_handling'],
   planting: ['precision_planting', 'autonomy'],
   monitoring: ['sensors', 'interoperability'],
   irrigation: ['irrigation_automation', 'sensors'],
@@ -385,7 +388,7 @@ const CORE: readonly Section[] = [
           ['operating_data', 'Figures from it working in the paddock'],
           ['service', 'Good local service, parts and technical support'],
           ['training', 'Training for operators and managers'],
-          ['finance', 'Finance, leasing or sharing the cost'],
+          ['finance', 'Finance options, capital, leasing or sharing the cost'],
           ['safety', 'Clear guidance on safety and the rules'],
           ['compatibility', 'It works with the machinery and software we already run'],
           ['not_my_call', 'Not my call to make'],
@@ -405,6 +408,7 @@ const CORE: readonly Section[] = [
         prompt: 'When you are weighing up new machinery or a new way of doing things, whose opinion counts most?',
         help: 'Tick the ones that would change your mind.',
         options: opts(
+          ['management', 'Management team'],
           ['neighbours', 'Other growers and neighbours'],
           ['grower_groups', 'Grower groups and study groups'],
           ['agronomist', 'An independent agronomist or consultant'],
@@ -519,6 +523,7 @@ const PATHWAYS: Readonly<Record<string, Section>> = {
         // first section, so the two can be read against each other.
         options: opts(
           ['land_prep', 'Ground preparation and bed forming'],
+          ['seed', 'Seed management, cutting, procurement'],
           ['planting', 'Planting'],
           ['monitoring', 'Crop monitoring and agronomy decisions'],
           ['irrigation', 'Irrigation operation and scheduling'],
@@ -1384,6 +1389,7 @@ const PROJECT_DESIGN: readonly Section[] = [
           ['checklists', 'Machinery or operator checklists'],
           ['roi_tools', 'Tools for working out whether it pays'],
           ['factsheets', 'Technical factsheets'],
+          ['roi_factsheets', 'Financial, economic return on investment factsheets'],
           ['one_to_one', 'One-to-one discussions'],
           ['articles', 'PotatoLink articles or updates'],
           ['other', 'Other'],

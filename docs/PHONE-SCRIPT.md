@@ -75,6 +75,7 @@ _Tick as many as you like._
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Ground preparation and bed forming
+  - Seed management, cutting, procurement
   - Planting
   - Crop monitoring and agronomy decisions
   - Irrigation operation, scheduling and automation
@@ -136,6 +137,7 @@ _1 is not important, 5 is essential. Skip any you have no view on._
 _Scale: 1 = not important, 2 = slightly important, 3 = moderately important, 4 = very important, 5 = essential._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
+  - Seed handling, storage and cutting
   - Precision planting and crop establishment
   - Spraying and weed control
   - Haulm removal before harvest
@@ -178,7 +180,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Figures from it working in the paddock
   - Good local service, parts and technical support
   - Training for operators and managers
-  - Finance, leasing or sharing the cost
+  - Finance options, capital, leasing or sharing the cost
   - Clear guidance on safety and the rules
   - It works with the machinery and software we already run
   - Not my call to make
@@ -193,6 +195,7 @@ _Tick the ones that would change your mind._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
+  - Management team
   - Other growers and neighbours
   - Grower groups and study groups
   - An independent agronomist or consultant
@@ -274,6 +277,7 @@ _Labour, timeliness, safety, quality, reliability, whatever it is for you. Tick 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
   - Ground preparation and bed forming
+  - Seed management, cutting, procurement
   - Planting
   - Crop monitoring and agronomy decisions
   - Irrigation operation and scheduling
@@ -664,6 +668,7 @@ _Pick the one that fits best for each. Skip any you don't know about._
 _Scale: 1 = not available yet, 2 = available overseas, not yet in australia, 3 = available in australia to trial, 4 = commercially ready in australia, 5 = established in australian potato operations._
 _Read each one, take a number. "No view" is a fine answer — leave it blank rather than guessing._
 
+  - Seed handling, storage and cutting
   - Precision planting and crop establishment
   - Spraying and weed control
   - Haulm removal before harvest
@@ -748,6 +753,7 @@ _Tick as many as you like. There is room to describe it properly at the end._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
+  - Seed handling, storage and cutting
   - Precision planting and crop establishment
   - Spraying and weed control
   - Haulm removal before harvest
@@ -937,6 +943,7 @@ _Tick as many as you like._
 
 _Listen first and tick what they raise. If they are stuck, read the list, and note which items only came up after prompting — an unprompted mention is the stronger finding._
 
+  - Seed handling, storage and cutting
   - Precision planting and crop establishment
   - Spraying and weed control
   - Haulm removal before harvest
@@ -1100,6 +1107,7 @@ _Listen first and tick what they raise. If they are stuck, read the list, and no
   - Machinery or operator checklists
   - Tools for working out whether it pays
   - Technical factsheets
+  - Financial, economic return on investment factsheets
   - One-to-one discussions
   - PotatoLink articles or updates
   - Other

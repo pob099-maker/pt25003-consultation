@@ -58,6 +58,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 `q1_constraints` · tick any + other · **tracked every round**
 
 - Ground preparation and bed forming
+- Seed management, cutting, procurement
 - Planting
 - Crop monitoring and agronomy decisions
 - Irrigation operation, scheduling and automation
@@ -101,8 +102,9 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 ### How important is it for the project to work on each of these?
 
-`q5_areas` · rate 1-5 × 14, list can grow · **tracked every round**
+`q5_areas` · rate 1-5 × 15, list can grow · **tracked every round**
 
+- Seed handling, storage and cutting
 - Precision planting and crop establishment
 - Spraying and weed control
 - Haulm removal before harvest
@@ -135,7 +137,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 - Figures from it working in the paddock
 - Good local service, parts and technical support
 - Training for operators and managers
-- Finance, leasing or sharing the cost
+- Finance options, capital, leasing or sharing the cost
 - Clear guidance on safety and the rules
 - It works with the machinery and software we already run
 - Not my call to make
@@ -145,6 +147,7 @@ Generated from `src/content/questionnaire.ts` — do not edit by hand. Import in
 
 `q_trust` · tick any + other · **tracked every round**
 
+- Management team
 - Other growers and neighbours
 - Grower groups and study groups
 - An independent agronomist or consultant
@@ -205,6 +208,7 @@ Grower: business owner; Grower: farm manager, supervisor or machinery operator �
 `farm_pressure` · tick any + other
 
 - Ground preparation and bed forming
+- Seed management, cutting, procurement
 - Planting
 - Crop monitoring and agronomy decisions
 - Irrigation operation and scheduling
@@ -512,12 +516,13 @@ Processor, packhouse or storage business · 8 questions · about 4.4 min
 
 ### Machinery and technology supply
 
-Machinery dealer, manufacturer, technology provider or service provider · 13 questions · about 8.1 min
+Machinery dealer, manufacturer, technology provider or service provider · 13 questions · about 8.2 min
 
 #### How available is each of these to Australian potato businesses today?
 
-`mach_available` · rate 1-5 × 14 + write-in
+`mach_available` · rate 1-5 × 15 + write-in
 
+- Seed handling, storage and cutting
 - Precision planting and crop establishment
 - Spraying and weed control
 - Haulm removal before harvest
@@ -587,6 +592,7 @@ Machinery dealer, manufacturer, technology provider or service provider · 13 qu
 
 `tech_offer` · tick any + other
 
+- Seed handling, storage and cutting
 - Precision planting and crop establishment
 - Spraying and weed control
 - Haulm removal before harvest
@@ -748,6 +754,7 @@ Advisor, agronomist; Researcher, consultant or educator · 5 questions · about 
 
 `adv_evaluate` · tick any + other
 
+- Seed handling, storage and cutting
 - Precision planting and crop establishment
 - Spraying and weed control
 - Haulm removal before harvest
@@ -878,6 +885,7 @@ Not asked at baseline: there is nothing yet to have seen or changed.
 - Machinery or operator checklists
 - Tools for working out whether it pays
 - Technical factsheets
+- Financial, economic return on investment factsheets
 - One-to-one discussions
 - PotatoLink articles or updates
 - Other
@@ -965,6 +973,10 @@ The two lists are different axes — where the trouble is, and what could be don
 - Precision planting and crop establishment
 - Autonomous and self-steering field machinery
 
+### Seed management, cutting, procurement
+
+- Seed handling, storage and cutting
+
 ### Planting
 
 - Precision planting and crop establishment
@@ -1034,14 +1046,14 @@ The two lists are different axes — where the trouble is, and what could be don
 
 ## Branch lengths
 
-- Shared by everyone: about 9.6 min
+- Shared by everyone: about 9.7 min
 
-- Your farming operation branch: about 3.8 min → total 13.3 min
-- Your contracting work branch: about 5.1 min → total 14.6 min
-- Receival, storage, grading and packing branch: about 4.4 min → total 13.9 min
-- Machinery and technology supply branch: about 8.1 min → total 17.7 min
-- Your members and the wider industry branch: about 2.4 min → total 12 min
-- Evidence, evaluation and extension branch: about 3.3 min → total 12.8 min
+- Your farming operation branch: about 3.8 min → total 13.5 min
+- Your contracting work branch: about 5.1 min → total 14.8 min
+- Receival, storage, grading and packing branch: about 4.4 min → total 14.1 min
+- Machinery and technology supply branch: about 8.2 min → total 18 min
+- Your members and the wider industry branch: about 2.4 min → total 12.2 min
+- Evidence, evaluation and extension branch: about 3.3 min → total 13 min
 
 _Estimates only: 1.5 seconds per option read, 45 for an open box, 7 per rating row. Useful for comparing branches against each other, not for promising a number to a respondent._
 

@@ -555,6 +555,10 @@ region, and the responses and contacts exports carry the label in a `link` colum
 | PotatoLink bulletin | `https://consultation.agaims.com.au/?src=bulletin` |
 | A regional WhatsApp group | `https://consultation.agaims.com.au/?src=chat-sa` (also `chat-tas`, `chat-ballarat`, `chat-gippsland`, `chat-qld`, `chat-wa`, `chat-nsw`) |
 | The national WhatsApp group | `https://consultation.agaims.com.au/?src=chat-all` |
+| A post on PotatoLink's Facebook | `https://consultation.agaims.com.au/?src=socials-facebook` |
+| A post on PotatoLink's LinkedIn | `https://consultation.agaims.com.au/?src=socials-linkedin` |
+| A post on PotatoLink's Instagram | `https://consultation.agaims.com.au/?src=socials-instagram` |
+| The PotatoLink website | `https://consultation.agaims.com.au/?src=potatolinkwebsite` |
 | Sent direct to a grower, by email, text or Teams | `https://consultation.agaims.com.au/?src=direct` |
 | A text to everybody who agreed to texts | `https://consultation.agaims.com.au/?src=text` |
 | A QR code on a card or poster | `https://consultation.agaims.com.au/?src=qr` |

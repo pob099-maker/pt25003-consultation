@@ -22,6 +22,8 @@ export type ChannelId =
   | 'magazine'
   | 'newsletter'
   | 'whatsapp'
+  | 'social'
+  | 'website'
   | 'text'
   | 'qr'
   | 'direct'
@@ -51,6 +53,11 @@ export const SOURCES: readonly SourceDefinition[] = [
   { id: 'chat-wa', channel: 'whatsapp', label: 'WhatsApp group, Western Australia' },
   { id: 'chat-nsw', channel: 'whatsapp', label: 'WhatsApp group, New South Wales' },
   { id: 'chat-all', channel: 'whatsapp', label: 'WhatsApp group, all regions' },
+  // One label per platform, for posts on PotatoLink's own pages.
+  { id: 'socials-facebook', channel: 'social', label: 'Social media, Facebook' },
+  { id: 'socials-linkedin', channel: 'social', label: 'Social media, LinkedIn' },
+  { id: 'socials-instagram', channel: 'social', label: 'Social media, Instagram' },
+  { id: 'potatolinkwebsite', channel: 'website', label: 'PotatoLink website' },
   // A text to everybody who has agreed to texts, never to one grower: one
   // label for the whole send, so it names the channel and nobody in it.
   { id: 'text', channel: 'text', label: 'Text message' },
@@ -72,6 +79,8 @@ export const CHANNEL_LABEL: Readonly<Record<ChannelId, string>> = {
   magazine: 'Magazines',
   newsletter: 'Newsletters and bulletins',
   whatsapp: 'WhatsApp groups',
+  social: 'Social media',
+  website: 'Websites',
   text: 'Text messages',
   qr: 'QR codes',
   direct: 'Sent direct to a grower',
